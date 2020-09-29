@@ -1,0 +1,12 @@
+<ng-select
+    class="dam-select"
+    [id]="key"
+    [(ngModel)]="value"
+    [items]="options"
+    [searchable]="searchable"
+    [bindValue]="map.key"
+    [bindLabel]="map.value"
+    [multiple]="multiple"
+    (change)="changeValue()"
+>
+</ng-select>

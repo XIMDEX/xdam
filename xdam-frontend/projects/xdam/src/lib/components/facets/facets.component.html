@@ -1,0 +1,19 @@
+<ng-container>
+    <div class="facets-title">
+        <h4 *ngIf="isOpen">Facets</h4>
+        <button class="xdam-btn-base" (click)="isOpen = !isOpen">
+            <fa-icon [icon]="openIcon"></fa-icon>
+        </button>
+    </div>
+    <ng-container *ngIf="isOpen">
+        <xdam-facet
+            #facetComponent
+            *ngFor="let facet of data"
+            [data]="facet"
+            [value]="facets[facet.key]"
+            [withDefault]="first"
+            [open]="isOpenFacet(facet.key)"
+            (onChange)="setFacets($event)"
+        ></xdam-facet>
+    </ng-container>
+</ng-container>

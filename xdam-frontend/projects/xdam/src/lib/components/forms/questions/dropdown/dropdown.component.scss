@@ -1,0 +1,11 @@
+:host {
+    @import '../../../../styles/colors';
+
+    display: inherit;
+    flex-grow: 1;
+
+    > * {
+        margin-top: 5px;
+        flex-grow: 1;
+    }
+}

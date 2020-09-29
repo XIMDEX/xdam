@@ -1,0 +1,33 @@
+
+<div class="loginPage shadow-panel dam-main-back">
+    <header>
+        XDAM (Digital Asset Management)
+    </header>
+    <main>
+        <div class="login">
+            <div class="content">
+                <h2>Login</h2>
+                <form [formGroup]="form" (submit)="login()">
+                    <div class="field-wrapper">
+                        <input type="text" name="email" formControlName="email" placeholder="email">
+                        <label>Email</label>
+                    </div>
+                    <div class="field-wrapper">
+                        <input type="password" name="password" formControlName="password" placeholder="password">
+                        <label>Password</label>
+                    </div>
+                    <div class="field-wrapper">
+                        <input type="submit" [disabled]="loading" value="Send">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <xdam-footer></xdam-footer>
+    </footer>
+</div>
+
+
+
+

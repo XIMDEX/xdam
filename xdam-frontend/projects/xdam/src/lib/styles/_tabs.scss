@@ -1,0 +1,40 @@
+@import './sizes';
+@import './colors';
+@import './borders';
+
+ngx-tabset {
+    display: flex;
+    flex-direction: column;
+    border: $tabset_border;
+
+    > .nav-tabset {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        background-color: $tabset_base_color;
+
+        > .nav-tab {
+            display: flex;
+            align-items: center;
+
+            min-height: $tabset_height;
+            max-height: $tabset_height;
+            padding: 0 10px;
+
+            &.active {
+                background-color: $tabs_active_bg;
+                color: $tabs_active_color;
+                border-top-left-radius: $tab_active_border_radius;
+                border-top-right-radius: $tab_active_border_radius;
+            }
+        }
+    }
+
+    > .tabs-container {
+        padding: 10px 5px;
+    }
+}

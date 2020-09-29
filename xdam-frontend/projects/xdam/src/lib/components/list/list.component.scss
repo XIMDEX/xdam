@@ -1,0 +1,15 @@
+:host {
+    @import '../../styles/sizes';
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax($list_item_width, 1fr));
+    grid-column-gap: 15px;
+    justify-items: center;
+
+    margin: 10px 0;
+}

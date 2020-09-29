@@ -1,0 +1,93 @@
+<swal
+    #swalModal
+    identifier="swalModal"
+    [customClass]="swalCustomClass"
+    [showCancelButton]="false"
+    [showConfirmButton]="false"
+    [title]="true"
+    (close)="closeForm()"
+>
+    <ng-container *swalPartial="swalTargets.title">
+        <div class="form-actions">
+            <button (click)="cancelForm()" class="xdam-btn-base red">
+                <fa-icon [icon]="faTimes"></fa-icon> Cancel
+            </button>
+            <button (click)="saveForm()" class="xdam-btn-base"><fa-icon [icon]="faSave"></fa-icon> Save</button>
+        </div>
+    </ng-container>
+
+    <ng-container *swalPartial="swalTargets.content">
+        <form class="item-form" #assetForm="ngForm">
+            <aside class="item-form-general">
+                <div class="item-form-group resource">
+                    <div class="fields column">
+                        <xdam-question
+                            *ngFor="let field of formFields"
+                            [question]="field"
+                            (onChange)="updatedValue(field.key, $event)"
+                        ></xdam-question>
+                    </div>
+                </div>
+                <div class="item-form-group data">
+                    <label class="title">Information</label>
+                    <div class="fields row" *ngIf="isEdition">
+                        <div class="field-item">
+                            <label>File Format</label>
+                            <div class="dam-edit-line">format</div>
+                        </div>
+                        <div class="field-item">
+                            <label>Resource Type</label>
+                            <div class="dam-edit-line">type</div>
+                        </div>
+                        <div class="field-item">
+                            <label>Width</label>
+                            <div class="dam-edit-line">width</div>
+                        </div>
+                        <div class="field-item">
+                            <label>Height</label>
+                            <div class="dam-edit-line">heigth</div>
+                        </div>
+                        <div class="field-item">
+                            <label>File name</label>
+                            <div class="dam-edit-line">filename</div>
+                        </div>
+                    </div>
+                    <div class="fields column">
+                        <xdam-question
+                            *ngFor="let field of infoFormFields"
+                            [question]="field"
+                            (onChange)="updatedValue(field.key, $event)"
+                        ></xdam-question>
+                    </div>
+                </div>
+            </aside>
+            <aside class="item-form-tabs" *ngIf="tabsForms.length > 0">
+                <ngx-tabset>
+                    <ngx-tab *ngFor="let form of tabsForms; let formIndex = index" [tabTitle]="form.title" [bypassDOM]="true">
+                        <ng-template>
+                            <ngx-tabset>
+                                <ngx-tab
+                                    *ngFor="let subForm of form.tabs"
+                                    [tabTitle]="subForm.title"
+                                    [bypassDOM]="true"
+                                >
+                                    <ng-template>
+                                        <div class="fields table">
+                                            <xdam-question
+                                                *ngFor="let field of subForm.fields; let tabIndex = index"
+                                                [question]="field"
+                                                (onChange)="
+                                                    updatedTabsFormValue(formIndex, tabIndex, field.key, $event)
+                                                "
+                                            ></xdam-question>
+                                        </div>
+                                    </ng-template>
+                                </ngx-tab>
+                            </ngx-tabset>
+                        </ng-template>
+                    </ngx-tab>
+                </ngx-tabset>
+            </aside>
+        </form>
+    </ng-container>
+</swal>

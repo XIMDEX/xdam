@@ -1,0 +1,35 @@
+:host {
+    @import '../../styles/fonts';
+    @import '../../styles/colors';
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    a {
+        cursor: pointer;
+    }
+
+    .footer-logo {
+    }
+
+    .footer-info {
+        display: flex;
+        flex-direction: column;
+        font-size: $font_size_normal;
+        justify-content: flex-end;
+
+        text-align: right;
+
+        > span {
+            a {
+                color: $actions_color;
+
+                &:visited {
+                    color: inherit;
+                }
+            }
+        }
+    }
+}

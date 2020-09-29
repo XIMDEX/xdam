@@ -1,0 +1,72 @@
+:host {
+    @import '../../styles/colors';
+    @import '../../styles/sizes';
+    @import '../../styles/borders';
+
+    display: flex;
+    flex-grow: 1;
+
+    > .search-bar {
+        margin: 0 0 20px 0;
+        padding: 25px;
+        overflow: hidden;
+        display: flex;
+        flex-grow: 1;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        background-color: $search_bar_bg_color;
+
+        > .search-input {
+            display: flex;
+            flex-direction: row;
+            flex-grow: 2;
+            min-width: $search_bar_input_min_width;
+            min-height: $search_bar_input_height;
+            max-height: $search_bar_input_height;
+
+            border: $input_border;
+            border-radius: $input_border_radius;
+            box-sizing: border-box;
+            background-color: $input_bg_color;
+            overflow: hidden;
+
+            > input[type='text'] {
+                flex-grow: 2;
+                border: unset;
+                background-color: unset;
+                padding-left: 5px;
+                padding-right: 5px;
+
+                &:focus,
+                &:active {
+                    outline: unset;
+                }
+            }
+        }
+
+        > .search-actions {
+            padding-left: 5px;
+            display: flex;
+            flex-direction: row;
+            flex: 1;
+
+            min-height: $search_bar_input_height;
+            max-height: $search_bar_input_height;
+            box-sizing: border-box;
+
+            justify-content: space-between;
+        }
+
+        @media screen and (max-width: 570px) {
+            > .search-input {
+                min-width: 100%;
+            }
+
+            > .search-actions {
+                padding-top: 10px;
+                justify-content: center;
+            }
+        }
+    }
+}

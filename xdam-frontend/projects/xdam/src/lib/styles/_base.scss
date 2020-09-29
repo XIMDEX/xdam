@@ -1,0 +1,118 @@
+@import './borders';
+@import './sizes';
+@import './colors';
+
+@import './tabs';
+@import url('~@ng-select/ng-select/themes/default.theme.css');
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.dam-main {
+    margin: 0;
+}
+
+.flex-row-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.assets-modal .nsm-dialog {
+    max-width: 100%;
+}
+
+.modal-delete .nsm-dialog {
+    max-width: auto !important;
+}
+
+.dam-select {
+    width: 95%;
+}
+
+.dam-textarea {
+    width: 95%;
+    height: 9em;
+    resize: none;
+}
+
+.dam-edit-item label {
+    display: block;
+    padding: 0;
+    border: 0;
+    margin-bottom: 10px;
+    font-size: 11px;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+input[type='text'],
+textarea,
+select {
+    min-height: $input_height;
+
+    &:not(textarea) {
+        max-height: $input_height;
+    }
+
+    border: $input_border;
+    border-radius: $input_border_radius;
+    background-color: $input_bg_color;
+
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.ng-select .ng-select-container,
+.ng-select.ng-select-opened > .ng-select-contain {
+    background-color: $input_bg_color;
+}
+
+.xdam-btn-base {
+    display: inline-block;
+    height: 28px;
+    padding: 0 8px;
+    line-height: 28px;
+    cursor: pointer;
+    padding: 0 10px;
+    border: unset;
+
+    &:not(.group) {
+        border-radius: $input_border_radius;
+    }
+
+    &.group:first-of-type {
+        border-right: unset;
+        border-top-left-radius: $input_border_radius;
+        border-bottom-left-radius: $input_border_radius;
+    }
+
+    &.group:last-of-type {
+        border-left: unset;
+        border-top-right-radius: $input_border_radius;
+        border-bottom-right-radius: $input_border_radius;
+    }
+
+    &:active,
+    &:focus {
+        outline: 0 !important;
+    }
+}
+
+.dam-form-item {
+    margin-top: 1em;
+}
+
+div.dam-form-item input {
+    width: 92%;
+    height: 2em;
+}
+
+.tabs-q .dam-select {
+    width: 95%;
+    margin-left: 1em;
+}

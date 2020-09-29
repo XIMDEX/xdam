@@ -1,0 +1,16 @@
+@at-root {
+    @import url('https://fonts.googleapis.com/css?family=Lato');
+}
+
+$font_size_small: 10px !default;
+$font_size_normal: 12px !default;
+$font_size_medium: 14px !default;
+$font_size_big: 18px !default;
+
+$font_weight_bold: 700 !default;
+$font_weight_normal: normal !default;
+
+$facet_font_size: $font_size_medium !default;
+$facet_font_size_icon: $font_size_normal !default;
+
+$font_family: 'Lato', sans-serif;

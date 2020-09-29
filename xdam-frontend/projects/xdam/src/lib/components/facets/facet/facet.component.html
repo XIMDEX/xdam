@@ -1,0 +1,16 @@
+<div class="facet-title" (click)="toggle()">
+    <span>{{ label }}</span>
+    <fa-icon [icon]="titleIcon"></fa-icon>
+</div>
+<div class="facet-options" *ngIf="isOpen">
+    <input class="facet-search" type="text" [(ngModel)]="filter" placeholder="Filter options..."/>
+    <ng-container *ngFor="let item of values | keyvalue">
+        <ng-container *ngIf="(item.value > 0 && item.key.toLowerCase().includes(filter.toLowerCase())) || isSelected(item.key)">
+            <div class="facet-option" [title]="item.key" (click)="selectFacet(item.key)">
+                <input type="checkbox" [checked]="isSelected(item.key)" />
+                <span class="facet-option-label">{{ item.key }}</span>
+                <span class="facet-option-value">({{ item.value }})</span>
+            </div>
+        </ng-container>
+    </ng-container>
+</div>

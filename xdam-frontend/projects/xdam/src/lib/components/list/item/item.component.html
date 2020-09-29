@@ -1,0 +1,28 @@
+<div class="dam-item" (click)="onSelectItem()" [class.selectable]="actions.select">
+    <div class="dam-type">{{ type }}</div>
+    <div class="dam-preview">
+        <div class="dam-preview-img">
+            <img class="dam-image" alt="{{ title }}" [src]="img" (error)="imgError()" />
+        </div>
+        <div class="dam-preview-title" [title]="title">
+            {{ title }}
+        </div>
+    </div>
+    <div class="dam-item-actions" *ngIf="actions">
+        <button *ngIf="actions.edit" class="xdam-btn-base group" title="Edit" (click)="editItem($event)">
+            <fa-icon [icon]="faEdit"></fa-icon>
+        </button>
+        <button *ngIf="actions.download" class="xdam-btn-base group" title="Download" (click)="downloadItem($event)">
+            <fa-icon [icon]="faDownload"></fa-icon>
+        </button>
+        <button
+            *ngIf="actions.delete"
+            class="xdam-btn-base group"
+            title="Delete"
+            [swal]="deleteModal"
+            (confirm)="deleteItem($event)"
+        >
+            <fa-icon [icon]="faTrash"></fa-icon>
+        </button>
+    </div>
+</div>

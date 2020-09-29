@@ -1,0 +1,28 @@
+:host {
+    display: flex;
+    flex-grow: 1;
+
+    .dam-main-back {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        padding: 15px;
+        box-sizing: border-box;
+
+        > .dam-main-container {
+            flex-grow: 2;
+            display: flex;
+            flex-direction: column;
+
+            > .dam-list {
+                padding-top: 10px;
+                flex-grow: 2;
+            }
+        }
+
+        /* MOBILE */
+        @media all and (max-width: 599px) {
+            padding: 0.5rem;
+        }
+    }
+}

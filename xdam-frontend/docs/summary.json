@@ -1,0 +1,20 @@
+[
+    {
+        "title": "Configuration",
+        "file": "config.md",
+        "children": [
+            {
+                "title": "Profiles",
+                "file": "profiles.md"
+            },
+            {
+                "title": "Themes",
+                "file": "themes.md"
+            },
+            {
+                "title": "Environment",
+                "file": "env.md"
+            }
+        ]
+    }
+]

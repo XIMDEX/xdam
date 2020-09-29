@@ -1,0 +1,97 @@
+@import '../../styles/borders';
+@import '../../styles/colors';
+@import '../../styles/fonts';
+
+.form-actions {
+    display: flex;
+    flex-direction: row;
+
+    > button {
+        margin: 0 2px;
+    }
+}
+
+.item-form {
+    display: flex;
+    flex-direction: column;
+
+    > .item-form-general {
+        flex-grow: 1;
+        display: grid;
+        grid-template-columns: 50% auto;
+        border: $item_form_group_border;
+        grid-gap: $item_form_group_border_weight;
+        background-color: $item_form_group_border_color;
+        box-sizing: border-box;
+
+        > .item-form-group {
+            box-sizing: border-box;
+            background-color: $xdam_modal_bg;
+            padding: 10px;
+
+            &.data {
+                > .title {
+                    color: $actions_color;
+                }
+
+                > .fields {
+                    margin-top: 10px;
+                }
+            }
+        }
+
+        @media screen and (max-width: 650px) {
+            grid-template-columns: 100%;
+        }
+    }
+
+    > .item-form-tabs {
+        margin-top: 10px;
+    }
+
+    .fields {
+        display: flex;
+        font-size: $font_size_normal;
+
+        > .field-item {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+
+            label {
+                text-transform: uppercase;
+            }
+
+            input[type='text'],
+            input[type='file'],
+            textarea {
+                margin-top: 5px;
+                flex-grow: 1;
+                min-width: unset !important;
+            }
+        }
+
+        &.table {
+            display: grid;
+            grid-template-columns: 50% 50%;
+
+            > * {
+                margin-left: 5px;
+                margin-right: 5px;
+            }
+
+            @media screen and (max-width: 650px) {
+                grid-template-columns: 100%;
+            }
+        }
+
+        &.row {
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        &.column {
+            flex-direction: column;
+        }
+    }
+}

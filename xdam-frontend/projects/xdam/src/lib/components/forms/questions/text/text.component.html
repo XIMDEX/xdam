@@ -1,0 +1,4 @@
+<textarea *ngIf="multiline; else singleLine" [id]="key" (change)="changeValue()" [(ngModel)]="value"></textarea>
+<ng-template #singleLine>
+    <input type="text" [id]="key" (change)="changeValue()" [(ngModel)]="value" />
+</ng-template>

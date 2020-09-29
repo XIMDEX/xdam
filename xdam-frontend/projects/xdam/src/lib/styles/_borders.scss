@@ -1,0 +1,20 @@
+$base_border_radius: 20px !default;
+
+$input_border: 1px solid #dddddd !default;
+$input_border_radius: 3px !default;
+
+$list_item_border_top: 2px solid #b1b1b1 !default;
+$list_item_box_shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.12) !default;
+
+$facets_title_border: 1px dotted #ccc !default;
+$facet_title_border: 2px solid #c3cbd5 !default;
+$facet_shadow: 0 1px 1px rgba(0, 0, 0, 0.05) !default;
+
+$modal_actions_border: 1px solid #c8cacc !default;
+
+$item_form_group_border_weight: 1px !default;
+$item_form_group_border_color: #c8cacc !default;
+$item_form_group_border: $item_form_group_border_weight solid $item_form_group_border_color !default;
+
+$tabset_border: 1px solid #c8cacc !default;
+$tab_active_border_radius: 3px !default;

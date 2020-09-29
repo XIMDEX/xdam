@@ -1,0 +1,8 @@
+{
+    "bundlerOptions": {
+        "entryFile": "./projects/xdam/src/lib/themes/_light.scss",
+        "outFile": "./dist/xdam/_light.scss",
+        "ignoreImports": ["~@angular/.*"],
+        "logLevel": "silent"
+    }
+}

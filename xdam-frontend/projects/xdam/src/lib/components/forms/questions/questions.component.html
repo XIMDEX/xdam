@@ -1,0 +1,11 @@
+<label *ngIf="label" [attr.for]="key">{{ label }}</label>
+<ng-container [ngSwitch]="question.type">
+    <xdam-text *ngSwitchCase="'text'" [question]="question" (onChange)="changeValue($event)"></xdam-text>
+    <xdam-dropdown *ngSwitchCase="'dropdown'" [question]="question" (onChange)="changeValue($event)"></xdam-dropdown>
+    <xdam-file *ngSwitchCase="'file'" [question]="question" (onChange)="changeValue($event)"></xdam-file>
+</ng-container>
+<div *ngIf="hasErrors" class="errors">
+    <span *ngFor="let error of errors">
+        {{ error }}
+    </span>
+</div>

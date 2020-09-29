@@ -1,0 +1,89 @@
+:host {
+    @import '../../../styles/borders';
+    @import '../../../styles/colors';
+    @import '../../../styles/fonts';
+    @import '../../../styles/sizes';
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    white-space: nowrap;
+
+    margin-top: 20px;
+    box-shadow: $facet_shadow;
+    background-color: $facet_bg_color;
+    user-select: none;
+    font-size: $facet_font_size;
+
+    .facet-title {
+        background-color: $facet_title_bg_color;
+        border-top: $facet_title_border;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 5px;
+        cursor: pointer;
+
+        span {
+            margin: 0;
+        }
+
+        fa-icon {
+            font-size: $facet_font_size_icon;
+        }
+    }
+
+    .facet-options {
+        max-height: 450px;
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        .facet-search {
+            width: 100%;
+            border-top: 0px;
+            border-left: 0px;
+            padding: 0 10px;
+
+            &:focus {
+                outline: 10;
+                background-color: $actions_color_light;
+                border-color: $actions_color;
+                box-shadow: 0 0 50px 0 $actions_color_light;
+            }
+        }
+
+        .facet-option {
+            margin: 4px 0;
+            padding: 8px 10px;
+
+            display: grid;
+            grid-template-columns: 20px auto 36px;
+            justify-items: flex-start;
+            align-content: center;
+            cursor: pointer;
+
+
+            * {
+                align-self: center;
+            }
+
+            input {
+                padding: 0;
+                margin: 0;
+            }
+
+            .facet-option-label {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: inline-block;
+                width: 12em;
+            }
+
+            .facet-option-value {
+                justify-self: flex-end;
+            }
+        }
+    }
+}

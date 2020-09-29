@@ -1,0 +1,149 @@
+:host {
+    @import '../../../projects/xdam/src/lib/components/search/search.component';
+
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    box-sizing: border-box;
+
+
+    // Dimensions
+    $prism-height: 350px;
+    $prism-length: 250px;
+    $prism-depth: $prism-length;
+    $spacing: 20px;
+    $br: 3px;
+
+    // Colors
+    $text-light: #fff;
+    $text-dark: #666;
+    $blue: #03a9f4;
+    $smoke: #f9f9fa;
+    $coral: #ff5751;
+    $navy-blue: #42509e;
+    $green: #07ad90;
+
+    font-family: Tahoma,Verdana,Segoe,sans-serif;
+    font-size: 14px;
+    background: #f6fffd;
+
+    .loginPage {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100vh;
+    }
+
+    header {
+        display: flex;
+        font-size: 20px;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    main {
+        flex-shrink: 0;    /* added this */
+        display: flex;
+    }
+
+    footer {
+        padding: $spacing;
+        flex-shrink: 0;
+    }
+
+    main {
+        display: flex;           /* establish flex container */
+        flex-direction: column;  /* make main axis vertical */
+        justify-content: center; /* center items vertically, in this case */
+        align-items: center;     /* center items horizontally, in this case */
+    }
+
+    .login {
+
+        min-width: 25%;
+        padding: $spacing;
+        background: rgba(250,250,250,0.96);
+        border: 3px solid $green;
+        border-radius: 1px;
+
+        .content{
+            color: $text-dark;
+
+            h2{
+                font-size: 1.2em;
+                color: $green;
+            }
+            .field-wrapper{
+                margin-top: $spacing*1.5;
+                position: relative;
+
+                label{
+                    position: absolute;
+                    pointer-events: none;
+                    font-size: 0.85em;
+                    top: 40%;
+                    left: 0;
+                    transform: translateY(-50%);
+                    transition: all ease-in 0.25s;
+                    color: lighten($text-dark, 20%);
+                }
+                input[type="text"], input[type="password"], input[type="submit"] {
+                    -webkit-appearance: none;
+                    appearance: none;
+                    &:focus{
+                        outline: none;
+                    }
+                }
+                input[type="text"], input[type="password"] {
+                    width: 100%;
+                    border: none;
+                    background: transparent;
+                    line-height: 2em;
+                    border-bottom: 1px solid $green;
+                    color: $text-dark;
+
+                    &::-webkit-input-placeholder{
+                        opacity: 0;
+                    }
+                    &::-moz-placeholder{
+                        opacity: 0;
+                    }
+                    &:-ms-input-placeholder{
+                        opacity: 0;
+                    }
+                    &:-moz-placeholder {
+                        opacity: 0;
+                    }
+                    &:focus, &:not(:placeholder-shown){
+                        + label{
+                            top: -35%;
+                            color: $navy-blue;
+                        }
+                    }
+                }
+                input[type="submit"]{
+                    -webkit-appearance: none;
+                    appearance: none;
+                    cursor: pointer;
+                    width: 100%;
+                    background: $green;
+                    line-height: 2em;
+                    color: $text-light;
+                    border: 1px solid $green;
+                    border-radius: $br;
+                    padding: $spacing/4;
+
+                    &:hover{
+                        opacity: 0.9;
+                    }
+                    &:active{
+                        transform: scale(0.96);
+                    }
+                }
+            }
+        }
+    }
+}
+
+

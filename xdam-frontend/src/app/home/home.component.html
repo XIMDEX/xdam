@@ -1,0 +1,10 @@
+<xdam-main
+    [settings]="settings"
+    [items]="items"
+    [action]="action"
+    (onSearch)="sendSearch($event)"
+    (onDelete)="deleteItem($event)"
+    (onDownload)="downloadItem($event)"
+    (onAction)="damAction($event)"
+    (onLogout)="logout()"
+></xdam-main>
