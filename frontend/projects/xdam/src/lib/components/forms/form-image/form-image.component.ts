@@ -1,32 +1,31 @@
-import {Component, Input, OnInit, Output} from '@angular/core';
-import {FormResourceBase} from '../FormResource.base';
-import {ImageResource} from '../../../models/forms/ImageResource';
+import {Component, Input, OnInit} from '@angular/core';
+import {FormControl, FormGroup} from '@angular/forms';
 
 @Component({
-  selector: 'xdam-form-image',
-  templateUrl: './form-image.component.html',
-  styleUrls: ['./form-image.component.scss']
+    selector: 'xdam-form-image',
+    templateUrl: './form-image.component.html',
+    styleUrls: ['./form-image.component.scss']
 })
-export class FormImageComponent extends FormResourceBase implements OnInit {
+export class FormImageComponent implements OnInit {
 
-  image: ImageResource;
+    @Input() modal: any;
 
-  constructor() {
-      super();
-      this.image = new ImageResource();
-  }
+
+    public formImage: FormGroup = new FormGroup({
+        lomes: new FormControl('')
+    });
+
+    constructor() {
+    }
 
     ngOnInit() {
-        this.setMetadata(this.image, this.entryData);
-        this.setSpecificData();
     }
 
-    setMetadata(image: any, data: any) {
-        super.setMetadata(image, data);
+    cancelForm() {
+        this.modal.close();
     }
 
-    setSpecificData() {
-        this.image.image = this.entryData.Preview;
+    public onSubmit() {
+        console.log('Billing Info', this.formImage.value);
     }
-
 }

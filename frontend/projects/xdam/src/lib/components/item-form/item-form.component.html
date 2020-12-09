@@ -22,11 +22,7 @@
                 ></xdam-form-course>
             </div>
             <div *ngSwitchCase="'Free'">
-                <xdam-form-image
-                    [entryData]="action.data"
-                    [modal]="modal"
-                    (exitData)="receiveData($event)"
-                ></xdam-form-image>
+                <xdam-form-image></xdam-form-image>
             </div>
         </div>
 

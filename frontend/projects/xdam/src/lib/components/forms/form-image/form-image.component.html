@@ -1,85 +1,14 @@
-<form #resourceForm="ngForm" (ngSubmit)="sendForm(this.modal, this.image, this.exitData)">
-
+<form [formGroup] ="formImage" (ngSubmit) = "onSubmit()">
     <div class="form-actions">
         <button (click)="cancelForm()" class="xdam-btn-base red">
             <fa-icon [icon]="faTimes"></fa-icon>
             Cancel
         </button>
-        <button type="submit" class="xdam-btn-base">
+        <button type="submit"  class="xdam-btn-base">
             <fa-icon [icon]="faSave"></fa-icon>
             Save
         </button>
     </div>
-
-    <div class="item-form">
-
-        <aside class="item-form-general">
-
-            <div class="item-form-group data">
-
-                <div class="title">Detalle de la imagen</div>
-
-                <div class="fields column">
-
-                    <xdam-thumbnail
-                        [src]="image.preview"
-                    ></xdam-thumbnail>
-
-                </div>
-
-            </div>
-
-            <div class="item-form-group data">
-
-                <div class="title">Image Information</div>
-
-                <div class="fields column">
-
-                    <xdam-input
-                        [type]="'file'"
-                        [id]="'resource_file'"
-                        [name]="'resource_file'"
-                        [label]="'New File'"
-                    ></xdam-input>
-
-                    <xdam-select
-                        [label]="'Seleccione un tipo'"
-                        [id]="'resource_category'"
-                        [name]="'resource_category'"
-                        [options]="[
-                                        {'key': 'investigation','value': 'Investigación'},
-                                        {'key': 'activation','value': 'Activación'},
-                                        {'key': 'training-teacher','value': 'Entreno profesor'}]"
-                        [(value)]="image.category"
-                    ></xdam-select>
-                    <span>{{ image.category }}</span>
-
-                    <xdam-input
-                        [type]="'text'"
-                        [id]="'resource_name'"
-                        [name]="'resource_name'"
-                        [label]="'Name'"
-                        [(value)]="image.name"
-                    ></xdam-input>
-                    <span>{{ image.name }}</span>
-
-                    <xdam-input
-                        [type]="'text'"
-                        [id]="'resource_description'"
-                        [name]="'resource_description'"
-                        [label]="'Descripción'"
-                        [(value)]="image.description"
-                    ></xdam-input>
-                    <span>{{ image.description }}</span>
-
-                </div>
-
-            </div>
-
-        </aside>
-
-    </div>
-
-    <xdam-lomes></xdam-lomes>
-
+    <!--add course information -->
+    <xdam-lomes formControlName="lomes"></xdam-lomes>
 </form>
