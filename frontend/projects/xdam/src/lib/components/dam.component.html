@@ -48,8 +48,9 @@
     <xdam-item-form
         [action]="actionModel"
         [display]="displayForm"
-        (save)="sendAction($event)"
         [settings]="settings.form"
+        [viewMode]="viewModeModal"
+        (save)="sendAction($event)"
         (close)="closeAction()"
     ></xdam-item-form>
 </div>

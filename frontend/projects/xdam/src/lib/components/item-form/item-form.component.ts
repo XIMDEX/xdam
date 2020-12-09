@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild, AfterContentChecked} from '@angular/core';
 import { SwalComponent, SwalPartialTargets } from '@sweetalert2/ngx-sweetalert2';
 import { equals, hasIn, is, isNil } from 'ramda';
 import { faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
@@ -9,6 +9,7 @@ import { ActionModel } from '../../../models/src/lib/ActionModel';
 import { FormI } from '../../../models/src/lib/interfaces/FormI.interface';
 import { setQuestion } from '../../models/forms/Question';
 import swal2 from '../../profiles/swal2';
+import {Resource} from '../../models/forms/Resource';
 
 @Component({
     selector: 'xdam-item-form',
@@ -19,6 +20,7 @@ export class ItemFormComponent implements OnChanges {
     @Input() action: ActionModel | null;
     @Input() settings: FormI;
     @Input() display: boolean;
+    @Input() viewMode: boolean;
 
     @Output() close = new EventEmitter<any>();
     @Output() save = new EventEmitter<any>();
@@ -40,6 +42,7 @@ export class ItemFormComponent implements OnChanges {
     formFieldsValues: any = {};
     infoFormFields = itemInfo;
     method: ActionMethods;
+    // resource: any;
 
     constructor(public readonly swalTargets: SwalPartialTargets) {
         this.swalCustomClass = { ...swal2.customClass, ...this.swalCustomClass };
@@ -124,11 +127,16 @@ export class ItemFormComponent implements OnChanges {
         this.close.emit();
     }
 
-    saveForm() {
+    saveForm(data) {
         const action = new ActionModel({ ...this.action });
-        action.data = this.formFieldsValues;
+        action.data = JSON.stringify(data);
         action.method = this.method;
+        console.log(data);
         this.save.emit(action);
+    }
+
+    receiveData(resource: any) {
+        this.saveForm(resource);
     }
 
     clearFormValues(form: any[]) {

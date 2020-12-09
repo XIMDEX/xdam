@@ -1,0 +1,148 @@
+<form #resourceForm="ngForm" (ngSubmit)="sendForm(this.modal, this.course, this.exitData)">
+
+    <div class="form-actions">
+        <button (click)="cancelForm()" class="xdam-btn-base red">
+            <fa-icon [icon]="faTimes"></fa-icon>
+            Cancel
+        </button>
+        <button type="submit" class="xdam-btn-base">
+            <fa-icon [icon]="faSave"></fa-icon>
+            Save
+        </button>
+    </div>
+
+    <div class="item-form">
+
+        <aside class="item-form-general">
+
+            <div class="item-form-group data">
+
+                <div class="title">Course Information</div>
+
+                <div class="fields column">
+
+                    <xdam-thumbnail
+                        [src]="course.preview"
+                    ></xdam-thumbnail>
+
+                    <xdam-input
+                        [type]="'file'"
+                        [id]="'resource_file'"
+                        [name]="'resource_file'"
+                        [label]="'New File'"
+                    ></xdam-input>
+
+                    <xdam-select
+                        [label]="'Seleccione un tipo'"
+                        [id]="'resource_category'"
+                        [name]="'resource_category'"
+                        [options]="[
+                                        {'key': 'investigation','value': 'Investigación'},
+                                        {'key': 'activation','value': 'Activación'},
+                                        {'key': 'training-teacher','value': 'Entreno profesor'}]"
+                        [(value)]="course.category"
+                    ></xdam-select>
+                    <span>{{ course.category }}</span>
+
+<!--                    <xdam-select-->
+<!--                        [label]="'Seleccione una licencia'"-->
+<!--                        [id]="'resource_license_type'"-->
+<!--                        [name]="'resource_license_type'"-->
+<!--                        [options]="[-->
+<!--                                        {'key': 'license_free','value': 'Gratuita'},-->
+<!--                                        {'key': 'license_paid','value': 'Pago'}]"-->
+<!--                        [(value)]="course.licenseType"-->
+<!--                    ></xdam-select>-->
+<!--                    <span>{{ course.licenseType }}</span>-->
+
+<!--                    <xdam-input-->
+<!--                        [type]="'text-area'"-->
+<!--                        [id]="'resource_license'"-->
+<!--                        [name]="'resource_license'"-->
+<!--                        [label]="'Licencia'"-->
+<!--                        [(value)]="course.license"-->
+<!--                    ></xdam-input>-->
+<!--                    <span>{{ course.license }}</span>-->
+
+                </div>
+            </div>
+            <div class="item-form-group data">
+<!--                <label class="title">Information</label>-->
+<!--                <div class="fields row" *ngIf="isEdition">-->
+<!--                    <div class="field-item">-->
+<!--                        <label>File Format</label>-->
+<!--                        <div class="dam-edit-line">format</div>-->
+<!--                    </div>-->
+<!--                    <div class="field-item">-->
+<!--                        <label>Resource Type</label>-->
+<!--                        <div class="dam-edit-line">type</div>-->
+<!--                    </div>-->
+<!--                    <div class="field-item">-->
+<!--                        <label>Width</label>-->
+<!--                        <div class="dam-edit-line">width</div>-->
+<!--                    </div>-->
+<!--                    <div class="field-item">-->
+<!--                        <label>Height</label>-->
+<!--                        <div class="dam-edit-line">heigth</div>-->
+<!--                    </div>-->
+<!--                    <div class="field-item">-->
+<!--                        <label>File name</label>-->
+<!--                        <div class="dam-edit-line">filename</div>-->
+<!--                    </div>-->
+<!--                </div>-->
+                <div class="fields column">
+
+                    <xdam-input
+                        [type]="'text'"
+                        [id]="'resource_name'"
+                        [name]="'resource_name'"
+                        [label]="'Name'"
+                        [(value)]="course.name"
+                    ></xdam-input>
+                    <span>{{ course.name }}</span>
+
+                    <xdam-input
+                        [type]="'text'"
+                        [id]="'resource_description'"
+                        [name]="'resource_description'"
+                        [label]="'Descripción'"
+                        [(value)]="course.description"
+                    ></xdam-input>
+                    <span>{{ course.description }}</span>
+
+<!--                    <xdam-input-->
+<!--                        [type]="'text'"-->
+<!--                        [id]="'resource_author'"-->
+<!--                        [name]="'resource_author'"-->
+<!--                        [label]="'Author'"-->
+<!--                        [(value)]="course.author"-->
+<!--                    ></xdam-input>-->
+<!--                    <span>{{ course.author }}</span>-->
+
+                    <xdam-input
+                        [type]="'number'"
+                        [id]="'resource_duration'"
+                        [name]="'resource_duration'"
+                        [label]="'Duración'"
+                        [(value)]="course.duration"
+                    ></xdam-input>
+                    <span>{{ course.duration }}</span>
+
+                    <xdam-input
+                        [type]="'number'"
+                        [id]="'resource_price'"
+                        [name]="'resource_price'"
+                        [label]="'Precio'"
+                        [(value)]="course.price"
+                    ></xdam-input>
+                    <span>{{ course.price }}</span>
+
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <xdam-lomes></xdam-lomes>
+
+</form>

@@ -1,15 +1,6 @@
-@import '../../styles/borders';
-@import '../../styles/colors';
-@import '../../styles/fonts';
-
-.form-actions {
-    display: flex;
-    flex-direction: row;
-
-    > button {
-        margin: 0 2px;
-    }
-}
+@import '../../../styles/borders';
+@import '../../../styles/colors';
+@import '../../../styles/fonts';
 
 .item-form {
     display: flex;

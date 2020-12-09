@@ -63,9 +63,9 @@ export class DamComponent implements OnInit, OnChanges {
     searchOptions: SearchOptionsI;
     loading: boolean;
     actionModel: ActionModel | null;
-    displayForm: boolean = false;
+    displayForm = false;
+    viewModeModal = true;
 
-    /**@ignore */
     constructor() {}
 
     /**@ignore */
@@ -187,6 +187,7 @@ export class DamComponent implements OnInit, OnChanges {
     sendAction(action: ActionModel) {
         this.loading = true;
         this.actionModel = null;
+        console.log(action);
         this.onAction.emit(action);
     }
 }

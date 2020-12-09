@@ -1,6 +1,6 @@
-@import '../../styles/borders';
-@import '../../styles/colors';
-@import '../../styles/fonts';
+@import '../../../styles/borders';
+@import '../../../styles/colors';
+@import '../../../styles/fonts';
 
 .form-actions {
     display: flex;
@@ -14,11 +14,12 @@
 .item-form {
     display: flex;
     flex-direction: column;
+    justify-content: center;
 
     > .item-form-general {
         flex-grow: 1;
         display: grid;
-        grid-template-columns: 50% auto;
+        grid-template-columns: 50% 50%;
         border: $item_form_group_border;
         grid-gap: $item_form_group_border_weight;
         background-color: $item_form_group_border_color;
@@ -52,11 +53,11 @@
     .fields {
         display: flex;
         font-size: $font_size_normal;
+        justify-content: center;
 
         > .field-item {
             margin-top: 10px;
             display: flex;
-            flex-direction: column;
 
             label {
                 text-transform: uppercase;
@@ -93,15 +94,6 @@
         &.column {
             flex-direction: column;
         }
-        .img-box {
-            display: flex;
-            align-items: center;
-            margin: 0 auto;
-            width: 200px;
-
-            > img {
-                width: 100%;
-            }
-        }
     }
 }
+

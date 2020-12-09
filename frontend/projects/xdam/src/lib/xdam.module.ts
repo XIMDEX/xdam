@@ -6,6 +6,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgSelectModule } from '@ng-select/ng-select';
 import swal2 from './profiles/swal2';
 import {TabsModule} from 'ngx-tabset';
+// import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { DamComponent } from './components/dam.component';
 import { SearchComponent } from './components/search/search.component';
@@ -22,6 +23,12 @@ import { QuestionsComponent } from './components/forms/questions/questions.compo
 import { TextComponent } from './components/forms/questions/text/text.component';
 import { DropdownComponent } from './components/forms/questions/dropdown/dropdown.component';
 import { FileComponent } from './components/forms/questions/file/file.component';
+import { InputComponent } from './components/forms/input/input.component';
+import { SelectComponent } from './components/forms/select/select.component';
+import { ThumbnailComponent } from './components/forms/thumbnail/thumbnail.component';
+import { LomesComponent } from './components/forms/lomes/lomes.component';
+import { FormCourseComponent } from './components/forms/form-course/form-course.component';
+import { FormImageComponent } from './components/forms/form-image/form-image.component';
 
 @NgModule({
     imports: [
@@ -39,7 +46,8 @@ import { FileComponent } from './components/forms/questions/file/file.component'
             tertiaryColour: '#00a397'
         }),
         SweetAlert2Module.forRoot(swal2),
-        TabsModule.forRoot()
+        TabsModule.forRoot(),
+        // NgbModule
     ],
     providers: [],
     declarations: [
@@ -55,7 +63,13 @@ import { FileComponent } from './components/forms/questions/file/file.component'
         QuestionsComponent,
         TextComponent,
         DropdownComponent,
-        FileComponent
+        FileComponent,
+        InputComponent,
+        SelectComponent,
+        ThumbnailComponent,
+        LomesComponent,
+        FormCourseComponent,
+        FormImageComponent
     ],
     exports: [DamComponent,
               FooterComponent]
