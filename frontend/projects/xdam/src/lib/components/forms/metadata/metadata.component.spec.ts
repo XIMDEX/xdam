@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LomesComponent } from './lomes.component';
+import { MetadataComponent } from './metadata.component';
 
 describe('LomesComponent', () => {
-  let component: LomesComponent;
-  let fixture: ComponentFixture<LomesComponent>;
+  let component: MetadataComponent;
+  let fixture: ComponentFixture<MetadataComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LomesComponent ]
+      declarations: [ MetadataComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LomesComponent);
+    fixture = TestBed.createComponent(MetadataComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

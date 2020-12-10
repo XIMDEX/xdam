@@ -1,0 +1,372 @@
+{
+    "type": "course",
+    "data": {
+        "resource_file": {
+            "value": "http://kakuma.cloud.ximdex.net/api/v1/catalogue/9d97b474-bc44-4eb7-b8ac-93f91e6f4040/image",
+            "type": "file"
+        },
+        "resource_type": {
+            "value": "training-teacher",
+            "type": "select"
+        },
+        "resource_license_type": {
+            "value": "license_paid",
+            "type": "select"
+        },
+        "resource_license": {
+            "value": "asldkjfaslblsdflkajsd",
+            "type": "text"
+        },
+        "resource_name": {
+            "value": "",
+            "type": "text"
+        },
+        "resource_description": {
+            "value": "Master completo",
+            "type": "text"
+        },
+        "resource_duration": {
+            "value": "120",
+            "type": "text"
+        },
+        "resource_price": {
+            "value": "90",
+            "type": "text"
+        }
+    },
+    "metadata": [
+        {
+            "name": "General",
+            "fields": [
+                {
+                    "id": "resource_metadata_general_id",
+                    "value": "texto de prueba"
+                },
+                {
+                    "id": "resource_metadata_general_catalogue",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_general_entry",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_general_title",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_general_lang",
+                    "value": "gl"
+                },
+                {
+                    "id": "resource_metadata_general_desc",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_general_keywords",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_general_scope",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_general_structure",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_general_aggregation_level",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "Ciclo de vida",
+            "fields": [
+                {
+                    "id": "resource_metadata_lifecycle_version",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_lifecycle_state",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_lifecycle_contribution",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_lifecycle_type",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_lifecycle_entity",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_lifecycle_date",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "Metadatos",
+            "fields": [
+                {
+                    "id": "resource_metadata_metadata_id",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_metadata_catalogue",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_metadata_entry",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_metadata_contribution",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_metadata_type",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_metadata_entity",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_metadata_date",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_metadata_schema",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_metadata_lang",
+                    "value": "es"
+                }
+            ]
+        },
+        {
+            "name": "Técnica",
+            "fields": [
+                {
+                    "id": "resource_metadata_technique_format",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_technique_size",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_technique_location",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_technique_instalation_requisits",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_technique_aggregator",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_technique_type",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_technique_name",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_technique_min_version",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_technique_max_version",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_technique_installation_guidelines",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_technique_another_platform_requeriments",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_technique_duration",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "Uso Educativo",
+            "fields": [
+                {
+                    "id": "resource_metadata_education_use_interactivity_type",
+                    "values": "activo"
+                },
+                {
+                    "id": "resource_metadata_education_use_shared_resource_type",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_education_use_interactivity_level",
+                    "values": "muy bajo"
+                },
+                {
+                    "id": "resource_metadata_education_use_semantic_density",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_education_use_receiver",
+                    "values": ""
+                },
+                {
+                    "id": "resource_metadata_education_use_context",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_education_use_age_range",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_education_use_difficulty",
+                    "value": "muy difícil"
+                },
+                {
+                    "id": "resource_metadata_education_use_learn_time",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_education_use_description",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_education_use_lang",
+                    "value": "es"
+                },
+                {
+                    "id": "resource_metadata_education_use_cognitive_process",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "Derechos",
+            "fields": [
+                {
+                    "id": "resource_metadata_rights_cost",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_rights_description1",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_rights_access",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_rights_access_type",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_rights_rights_author",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_rights_description2",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "Relación",
+            "fields": [
+                {
+                    "id": "resource_metadata_relation_type",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_relation_resource",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_relation_id",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_relation_catalogue",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_relation_entry",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_relation_description",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "Anotación",
+            "fields": [
+                {
+                    "id": "resource_metadata_annotation_entity",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_annotation_date",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_annotation_description",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "Clasificación",
+            "fields": [
+                {
+                    "id": "resource_metadata_classification_propose",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_classification_taxonomic_route",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_classification_source",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_classification_taxon",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_classification_id",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_classification_entrance",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_classification_description",
+                    "value": ""
+                },
+                {
+                    "id": "resource_metadata_classification_keywords",
+                    "value": ""
+                }
+            ]
+        }
+    ]
+}

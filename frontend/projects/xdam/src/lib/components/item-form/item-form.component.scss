@@ -11,6 +11,11 @@
     }
 }
 
+.form-title {
+    color: $actions_color;
+    text-transform: capitalize;
+}
+
 .item-form {
     display: flex;
     flex-direction: column;

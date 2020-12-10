@@ -9,7 +9,7 @@ import { ActionModel } from '../../../models/src/lib/ActionModel';
 import { FormI } from '../../../models/src/lib/interfaces/FormI.interface';
 import { setQuestion } from '../../models/forms/Question';
 import swal2 from '../../profiles/swal2';
-import {Resource} from '../../models/forms/Resource';
+import * as resourceInfo from '../forms/dataToFillCourseForm.json';
 
 @Component({
     selector: 'xdam-item-form',
@@ -42,7 +42,8 @@ export class ItemFormComponent implements OnChanges {
     formFieldsValues: any = {};
     infoFormFields = itemInfo;
     method: ActionMethods;
-    // resource: any;
+
+    dataToFill = resourceInfo;
 
     constructor(public readonly swalTargets: SwalPartialTargets) {
         this.swalCustomClass = { ...swal2.customClass, ...this.swalCustomClass };

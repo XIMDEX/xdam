@@ -26,9 +26,10 @@ import { FileComponent } from './components/forms/questions/file/file.component'
 import { InputComponent } from './components/forms/input/input.component';
 import { SelectComponent } from './components/forms/select/select.component';
 import { ThumbnailComponent } from './components/forms/thumbnail/thumbnail.component';
-import { LomesComponent } from './components/forms/lomes/lomes.component';
-import { FormCourseComponent } from './components/forms/form-course/form-course.component';
-import { FormImageComponent } from './components/forms/form-image/form-image.component';
+import { MetadataComponent } from './components/forms/metadata/metadata.component';
+import { ModalCourseComponent } from './components/forms/modal-course/modal-course.component';
+import { ModalImageComponent } from './components/forms/modal-image/modal-image.component';
+import { FormCourseComponent } from './components/forms/modal-course/form-course/form-course.component';
 
 @NgModule({
     imports: [
@@ -67,9 +68,10 @@ import { FormImageComponent } from './components/forms/form-image/form-image.com
         InputComponent,
         SelectComponent,
         ThumbnailComponent,
-        LomesComponent,
-        FormCourseComponent,
-        FormImageComponent
+        MetadataComponent,
+        ModalCourseComponent,
+        ModalImageComponent,
+        FormCourseComponent
     ],
     exports: [DamComponent,
               FooterComponent]

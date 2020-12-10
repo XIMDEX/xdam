@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FormImageComponent } from './form-image.component';
+import { FormCourseComponent } from './form-course.component';
 
-describe('FormImageComponent', () => {
-  let component: FormImageComponent;
-  let fixture: ComponentFixture<FormImageComponent>;
+describe('FormCourseMetadataComponent', () => {
+  let component: FormCourseComponent;
+  let fixture: ComponentFixture<FormCourseComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FormImageComponent ]
+      declarations: [ FormCourseComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FormImageComponent);
+    fixture = TestBed.createComponent(FormCourseComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
