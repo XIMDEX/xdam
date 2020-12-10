@@ -15,14 +15,6 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
-    'solr_core_crawler' => env('SOLR_CORE_CRAWLER', 'crawler'),
-    'solr_core_dam' => env('SOLR_CORE_DAM', 'dam'),
-
-    'preview_files_dir' => env('PREVIEW_FILES_DIR', ''),
-    'crawler_cache_dir' => env('CRAWLER_CACHE_DIR', ''),
-    'dam_files_dir' => env('DAM_FILES_DIR', ''),
-    'input_files_dir' => env('INPUT_FILES_DIR', ''),
-
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -182,8 +174,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        App\Providers\ServiceServiceProvider::class,
-        App\Auth\Providers\PassportServiceProvider::class,
+
     ],
 
     /*

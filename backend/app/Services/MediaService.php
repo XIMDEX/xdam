@@ -1,0 +1,82 @@
+<?php
+
+namespace App\Services;
+
+use App\Enums\MediaType;
+use App\Http\Requests\DeleteFileRequest;
+use App\Models\Media;
+use Illuminate\Database\Eloquent\Model;
+use Iman\Streamer\VideoStreamer;
+use stdClass;
+
+class MediaService
+{
+    /**
+     * @var string
+     */
+    private $defaultFileCollection;
+    /**
+     * @var string
+     */
+    private $defaultPreviewCollection;
+
+    /**
+     * FileService constructor.
+     */
+    public function __construct()
+    {
+        $this->defaultPreviewCollection = MediaType::Preview()->value;
+        $this->defaultFileCollection = MediaType::File()->value;
+    }
+
+    public function list(Model $model, $collection, $returnModel = false)
+    {
+        $collection = $collection ?? $this->defaultFileCollection;
+        $mediaItems = $model->getMedia($collection);
+        if ($returnModel) {
+            return $mediaItems;
+        }
+        $files = [];
+        foreach ($mediaItems as $item) {
+            $itemClass = new stdClass();
+            $itemClass->id = $item->id;
+            $itemClass->name = $item->name;
+            $itemClass->url = $item->getUrl();
+            $files[] = $itemClass;
+        }
+        return $files;
+    }
+
+    public function preview(Media $media)
+    {
+        $mimeType = $media->mime_type;
+        $mediaPath = $media->getPath();
+        $fileType = explode('/', $mimeType)[0];
+
+        if ($fileType === 'video') {
+            //if it is a video, render it with a streaming
+            VideoStreamer::streamFile($mediaPath);
+        } else {
+            return $mediaPath;
+        }
+    }
+
+    public function addFromRequest(Model $model, $requestKey, $collection, $customProperties)
+    {
+        $collection = $collection ?? $this->defaultFileCollection;
+        $model->addMediaFromRequest($requestKey)->withCustomProperties($customProperties)->toMediaCollection($collection);
+        $mediaList = $this->list($model, $collection);
+        return !empty($mediaList) ? end($mediaList) : [];
+    }
+
+    public function deleteAllMedia(Model $model): boolean
+    {
+        $model->clearMediaCollection($this->defaultFileCollection);
+        return true;
+    }
+
+    public function deleteOne(Media $media): boolean
+    {
+        return $media->delete();
+    }
+}

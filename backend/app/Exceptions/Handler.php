@@ -2,10 +2,15 @@
 
 namespace App\Exceptions;
 
+use App\Traits\RestExceptionHandlerTrait;
+use App\Traits\RestTrait;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
 {
+    use RestTrait;
+    use RestExceptionHandlerTrait;
+
     /**
      * A list of the exception types that are not reported.
      *
@@ -33,5 +38,16 @@ class Handler extends ExceptionHandler
     public function register()
     {
         //
+    }
+
+    public function render($request, $e)
+    {
+        if (!$this->isApiCall($request)) {
+            $retval = parent::render($request, $e);
+        } else {
+            $retval = $this->getJsonResponseForException($request, $e);
+        }
+
+        return $retval;
     }
 }
