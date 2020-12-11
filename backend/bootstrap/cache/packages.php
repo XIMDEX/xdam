@@ -6,6 +6,13 @@
       0 => 'BenSampo\\Enum\\EnumServiceProvider',
     ),
   ),
+  'beyondcode/laravel-er-diagram-generator' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'BeyondCode\\ErdGenerator\\ErdGeneratorServiceProvider',
+    ),
+  ),
   'facade/ignition' => 
   array (
     'providers' => 
@@ -31,6 +38,13 @@
       0 => 'Fruitcake\\Cors\\CorsServiceProvider',
     ),
   ),
+  'imanghafoori/laravel-video' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Iman\\Streamer\\StreamServiceProvider',
+    ),
+  ),
   'intervention/image' => 
   array (
     'providers' => 
@@ -40,13 +54,6 @@
     'aliases' => 
     array (
       'Image' => 'Intervention\\Image\\Facades\\Image',
-    ),
-  ),
-  'laravel/passport' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Laravel\\Passport\\PassportServiceProvider',
     ),
   ),
   'laravel/tinker' => 
@@ -70,15 +77,18 @@
       0 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
     ),
   ),
-  'pbmedia/laravel-ffmpeg' => 
+  'rtconner/laravel-tagging' => 
   array (
     'providers' => 
     array (
-      0 => 'ProtoneMedia\\LaravelFFMpeg\\Support\\ServiceProvider',
+      0 => 'Conner\\Tagging\\Providers\\TaggingServiceProvider',
     ),
-    'aliases' => 
+  ),
+  'spatie/laravel-medialibrary' => 
+  array (
+    'providers' => 
     array (
-      'FFMpeg' => 'ProtoneMedia\\LaravelFFMpeg\\Support\\FFMpeg',
+      0 => 'Spatie\\MediaLibrary\\MediaLibraryServiceProvider',
     ),
   ),
   'tsterker/solarium' => 
