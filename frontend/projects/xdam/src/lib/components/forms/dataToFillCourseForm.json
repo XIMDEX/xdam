@@ -2,36 +2,51 @@
     "type": "course",
     "data": {
         "resource_file": {
-            "value": "http://kakuma.cloud.ximdex.net/api/v1/catalogue/9d97b474-bc44-4eb7-b8ac-93f91e6f4040/image",
-            "type": "file"
+            "type": "file",
+            "label": "Selecciona una imagen",
+            "value": "http://kakuma.cloud.ximdex.net/api/v1/catalogue/9d97b474-bc44-4eb7-b8ac-93f91e6f4040/image"
         },
         "resource_type": {
-            "value": "training-teacher",
-            "type": "select"
+            "type": "select",
+            "label": "Seleccione un tipo",
+            "value": {
+                "investigation": true,
+                "activation": false,
+                "training-teacher": false
+            }
         },
         "resource_license_type": {
-            "value": "license_paid",
-            "type": "select"
+            "type": "select",
+            "label": "Seleccione un tipo de licencia",
+            "value": {
+                "license_paid": true,
+                "license_free": false
+            }
         },
         "resource_license": {
-            "value": "asldkjfaslblsdflkajsd",
-            "type": "text"
+            "type": "text",
+            "label": "Licencia",
+            "value": "asldkjfaslblsdflkajsd"
         },
         "resource_name": {
-            "value": "",
-            "type": "text"
+            "type": "text",
+            "label": "Nombre",
+            "value": ""
         },
         "resource_description": {
-            "value": "Master completo",
-            "type": "text"
+            "type": "text",
+            "label": "Descripción",
+            "value": "Master completo"
         },
         "resource_duration": {
-            "value": "120",
-            "type": "text"
+            "type": "text",
+            "label": "Duracion",
+            "value": "120"
         },
         "resource_price": {
-            "value": "90",
-            "type": "text"
+            "type": "text",
+            "label": "Precio",
+            "value": "90"
         }
     },
     "metadata": [
