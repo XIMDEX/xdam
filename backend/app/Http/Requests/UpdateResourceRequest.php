@@ -2,6 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\MediaType;
+use App\Enums\ResourceType;
+use BenSampo\Enum\Rules\EnumKey;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateResourceRequest extends FormRequest
@@ -24,7 +27,9 @@ class UpdateResourceRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'data' => 'string',
+            MediaType::File()->key => 'file',
+            MediaType::Preview()->key => 'file',
         ];
     }
 }

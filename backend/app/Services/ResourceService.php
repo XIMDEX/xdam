@@ -4,8 +4,6 @@ namespace App\Services;
 
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
-use App\Http\Resources\DamResourceUseResource;
-use App\Http\Resources\MediaResource;
 use App\Models\Category;
 use App\Models\DamResource;
 use App\Models\DamResourceUse;
@@ -44,14 +42,12 @@ class ResourceService
         $class->type = ResourceType::fromValue($resource->type)->key;
         $class->categories = $resource->categories()->pluck('name')->toArray() ?? [""];
         $previews = $this->mediaService->list($resource, MediaType::Preview()->key, true);
-        foreach ($previews as $preview)
-        {
+        foreach ($previews as $preview) {
             $parent_id = $preview->hasCustomProperty('parent_id') ? $preview->getCustomProperty('parent_id') : "";
             $class->previews[] = DamUrlUtil::generateDamUrl($preview, $parent_id);
         }
         $files = $this->mediaService->list($resource, MediaType::File()->key, true);
-        foreach ($files as $file)
-        {
+        foreach ($files as $file) {
             $parent_id = $file->hasCustomProperty('parent_id') ? $file->getCustomProperty('parent_id') : "";
             $class->files[] = DamUrlUtil::generateDamUrl($file, $parent_id);
         }
@@ -70,10 +66,17 @@ class ResourceService
 
     public function update(DamResource $resource, $params)
     {
-        $updated = $resource->update([
-            'data' => $params['data'],
-            'type' => ResourceType::fromKey($params["type"])->value,
-        ]);
+        if (array_key_exists("type", $params) && $params["type"]) {
+            $updated = $resource->update([
+                'type' => ResourceType::fromKey($params["type"])->value,
+            ]);
+        }
+
+        if (array_key_exists("data", $params) && $params["data"]) {
+            $updated = $resource->update([
+                'data' => $params['data'],
+            ]);
+        }
 
         if (array_key_exists("file", $params) && $params["file"]) {
             $this->mediaService->addFromRequest($resource, "file", ["parent_id" => $resource->id]);
@@ -85,10 +88,7 @@ class ResourceService
 
         $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
 
-        if ($updated) {
-            return $resource;
-        }
-        return false;
+        return $resource;
     }
 
     public function store($params): DamResource

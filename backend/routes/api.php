@@ -37,7 +37,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
         Route::get('/render/{damUrl}', [ResourceController::class, 'render'])->name('damResource.render');
         Route::get('/listTypes', [ResourceController::class, 'listTypes'])->name('damResource.listTypes');
         Route::get('/{damResource}', [ResourceController::class, 'get'])->name('damResource.get');
-        Route::post('/{damResource}', [ResourceController::class, 'update'])->name('damResource.update');
+        Route::post('/{damResource}/update', [ResourceController::class, 'update'])->name('damResource.update');
         Route::post('/', [ResourceController::class, 'store'])->name('damResource.store');
         Route::post('/{damResource}/addPreview', [ResourceController::class, 'addPreview'])->name('damResource.addPreview');
         Route::post('/{damResource}/addFile', [ResourceController::class, 'addFile'])->name('damResource.addFile');
