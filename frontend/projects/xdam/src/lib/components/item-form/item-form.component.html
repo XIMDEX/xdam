@@ -17,6 +17,7 @@
 
             <div *ngSwitchCase="'course'">
                 <xdam-modal-course
+                    [action]="action"
                     [toFill]="dataToFill.default"
                     [modal]="modal"
                 ></xdam-modal-course>

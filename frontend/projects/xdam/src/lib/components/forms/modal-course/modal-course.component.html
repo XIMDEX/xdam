@@ -12,11 +12,13 @@
     </div>
 
     <xdam-form-course
+        [action]="action"
         [toFill]="toFill.data"
         formControlName="dataForm"
     ></xdam-form-course>
 
     <xdam-metadata
+        [action]="action"
         [toFill]="toFill.metadata"
         formControlName="metadataForm"
     ></xdam-metadata>

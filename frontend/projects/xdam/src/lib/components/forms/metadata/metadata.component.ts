@@ -10,6 +10,7 @@ import {
     ValidationErrors,
     Validators
 } from '@angular/forms';
+import { ActionModel } from '../../../../models/src/lib/ActionModel';
 
 @Component({
     selector: 'xdam-metadata',
@@ -29,7 +30,7 @@ import {
     ]
 })
 export class MetadataComponent implements OnInit, ControlValueAccessor {
-
+    @Input() action: ActionModel;
     @Input() toFill: any;
 
     metadata: any;
@@ -45,8 +46,8 @@ export class MetadataComponent implements OnInit, ControlValueAccessor {
     ngOnInit() {
         this.metadata.default.tabs.forEach((element, i) => {
             element.fields.forEach((input, j) => {
-                let valueOfField = this.toFill[i].fields[j].value;
-                if(input.type === 'text'){
+                const valueOfField = this.action.method === 'new' ? '' : this.toFill[i].fields[j].value;
+                if (input.type === 'text') {
                     this.metadataForm.addControl(input.id, new FormControl(valueOfField));
                 } else if (input.type === 'select') {
                     this.metadataForm.addControl(input.id, new FormControl(''));

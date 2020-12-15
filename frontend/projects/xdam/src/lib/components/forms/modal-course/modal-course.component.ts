@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import { faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
-import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ActionModel } from '../../../../models/src/lib/ActionModel';
 
 @Component({
   selector: 'xdam-modal-course',
@@ -8,7 +9,7 @@ import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
   styleUrls: ['./modal-course.component.scss']
 })
 export class ModalCourseComponent implements OnInit {
-
+   @Input() action: ActionModel;
    @Input() toFill: any;
    @Input() modal: any;
 
