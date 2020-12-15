@@ -22,3 +22,10 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 
 ## Additional Documentation
 [Technical Documentation for XDAM at Ximdex website](https://www.ximdex.com/en/documentation/xdam/)
+
+
+## Changes Dec 2020
+
+* We delete the JSON dependency for store resource metadata fields (Lomes tab), stored in index.html.
+* Now we have a form for every resource type in xdam system. **ItemComponent** have a **ModalCourseComponent** and this modal is composed by two components, **FormCourseComponent** and **MetadataComponent**,
+every form have specific data of the resource.
