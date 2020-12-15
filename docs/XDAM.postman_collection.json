@@ -1,0 +1,1040 @@
+{
+	"info": {
+		"_postman_id": "1f179f4d-e7bf-4936-a7f0-a206e738416e",
+		"name": "XDAM",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "CATEGORIES",
+			"item": [
+				{
+					"name": "ADD CATEGORY",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Teacher Training",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/category",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"category"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LIST CATEGORIES",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Teacher Training",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "_method",
+									"value": "PUT",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/category",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"category"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET CATEGORY",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}{{api}}/category/0bfb421f-7550-4654-a62a-ebb1c87a7807",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"category",
+								"0bfb421f-7550-4654-a62a-ebb1c87a7807"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE CATEGORY",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Teacher Training",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "_method",
+									"value": "PUT",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/category/0bfb421f-7550-4654-a62a-ebb1c87a7802",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"category",
+								"0bfb421f-7550-4654-a62a-ebb1c87a7802"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "RESOURCES",
+			"item": [
+				{
+					"name": "ADD RESOURCE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "File",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"value": "{}",
+									"type": "text"
+								},
+								{
+									"key": "Preview",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE RESOURCE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "File",
+									"type": "file",
+									"src": "/Users/develop/Desktop/Captura de pantalla 2020-12-01 a las 13.14.18.png",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "data",
+									"value": "{\"name\":\"123\"}",
+									"type": "text"
+								},
+								{
+									"key": "Preview",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource/c4a09fff-e795-4acb-a3df-388cb5539d1d/update",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"c4a09fff-e795-4acb-a3df-388cb5539d1d",
+								"update"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ADD USE IN RESOURCE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "used_in",
+									"value": "1234",
+									"type": "text"
+								},
+								{
+									"key": "related_to",
+									"value": "course",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource/a7615b52-d735-41a6-a585-ac3cf62d2ed8/addUse",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"a7615b52-d735-41a6-a585-ac3cf62d2ed8",
+								"addUse"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ADD PREVIEW TO RESOURCE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "Preview",
+									"type": "file",
+									"src": "/Users/develop/Desktop/Captura de pantalla 2020-12-01 a las 13.14.18.png"
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "data",
+									"value": "{\"test\":123}",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "category_id",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource/4581d7e6-6dc3-4cc0-a4f1-99d38d31ef48/addPreview",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"4581d7e6-6dc3-4cc0-a4f1-99d38d31ef48",
+								"addPreview"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ADD FILE TO RESOURCE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "File",
+									"type": "file",
+									"src": "/Users/develop/Desktop/Captura de pantalla 2020-12-01 a las 13.14.27.png"
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "data",
+									"value": "{\"test\":123}",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "category_id",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource/03d0b6d6-fdc2-401e-9aac-d61910f1efb3/addFile",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"03d0b6d6-fdc2-401e-9aac-d61910f1efb3",
+								"addFile"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ADD CATEGORY TO RESOURCE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "Preview",
+									"type": "file",
+									"src": "/Users/develop/Downloads/Imprime esta etiqueta - Devolucion Gratuita ETAM.pdf"
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "data",
+									"value": "{\"test\":123}",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "category_id",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource/142a2fd0-7b8b-4198-bcae-0f17b17e64de/addCategory/84eb943f-c2b6-40dc-9047-72bd7504c500",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"142a2fd0-7b8b-4198-bcae-0f17b17e64de",
+								"addCategory",
+								"84eb943f-c2b6-40dc-9047-72bd7504c500"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LIST RESOURCES",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Teacher Training",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "_method",
+									"value": "PUT",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET RESOURCE",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Teacher Training",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text"
+								},
+								{
+									"key": "_method",
+									"value": "PUT",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource/2fa01536-6da3-45e3-8d4d-c36146ad0195",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"2fa01536-6da3-45e3-8d4d-c36146ad0195"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE RESOURCE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Teacher Training",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "_method",
+									"value": "PUT",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource/2fa01536-6da3-45e3-8d4d-c36146ad0195",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"2fa01536-6da3-45e3-8d4d-c36146ad0195"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE CATEGORY FROM RESOURCE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Teacher Training",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "_method",
+									"value": "PUT",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource/355f5c9b-259b-45c8-ae8e-79c53851643b/deleteCategory/2d90ced7-5f83-4e41-a83b-095073dbd9ee",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"355f5c9b-259b-45c8-ae8e-79c53851643b",
+								"deleteCategory",
+								"2d90ced7-5f83-4e41-a83b-095073dbd9ee"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE USE IN RESOURCE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "category_id",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource/a7615b52-d735-41a6-a585-ac3cf62d2ed8/deleteUse/8",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"a7615b52-d735-41a6-a585-ac3cf62d2ed8",
+								"deleteUse",
+								"8"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RENDER",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Teacher Training",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "_method",
+									"value": "PUT",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource/render/@@@dam:@video@f58f128f-3b64-4cb9-95a8-c8f582d25471@eb8b8ac1-2376-4d5e-a333-0595e949bc71@@@",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"render",
+								"@@@dam:@video@f58f128f-3b64-4cb9-95a8-c8f582d25471@eb8b8ac1-2376-4d5e-a333-0595e949bc71@@@"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "CATALOGUE",
+			"item": [
+				{
+					"name": "INDEX BY TYPE",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}{{api}}/catalogue/video/index?page=1&search=&limit=100",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"catalogue",
+								"video",
+								"index"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "search",
+									"value": ""
+								},
+								{
+									"key": "limit",
+									"value": "100"
+								},
+								{
+									"key": "facets[categories]",
+									"value": "Horses",
+									"disabled": true
+								},
+								{
+									"key": "facets[categories]",
+									"value": "Cats",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET DOCUMENTS BY TYPE",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}{{api}}/catalogue/document",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"catalogue",
+								"document"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CLEAR CATALOGUE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}{{api}}/catalogue/clearAll",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"catalogue",
+								"clearAll"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "LIST TYPES",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Teacher Training",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "type",
+							"value": "course",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "_method",
+							"value": "PUT",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}{{api}}/resource/listTypes",
+					"host": [
+						"{{url}}{{api}}"
+					],
+					"path": [
+						"resource",
+						"listTypes"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "c087dbb5-79d3-412d-ba48-c623d99c6a0a",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "7e4e5531-2a89-4417-a05f-b5a6b4d8fde0",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "b6226116-d7a2-4170-9f4d-cb8920fb7e56",
+			"key": "url",
+			"value": "http://xdam.pre-cloud.ximdex.net",
+			"disabled": true
+		},
+		{
+			"id": "d6a84fce-066e-41b8-8de1-9a81f82e98de",
+			"key": "api",
+			"value": "/api/v1"
+		},
+		{
+			"id": "edc2a2f9-5db1-42c9-b487-d270ef1a16ed",
+			"key": "url",
+			"value": "https://xdam.dev"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
