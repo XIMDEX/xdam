@@ -12,7 +12,7 @@
             "value": {
                 "investigation": true,
                 "activation": false,
-                "training-teacher": false
+                "training_teacher": false
             }
         },
         "resource_license_type": {

@@ -38,26 +38,30 @@ export class FormCourseComponent implements OnInit, ControlValueAccessor {
   constructor() {}
 
   ngOnInit() {
-      // this.toFill.forEach(input => {
-      //     if (input.type === 'text') {
-      //         let text = new FormControl(input.value);
-      //         if (input.id === 'resource_name') {
-      //             text.setValidators(Validators.required);
-      //         }
-      //         this.formMetadata.addControl(input.id, text);
-      //     } else if(input.type === 'select' || 'file') {
-      //         let field = new FormControl('');
-      //         if (input.type === 'file') {
-      //             field.setValidators(Validators.required);
-      //         }
-      //         this.formMetadata.addControl(input.id, field);
-      //     }
-      // });
-      this.formMetadata.addControl(this.toFill.resource_file, new FormControl('', Validators.required));
+      Object.keys(this.toFill).forEach(key => {
+          const item = this.toFill[key];
+          if (item.type === 'text') {
+              const text = new FormControl(item.value);
+              if (key === 'resource_name') {
+                  text.setValidators([Validators.required]);
+                  text.updateValueAndValidity();
+              }
+              this.formMetadata.addControl(key, text);
+          } else if (item.type === 'select' || 'file') {
+              const field = new FormControl('');
+              if (key === 'resource_file') {
+                  field.setValidators([Validators.required]);
+                  field.updateValueAndValidity();
+              }
+              this.formMetadata.addControl(key, field);
+          }
+      });
+
+      console.log(this.formMetadata);
   }
 
   public onTouched: () => void = () => {
-  };
+  }
 
   writeValue(val: any): void {
       val && this.formMetadata.setValue(val, {emitEvent: false});

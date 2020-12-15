@@ -28,7 +28,9 @@ export class ModalCourseComponent implements OnInit {
   }
 
   sendForm(): any {
-    console.log(this.courseForm.value);
+    if (this.courseForm.valid) {
+        console.log(this.courseForm.value);
+    }
   }
 
 }

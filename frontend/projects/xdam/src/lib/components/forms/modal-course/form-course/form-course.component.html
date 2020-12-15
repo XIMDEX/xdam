@@ -9,22 +9,26 @@
           <div class="fields column">
 
               <div class="img-box">
-                  <img [src]="toFill[0].value" />
+                  <img [src]="toFill.resource_file.value" />
               </div>
 
               <div class="field-item">
                   <label for="resource_file"> New File</label>
                   <input type="file" id="resource_file" name="resource_file" formControlName="resource_file" />
-                  <p *ngIf="formMetadata.controls">File is necessary</p>
+
+                  <div *ngIf="formMetadata.controls.resource_file.invalid && (formMetadata.controls.resource_file.dirty || formMetadata.controls.resource_file.touched)">
+                      <div *ngIf="formMetadata.controls.resource_file.errors.required">File is necessary</div>
+                  </div>
+
               </div>
 
               <div class="field-item">
                   <label>Seleccione un tipo</label>
                   <select id="resource_type" name="resource_type" formControlName="resource_type">
                       <option value=""></option>
-                      <option value="investigation" [selected]="toFill.resource_type.value == 'investigation'">Investigación</option>
-                      <option value="activation" [selected]="toFill.resource_type.value == 'activation'">Activación</option>
-                      <option value="training-teacher" [selected]="toFill.resource_type.value == 'training-teacher'">Entreno profesor</option>
+                      <option value="investigation" [selected]="toFill.resource_type.value.investigation">Investigación</option>
+                      <option value="activation" [selected]="toFill.resource_type.value.activation">Activación</option>
+                      <option value="training-teacher" [selected]="toFill.resource_type.value.training_teacher">Entreno profesor</option>
                   </select>
               </div>
 
@@ -32,8 +36,8 @@
                   <label>Seleccione una licencia</label>
                   <select name="resource_license_type" id="resource_license_type" formControlName="resource_license_type">
                       <option value="" selected></option>
-                      <option value="license_free" [selected]="toFill.resource_license_type.value == 'license_free'">Gratuita</option>
-                      <option value="license_paid" [selected]="toFill.resource_license_type.value == 'license_paid'">Pago</option>
+                      <option value="license_free" [selected]="toFill.resource_license_type.value">Gratuita</option>
+                      <option value="license_paid" [selected]="toFill.resource_license_type.value">Pago</option>
                   </select>
               </div>
 
@@ -53,6 +57,9 @@
               <div class="field-item">
                   <label for="resource_name">Nombre</label>
                   <input type="text" id="resource_name" name="resource_name" formControlName="resource_name" />
+                  <div *ngIf="formMetadata.controls.resource_name.invalid && (formMetadata.controls.resource_name.dirty || formMetadata.controls.resource_name.touched)">
+                    <div *ngIf="formMetadata.controls.resource_name.errors.required">Name is necessary</div>
+                  </div>
               </div>
 
               <div class="field-item">
