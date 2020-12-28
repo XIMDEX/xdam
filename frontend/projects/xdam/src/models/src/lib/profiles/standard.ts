@@ -24,13 +24,14 @@ export const standard: XDamSettingsInterface = {
     },
     list: {
         model: {
+            active: 'active',
+            data: 'data',
+            files: 'files',
             id: 'id',
-            title: 'title',
-            hash: 'hash',
-            size: 'size',
+            name: 'name',
+            score: 'score',
             type: 'type',
-            image: 'image',
-            context: 'context'
+            version: '_version_'
         },
         items: {
             type: '%s',
