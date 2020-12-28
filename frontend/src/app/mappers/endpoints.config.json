@@ -1,0 +1,57 @@
+{
+    "baseUrl": "http://xdam.com.devel",
+    "api": "/api/v1",
+    "options": {
+        "headers": {
+            "Access-Control-Allow-Origin": "*",
+            "Accept": "application/json"
+        },
+        "params": {
+            "page": 1,
+            "search": "",
+            "limit": 20
+        }
+    },
+    "endpoints": {
+        "catalogue": {
+            "delete": {
+                "uri": "/catalogue/clearAll",
+                "method": "DELETE"
+            },
+            "get": {
+                "uri": "/catalogue/%(id)s",
+                "method": "GET"
+            },
+            "index": {
+                "uri": "/catalogue/course/index",
+                "method": "GET",
+                "params": {
+                    "page": "1",
+                    "limit": "20",
+                    "search": ""
+                }
+            }
+        },
+        "category": {},
+        "resource": {
+            "getAll": {
+                "uri": "/resource",
+                "method": "GET"
+            },
+            "store": {
+                "uri": "/resource",
+                "method": "POST"
+            },
+            "get": {
+                "uri": "/resource/%(id)s",
+                "method": "GET"
+            },
+            "delete": {
+                "uri": "/resource/%(id)s",
+                "method": "DELETE"
+            }
+
+        },
+        "tag": {}
+    }
+}
