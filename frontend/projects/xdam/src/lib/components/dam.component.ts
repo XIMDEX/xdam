@@ -64,7 +64,6 @@ export class DamComponent implements OnInit, OnChanges {
     loading: boolean;
     actionModel: ActionModel | null;
     displayForm = false;
-    viewModeModal = true;
 
     constructor() {}
 
@@ -73,7 +72,7 @@ export class DamComponent implements OnInit, OnChanges {
         this.loading = true;
 
         if (!isNil(this.items) && hasIn('data', this.items) && this.items.data.length > 0) {
-            this.perpareData();
+            this.prepareData();
         }
 
         if (!isNil(this.items) && hasIn('pager', this.items) && !isNil(this.items.pager)) {
@@ -84,7 +83,7 @@ export class DamComponent implements OnInit, OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         if (hasIn('items', changes) && !changes.items.isFirstChange()) {
             this.preparePager();
-            this.perpareData();
+            this.prepareData();
         }
 
         if (hasIn('action', changes)) {
@@ -102,7 +101,7 @@ export class DamComponent implements OnInit, OnChanges {
      * Map every raw row of data as a typed model class Item
      * @param data The model instance
      */
-    perpareData() {
+    prepareData() {
         let result = [];
 
         result = (this.items.data as [ItemModel?]).map(item => new Item(item, this.settings.list.model || null));
