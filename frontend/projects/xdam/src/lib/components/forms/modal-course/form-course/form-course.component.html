@@ -9,64 +9,35 @@
             <div class="fields column">
 
                 <div class="img-box">
-                    <img [src]="toFill.resource_file.value"/>
+                    <img src="{{preview}}" />
                 </div>
 
                 <div class="field-item">
-                    <label for="resource_file"> New File</label>
-                    <input type="file" id="resource_file" name="resource_file" formControlName="resource_file"/>
-
-                    <div
-                        *ngIf="formMetadata.controls.resource_file.invalid && (formMetadata.controls.resource_file.dirty || formMetadata.controls.resource_file.touched)">
-                        <div *ngIf="formMetadata.controls.resource_file.errors.required">File is necessary</div>
-                    </div>
-
+                    <label for="files">Preview</label>
+                    <input type="file" id="files" formControlName="files" />
                 </div>
 
                 <div class="field-item">
-                    <label>Seleccione un tipo</label>
-                    <select id="resource_type" name="resource_type" formControlName="resource_type">
+                    <label for="type">Seleccione un tipo</label>
+                    <select id="type" formControlName="type">
                         <option value=""></option>
-                        <option
-                            value="investigation"
-                            [selected]="action.method != 'new' && toFill.resource_type.value.investigation"
-                        >Investigación
-                        </option>
-                        <option
-                            value="activation"
-                            [selected]="action.method != 'new' && toFill.resource_type.value.activation"
-                        >Activación
-                        </option>
-                        <option
-                            value="training-teacher"
-                            [selected]="action.method != 'new' && toFill.resource_type.value.training_teacher"
-                        >Entreno profesor
-                        </option>
+                        <option value="document">Documento</option>
+                        <option value="video">Video</option>
+                        <option value="image">Imagen</option>
+                        <option value="audio">Audio</option>
+                        <option value="url">URL</option>
+                        <option value="course">Course</option>
                     </select>
                 </div>
 
                 <div class="field-item">
-                    <label>Seleccione una licencia</label>
-                    <select name="resource_license_type" id="resource_license_type"
-                            formControlName="resource_license_type">
-                        <option value="" selected></option>
-                        <option
-                            value="license_free"
-                            [selected]="action.method != 'new' && toFill.resource_license_type.value.license_free"
-                        >Gratuita
-                        </option>
-                        <option
-                            value="license_paid"
-                            [selected]="action.method != 'new' && toFill.resource_license_type.value.license_paid"
-                        >Pago
-                        </option>
-                    </select>
-                </div>
-
-                <div class="field-item">
-                    <label for="resource_license">Licencia</label>
-                    <textarea name="resource_license" id="resource_license"
-                              formControlName="resource_license"></textarea>
+                    <label>Activo</label>
+                    <div>
+                        <input type="radio" value="true" formControlName="active" />
+                        <span>Si</span>
+                        <input type="radio" value="false" formControlName="active" />
+                        <span>No</span>
+                    </div>
                 </div>
 
             </div>
@@ -78,29 +49,18 @@
             <div class="fields column">
 
                 <div class="field-item">
-                    <label for="resource_name">Nombre</label>
-                    <input type="text" id="resource_name" name="resource_name" formControlName="resource_name"/>
-                    <div
-                        *ngIf="formMetadata.controls.resource_name.invalid && (formMetadata.controls.resource_name.dirty || formMetadata.controls.resource_name.touched)">
-                        <div *ngIf="formMetadata.controls.resource_name.errors.required">Name is necessary</div>
-                    </div>
+                    <label for="name">Nombre</label>
+                    <input type="text" id="name" formControlName="name"/>
                 </div>
 
                 <div class="field-item">
-                    <label for="resource_description">Descripción</label>
-                    <input type="text" id="resource_description" name="resource_description"
-                           formControlName="resource_description"/>
+                    <label for="score">Score</label>
+                    <input type="text" id="score" formControlName="score"/>
                 </div>
 
                 <div class="field-item">
-                    <label for="resource_duration">Duración</label>
-                    <input type="number" id="resource_duration" name="resource_duration"
-                           formControlName="resource_duration"/>
-                </div>
-
-                <div class="field-item">
-                    <label for="resource_price">Precio</label>
-                    <input type="number" id="resource_price" name="resource_price" formControlName="resource_price"/>
+                    <label for="version">Version</label>
+                    <input type="text" id="version" name="version" formControlName="version"/>
                 </div>
 
             </div>

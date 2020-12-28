@@ -11,6 +11,7 @@ import {
 } from '@angular/forms';
 import {ActionModel} from '../../../../../models/src/lib/ActionModel';
 import {isNil} from 'ramda';
+import {isArray} from 'util';
 
 @Component({
   selector: 'xdam-form-course',
@@ -31,46 +32,49 @@ import {isNil} from 'ramda';
 })
 export class FormCourseComponent implements OnInit, ControlValueAccessor {
   @Input() action: ActionModel;
-  @Input() toFill: any;
-
-  name: FormControl;
 
   public formMetadata: FormGroup = new FormGroup({});
+
+  new: boolean;
+  show: boolean;
+  preview = window.origin + '/assets/default_item_image.jpg';
 
   constructor() {}
 
   ngOnInit() {
-      if (!isNil(this.action) && this.action.method === 'new') {
-          this.formMetadata.addControl('resource_file', new FormControl('', Validators.required));
-          this.formMetadata.addControl('resource_type', new FormControl(''));
-          this.formMetadata.addControl('resource_license_type', new FormControl(''));
-          this.formMetadata.addControl('resource_license', new FormControl(''));
-          this.formMetadata.addControl('resource_name', new FormControl('', Validators.required));
-          this.formMetadata.addControl('resource_description', new FormControl(''));
-          this.formMetadata.addControl('resource_duration', new FormControl(''));
-          this.formMetadata.addControl('resource_price', new FormControl(''));
-      } else if (!isNil(this.action)) {
-          console.log(this.action);
-          Object.keys(this.toFill).forEach(key => {
-              const item = this.toFill[key];
-              if (item.type === 'text') {
-                  const text = new FormControl(item.value);
-                  if (key === 'resource_name') {
-                      text.setValidators([Validators.required]);
-                      text.updateValueAndValidity();
-                  }
-                  this.formMetadata.addControl(key, text);
-              } else if (item.type === 'select' || 'file') {
-                  const field = new FormControl('');
-                  if (key === 'resource_file') {
-                      field.setValidators([Validators.required]);
-                      field.updateValueAndValidity();
-                  }
-                  this.formMetadata.addControl(key, field);
-              }
-          });
+      if (!isNil(this.action) && this.action.method === 'show') {
+          this.initFormControlsWithData();
+      } else if (this.action.method === 'new') {
+          this.initFormControls();
+      } else {
+          this.initFormControls();
       }
-      console.log(this.formMetadata);
+  }
+
+  private initFormControls() {
+      this.formMetadata.addControl('files', new FormControl(''));
+      this.formMetadata.addControl('type', new FormControl(''));
+      this.formMetadata.addControl('name', new FormControl('', Validators.required));
+      this.formMetadata.addControl('score', new FormControl(''));
+      this.formMetadata.addControl('version', new FormControl(''));
+      this.formMetadata.addControl('active', new FormControl(''));
+  }
+
+  private initFormControlsWithData() {
+      const item = this.action.item;
+      let field: FormControl;
+      Object.keys(item).forEach(key => {
+          if (key.startsWith('_')) {
+              key = key.slice(1);
+          }
+          if (!isNil(item[key]) && key !== 'files') {
+              field = new FormControl(item[key]);
+              field.markAsDirty();
+          } else {
+              field = new FormControl('');
+          }
+          this.formMetadata.addControl(key, field);
+      });
   }
 
   public onTouched: () => void = () => {
