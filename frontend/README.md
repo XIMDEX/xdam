@@ -29,3 +29,7 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 * We delete the JSON dependency for store resource metadata fields (Lomes tab), stored in index.html.
 * Now we have a form for every resource type in xdam system. **ItemComponent** have a **ModalCourseComponent** and this modal is composed by two components, **FormCourseComponent** and **MetadataComponent**,
 every form have specific data of the resource.
+* Added a Mapper class named EndPointMapper. This class load a JSON `endpoints.config.json`, that contains all endpoints of api, when you convoke it method ```getEndPointUrl(model: string, action: string, item: Item = null)```, it return a URL endpoint. It load default params to show init items on home page.
+* When new asset is wanted to create, **ItemComponent** load a specified form **ModalNewComponent** set by URL or JSON.
+* Modified ItemModel to adjust on actual model.
+* Move SettingsMapper structure on isolated JSON `settings.config.json`. XDAM init with this structure.
