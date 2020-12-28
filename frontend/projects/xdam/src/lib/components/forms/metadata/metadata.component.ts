@@ -1,4 +1,5 @@
 import {Component, forwardRef, Input, OnInit} from '@angular/core';
+import { isNil } from 'ramda';
 import * as structure from './metadata.structure.json';
 import {
     AbstractControl,
@@ -31,7 +32,6 @@ import { ActionModel } from '../../../../models/src/lib/ActionModel';
 })
 export class MetadataComponent implements OnInit, ControlValueAccessor {
     @Input() action: ActionModel;
-    @Input() toFill: any;
 
     metadata: any;
     metadataLength: number;
@@ -44,20 +44,40 @@ export class MetadataComponent implements OnInit, ControlValueAccessor {
     }
 
     ngOnInit() {
-        this.metadata.default.tabs.forEach((element, i) => {
-            element.fields.forEach((input, j) => {
-                const valueOfField = this.action.method === 'new' ? '' : this.toFill[i].fields[j].value;
-                if (input.type === 'text') {
-                    this.metadataForm.addControl(input.id, new FormControl(valueOfField));
-                } else if (input.type === 'select') {
-                    this.metadataForm.addControl(input.id, new FormControl(''));
-                }
+        if (this.action.method === 'show') {
+            if (!isNil(this.action.item) && this.action.item.data.startsWith('{')) {
+                this.initFormControlsWithData();
+            } else {
+                this.initFormControls();
+            }
+        } else if (this.action.method === 'new') {
+            this.initFormControls();
+        }
+    }
+
+    private initFormControls() {
+        this.metadata.default.tabs.forEach(element => {
+            element.fields.forEach(input => {
+                this.metadataForm.addControl(input.id, new FormControl(''));
             });
         });
     }
 
+    private initFormControlsWithData() {
+        const metadataValues = JSON.parse(this.action.item.data);
+        Object.keys(metadataValues).forEach(key => {
+            let field: FormControl;
+            if (!isNil(metadataValues[key]) && key !== 'files') {
+                field = new FormControl(metadataValues[key]);
+            } else {
+                field = new FormControl('');
+            }
+            this.metadataForm.addControl(key, field);
+        });
+    }
+
     public onTouched: () => void = () => {
-    };
+    }
 
     writeValue(val: any): void {
         val && this.metadataForm.setValue(val, {emitEvent: false});

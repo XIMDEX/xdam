@@ -39,7 +39,6 @@
                                                     <option value=""></option>
                                                     <option
                                                         *ngFor="let option of field.value.options| keyvalue"
-                                                        [selected]="action.method != 'new' && (option.value.value == toFill[tabIndex].fields[fieldIndex].value)"
                                                     >{{option.value.value}}</option>
                                                 </select>
                                             </div>
