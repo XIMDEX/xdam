@@ -127,14 +127,14 @@ export class HomeComponent implements OnInit {
 
         this.mainService.list(params).subscribe(
             response => {
-                const { data } = response as any;
+                const { pager } = response as any;
                 this.items = {
-                    data: data['data'],
-                    pager: new Pager(data, this.pagerSchema),
-                    facets: data['facets']
+                    data: response['data'],
+                    pager: new Pager(pager, this.pagerSchema),
+                    facets: response['facets']
                 };
                 if (this.default) {
-                    this.getDefaultFacet(data['facets']);
+                    this.getDefaultFacet(response['facets']);
                 }
             },
             err => console.error(err)
@@ -168,7 +168,7 @@ export class HomeComponent implements OnInit {
 
                 downloadFile.style.display = 'none';
                 downloadFile.href = url;
-                downloadFile.download = item.title;
+                downloadFile.download = item.name;
                 downloadFile.click();
                 downloadFile.remove();
 
@@ -206,7 +206,7 @@ export class HomeComponent implements OnInit {
         if (action.method === 'select') {
             action.status = 'success';
             setTimeout(() => {
-                alert(`Selectd item ${action.item.title}`);
+                alert(`Selectd item ${action.item.name}`);
                 this.action = action;
             }, 2500);
         } else {
@@ -217,8 +217,7 @@ export class HomeComponent implements OnInit {
             }
 
             actionType
-                .subscribe(
-                    ({ result }) => {
+                .subscribe( result => {
                         const { data } = result as any;
                         action.data = data;
                         action.status = 'success';
