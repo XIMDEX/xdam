@@ -8,18 +8,18 @@
     (close)="closeForm()"
 >
     <ng-container *swalPartial="swalTargets.title">
-        <div class="form-title">{{dataToFill.default.type}} Form</div>
+        <div class="form-title">{{title}}</div>
     </ng-container>
 
     <ng-container *swalPartial="swalTargets.content">
 
-        <div [ngSwitch]="dataToFill.default.type">
+        <div [ngSwitch]="action.item.type">
 
             <div *ngSwitchCase="'course'">
                 <xdam-modal-course
                     [action]="action"
-                    [toFill]="dataToFill.default"
                     [modal]="modal"
+                    (dataToSave)="sendForm($event)"
                 ></xdam-modal-course>
             </div>
 

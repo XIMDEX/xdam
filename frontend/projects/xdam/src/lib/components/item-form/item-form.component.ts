@@ -9,7 +9,6 @@ import { ActionModel } from '../../../models/src/lib/ActionModel';
 import { FormI } from '../../../models/src/lib/interfaces/FormI.interface';
 import { setQuestion } from '../../models/forms/Question';
 import swal2 from '../../profiles/swal2';
-import * as resourceInfo from '../forms/dataToFillCourseForm.json';
 
 @Component({
     selector: 'xdam-item-form',
@@ -42,8 +41,7 @@ export class ItemFormComponent implements OnChanges {
     formFieldsValues: any = {};
     infoFormFields = itemInfo;
     method: ActionMethods;
-
-    dataToFill = resourceInfo;
+    title = 'Nuevo Recurso';
 
     constructor(public readonly swalTargets: SwalPartialTargets) {
         this.swalCustomClass = { ...swal2.customClass, ...this.swalCustomClass };
@@ -63,32 +61,10 @@ export class ItemFormComponent implements OnChanges {
         if (hasIn('action', changes) && !changes.action.isFirstChange() && !isNil(this.swalModal)) {
             if (!isNil(changes.action.currentValue)) {
                 this.method = this.action.method;
-
                 if (this.action.method === 'show') {
                     this.action.status = 'pending';
                     this.method = 'edit';
-                    const mainForm = this.action.data;
-                    const tabsForm = hasIn('tabsform', mainForm) && !isNil(mainForm.tabsform) ? mainForm.tabsform : [];
-
-                    if (hasIn('tabsform', mainForm)) {
-                        delete mainForm.tabsform;
-                    }
-
-                    this.setFormValues(mainForm, this.formFields);
-                    this.setFormValues(mainForm, this.infoFormFields);
-                    this.setTabsFormValues(tabsForm);
-                }
-
-                if (!isNil(this.action.errors)) {
-                    const mainForm = this.action.errors;
-                    const tabsForm = hasIn('tabsform', mainForm) && !isNil(mainForm.tabsform) ? mainForm.tabsform : [];
-
-                    if (hasIn('tabsform', mainForm)) {
-                        delete mainForm.tabsform;
-                    }
-
-                    this.setFormErrors(mainForm, this.formFields);
-                    this.setFormErrors(mainForm, this.infoFormFields);
+                    this.title = 'Editar ' + this.action.item.name;
                 }
             }
         }
@@ -111,14 +87,6 @@ export class ItemFormComponent implements OnChanges {
         return this.action.method === 'edit';
     }
 
-    validForm(): boolean {
-        return false;
-    }
-
-    cancelForm() {
-        this.modal.close();
-    }
-
     closeForm() {
         this.formFieldsValues = {};
         this.clearFormValues(this.formFields);
@@ -132,8 +100,13 @@ export class ItemFormComponent implements OnChanges {
         const action = new ActionModel({ ...this.action });
         action.data = JSON.stringify(data);
         action.method = this.method;
-        console.log(data);
         this.save.emit(action);
+        this.closeForm();
+    }
+
+    sendForm(action: ActionModel) {
+        this.save.emit(action);
+        this.modal.close();
     }
 
     receiveData(resource: any) {
@@ -189,29 +162,6 @@ export class ItemFormComponent implements OnChanges {
         }
     }
 
-    setTabsFormValues(form: any) {
-        for (const section of this.tabsForms) {
-            if (hasIn(section.name, form)) {
-                const formTab = form[section.name];
-                for (const tab of section.tabs) {
-                    if (hasIn(tab.key, formTab)) {
-                        let fieldKey = `${section.name}.${tab.key}`;
-                        for (const key of Object.keys(formTab[tab.key])) {
-                            const _fieldKey = `${fieldKey}.${key}`;
-                            const value = formTab[tab.key][key];
-                            tab.fields.forEach(element => {
-                                if (element.realName === _fieldKey) {
-                                    element.value = value;
-                                    this.updatedValue(element.key, value);
-                                }
-                            });
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     setFormErrors(data: any, form: any[]) {
         for (const field of form) {
             let key = null;
@@ -227,16 +177,6 @@ export class ItemFormComponent implements OnChanges {
                 field.errors = data[key];
             }
         }
-    }
-
-    updatedTabsFormValue(form: string, tab: string, key: string, value: any) {
-        this.updatedValue(key, value);
-
-        this.tabsForms[form].tabs[tab].fields.forEach(field => {
-            if (field.key === key) {
-                field.value = value;
-            }
-        });
     }
 
     updatedValue(key: string, value: any) {
