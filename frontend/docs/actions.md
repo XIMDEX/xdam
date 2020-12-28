@@ -2,7 +2,7 @@
     <li>Item actions</li>
 </ol>
 
-* On `frontend/docs/dec2020-changes`, there are drawio flowcharts of different item actions **add new resource**, **delete resource**, **load initial resources** and a schema of XDAM components structure.
+* On `frontend/docs/dec2020-changes`, there are drawio sequence charts of different item actions **add new resource**, **delete resource**, **load initial resources** and a schema of XDAM components structure.
 
 ### XDAM COMPONENTS STRUCTURE
 
