@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import { faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
-import {ActionModel} from '@xdam/models/lib';
+import {ActionModel} from '../../../../models/src/lib/ActionModel';
 
 @Component({
     selector: 'xdam-modal-image',
