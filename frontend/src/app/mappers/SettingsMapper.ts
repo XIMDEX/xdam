@@ -1,4 +1,5 @@
 import { XDamSettings } from '@xdam/models/XDamSettings';
+import * as settings from './settings.config.json';
 import { hasIn } from 'ramda';
 
 /**
@@ -8,10 +9,11 @@ import { hasIn } from 'ramda';
 export default class SettingsMapper extends XDamSettings {
     /**@ignore */
     constructor() {
-        const xdam = hasIn('$xdam', window) ? (<any>window).$xdam : {};
+        // const xdam = hasIn('$xdam', window) ? (<any>window).$xdam : {};
+        const _settings = settings;
         let params = null;
-        if (hasIn('settings', xdam)) {
-            params = { ...xdam['settings'], form: xdam['form'] };
+        if (hasIn('settings', _settings)) {
+            params = _settings;
         }
         super(params);
     }
