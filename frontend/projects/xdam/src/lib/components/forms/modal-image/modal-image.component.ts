@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import { faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
+import {ActionModel} from '@xdam/models/lib';
 
 @Component({
     selector: 'xdam-modal-image',
@@ -10,6 +11,7 @@ import { faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
 export class ModalImageComponent implements OnInit {
 
     @Input() modal: any;
+    @Input() action: ActionModel;
 
     faSave = faSave;
     faTimes = faTimes;
@@ -22,10 +24,6 @@ export class ModalImageComponent implements OnInit {
     }
 
     ngOnInit() {
-    }
-
-    cancelForm() {
-        this.modal.close();
     }
 
     public onSubmit() {

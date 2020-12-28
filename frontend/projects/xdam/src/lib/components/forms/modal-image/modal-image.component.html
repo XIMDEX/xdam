@@ -1,6 +1,6 @@
 <form [formGroup] ="formImage" (ngSubmit) = "onSubmit()">
     <div class="form-actions">
-        <button (click)="cancelForm()" class="xdam-btn-base red">
+        <button (click)="modal.close()" class="xdam-btn-base red">
             <fa-icon [icon]="faTimes"></fa-icon>
             Cancel
         </button>
@@ -11,7 +11,7 @@
     </div>
     <!--add course information -->
     <xdam-metadata
-        [toFill]=""
+        [action]="action"
         formControlName="metadataForm"
     ></xdam-metadata>
 </form>
