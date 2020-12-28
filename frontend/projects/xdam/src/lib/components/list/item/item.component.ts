@@ -16,6 +16,7 @@ export class ItemComponent {
     faDownload = faDownload;
     faEdit = faEdit;
     faTrash = faTrash;
+    defaultImage = window.origin + '/assets/default_item_image.jpg';
 
     @Input() item: Item;
     @Input() settings: ListItemOptionI;
@@ -32,15 +33,15 @@ export class ItemComponent {
     }
 
     get title(): string {
-        return sprintf(this.settings.title, this.item.title);
+        return sprintf(this.settings.title, this.item.name);
     }
 
-    set img(url: string) {
-        this.item.image = url;
+    set preview(url: string) {
+        this.item.preview = url;
     }
 
-    get img(): string {
-        return this.item.image;
+    get preview(): string {
+        return this.item.preview;
     }
 
     get actions(): ListItemActionsI | null {
@@ -62,14 +63,14 @@ export class ItemComponent {
     }
 
     imgError() {
-        let image = null;
-        if (hasIn(this.item.type.toLowerCase(), this.settings.placeholder)) {
-            image = this.settings.placeholder[this.item.type.toLowerCase()];
-        } else if (hasIn('default', this.settings.placeholder)) {
-            image = this.settings.placeholder['default'];
-        }
-
-        this.img = image;
+        // let image = null;
+        // if (hasIn(this.item.type.toLowerCase(), this.settings.placeholder)) {
+        //     image = this.settings.placeholder[this.item.type.toLowerCase()];
+        // } else if (hasIn('default', this.settings.placeholder)) {
+        //     image = this.settings.placeholder['default'];
+        // }
+        // this.img = image;
+        this.preview = this.defaultImage;
     }
 
     editItem(evt: Event) {
