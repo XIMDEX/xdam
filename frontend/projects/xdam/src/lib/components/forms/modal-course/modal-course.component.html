@@ -5,7 +5,11 @@
             <fa-icon [icon]="faTimes"></fa-icon>
             Cancel
         </button>
-        <button type="submit" class="xdam-btn-base" [disabled]="!courseForm.valid">
+        <button
+            type="submit"
+            class="xdam-btn-base"
+            [disabled]="!courseForm.valid &&
+                (courseForm.controls.dataForm.dirty || courseForm.controls.metadataForm.dirty)">
             <fa-icon [icon]="faSave"></fa-icon>
             Save
         </button>
@@ -13,13 +17,11 @@
 
     <xdam-form-course
         [action]="action"
-        [toFill]="toFill.data"
         formControlName="dataForm"
     ></xdam-form-course>
 
     <xdam-metadata
         [action]="action"
-        [toFill]="toFill.metadata"
         formControlName="metadataForm"
     ></xdam-metadata>
 

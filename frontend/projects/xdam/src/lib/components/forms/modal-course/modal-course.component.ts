@@ -1,7 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActionModel } from '../../../../models/src/lib/ActionModel';
+import { Item } from '../../../../models/src/lib/Item';
+import { isNil } from 'ramda';
 
 @Component({
   selector: 'xdam-modal-course',
@@ -10,8 +12,9 @@ import { ActionModel } from '../../../../models/src/lib/ActionModel';
 })
 export class ModalCourseComponent implements OnInit {
    @Input() action: ActionModel;
-   @Input() toFill: any;
    @Input() modal: any;
+
+   @Output() dataToSave = new EventEmitter<ActionModel>();
 
    courseForm: FormGroup;
 
@@ -26,12 +29,20 @@ export class ModalCourseComponent implements OnInit {
   }
 
   ngOnInit() {
+      if (this.action.method === 'show') {
+          this.courseForm.markAsTouched();
+      }
   }
 
   sendForm(): any {
-    if (this.courseForm.valid) {
-        console.log(this.courseForm.value);
-    }
+      if (this.courseForm.valid) {
+          if (this.courseForm.controls.dataForm.dirty || this.courseForm.controls.metadataForm.dirty) {
+              const action = new ActionModel();
+              action.method = this.action.method;
+              action.data = this.courseForm.value.dataForm;
+              action.data['data'] = JSON.stringify(this.courseForm.value.metadataForm);
+              this.dataToSave.emit(action);
+          }
+      }
   }
-
 }
