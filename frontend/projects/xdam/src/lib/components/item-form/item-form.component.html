@@ -13,23 +13,33 @@
 
     <ng-container *swalPartial="swalTargets.content">
 
-        <div [ngSwitch]="action.item.type">
+        <div *ngIf="action.item; else newAsset">
+            <div [ngSwitch]="action.item.type">
 
-            <div *ngSwitchCase="'course'">
-                <xdam-modal-course
-                    [action]="action"
-                    [modal]="modal"
-                    (dataToSave)="sendForm($event)"
-                ></xdam-modal-course>
+                <div *ngSwitchCase="'course'">
+                    <xdam-modal-course
+                        [action]="action"
+                        [modal]="modal"
+                        (dataToSave)="sendForm($event)"
+                    ></xdam-modal-course>
+                </div>
+
+                <div *ngSwitchCase="'image'">
+                    <xdam-modal-image
+                        [modal]="modal"
+                    ></xdam-modal-image>
+                </div>
+
             </div>
-
-            <div *ngSwitchCase="'image'">
-                <xdam-modal-image
-                    [modal]="modal"
-                ></xdam-modal-image>
-            </div>
-
         </div>
+
+        <ng-template #newAsset>
+            <xdam-modal-course
+                [action]="action"
+                [modal]="modal"
+                (dataToSave)="sendForm($event)"
+            ></xdam-modal-course>
+        </ng-template>
 
     </ng-container>
 </swal>
