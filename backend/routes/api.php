@@ -20,17 +20,17 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group(['prefix'=>'v1','as'=>'v1'], function(){
-    Route::get('', function(){
-        return "test";
-    })->name('api.index');
 
     Route::group(['prefix' => 'category'], function() {
         Route::get('', [CategoryController::class, 'getAll'])->name('category.getAll');
         Route::get('/{category}', [CategoryController::class, 'get'])->name('category.get');
+        Route::get('/{category}/getResources', [CategoryController::class, 'getResources'])->name('category.getResources');
         Route::post('/{category}', [CategoryController::class, 'update'])->name('category.update');
         Route::post('/', [CategoryController::class, 'store'])->name('category.store');
         Route::delete('/{category}', [CategoryController::class, 'delete'])->name('category.delete');
     });
+
+    Route::get('/exploreCourses', [ResourceController::class, 'exploreCourses'])->name('damResource.exploreCourses');
 
     Route::group(['prefix' => 'resource'], function() {
         Route::get('/', [ResourceController::class, 'getAll'])->name('damResource.getAll');

@@ -21,7 +21,7 @@ class ResourceResource extends BaseResource
             'name' => $this->name,
             'type' => ResourceType::fromValue($this->type)->key,
             'categories' => CategoryResource::collection($this->categories),
-            'data' => $this->data ? json_decode($this->data, true) : [],
+            'data' => $this->data ?? [],
             'files' => MediaResource::collection($this->getMedia(MediaType::File()->key)),
             'previews' => MediaResource::collection($this->getMedia(MediaType::Preview()->key)),
             'uses' => DamResourceUseResource::collection($this->uses),

@@ -23,6 +23,11 @@ class CategoryService
         return $category;
     }
 
+    public function getResources(Category $category)
+    {
+        return $category->resources;
+    }
+
     public function update(Category $category, $data)
     {
         $updated = $category->update([

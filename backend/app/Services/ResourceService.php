@@ -25,6 +25,7 @@ class ResourceService
     /**
      * ResourceService constructor.
      * @param MediaService $mediaService
+     * @param SolrService $solr
      */
     public function __construct(MediaService $mediaService, SolrService $solr)
     {
@@ -62,6 +63,11 @@ class ResourceService
     public function get(DamResource $resource): DamResource
     {
         return $resource;
+    }
+
+    public function exploreCourses()
+    {
+        return Category::where('type', ResourceType::course)->get();
     }
 
     public function update(DamResource $resource, $params)

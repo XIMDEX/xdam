@@ -6,6 +6,7 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\ResourceCollection;
 use App\Models\Category;
 use App\Services\CategoryService;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,6 +39,14 @@ class CategoryController extends Controller
     {
         $category =  $this->categoryService->get($category);
         return (new CategoryResource($category))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function getResources(Category $category)
+    {
+        $resources =  $this->categoryService->getResources($category);
+        return (new ResourceCollection($resources))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }

@@ -9,8 +9,10 @@ use App\Http\Requests\addPreviewToResourceRequest;
 use App\Http\Requests\addUseRequest;
 use App\Http\Requests\deleteUseRequest;
 use App\Http\Requests\StoreResourceRequest;
+use App\Http\Requests\ResouceCategoriesRequest;
 use App\Http\Requests\UpdateResourceRequest;
 use App\Http\Resources\DamResourceUseResource;
+use App\Http\Resources\ExploreCoursesCollection;
 use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\ResourceResource;
 use App\Models\Category;
@@ -33,6 +35,7 @@ class ResourceController extends Controller
     /**
      * CategoryController constructor.
      * @param ResourceService $resourceService
+     * @param MediaService $mediaService
      */
     public function __construct(ResourceService $resourceService, MediaService $mediaService)
     {
@@ -52,6 +55,13 @@ class ResourceController extends Controller
     {
         $damResource =  $this->resourceService->get($damResource);
         return (new ResourceResource($damResource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function exploreCourses(ResouceCategoriesRequest $request)
+    {
+        return (new ExploreCoursesCollection($this->resourceService->exploreCourses()))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }

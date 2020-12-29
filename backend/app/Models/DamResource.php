@@ -20,6 +20,7 @@ class DamResource extends Model implements HasMedia
 
     protected $casts = [
         'type' => ResourceType::class,
+        "data" => "object"
     ];
 
     public function categories() {
