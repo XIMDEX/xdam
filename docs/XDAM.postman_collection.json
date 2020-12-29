@@ -138,6 +138,37 @@
 					"response": []
 				},
 				{
+					"name": "GET ASSOCIATED RESOURCES",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}{{api}}/category/028acd38-33a5-4289-b495-95e4ccf2886b/getResources",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"category",
+								"028acd38-33a5-4289-b495-95e4ccf2886b",
+								"getResources"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "DELETE CATEGORY",
 					"request": {
 						"method": "DELETE",
@@ -274,7 +305,7 @@
 								},
 								{
 									"key": "data",
-									"value": "{\"name\":\"123\"}",
+									"value": "\"id\": \"a76045ca-bae6-4d08-be2e-360dc622f507\",\n        \"description\": {\n          \"type\": \"Payment\",\n          \"price\": \"10000\",\n          \"skills\": [\n            \"classroom management\",\n            \"teaching\",\n            \"group work\"\n          ],\n          \"category\": \"classroom_management\",\n          \"duration\": \"120\",\n          \"visibility\": \"Public\",\n          \"description\": \"In this project-centered course, you will create a meaningful procedures plan that will help you to save time in your classroom and improve the efficacy of your teaching. You’ll identify the time-wasting moments and minimise the time spent in procedures (such as moving students around the classroom) that tend the consume valuable teaching time. You’ll explore first how your behaviour influences your students’, looking at how you control emotional responses and interact with students. Then, you’ll learn techniques and develop your capability to achieve consistency in managing behaviour, recognise positive behaviour and build trust in your classroom.\",\n          \"achievements\": [\n            \"Learn how to manage groups\",\n            \"Learn how to transition between activities\",\n            \"Manage noisy groups\"\n          ],\n          \"course_title\": \"Course One \",\n          \"external_url\": \"\",\n          \"media_upload\": \"@@@dam:@image@f19d1eec-ed50-4de5-8f88-5c0c24010d3a@2e447905-069c-4ff8-92b9-c72484509d38@@@\",\n          \"preparations\": []",
 									"type": "text"
 								},
 								{
@@ -477,8 +508,11 @@
 				},
 				{
 					"name": "ADD CATEGORY TO RESOURCE",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "formdata",
@@ -509,15 +543,15 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/142a2fd0-7b8b-4198-bcae-0f17b17e64de/addCategory/84eb943f-c2b6-40dc-9047-72bd7504c500",
+							"raw": "{{url}}{{api}}/resource/c4a09fff-e795-4acb-a3df-388cb5539d1d/addCategory/028acd38-33a5-4289-b495-95e4ccf2886b",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
-								"142a2fd0-7b8b-4198-bcae-0f17b17e64de",
+								"c4a09fff-e795-4acb-a3df-388cb5539d1d",
 								"addCategory",
-								"84eb943f-c2b6-40dc-9047-72bd7504c500"
+								"028acd38-33a5-4289-b495-95e4ccf2886b"
 							],
 							"query": [
 								{
@@ -626,6 +660,42 @@
 							"path": [
 								"resource",
 								"2fa01536-6da3-45e3-8d4d-c36146ad0195"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EXPLORE RESOURCES",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"1\",\n    \"2\",\n}"
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/exploreCourses",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"exploreCourses"
 							],
 							"query": [
 								{
@@ -1020,18 +1090,18 @@
 	],
 	"variable": [
 		{
-			"id": "b6226116-d7a2-4170-9f4d-cb8920fb7e56",
+			"id": "48152cff-2636-4008-8c0e-7d723f68f477",
 			"key": "url",
 			"value": "http://xdam.pre-cloud.ximdex.net",
 			"disabled": true
 		},
 		{
-			"id": "d6a84fce-066e-41b8-8de1-9a81f82e98de",
+			"id": "79a51964-aa48-4c17-87d3-e8a25024a2b5",
 			"key": "api",
 			"value": "/api/v1"
 		},
 		{
-			"id": "edc2a2f9-5db1-42c9-b487-d270ef1a16ed",
+			"id": "db429271-6f38-4379-994a-1b40e7bda1f1",
 			"key": "url",
 			"value": "https://xdam.dev"
 		}
