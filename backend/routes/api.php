@@ -35,6 +35,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
     Route::group(['prefix' => 'resource'], function() {
         Route::get('/', [ResourceController::class, 'getAll'])->name('damResource.getAll');
         Route::get('/render/{damUrl}', [ResourceController::class, 'render'])->name('damResource.render');
+        Route::get('/{damResource}/download', [ResourceController::class, 'download'])->name('damResource.download');
         Route::get('/listTypes', [ResourceController::class, 'listTypes'])->name('damResource.listTypes');
         Route::get('/{damResource}', [ResourceController::class, 'get'])->name('damResource.get');
         Route::post('/{damResource}/update', [ResourceController::class, 'update'])->name('damResource.update');

@@ -61,10 +61,18 @@ class MediaService
         }
     }
 
-    public function addFromRequest(Model $model, $requestKey, $collection, $customProperties)
+    public function addFromRequest(Model $model, $requestKey = null, $collection, $customProperties, $files = null)
     {
         $collection = $collection ?? $this->defaultFileCollection;
-        $model->addMediaFromRequest($requestKey)->withCustomProperties($customProperties)->toMediaCollection($collection);
+        if (!empty($requestKey) && empty($files))
+        {
+            $model->addMediaFromRequest($requestKey)->withCustomProperties($customProperties)->toMediaCollection($collection);
+        }
+        if (!empty($files) && empty($requestKey))
+        {
+            $model->addMedia($files)->toMediaCollection($collection);
+        }
+        $model->save();
         $mediaList = $this->list($model, $collection);
         return !empty($mediaList) ? end($mediaList) : [];
     }

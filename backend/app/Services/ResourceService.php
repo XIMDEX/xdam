@@ -55,6 +55,17 @@ class ResourceService
         return $class;
     }
 
+    private function saveAssociatedFiles($model, $params)
+    {
+        if (array_key_exists(MediaType::File()->key, $params) && $params[MediaType::File()->key]) {
+            $this->mediaService->addFromRequest($model, null, MediaType::File()->key, ["parent_id" => $model->id], $params[MediaType::File()->key]);
+        }
+
+        if (array_key_exists(MediaType::Preview()->key, $params) && $params[MediaType::Preview()->key]) {
+            $this->mediaService->addFromRequest($model, null, MediaType::Preview()->key, ["parent_id" => $model->id], $params[MediaType::Preview()->key]);
+        }
+    }
+
     public function getAll()
     {
         return DamResource::all();
@@ -84,16 +95,9 @@ class ResourceService
             ]);
         }
 
-        if (array_key_exists("file", $params) && $params["file"]) {
-            $this->mediaService->addFromRequest($resource, "file", ["parent_id" => $resource->id]);
-        }
-
-        if (array_key_exists("preview", $params) && $params["preview"]) {
-            $this->mediaService->addFromRequest($resource, "preview", ["parent_id" => $resource->id]);
-        }
-
+        $this->saveAssociatedFiles($resource, $params);
         $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
-
+        $resource->refresh();
         return $resource;
     }
 
@@ -109,16 +113,9 @@ class ResourceService
             'type' => ResourceType::fromKey($params["type"])->value,
         ]);
 
-        if (array_key_exists(MediaType::File()->key, $params) && $params[MediaType::File()->key]) {
-            $this->mediaService->addFromRequest($newResource, MediaType::File()->key, MediaType::File()->key, ["parent_id" => $newResource->id]);
-        }
-
-        if (array_key_exists(MediaType::Preview()->key, $params) && $params[MediaType::Preview()->key]) {
-            $this->mediaService->addFromRequest($newResource, MediaType::Preview()->key, MediaType::File()->key, ["parent_id" => $newResource->id]);
-        }
-
+        $this->saveAssociatedFiles($newResource, $params);
         $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($newResource));
-
+        $newResource->refresh();
         return $newResource;
     }
 
