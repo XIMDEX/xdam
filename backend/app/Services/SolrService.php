@@ -162,7 +162,9 @@ class SolrService
         $documentsResponse = [];
 
         foreach ($allDocuments as $document) {
-            $documentsResponse[] = $document->getFields();
+            $fields = $document->getFields();
+            $fields["data"] = @json_decode($fields["data"]);
+            $documentsResponse[] = $fields;
         }
 
         /* Response with pagination data */
