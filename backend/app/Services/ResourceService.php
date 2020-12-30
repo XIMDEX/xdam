@@ -68,13 +68,17 @@ class ResourceService
 
     private function linkCategoriesFromJson($resource, $data, $type)
     {
-        if (property_exists($data, "category")) {
-            $category = Category::where("type", "=", $type)->where("name", $data->category)->first();
-            if (null != $category) {
-                $this->deleteCategoryFrom($resource, $category);
-                $this->addCategoryTo($resource, $category);
+        if(property_exists($data, "description"))
+        {
+            if (property_exists($data->description, "category")) {
+                $category = Category::where("type", "=", $type)->where("name", $data->description->category)->first();
+                if (null != $category) {
+                    $this->deleteCategoryFrom($resource, $category);
+                    $this->addCategoryTo($resource, $category);
+                }
             }
         }
+
         return null;
     }
 
