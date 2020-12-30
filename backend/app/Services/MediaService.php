@@ -70,7 +70,7 @@ class MediaService
         }
         if (!empty($files) && empty($requestKey))
         {
-            $model->addMedia($files)->toMediaCollection($collection);
+            $model->addMedia($files)->withCustomProperties($customProperties)->toMediaCollection($collection);
         }
         $model->save();
         $mediaList = $this->list($model, $collection);
