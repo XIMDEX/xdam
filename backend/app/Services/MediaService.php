@@ -29,6 +29,12 @@ class MediaService
         $this->defaultFileCollection = MediaType::File()->value;
     }
 
+    /**
+     * @param Model $model
+     * @param $collection
+     * @param false $returnModel
+     * @return array
+     */
     public function list(Model $model, $collection, $returnModel = false)
     {
         $collection = $collection ?? $this->defaultFileCollection;
@@ -47,6 +53,11 @@ class MediaService
         return $files;
     }
 
+    /**
+     * @param Media $media
+     * @return mixed
+     * @throws \Exception
+     */
     public function preview(Media $media)
     {
         $mimeType = $media->mime_type;
@@ -61,6 +72,14 @@ class MediaService
         }
     }
 
+    /**
+     * @param Model $model
+     * @param null $requestKey
+     * @param $collection
+     * @param $customProperties
+     * @param null $files
+     * @return array|mixed
+     */
     public function addFromRequest(Model $model, $requestKey = null, $collection, $customProperties, $files = null)
     {
         $collection = $collection ?? $this->defaultFileCollection;
@@ -77,12 +96,20 @@ class MediaService
         return !empty($mediaList) ? end($mediaList) : [];
     }
 
+    /**
+     * @param Model $model
+     * @return bool
+     */
     public function deleteAllMedia(Model $model): boolean
     {
         $model->clearMediaCollection($this->defaultFileCollection);
         return true;
     }
 
+    /**
+     * @param Media $media
+     * @return bool
+     */
     public function deleteOne(Media $media): boolean
     {
         return $media->delete();

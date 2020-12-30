@@ -44,6 +44,9 @@ class ResourceController extends Controller
         $this->mediaService = $mediaService;
     }
 
+    /**
+     * @return \Illuminate\Http\JsonResponse|object
+     */
     public function getAll()
     {
         $resources =  $this->resourceService->getAll();
@@ -52,6 +55,10 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    /**
+     * @param DamResource $damResource
+     * @return \Illuminate\Http\JsonResponse|object
+     */
     public function get(DamResource $damResource)
     {
         $damResource =  $this->resourceService->get($damResource);
@@ -60,6 +67,10 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    /**
+     * @param ResouceCategoriesRequest $request
+     * @return \Illuminate\Http\JsonResponse|object
+     */
     public function exploreCourses(ResouceCategoriesRequest $request)
     {
         return (new ExploreCoursesCollection($this->resourceService->exploreCourses()))
@@ -67,6 +78,11 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    /**
+     * @param DamResource $damResource
+     * @param UpdateResourceRequest $request
+     * @return \Illuminate\Http\JsonResponse|object
+     */
     public function update(DamResource $damResource, UpdateResourceRequest $request)
     {
         $resource = $this->resourceService->update($damResource, $request->all());
@@ -75,6 +91,10 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    /**
+     * @param StoreResourceRequest $request
+     * @return \Illuminate\Http\JsonResponse|object
+     */
     public function store(StoreResourceRequest $request)
     {
         $resource = $this->resourceService->store($request->all());
@@ -83,12 +103,21 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    /**
+     * @param DamResource $damResource
+     * @return \Illuminate\Http\Response
+     */
     public function delete(DamResource $damResource)
     {
         $this->resourceService->delete($damResource);
         return response(null, Response::HTTP_NO_CONTENT);
     }
 
+    /**
+     * @param DamResource $damResource
+     * @param addPreviewToResourceRequest $request
+     * @return \Illuminate\Http\JsonResponse|object
+     */
     public function addPreview(DamResource $damResource, addPreviewToResourceRequest $request)
     {
         $resource = $this->resourceService->addPreview($damResource, MediaType::Preview()->key);
@@ -97,6 +126,11 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    /**
+     * @param DamResource $damResource
+     * @param addFileToResourceRequest $request
+     * @return \Illuminate\Http\JsonResponse|object
+     */
     public function addFile(DamResource $damResource, addFileToResourceRequest $request)
     {
         $resource = $this->resourceService->addFile($damResource, MediaType::File()->key);
@@ -105,6 +139,12 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    /**
+     * @param DamResource $damResource
+     * @param Category $category
+     * @return \Illuminate\Http\JsonResponse|object
+     * @throws \Exception
+     */
     public function addCategory(DamResource $damResource, Category $category)
     {
         $resource = $this->resourceService->addCategoryTo($damResource, $category);
@@ -113,6 +153,12 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    /**
+     * @param DamResource $damResource
+     * @param Category $category
+     * @return \Illuminate\Http\JsonResponse|object
+     * @throws \Exception
+     */
     public function deleteCategory(DamResource $damResource, Category $category)
     {
         $resource = $this->resourceService->deleteCategoryFrom($damResource, $category);
@@ -121,12 +167,20 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    /**
+     * @param $damUrl
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
     public function render($damUrl)
     {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         return response()->file($this->mediaService->preview(Media::findOrFail($mediaId)));
     }
 
+    /**
+     * @param $damUrl
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
     public function download($damUrl)
     {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
@@ -134,11 +188,19 @@ class ResourceController extends Controller
         return response()->download($media->getPath(), $media->file_name);
     }
 
+    /**
+     * @return array
+     */
     public function listTypes()
     {
         return ResourceType::getKeys();
     }
 
+    /**
+     * @param DamResource $damResource
+     * @param addUseRequest $request
+     * @return \Illuminate\Http\JsonResponse|object
+     */
     public function addUse(DamResource $damResource, addUseRequest $request)
     {
         $resource = $this->resourceService->addUse($damResource, $request->all());
@@ -147,7 +209,11 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-
+    /**
+     * @param DamResource $damResource
+     * @param DamResourceUse $damResourceUse
+     * @return \Illuminate\Http\JsonResponse|object
+     */
     public function deleteUse(DamResource $damResource, DamResourceUse $damResourceUse)
     {
         $resource = $this->resourceService->deleteUse($damResource, $damResourceUse);

@@ -23,6 +23,11 @@ class CatalogueController extends Controller
         $this->catalogueService = $catalogueService;
     }
 
+    /**
+     * @param GetCatalogueRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
+     */
     public function index(GetCatalogueRequest $request)
     {
         $pageParams = [];
@@ -42,11 +47,19 @@ class CatalogueController extends Controller
         return response()->json($response);
     }
 
+    /**
+     * @param GetCatalogueRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
+     */
     public function get(GetCatalogueRequest $request)
     {
         return response()->json($this->catalogueService->exploreByType(ResourceType::fromKey($request->type)));
     }
 
+    /**
+     * @return \Illuminate\Http\Response
+     */
     public function delete()
     {
         $this->catalogueService->resetIndex();

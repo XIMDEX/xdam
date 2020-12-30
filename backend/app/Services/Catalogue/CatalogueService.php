@@ -24,18 +24,31 @@ class CatalogueService
         $this->solrService = $solrService;
     }
 
+    /**
+     * @param $pageParams
+     * @param $sortParams
+     * @param $facetsFilter
+     * @return \stdClass
+     */
     public function indexByType($pageParams, $sortParams, $facetsFilter)
     {
         return $this->solrService->paginatedQueryByFacet($pageParams, $sortParams, $facetsFilter);
     }
 
+    /**
+     * @param ResourceType $type
+     * @return array|\stdClass
+     */
     public function exploreByType(ResourceType $type)
     {
-       return $this->solrService->queryByFacet(['type' => $type->key]);
+        return $this->solrService->queryByFacet(['type' => $type->key]);
     }
 
+    /**
+     * @return \Solarium\QueryType\Update\Result
+     */
     public function resetIndex()
     {
-        $this->solrService->cleanSolr();
+        return $this->solrService->cleanSolr();
     }
 }

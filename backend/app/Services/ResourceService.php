@@ -33,6 +33,10 @@ class ResourceService
         $this->solr = $solr;
     }
 
+    /**
+     * @param DamResource $resource
+     * @return stdClass
+     */
     private function prepareResourceToBeIndexed(DamResource $resource)
     {
         $class = new stdClass();
@@ -55,6 +59,10 @@ class ResourceService
         return $class;
     }
 
+    /**
+     * @param $model
+     * @param $params
+     */
     private function saveAssociatedFiles($model, $params)
     {
         if (array_key_exists(MediaType::File()->key, $params) && $params[MediaType::File()->key]) {
@@ -66,10 +74,16 @@ class ResourceService
         }
     }
 
+    /**
+     * @param $resource
+     * @param $data
+     * @param $type
+     * @return null
+     * @throws Exception
+     */
     private function linkCategoriesFromJson($resource, $data, $type)
     {
-        if(property_exists($data, "description"))
-        {
+        if (property_exists($data, "description")) {
             if (property_exists($data->description, "category")) {
                 $category = Category::where("type", "=", $type)->where("name", $data->description->category)->first();
                 if (null != $category) {
@@ -82,21 +96,37 @@ class ResourceService
         return null;
     }
 
+    /**
+     * @return DamResource[]|\Illuminate\Database\Eloquent\Collection
+     */
     public function getAll()
     {
         return DamResource::all();
     }
 
+    /**
+     * @param DamResource $resource
+     * @return DamResource
+     */
     public function get(DamResource $resource): DamResource
     {
         return $resource;
     }
 
+    /**
+     * @return mixed
+     */
     public function exploreCourses()
     {
         return Category::where('type', ResourceType::course)->get();
     }
 
+    /**
+     * @param DamResource $resource
+     * @param $params
+     * @return DamResource
+     * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
+     */
     public function update(DamResource $resource, $params)
     {
         if (array_key_exists("type", $params) && $params["type"]) {
@@ -117,6 +147,11 @@ class ResourceService
         return $resource;
     }
 
+    /**
+     * @param $params
+     * @return DamResource
+     * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
+     */
     public function store($params): DamResource
     {
         $name = array_key_exists('name', $params) ? $params["name"] : "";
@@ -137,12 +172,21 @@ class ResourceService
         return $newResource;
     }
 
+    /**
+     * @param DamResource $resource
+     * @throws Exception
+     */
     public function delete(DamResource $resource)
     {
         $this->solr->deleteDocumentById($resource->id);
         $resource->delete();
     }
 
+    /**
+     * @param DamResource $resource
+     * @param $requestKey
+     * @return DamResource
+     */
     public function addPreview(DamResource $resource, $requestKey)
     {
         $this->mediaService->addFromRequest($resource, $requestKey, MediaType::Preview()->key, ["parent_id" => $resource->id]);
@@ -150,12 +194,23 @@ class ResourceService
         return $resource;
     }
 
+    /**
+     * @param DamResource $resource
+     * @param $requestKey
+     * @return DamResource
+     */
     public function addFile(DamResource $resource, $requestKey)
     {
         $this->mediaService->addFromRequest($resource, $requestKey, MediaType::File()->key, ["parent_id" => $resource->id]);
         return $resource;
     }
 
+    /**
+     * @param DamResource $resource
+     * @param Category $category
+     * @return DamResource
+     * @throws Exception
+     */
     public function addCategoryTo(DamResource $resource, Category $category)
     {
         if ($category->type == $resource->type) {
@@ -169,6 +224,12 @@ class ResourceService
         return $resource;
     }
 
+    /**
+     * @param DamResource $resource
+     * @param Category $category
+     * @return DamResource
+     * @throws Exception
+     */
     public function deleteCategoryFrom(DamResource $resource, Category $category)
     {
         if ($category->type == $resource->type) {
@@ -182,12 +243,23 @@ class ResourceService
         return $resource;
     }
 
+    /**
+     * @param DamResource $resource
+     * @param $params
+     * @return DamResource
+     */
     public function addUse(DamResource $resource, $params)
     {
         $resource->uses()->create($params);
         return $resource;
     }
 
+    /**
+     * @param DamResource $resource
+     * @param DamResourceUse $damResourceUse
+     * @return DamResource
+     * @throws Exception
+     */
     public function deleteUse(DamResource $resource, DamResourceUse $damResourceUse)
     {
         $resource->uses()->findOrFail($damResourceUse->id)->delete();

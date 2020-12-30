@@ -22,7 +22,7 @@ class SolrService
     /**
      * SolrService constructor.
      * @param SolariumManager $solarium
-     * @param FacetManager $facet
+     * @param FacetManager $facetManager
      */
     public function __construct(SolariumManager $solarium, FacetManager $facetManager)
     {
@@ -31,6 +31,9 @@ class SolrService
         $this->facetManager = $facetManager;
     }
 
+    /**
+     * @return bool
+     */
     public function ping()
     {
         // create a ping query
@@ -45,6 +48,10 @@ class SolrService
         }
     }
 
+    /**
+     * @param string $id
+     * @return array
+     */
     public function getDocumentById(string $id)
     {
         $select = $this->solarium->createRealtimeGet();
@@ -59,6 +66,10 @@ class SolrService
         return $document;
     }
 
+    /**
+     * @param $data
+     * @return Solarium\QueryType\Update\Result
+     */
     public function saveOrUpdateDocument($data)
     {
         $createCommand = $this->solarium->createUpdate();
@@ -74,6 +85,10 @@ class SolrService
         return $this->solarium->update($createCommand);
     }
 
+    /**
+     * @param string $id
+     * @return \Solarium\QueryType\Update\Result
+     */
     public function deleteDocumentById(string $id)
     {
         $deleteQuery = $this->solarium->createUpdate();
@@ -82,6 +97,9 @@ class SolrService
         return $this->solarium->update($deleteQuery);
     }
 
+    /**
+     * @return \Solarium\QueryType\Update\Result
+     */
     public function cleanSolr()
     {
         // get an update query instance
@@ -95,7 +113,10 @@ class SolrService
         return $this->solarium->update($update);
     }
 
-
+    /**
+     * @param $facetsFilter
+     * @return array|\stdClass
+     */
     public function queryByFacet($facetsFilter)
     {
 
@@ -127,7 +148,13 @@ class SolrService
 
     }
 
-    public function paginatedQueryByFacet($pageParams = [], $sortParams = [], $facetsFilter = nu)
+    /**
+     * @param array $pageParams
+     * @param array $sortParams
+     * @param $facetsFilter
+     * @return \stdClass
+     */
+    public function paginatedQueryByFacet($pageParams = [], $sortParams = [], $facetsFilter = null)
     {
         $search = $pageParams['search'];
         $currentPage = $pageParams['currentPage'];
