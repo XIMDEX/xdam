@@ -66,6 +66,18 @@ class ResourceService
         }
     }
 
+    private function linkCategoriesFromJson($resource, $data, $type)
+    {
+        if (property_exists($data, "category")) {
+            $category = Category::where("type", "=", $type)->where("name", $data->category)->first();
+            if (null != $category) {
+                $this->deleteCategoryFrom($resource, $category);
+                $this->addCategoryTo($resource, $category);
+            }
+        }
+        return null;
+    }
+
     public function getAll()
     {
         return DamResource::all();
@@ -93,8 +105,8 @@ class ResourceService
             $updated = $resource->update([
                 'data' => $params['data'],
             ]);
+            $this->linkCategoriesFromJson($resource, json_decode($params["data"]), $resource->type);
         }
-
         $this->saveAssociatedFiles($resource, $params);
         $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
         $resource->refresh();
@@ -107,12 +119,14 @@ class ResourceService
         if (empty($name) && array_key_exists(MediaType::File()->key, $params)) {
             $name = $params[MediaType::File()->key]->getClientOriginalName();
         }
+        $type = ResourceType::fromKey($params["type"])->value;
         $newResource = DamResource::create([
             'data' => $params['data'],
             'name' => $name,
-            'type' => ResourceType::fromKey($params["type"])->value,
+            'type' => $type,
         ]);
 
+        $this->linkCategoriesFromJson($newResource, json_decode($params["data"]), $type);
         $this->saveAssociatedFiles($newResource, $params);
         $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($newResource));
         $newResource->refresh();
