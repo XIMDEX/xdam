@@ -171,7 +171,7 @@ class SolrService
 
         /* if we have a search param, restrict the query */
         if (!empty($search)) {
-            $query->setQuery("name:*" . $search . "*");
+            $query->setQuery("data:*" . $search . "*");
         }
 
         $allDocuments = $this->solarium->select($query);
