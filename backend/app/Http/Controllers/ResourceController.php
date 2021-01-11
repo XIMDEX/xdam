@@ -10,6 +10,7 @@ use App\Http\Requests\addUseRequest;
 use App\Http\Requests\deleteUseRequest;
 use App\Http\Requests\DownloadMultipleRequest;
 use App\Http\Requests\ResouceCategoriesRequest;
+use App\Http\Requests\SetTagsRequest;
 use App\Http\Requests\StoreResourceRequest;
 use App\Http\Requests\UpdateResourceRequest;
 use App\Http\Resources\ExploreCoursesCollection;
@@ -138,6 +139,21 @@ class ResourceController extends Controller
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
+
+
+    /**
+     * @param DamResource $damResource
+     * @param SetTagsRequest $request
+     * @return \Illuminate\Http\JsonResponse|object
+     */
+    public function setTags(DamResource $damResource, setTagsRequest $request)
+    {
+        $resource = $this->resourceService->setTags($damResource, $request->json()->all()["tags"]);
+        return (new ResourceResource($resource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
 
     /**
      * @param DamResource $damResource

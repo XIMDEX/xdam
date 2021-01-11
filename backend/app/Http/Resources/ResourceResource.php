@@ -20,6 +20,7 @@ class ResourceResource extends BaseResource
             'id' => $this->id,
             'name' => $this->name,
             'type' => ResourceType::fromValue($this->type)->key,
+            'tags' => $this->tags,
             'categories' => CategoryResource::collection($this->categories),
             'data' => @json_decode($this->data) ?? [],
             'files' => MediaResource::collection($this->getMedia(MediaType::File()->key)),

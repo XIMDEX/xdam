@@ -9,6 +9,7 @@ use App\Models\DamResource;
 use App\Models\DamResourceUse;
 use App\Utils\DamUrlUtil;
 use Exception;
+use Illuminate\Support\Collection;
 use stdClass;
 
 class ResourceService
@@ -97,7 +98,7 @@ class ResourceService
     }
 
     /**
-     * @return DamResource[]|\Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function getAll()
     {
@@ -221,6 +222,17 @@ class ResourceService
             throw new Exception ("category type and resource type are not equals");
         }
         $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
+        return $resource;
+    }
+
+    /**
+     * @param DamResource $resource
+     * @param $requestKey
+     * @return DamResource
+     */
+    public function setTags(DamResource $resource, $tags = [])
+    {
+        $resource->setTags($tags);
         return $resource;
     }
 

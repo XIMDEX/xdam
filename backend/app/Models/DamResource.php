@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\ResourceType;
 use App\Traits\UsesUuid;
+use Cartalyst\Tags\TaggableTrait;
 use Conner\Tagging\Taggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class DamResource extends Model implements HasMedia
 {
-    use HasFactory, UsesUuid, Taggable, InteractsWithMedia;
+    use HasFactory, UsesUuid, TaggableTrait, InteractsWithMedia;
 
     protected $fillable = ['type', 'data', 'name'];
 
@@ -30,10 +31,6 @@ class DamResource extends Model implements HasMedia
     public function hasCategory(Category $category)
     {
         return $this->categories()->where('category_id', $category->id)->exists();
-    }
-
-    public function tags() {
-        return $this->belongsToMany(Category::class);
     }
 
     public function uses()

@@ -41,6 +41,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
         Route::post('/{damResource}/update', [ResourceController::class, 'update'])->name('damResource.update');
         Route::post('/', [ResourceController::class, 'store'])->name('damResource.store');
         Route::post('/{damResource}/addPreview', [ResourceController::class, 'addPreview'])->name('damResource.addPreview');
+        Route::post('/{damResource}/setTags', [ResourceController::class, 'setTags'])->name('damResource.setTags');
         Route::post('/{damResource}/addFile', [ResourceController::class, 'addFile'])->name('damResource.addFile');
         Route::post('/{damResource}/addCategory/{category}', [ResourceController::class, 'addCategory'])->name('damResource.addCategory');
         Route::post('/{damResource}/addUse', [ResourceController::class, 'addUse'])->name('damResource.addUse');
