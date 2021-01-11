@@ -221,8 +221,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "RESOURCES",
@@ -567,6 +566,29 @@
 					"response": []
 				},
 				{
+					"name": "SET TAGS",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tags\" : [\n        \"aprendizaje ultramatico\",\n        \"automatico\"\n    ]\n }"
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource/c3cf5f39-d83f-414d-a6e0-99a192e075a8/setTags",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"c3cf5f39-d83f-414d-a6e0-99a192e075a8",
+								"setTags"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "LIST RESOURCES",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -657,42 +679,6 @@
 							"path": [
 								"resource",
 								"2fa01536-6da3-45e3-8d4d-c36146ad0195"
-							],
-							"query": [
-								{
-									"key": "",
-									"value": null,
-									"disabled": true
-								},
-								{
-									"key": "",
-									"value": null,
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "EXPLORE RESOURCES",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"1\",\n    \"2\",\n}"
-						},
-						"url": {
-							"raw": "{{url}}{{api}}/exploreCourses",
-							"host": [
-								"{{url}}{{api}}"
-							],
-							"path": [
-								"exploreCourses"
 							],
 							"query": [
 								{
@@ -917,9 +903,65 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "DOWNLOAD",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Teacher Training",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "_method",
+									"value": "PUT",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource/@@@dam:@video@f58f128f-3b64-4cb9-95a8-c8f582d25471@eb8b8ac1-2376-4d5e-a333-0595e949bc71@@@/download",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"@@@dam:@video@f58f128f-3b64-4cb9-95a8-c8f582d25471@eb8b8ac1-2376-4d5e-a333-0595e949bc71@@@",
+								"download"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "CATALOGUE",
@@ -1003,8 +1045,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "LIST TYPES",
@@ -1061,13 +1102,48 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "EXPLORE COURSES",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"1\",\n    \"2\",\n}"
+				},
+				"url": {
+					"raw": "{{url}}{{api}}/exploreCourses",
+					"host": [
+						"{{url}}{{api}}"
+					],
+					"path": [
+						"exploreCourses"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "c087dbb5-79d3-412d-ba48-c623d99c6a0a",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1077,7 +1153,6 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "7e4e5531-2a89-4417-a05f-b5a6b4d8fde0",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1087,21 +1162,22 @@
 	],
 	"variable": [
 		{
-			"id": "fa27818b-95b8-4fc7-b71e-e570ee4b3732",
 			"key": "url",
 			"value": "http://xdam.pre-cloud.ximdex.net"
 		},
 		{
-			"id": "95e531c8-a936-4dbc-a69d-62351dcd1033",
 			"key": "api",
 			"value": "/api/v1"
 		},
 		{
-			"id": "6b1e0a44-924e-49ac-8f24-971dbd6cfb72",
 			"key": "url",
 			"value": "https://xdam.dev",
 			"disabled": true
+		},
+		{
+			"key": "url",
+			"value": "http://localhost/xdam/backend/public",
+			"disabled": true
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }
