@@ -67,11 +67,23 @@ class ResourceService
     private function saveAssociatedFiles($model, $params)
     {
         if (array_key_exists(MediaType::File()->key, $params) && $params[MediaType::File()->key]) {
-            $this->mediaService->addFromRequest($model, null, MediaType::File()->key, ["parent_id" => $model->id], $params[MediaType::File()->key]);
+            $this->mediaService->addFromRequest(
+                $model,
+                null,
+                MediaType::File()->key,
+                ["parent_id" => $model->id],
+                $params[MediaType::File()->key]
+            );
         }
 
         if (array_key_exists(MediaType::Preview()->key, $params) && $params[MediaType::Preview()->key]) {
-            $this->mediaService->addFromRequest($model, null, MediaType::Preview()->key, ["parent_id" => $model->id], $params[MediaType::Preview()->key]);
+            $this->mediaService->addFromRequest(
+                $model,
+                null,
+                MediaType::Preview()->key,
+                ["parent_id" => $model->id],
+                $params[MediaType::Preview()->key]
+            );
         }
     }
 
@@ -84,7 +96,7 @@ class ResourceService
      */
     private function linkCategoriesFromJson($resource, $data, $type)
     {
-        if (property_exists($data, "description")) {
+        if ($data && property_exists($data, "description")) {
             if (property_exists($data->description, "category")) {
                 $category = Category::where("type", "=", $type)->where("name", $data->description->category)->first();
                 if (null != $category) {
@@ -94,6 +106,23 @@ class ResourceService
             }
         }
 
+        return null;
+    }
+
+
+    /**
+     * @param $resource
+     * @param $data
+     * @return null
+     * @throws Exception
+     */
+    private function linkTagsFromJson($resource, $data)
+    {
+        if ($data && property_exists($data, "description")) {
+            if (property_exists($data->description, "tags")) {
+                $this->setTags($resource, $data->description->tags);
+            }
+        }
         return null;
     }
 
@@ -131,20 +160,26 @@ class ResourceService
     public function update(DamResource $resource, $params)
     {
         if (array_key_exists("type", $params) && $params["type"]) {
-            $updated = $resource->update([
-                'type' => ResourceType::fromKey($params["type"])->value,
-            ]);
+            $updated = $resource->update(
+                [
+                    'type' => ResourceType::fromKey($params["type"])->value,
+                ]
+            );
         }
 
         if (array_key_exists("data", $params) && $params["data"]) {
-            $updated = $resource->update([
-                'data' => $params['data'],
-            ]);
-            $this->linkCategoriesFromJson($resource, json_decode($params["data"]), $resource->type);
+            $updated = $resource->update(
+                [
+                    'data' => $params['data'],
+                ]
+            );
+            $dataJson = json_decode($params["data"]);
+            $this->linkCategoriesFromJson($resource, $dataJson, $resource->type);
         }
         $this->saveAssociatedFiles($resource, $params);
         $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
         $resource->refresh();
+        $this->linkTagsFromJson($resource, $dataJson);
         return $resource;
     }
 
@@ -160,16 +195,19 @@ class ResourceService
             $name = $params[MediaType::File()->key]->getClientOriginalName();
         }
         $type = ResourceType::fromKey($params["type"])->value;
-        $newResource = DamResource::create([
-            'data' => $params['data'],
-            'name' => $name,
-            'type' => $type,
-        ]);
-
-        $this->linkCategoriesFromJson($newResource, json_decode($params["data"]), $type);
+        $newResource = DamResource::create(
+            [
+                'data' => $params['data'],
+                'name' => $name,
+                'type' => $type,
+            ]
+        );
+        $jsonData = json_decode($params["data"]);
+        $this->linkCategoriesFromJson($newResource, $jsonData, $type);
         $this->saveAssociatedFiles($newResource, $params);
         $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($newResource));
         $newResource->refresh();
+        $this->linkTagsFromJson($newResource, $jsonData);
         return $newResource;
     }
 
@@ -190,7 +228,12 @@ class ResourceService
      */
     public function addPreview(DamResource $resource, $requestKey)
     {
-        $this->mediaService->addFromRequest($resource, $requestKey, MediaType::Preview()->key, ["parent_id" => $resource->id]);
+        $this->mediaService->addFromRequest(
+            $resource,
+            $requestKey,
+            MediaType::Preview()->key,
+            ["parent_id" => $resource->id]
+        );
         $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
         return $resource;
     }
@@ -202,7 +245,12 @@ class ResourceService
      */
     public function addFile(DamResource $resource, $requestKey)
     {
-        $this->mediaService->addFromRequest($resource, $requestKey, MediaType::File()->key, ["parent_id" => $resource->id]);
+        $this->mediaService->addFromRequest(
+            $resource,
+            $requestKey,
+            MediaType::File()->key,
+            ["parent_id" => $resource->id]
+        );
         return $resource;
     }
 
