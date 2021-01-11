@@ -4,8 +4,9 @@
 namespace App\Traits;
 
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 trait RestExceptionHandlerTrait
 {
@@ -19,9 +20,12 @@ trait RestExceptionHandlerTrait
      */
     protected function getJsonResponseForException(Request $request, \Throwable $e)
     {
-        switch(true) {
+        switch (true) {
             case $this->isModelNotFoundException($e):
                 $retval = $this->modelNotFound($e->getMessage());
+                break;
+            case $this->isValidationException($e):
+                $retval = $this->validationError($e->validator->getMessageBag());
                 break;
             default:
                 $retval = $this->badRequest($e->getMessage());
@@ -37,7 +41,20 @@ trait RestExceptionHandlerTrait
      * @param int $statusCode
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function badRequest($message='Bad request', $statusCode=400)
+    protected function badRequest($message = 'Bad request', $statusCode = 400)
+    {
+        return $this->jsonResponse(['error' => $message], $statusCode);
+    }
+
+
+    /**
+     * Returns json response for validation error in request.
+     *
+     * @param string $message
+     * @param int $statusCode
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function validationError($message = 'Bad request', $statusCode = 422)
     {
         return $this->jsonResponse(['error' => $message], $statusCode);
     }
@@ -49,7 +66,7 @@ trait RestExceptionHandlerTrait
      * @param int $statusCode
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function modelNotFound($message='Record not found', $statusCode=404)
+    protected function modelNotFound($message = 'Record not found', $statusCode = 404)
     {
         return $this->jsonResponse(['error' => $message], $statusCode);
     }
@@ -61,7 +78,7 @@ trait RestExceptionHandlerTrait
      * @param int $statusCode
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function jsonResponse(array $payload=null, $statusCode=404)
+    protected function jsonResponse(array $payload = null, $statusCode = 404)
     {
         $payload = $payload ?: [];
 
@@ -74,9 +91,18 @@ trait RestExceptionHandlerTrait
      * @param Exception $e
      * @return bool
      */
-    protected function isModelNotFoundException($e)
+    protected function isModelNotFoundException($e): bool
     {
         return $e instanceof ModelNotFoundException;
     }
 
+    /**
+     * Determines if the given exception is a Validation Exception
+     * @param $e
+     * @return bool
+     */
+    protected function isValidationException($e): bool
+    {
+        return $e instanceof ValidationException;
+    }
 }
