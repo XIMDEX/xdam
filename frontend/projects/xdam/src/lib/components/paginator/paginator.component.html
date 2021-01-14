@@ -20,12 +20,6 @@
     </ng-container>
 </div>
 <div class="limit">
-    <ng-select
-        *ngIf="hasLimit && perPage"
-        class="dam-select"
-        (change)="updateLimit($event)"
-        [(ngModel)]="perPage.value"
-        [items]="perPage.items"
-        [clearable]="false"
-    ></ng-select>
+    <ng-select *ngIf="hasLimit && perPage" class="dam-select" (change)="updateLimit($event)" [(ngModel)]="perPage.value"
+        [items]="perPage.items" [clearable]="false"></ng-select>
 </div>

@@ -1,5 +1,5 @@
 {
-    "baseUrl": "http://xdam.com.devel",
+    "baseUrl": "http://localhost/xdam/backend/public",
     "api": "/api/v1",
     "options": {
         "headers": {
@@ -23,7 +23,7 @@
                 "method": "GET"
             },
             "index": {
-                "uri": "/catalogue/course/index",
+                "uri": "/catalogue/%1$s/index",
                 "method": "GET",
                 "params": {
                     "page": "1",
@@ -50,7 +50,6 @@
                 "uri": "/resource/%(id)s",
                 "method": "DELETE"
             }
-
         },
         "tag": {}
     }

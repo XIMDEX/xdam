@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import SettingsMapper from '../mappers/SettingsMapper';
 import EndPointMapper from '../mappers/EndPointMapper';
+import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
 
 /**
  * Service who acts as a global state for the application.
@@ -72,9 +73,21 @@ export class MainService {
      * @param params The parameters
      * @returns {Observable} The response of getResources
      */
-    list(params: HttpParams = null) {
-        return this.getResources(params);
+    list(xdamMode: XdamMode ,params: HttpParams = null) {
+        let recourse = 'course'
+        switch(xdamMode){
+            case XdamMode.Course:
+                recourse = 'course';
+                break
+            case XdamMode.Multimedia:
+                recourse = 'video';
+                break
+        }
+
+
+        return this.getResources(recourse, params);
     }
+
 
     /**
      * Builds a query and fetchs data from the API.
@@ -100,8 +113,8 @@ export class MainService {
      * @param {Object} params The parameters dict for the query
      * @returns {Observable} The response as a observable
      */
-    getResources(params: HttpParams = null) {
-        const url = this.router.getEndPointUrl('catalogue', 'index');
+    getResources(type ="course", params: HttpParams = null) {
+        const url = this.router.getEndPointUrlString('catalogue', 'index', type);
         params = this.router.getBaseParams();
         this.httpOptions.params = params;
         return this.http.get(url, this.httpOptions);

@@ -1,15 +1,8 @@
-<swal
-    #swalModal
-    identifier="swalModal"
-    [customClass]="swalCustomClass"
-    [showCancelButton]="false"
-    [showConfirmButton]="false"
-    [title]="true"
-    (close)="closeForm()"
->
-    <ng-container *swalPartial="swalTargets.title">
+<swal #swalModal identifier="swalModal" [customClass]="swalCustomClass" [showCancelButton]="false"
+    [showConfirmButton]="false" [title]="false" (close)="closeForm()">
+    <!--<ng-container *swalPartial="swalTargets.title">
         <div class="form-title">{{title}}</div>
-    </ng-container>
+    </ng-container>-->
 
     <ng-container *swalPartial="swalTargets.content">
 
@@ -17,28 +10,19 @@
             <div [ngSwitch]="action.item.type">
 
                 <div *ngSwitchCase="'course'">
-                    <xdam-modal-course
-                        [action]="action"
-                        [modal]="modal"
-                        (dataToSave)="sendForm($event)"
-                    ></xdam-modal-course>
+                    <xdam-modal-course [action]="action" [modal]="modal" (dataToSave)="sendForm($event)">
+                    </xdam-modal-course>
                 </div>
 
                 <div *ngSwitchCase="'image'">
-                    <xdam-modal-image
-                        [modal]="modal"
-                    ></xdam-modal-image>
+                    <xdam-modal-image [modal]="modal"></xdam-modal-image>
                 </div>
 
             </div>
         </div>
 
         <ng-template #newAsset>
-            <xdam-modal-course
-                [action]="action"
-                [modal]="modal"
-                (dataToSave)="sendForm($event)"
-            ></xdam-modal-course>
+            <xdam-modal-course [action]="action" [modal]="modal" (dataToSave)="sendForm($event)"></xdam-modal-course>
         </ng-template>
 
     </ng-container>

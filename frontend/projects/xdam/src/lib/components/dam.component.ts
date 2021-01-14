@@ -23,6 +23,8 @@ import { SearchComponent } from './search/search.component';
 import { SearchModel } from '../../models/src/lib/SearchModel';
 import { SearchOptionsI } from './../../models/src/lib/interfaces/SearchModel.interface';
 import { XDamSettings } from '../../models/src/lib/XDamSettings';
+import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
+import { GlobalService } from '../services/global.service';
 
 /**
  * Entry point component for the application, is the component in charge of the
@@ -38,6 +40,8 @@ export class DamComponent implements OnInit, OnChanges {
     @Input() settings: XDamSettings;
     @Input() action: ActionModel;
     @Input() reset: boolean;
+    @Input() mode: XdamMode;
+    
 
     @Output() onSearch = new EventEmitter<any>();
     @Output() onDelete = new EventEmitter<Item>();
@@ -45,6 +49,8 @@ export class DamComponent implements OnInit, OnChanges {
     @Output() onSave = new EventEmitter<any>();
     @Output() onAction = new EventEmitter<ActionModel>();
     @Output() onLogout = new EventEmitter<boolean>();
+    @Output() onXdamChangeMode = new EventEmitter<XdamMode>();
+
 
     @ViewChild('search') searchComponent: SearchComponent;
     @ViewChildren('paginator') paginatorComponent: PaginatorComponent[];
@@ -65,7 +71,7 @@ export class DamComponent implements OnInit, OnChanges {
     actionModel: ActionModel | null;
     displayForm = false;
 
-    constructor() {}
+    constructor(private globalService_: GlobalService) {}
 
     /**@ignore */
     ngOnInit() {
@@ -78,6 +84,13 @@ export class DamComponent implements OnInit, OnChanges {
         if (!isNil(this.items) && hasIn('pager', this.items) && !isNil(this.items.pager)) {
             this.preparePager();
         }
+
+        this.globalService_.modeChange.subscribe((newMode: XdamMode)=>{
+            this.loading = true
+            this.onXdamChangeMode.emit(newMode);
+
+        });
+
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -94,6 +107,10 @@ export class DamComponent implements OnInit, OnChanges {
             this.searchComponent.resetSearch();
             this.paginatorComponent.forEach(paginator => paginator.reset());
             this.facetsComponent.reset();
+        }
+
+        if(hasIn('mode', changes) && !changes.mode.isFirstChange()){
+            console.log("Modo cambiado a ", this.mode)
         }
     }
 

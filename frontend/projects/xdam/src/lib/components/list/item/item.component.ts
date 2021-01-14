@@ -2,10 +2,13 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ListItemActionsI, ListItemOptionI } from './../../../../models/src/lib/interfaces/ListOptions.interface';
 import { faDownload, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
+
 import { Item } from '../../../../models/src/lib/Item';
 import { SweetAlertOptions } from 'sweetalert2';
 import { hasIn } from 'ramda';
 import { sprintf } from 'sprintf-js';
+
+const CAN_BE_DOWNLOADED:string[] = ["video"];
 
 @Component({
     selector: 'xdam-item',
@@ -25,6 +28,9 @@ export class ItemComponent {
     @Output() download = new EventEmitter<Item>();
     @Output() edit = new EventEmitter<Item>();
     @Output() select = new EventEmitter<Item>();
+
+    
+
 
     constructor() {}
 
@@ -48,6 +54,16 @@ export class ItemComponent {
         return this.settings.actions;
     }
 
+    get canBeDownloaded():boolean{
+        for(let i = 0 ; i < this.item.type.length; i++){
+            let type = this.item.type[i].toLowerCase();
+            if(CAN_BE_DOWNLOADED.includes(type)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     get deleteModal(): SweetAlertOptions {
         return {
             title: 'Confirm Deletion',
@@ -61,7 +77,7 @@ export class ItemComponent {
             focusConfirm: false
         };
     }
-
+    
     imgError() {
         // let image = null;
         // if (hasIn(this.item.type.toLowerCase(), this.settings.placeholder)) {
@@ -75,7 +91,7 @@ export class ItemComponent {
 
     editItem(evt: Event) {
         evt.stopPropagation();
-
+        console.log(this.item)
         this.edit.emit(this.item);
     }
 

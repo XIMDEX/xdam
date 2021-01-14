@@ -2,9 +2,11 @@
     [settings]="settings"
     [items]="items"
     [action]="action"
+    [mode]="xdamMode"
     (onSearch)="sendSearch($event)"
     (onDelete)="deleteItem($event)"
     (onDownload)="downloadItem($event)"
     (onAction)="damAction($event)"
     (onLogout)="logout()"
+    (onXdamChangeMode)="changeMode($event)"
 ></xdam-main>

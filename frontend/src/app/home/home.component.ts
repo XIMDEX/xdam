@@ -14,6 +14,7 @@ import { XDamSettingsInterface } from '@xdam/models/interfaces/Settings.interfac
 import { JwtHelperService } from '../services/jwt-helper.service';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
 
 @Component({
     selector: 'app-home',
@@ -63,6 +64,13 @@ export class HomeComponent implements OnInit {
     action: ActionModel | null = null;
 
     reset = false;
+    /**
+     * 
+     */
+    xdamMode: XdamMode
+    /**
+     * 
+     */
 
     private pagerSchema: PagerModelSchema = {
         total: 'total',
@@ -98,12 +106,17 @@ export class HomeComponent implements OnInit {
     ngOnInit() {
         this.settings = this.mainService.getGeneralConfigs();
         this.search = new SearchModel();
-
+        
         this.page = 'page';
         this.searchTerm = 'search';
         this.limit = 'limit';
 
+        //We start the application in Course mode
+        this.xdamMode = XdamMode.Course;
+
         this.sendSearch(this.search);
+
+        
     }
 
     /**
@@ -125,9 +138,19 @@ export class HomeComponent implements OnInit {
         params = params.append('default', this.default ? '1' : '0');
         params = params.append(this.limit, String(this.search.limit));
 
-        this.mainService.list(params).subscribe(
+        this.mainService.list(this.xdamMode ,params).subscribe(
             response => {
-                const { pager } = response as any;
+                const {total, current_page, last_page, next_page, prev_page, per_page} = response as any; 
+
+                const pager:any = {
+                    total,
+                    currentPage: current_page,
+                    lastPage: last_page,
+                    nextPage:next_page,
+                    prevPage: prev_page,
+                    perPage: per_page
+                }
+
                 this.items = {
                     data: response['data'],
                     pager: new Pager(pager, this.pagerSchema),
@@ -248,6 +271,11 @@ export class HomeComponent implements OnInit {
                 localStorage.removeItem('access_token');
                 this.router.navigate(['/login']);
             });
+    }
+
+    changeMode(newMode:XdamMode){
+        this.xdamMode = newMode;
+        this.getItems();
     }
 
 }

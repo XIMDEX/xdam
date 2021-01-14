@@ -1,9 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { faEraser, faSearch, faSync, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
 import { hasIn, isEmpty, isNil } from 'ramda';
 
 import { ActionModel } from '../../../models/src/lib/ActionModel';
 import { SearchModel } from '../../../models/src/lib/SearchModel';
+import { GlobalService } from '../../services/global.service';
 import { SearchOptionsI } from './../../../models/src/lib/interfaces/SearchModel.interface';
 
 @Component({
@@ -32,7 +34,16 @@ export class SearchComponent implements OnInit {
     content: string;
     lastContent: string;
 
-    constructor() {}
+    modes = [
+        {value: XdamMode.Course, label: "Curso"},
+        {value: XdamMode.Multimedia, label: "Multimedia" }
+    ];
+
+    selecMode: any;
+
+    constructor(
+        private globalService_ : GlobalService
+    ) {}
 
     ngOnInit() {}
 
@@ -81,5 +92,9 @@ export class SearchComponent implements OnInit {
         const action = new ActionModel();
         action.method = 'new';
         return this.action.emit(action);
+    }
+
+    onChangeMode({value}){
+        this.globalService_.setMode(value);
     }
 }

@@ -30,6 +30,7 @@ import { MetadataComponent } from './components/forms/metadata/metadata.componen
 import { ModalCourseComponent } from './components/forms/modal-course/modal-course.component';
 import { ModalImageComponent } from './components/forms/modal-image/modal-image.component';
 import { FormCourseComponent } from './components/forms/modal-course/form-course/form-course.component';
+import { GlobalService } from './services/global.service';
 
 @NgModule({
     imports: [
@@ -50,7 +51,9 @@ import { FormCourseComponent } from './components/forms/modal-course/form-course
         TabsModule.forRoot(),
         // NgbModule
     ],
-    providers: [],
+    providers: [
+        GlobalService
+    ],
     declarations: [
         DamComponent,
         SearchComponent,

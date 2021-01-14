@@ -12,7 +12,7 @@
         <button *ngIf="actions.edit" class="xdam-btn-base group" title="Edit" (click)="editItem($event)">
             <fa-icon [icon]="faEdit"></fa-icon>
         </button>
-        <button *ngIf="actions.download" class="xdam-btn-base group" title="Download" (click)="downloadItem($event)">
+        <button *ngIf="actions.download && canBeDownloaded" class="xdam-btn-base group" title="Download" (click)="downloadItem($event)">
             <fa-icon [icon]="faDownload"></fa-icon>
         </button>
         <button

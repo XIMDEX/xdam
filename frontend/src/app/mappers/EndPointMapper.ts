@@ -52,13 +52,29 @@ export default class EndPointMapper {
      * @param item
      * @return url
      */
-    public getEndPointUrl(model: string = null, action: string = null, item: Item = null): string {
+    public getEndPointUrl(model: string = null, action: string = null, item: Item = null ): string {
         if (isNil(model) || isNil(action)) {
             throw new Error('Model and Action can not be null');
         }
         if (this.endpoints.hasOwnProperty(model) && this.endpoints[model].hasOwnProperty(action)) {
             let url = this.baseUrl.concat(this.api.concat(this.endpoints[model][action].uri));
             if (!isNil(item)) {
+                url = sprintf(url, item);
+            }
+            return url;
+        } else {
+            throw new Error('Endpoint have not Model or Model have not Action');
+        }
+    }
+
+    public getEndPointUrlString(model: string = null, action: string = null, item: String = null ): string {
+        if (isNil(model) || isNil(action)) {
+            throw new Error('Model and Action can not be null');
+        }
+        if (this.endpoints.hasOwnProperty(model) && this.endpoints[model].hasOwnProperty(action)) {
+            let url = this.baseUrl.concat(this.api.concat(this.endpoints[model][action].uri));
+            if (!isNil(item)) {
+                console.log(url, item)
                 url = sprintf(url, item);
             }
             return url;

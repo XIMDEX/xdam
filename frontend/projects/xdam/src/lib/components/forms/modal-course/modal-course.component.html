@@ -1,28 +1,27 @@
 <form #resourceForm="ngForm" [formGroup]="courseForm" (ngSubmit)="sendForm()">
-
+    
     <div class="form-actions">
-        <button (click)="modal.close()" class="xdam-btn-base red">
+        
+        <button (click)="modal.close()" class="xdam-btn-base group">
             <fa-icon [icon]="faTimes"></fa-icon>
             Cancel
         </button>
-        <button
-            type="submit"
-            class="xdam-btn-base"
-            [disabled]="!courseForm.valid &&
+        <button type="submit" class="xdam-btn-base group" [disabled]="!courseForm.valid &&
                 (courseForm.controls.dataForm.dirty || courseForm.controls.metadataForm.dirty)">
             <fa-icon [icon]="faSave"></fa-icon>
-            Save
+            Save & Update
         </button>
+        
     </div>
+    
+    <xdam-form-course [action]="action" formControlName="dataForm"></xdam-form-course>
+    
 
-    <xdam-form-course
-        [action]="action"
-        formControlName="dataForm"
-    ></xdam-form-course>
-
-    <xdam-metadata
+    <!--<xdam-metadata
         [action]="action"
         formControlName="metadataForm"
-    ></xdam-metadata>
+    ></xdam-metadata>-->
+
+    
 
 </form>

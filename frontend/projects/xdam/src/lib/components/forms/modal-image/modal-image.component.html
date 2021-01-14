@@ -1,17 +1,14 @@
-<form [formGroup] ="formImage" (ngSubmit) = "onSubmit()">
+<form [formGroup]="formImage" (ngSubmit)="onSubmit()">
     <div class="form-actions">
         <button (click)="modal.close()" class="xdam-btn-base red">
             <fa-icon [icon]="faTimes"></fa-icon>
             Cancel
         </button>
-        <button type="submit"  class="xdam-btn-base">
+        <button type="submit" class="xdam-btn-base">
             <fa-icon [icon]="faSave"></fa-icon>
             Save
         </button>
     </div>
     <!--add course information -->
-    <xdam-metadata
-        [action]="action"
-        formControlName="metadataForm"
-    ></xdam-metadata>
+    <xdam-metadata [action]="action" formControlName="metadataForm"></xdam-metadata>
 </form>
