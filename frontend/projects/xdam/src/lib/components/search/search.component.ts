@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { faEraser, faSearch, faSync, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
 import { hasIn, isEmpty, isNil } from 'ramda';
@@ -33,10 +33,11 @@ export class SearchComponent implements OnInit {
 
     content: string;
     lastContent: string;
+    currentMode: XdamMode = XdamMode.Multimedia;
 
     modes = [
+        {value: XdamMode.Multimedia, label: "Multimedia" },
         {value: XdamMode.Course, label: "Curso"},
-        {value: XdamMode.Multimedia, label: "Multimedia" }
     ];
 
     selecMode: any;
@@ -45,7 +46,8 @@ export class SearchComponent implements OnInit {
         private globalService_ : GlobalService
     ) {}
 
-    ngOnInit() {}
+    ngOnInit() {
+    }
 
     get input() {
         let result = null;

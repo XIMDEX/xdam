@@ -8,7 +8,7 @@
             {{ title }}
         </div>
     </div>
-    <div class="dam-item-actions" *ngIf="actions">
+    <div class="dam-item-actions " *ngIf="actions">
         <button *ngIf="actions.edit" class="xdam-btn-base group" title="Edit" (click)="editItem($event)">
             <fa-icon [icon]="faEdit"></fa-icon>
         </button>

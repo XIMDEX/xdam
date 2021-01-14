@@ -40,7 +40,7 @@ export class DamComponent implements OnInit, OnChanges {
     @Input() settings: XDamSettings;
     @Input() action: ActionModel;
     @Input() reset: boolean;
-    @Input() mode: XdamMode;
+    @Input() xdamMode: XdamMode;
     
 
     @Output() onSearch = new EventEmitter<any>();
@@ -109,8 +109,8 @@ export class DamComponent implements OnInit, OnChanges {
             this.facetsComponent.reset();
         }
 
-        if(hasIn('mode', changes) && !changes.mode.isFirstChange()){
-            console.log("Modo cambiado a ", this.mode)
+        if (hasIn('xdamMode', changes)){
+            this.searchComponent.currentMode = this.xdamMode;
         }
     }
 

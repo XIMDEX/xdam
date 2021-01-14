@@ -7,7 +7,7 @@ return [
     'connections' => [
         'main' => [
             'timeout' => env('SOLR_TIMEOUT', 60),
-            'host' => env('SOLR_HOST', 'localhost'),
+            'host' => env('SOLR_HOST', 'myubuntuserver.com.devel'),
             'port' => env('SOLR_PORT', '8983'),
             'path' => env('SOLR_PATH', '/'),
 

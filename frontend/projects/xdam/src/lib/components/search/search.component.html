@@ -1,7 +1,7 @@
 <div class="search-bar shadow-panel">
     <div class="search-input" *ngIf="input">
         <select id="type" (change)="onChangeMode(selectMode)"
-             #selectMode class="select-group">  
+             #selectMode class="select-group" [(ngModel)]='currentMode'>  
             <option *ngFor="let mode of this.modes" [value]="mode.value">{{mode.label}} </option>
         </select>
         <input type="text" ref="inputSearch" [(ngModel)]="content" (keyup.enter)="updateSearch()" />
@@ -11,11 +11,6 @@
         <button class="xdam-btn-base group btn-tool" *ngIf="input.reset" (click)="resetSearch()">
             <fa-icon [icon]="faEraser"></fa-icon>
         </button>
-    </div>
-    <div class="search-mode">
-        <ng-container >
-            
-        </ng-container>
     </div>
     <div class="search-actions" *ngIf="actions">
         <button (click)="sendAction()" *ngIf="actions.newAsset" class="xdam-btn-base btn-filters">

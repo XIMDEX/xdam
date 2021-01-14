@@ -1,2 +1,2 @@
-export enum XdamMode {Course = 'couse' ,  Multimedia = 'multimedia'};
+export enum XdamMode {Course = 'course' ,  Multimedia = 'multimedia'};
 

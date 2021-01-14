@@ -13,7 +13,7 @@ import { XDamSettingsInterface } from '@xdam/models/interfaces/Settings.interfac
 
 import { JwtHelperService } from '../services/jwt-helper.service';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
 
 @Component({
@@ -93,6 +93,7 @@ export class HomeComponent implements OnInit {
         jwtHelper: JwtHelperService,
         private authService: AuthService,
         private router: Router,
+        private activatedRoute: ActivatedRoute,
         private mainService: MainService
     ) {
         this.accessToken = localStorage.getItem('access_token');
@@ -114,8 +115,12 @@ export class HomeComponent implements OnInit {
         //We start the application in Course mode
         this.xdamMode = XdamMode.Course;
 
-        this.sendSearch(this.search);
+        //this.sendSearch(this.search);
 
+        this.activatedRoute.data.subscribe(data => {
+            this.xdamMode=data.mode;
+            this.sendSearch(this.search);
+        })
         
     }
 
@@ -274,8 +279,8 @@ export class HomeComponent implements OnInit {
     }
 
     changeMode(newMode:XdamMode){
-        this.xdamMode = newMode;
-        this.getItems();
+        if(newMode === this.xdamMode) return;
+        this.router.navigate( ['/'+ newMode])
     }
 
 }
