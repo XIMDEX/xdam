@@ -12,6 +12,7 @@ import {
 import {ActionModel} from '../../../../../models/src/lib/ActionModel';
 import {isNil} from 'ramda';
 import {isArray} from 'util';
+import { faDownload, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'xdam-form-course',
@@ -31,6 +32,7 @@ import {isArray} from 'util';
 ]
 })
 export class FormCourseComponent implements OnInit, ControlValueAccessor {
+  faDownload = faDownload;
   @Input() action: ActionModel;
 
   public formMetadata: FormGroup = new FormGroup({});
@@ -38,6 +40,7 @@ export class FormCourseComponent implements OnInit, ControlValueAccessor {
   new: boolean;
   show: boolean;
   preview = window.origin + '/assets/default_item_image.jpg';
+
 
   constructor() {}
 
@@ -98,6 +101,10 @@ export class FormCourseComponent implements OnInit, ControlValueAccessor {
 
   validate(c: AbstractControl): ValidationErrors | null {
       return this.formMetadata.valid ? null : {invalidForm: {valid: false, message: 'Metadata fields are invalid'}};
+  }
+
+  downloadImage(){
+    //downloadUrl('https://s1.1zoom.me/big3/471/Painting_Art_Back_view_Photographer_575380_3840x2400.jpg', 'image.png');
   }
 
 }

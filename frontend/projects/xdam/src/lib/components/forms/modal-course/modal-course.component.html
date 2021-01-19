@@ -1,5 +1,7 @@
 <form #resourceForm="ngForm" [formGroup]="courseForm" (ngSubmit)="sendForm()">
-    
+
+    <xdam-form-course [action]="action" formControlName="dataForm"></xdam-form-course>
+
     <div class="form-actions">
         
         <button (click)="modal.close()" class="xdam-btn-base group">
@@ -13,9 +15,6 @@
         </button>
         
     </div>
-    
-    <xdam-form-course [action]="action" formControlName="dataForm"></xdam-form-course>
-    
 
     <!--<xdam-metadata
         [action]="action"

@@ -41,7 +41,8 @@ export const standard: XDamSettingsInterface = {
                 audio: 'https://via.placeholder.com/200/ef680e/ffffff?text=Audio',
                 video: 'https://via.placeholder.com/200/af8282/ffffff?text=Video',
                 pdf: 'https://via.placeholder.com/200/5273a8/ffffff?text=pdf',
-                default: 'https://via.placeholder.com/200/5ab1c9/ffffff?text=Other'
+                default: 'https://via.placeholder.com/200/5ab1c9/ffffff?text=Other',
+                course: 'https://via.placeholder.com/200/8c4966/ffffff?text=Course'
             },
             actions: {
                 edit: true,

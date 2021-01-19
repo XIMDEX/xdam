@@ -91,7 +91,6 @@ export class ItemComponent {
 
     editItem(evt: Event) {
         evt.stopPropagation();
-        console.log(this.item)
         this.edit.emit(this.item);
     }
 

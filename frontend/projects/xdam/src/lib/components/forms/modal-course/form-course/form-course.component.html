@@ -2,9 +2,7 @@
 
     <aside class="item-form-general">
 
-        <div class="item-form-group data">
-
-            <div class="title">Information</div>
+        <div class="item-form-group media">
 
             <div class="fields column">
 
@@ -12,25 +10,48 @@
                     <img src="{{preview}}" />
                 </div>
 
-                <div class="field-item">
+                <!--<div class="field-item">
                     <label for="files">Preview</label>
                     <input type="file" id="files" formControlName="files" />
+                </div>-->
+                <label class="field-item">
+                    <label for="files">NEW FILE</label>
+                    <input type="file" id="files" class="custom-file-input" />
+                </label>
+                <div class="field-item">
+                    <label for="thumb">THUMBNAIL SMALL</label>
+                    <div class="thumb" id="thumb">
+                        <p>https://estoEsUnaPruebaestoEsUnaPruebaestoEsUnaPruebaestoEsUnaPrueba.com</p>
+                        <button class="xdam-btn-base"><fa-icon [icon]="faDownload"></fa-icon> DOWNLOAD</button>
+                    </div>
+                    
+                </div>
+                <div class="field-item">
+                    <label for="thumb">THUMBNAIL SMALL</label>
+                    <div class="thumb" id="thumb">
+                        <p>https://estoEsUnaPrueba.com</p>
+                        <button class="xdam-btn-base"><fa-icon [icon]="faDownload"></fa-icon> DOWNLOAD</button>
+                    </div>
+                    
+                </div>
+                <div class="field-item">
+                    <label for="thumb">THUMBNAIL SMALL</label>
+                    <div class="thumb" id="thumb">
+                        <p>https://estoEsUnaPrueba.com</p>
+                        <button class="xdam-btn-base"><fa-icon [icon]="faDownload"></fa-icon> DOWNLOAD</button>
+                    </div>
+                    
+                </div>
+                <div class="field-item">
+                    <label for="thumb">THUMBNAIL SMALL</label>
+                    <div class="thumb" id="thumb">
+                        <p>https://estoEsUnaPrueba.com</p>
+                        <button class="xdam-btn-base"><fa-icon [icon]="faDownload"></fa-icon> DOWNLOAD</button>
+                    </div>
+                    
                 </div>
 
-                <div class="field-item">
-                    <label for="type">Seleccione un tipo</label>
-                    <select id="type" formControlName="type">
-                        <option value=""></option>
-                        <option value="document">Documento</option>
-                        <option value="video">Video</option>
-                        <option value="image">Imagen</option>
-                        <option value="audio">Audio</option>
-                        <option value="url">URL</option>
-                        <option value="course">Course</option>
-                    </select>
-                </div>
-
-                <div class="field-item">
+                <!--<div class="field-item">
                     <label>Activo</label>
                     <div>
                         <input type="radio" value="true" formControlName="active" />
@@ -38,18 +59,16 @@
                         <input type="radio" value="false" formControlName="active" />
                         <span>No</span>
                     </div>
-                </div>
+                </div>-->
 
             </div>
         </div>
         <div class="item-form-group data">
-
-            <div class="title">Meta Data</div>
+            <p class="title-data-info">Information</p>
 
             <div class="fields column">
-
                 <div class="field-item">
-                    <label for="name">Nombre</label>
+                    <label for="name">Name</label>
                     <input type="text" id="name" formControlName="name"/>
                 </div>
 
