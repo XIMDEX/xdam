@@ -57,13 +57,11 @@ export class ActionModel extends BaseModel implements ActionI {
     }
 
     public toFormData() {
-        delete this.data['files'];
-        this.data['previews'] = [this.data['previews']];
-        this.data['type'] = this.data['type'][0]
         return this.jsonToFormData(this.data, new FormData());
     }
 
     private jsonToFormData(obj: any, formData: FormData, prefix: string = '') {
+
         if (is(Array, obj)) {
             obj.forEach((element, index) => {
                 formData = this.jsonToFormData(element, formData, `${prefix}[${index}]`);

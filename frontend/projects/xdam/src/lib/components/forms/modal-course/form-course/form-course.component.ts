@@ -60,7 +60,11 @@ export class FormCourseComponent implements OnInit, ControlValueAccessor {
       this.formMetadata.addControl('type', new FormControl(''));
       this.formMetadata.addControl('active', new FormControl(''));
       let groupData: FormGroup = new FormGroup({});
-      
+      groupData.addControl('course_title', new FormControl('', Validators.required));
+      groupData.addControl('external_url', new FormControl('', Validators.required));
+      groupData.addControl('duration', new FormControl('', Validators.required));
+      groupData.addControl('introduction', new FormControl('', Validators.required));
+      this.formMetadata.setControl('data', groupData);
   }
 
   private initFormControlsWithData() {

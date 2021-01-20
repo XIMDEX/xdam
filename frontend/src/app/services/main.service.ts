@@ -5,7 +5,6 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import SettingsMapper from '../mappers/SettingsMapper';
 import EndPointMapper from '../mappers/EndPointMapper';
 import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
-import { ItemModel } from '@xdam/models/interfaces/ItemModel.interface';
 
 /**
  * Service who acts as a global state for the application.
@@ -151,10 +150,29 @@ export class MainService {
             'Access-Control-Allow-Origin': '*',
             Accept: 'application/json'
         });
-        //const method = data.method === 'new' ? 'post' : 'put';
+
         const formData = data.toFormData();
-        
-        const url = this.router.getEndPointUrl('resource', 'store', new Item(data.data));
+        const url = this.router.getEndPointUrl('resource', 'store');
+
+        return this.http.post(url, formData, { headers: heads });
+    }
+
+    /**
+     * Receives a FormData object and send the form to the server.
+     * @param {FormData} form The form to be sent
+     * @returns {Observable} The response as a observable
+     */
+    updateForm(data: ActionModel) {
+        const heads = new HttpHeaders({
+            'Access-Control-Allow-Origin': '*',
+            Accept: 'application/json'
+        });
+        //const method = data.method === 'new' ? 'post' : 'put';
+        let formData;
+        let url;
+
+        formData = data.toFormData();
+        url = this.router.getEndPointUrl('resource', 'update', new Item(data.data));
 
         /*if (method === 'put') {
             formData.append('_method', 'PUT');

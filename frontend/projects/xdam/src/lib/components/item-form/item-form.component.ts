@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild, AfterContentChecked} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild, AfterContentChecked, HostListener} from '@angular/core';
 import { SwalComponent, SwalPartialTargets } from '@sweetalert2/ngx-sweetalert2';
 import { equals, hasIn, is, isNil } from 'ramda';
 import { faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
@@ -45,6 +45,9 @@ export class ItemFormComponent implements OnChanges {
 
     constructor(public readonly swalTargets: SwalPartialTargets) {
         this.swalCustomClass = { ...swal2.customClass, ...this.swalCustomClass };
+        window.onbeforeunload = function(e) {
+            return "¿Estás seguro que deseas salir de la actual página?"
+          };
     }
 
     ngOnChanges(changes: SimpleChanges): void {

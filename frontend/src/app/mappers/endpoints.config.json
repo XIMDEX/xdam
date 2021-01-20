@@ -39,6 +39,10 @@
                 "method": "GET"
             },
             "store": {
+                "uri": "/resource",
+                "method": "POST"
+            },
+            "update": {
                 "uri": "/resource/%(id)s/update",
                 "method": "POST"
             },

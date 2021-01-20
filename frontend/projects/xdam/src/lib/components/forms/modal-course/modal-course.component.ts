@@ -1,9 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import {  FormControl, FormGroup } from '@angular/forms';
 import { ActionModel } from '../../../../models/src/lib/ActionModel';
-import { Item } from '../../../../models/src/lib/Item';
-import { isNil } from 'ramda';
+import { is } from 'ramda';
 
 @Component({
   selector: 'xdam-modal-course',
@@ -38,11 +37,23 @@ export class ModalCourseComponent implements OnInit {
       if (this.courseForm.valid) {
           if (this.courseForm.controls.dataForm.dirty || this.courseForm.controls.metadataForm.dirty) {
               const action = new ActionModel();
-              action.method = 'edit'; //this.action.method;
-              action.data = this.courseForm.value.dataForm;
+              action.method = this.action.method === 'show' ? 'edit' : this.action.method;
+              action.data = this.prepareData(this.courseForm.value.dataForm);
               action.data['data'] = JSON.stringify({description: this.courseForm.value.dataForm['data']});
               this.dataToSave.emit(action);
           }
       }
+  }
+
+  prepareData(data: any){
+    Object.keys(data).forEach(key => {
+      if(data[key] === ''){
+        delete data[key];
+      }else if(key  === 'type' && is(Array, data[key])){
+        data[key] = data[key][0];
+      }
+    })
+
+    return data;
   }
 }
