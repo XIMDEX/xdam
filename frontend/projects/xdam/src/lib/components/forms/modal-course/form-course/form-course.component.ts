@@ -35,12 +35,13 @@ export class FormCourseComponent implements OnInit, ControlValueAccessor {
   faDownload = faDownload;
   @Input() action: ActionModel;
 
-  public formMetadata: FormGroup = new FormGroup({});
+  public data: FormGroup = new FormGroup({});
+  
+  public formMetadata: FormGroup = new FormGroup({data: this.data});
 
   new: boolean;
   show: boolean;
   preview = window.origin + '/assets/default_item_image.jpg';
-
 
   constructor() {}
 
@@ -57,25 +58,37 @@ export class FormCourseComponent implements OnInit, ControlValueAccessor {
   private initFormControls() {
       this.formMetadata.addControl('files', new FormControl(''));
       this.formMetadata.addControl('type', new FormControl(''));
-      this.formMetadata.addControl('name', new FormControl('', Validators.required));
-      this.formMetadata.addControl('score', new FormControl(''));
-      this.formMetadata.addControl('version', new FormControl(''));
       this.formMetadata.addControl('active', new FormControl(''));
+      let groupData: FormGroup = new FormGroup({});
+      
   }
 
   private initFormControlsWithData() {
       const item = this.action.item;
       let field: FormControl;
+      console.log(item)
       Object.keys(item).forEach(key => {
-          if (key.startsWith('_')) {
-              key = key.slice(1);
-          }
-          if (!isNil(item[key]) && key !== 'files') {
-              field = new FormControl(item[key]);
-              field.markAsDirty();
-          } else {
-              field = new FormControl('');
-          }
+        if (key.startsWith('_')) {
+            key = key.slice(1);
+        }
+        
+        if(key === 'data'){
+            let groupData: FormGroup = new FormGroup({});
+            let {data} = this.action.item;
+            Object.keys(data['description']).forEach(keyData => {
+                groupData.addControl(keyData, new FormControl(data['description'][keyData]))
+            });
+            this.formMetadata.setControl('data', groupData);
+            return
+        } 
+        else if (!isNil(item[key]) && key !== 'files' ) {
+            field = new FormControl(item[key]);
+            field.markAsDirty();
+        }
+        else {
+            field = new FormControl('');
+        }
+          
           this.formMetadata.addControl(key, field);
       });
   }

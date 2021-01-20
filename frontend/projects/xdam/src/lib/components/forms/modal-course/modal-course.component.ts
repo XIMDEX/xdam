@@ -38,9 +38,9 @@ export class ModalCourseComponent implements OnInit {
       if (this.courseForm.valid) {
           if (this.courseForm.controls.dataForm.dirty || this.courseForm.controls.metadataForm.dirty) {
               const action = new ActionModel();
-              action.method = this.action.method;
+              action.method = 'edit'; //this.action.method;
               action.data = this.courseForm.value.dataForm;
-              action.data['data'] = JSON.stringify(this.courseForm.value.metadataForm);
+              action.data['data'] = JSON.stringify({description: this.courseForm.value.dataForm['data']});
               this.dataToSave.emit(action);
           }
       }

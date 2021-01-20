@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import SettingsMapper from '../mappers/SettingsMapper';
 import EndPointMapper from '../mappers/EndPointMapper';
 import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
+import { ItemModel } from '@xdam/models/interfaces/ItemModel.interface';
 
 /**
  * Service who acts as a global state for the application.
@@ -150,14 +151,14 @@ export class MainService {
             'Access-Control-Allow-Origin': '*',
             Accept: 'application/json'
         });
-        const method = data.method === 'new' ? 'post' : 'put';
+        //const method = data.method === 'new' ? 'post' : 'put';
         const formData = data.toFormData();
+        
+        const url = this.router.getEndPointUrl('resource', 'store', new Item(data.data));
 
-        const url = this.router.getEndPointUrl('resource', 'store');
-
-        if (method === 'put') {
+        /*if (method === 'put') {
             formData.append('_method', 'PUT');
-        }
+        }*/
         return this.http.post(url, formData, { headers: heads });
     }
 

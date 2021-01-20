@@ -145,15 +145,13 @@ export class HomeComponent implements OnInit {
 
         this.mainService.list(this.xdamMode ,params).subscribe(
             response => {
-                const {total, current_page, last_page, next_page, prev_page, per_page} = response as any; 
-
                 const pager:any = {
-                    total,
-                    currentPage: current_page,
-                    lastPage: last_page,
-                    nextPage:next_page,
-                    prevPage: prev_page,
-                    perPage: per_page
+                    total: response['total'],
+                    currentPage: response['current_page'],
+                    lastPage: response['last_page'],
+                    nextPage:response['next_page'],
+                    prevPage: response['prev_page'],
+                    perPage: response['per_page']
                 }
 
                 this.items = {
@@ -161,6 +159,7 @@ export class HomeComponent implements OnInit {
                     pager: new Pager(pager, this.pagerSchema),
                     facets: response['facets']
                 };
+                
                 if (this.default) {
                     this.getDefaultFacet(response['facets']);
                 }

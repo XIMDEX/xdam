@@ -39,15 +39,15 @@ export class ItemComponent {
     }
 
     get title(): string {
-        return sprintf(this.settings.title, this.item.name);
+        return sprintf(this.settings.title, this.item.data['description']['course_title']);
     }
 
     set preview(url: string) {
-        this.item.preview = url;
+        this.item.previews = url;
     }
 
     get preview(): string {
-        return this.item.preview;
+        return this.item.previews;
     }
 
     get actions(): ListItemActionsI | null {

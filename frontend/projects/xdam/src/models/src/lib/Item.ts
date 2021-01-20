@@ -12,7 +12,7 @@ export class Item extends BaseModel {
      * Say if item is active or not
      * @private
      */
-    private _active: boolean;
+    //private _active: boolean;
     /**
      * The metadata of the item
      * @private
@@ -32,7 +32,7 @@ export class Item extends BaseModel {
      * The preview of the item
      * @private
      */
-    private _preview: string;
+    private _previews: string;
     /**
      * The name of the item
      * @private
@@ -42,7 +42,7 @@ export class Item extends BaseModel {
      * The score of the item
      * @private
      */
-    private _score: number;
+    //private _score: number;
     /**
      * The type/s or category/ies of the item
      * @private
@@ -52,7 +52,7 @@ export class Item extends BaseModel {
      * The version number of item
      * @private
      */
-    private _version: number;
+    //private _version: number;
 
     /**@ignore */
     constructor(item: any = null, schema: ItemModel | null = null) {
@@ -65,13 +65,13 @@ export class Item extends BaseModel {
         }
     }
 
-    get active(): boolean {
+    /*get active(): boolean {
         return this._active;
     }
 
     set active(value: boolean) {
         this._active = value;
-    }
+    }*/
 
     get data(): string {
         return this._data;
@@ -97,12 +97,12 @@ export class Item extends BaseModel {
         this._id = value;
     }
 
-    get preview(): string {
-        return this._preview;
+    get previews(): string {
+        return this._previews;
     }
 
-    set preview(value: string) {
-        this._preview = value;
+    set previews(value: string) {
+        this._previews = value;
     }
 
     get name(): string {
@@ -113,13 +113,13 @@ export class Item extends BaseModel {
         this._name = value;
     }
 
-    get score(): number {
+    /*get score(): number {
         return this._score;
     }
 
     set score(value: number) {
         this._score = value;
-    }
+    }*/
 
     get type(): any[] {
         return this._type;
@@ -129,13 +129,13 @@ export class Item extends BaseModel {
         this._type = value;
     }
 
-    get version(): number {
+    /*get version(): number {
         return this._version;
     }
 
     set version(value: number) {
         this._version = value;
-    }
+    }*/
 
     protected prepareData(data: {}, schema: ItemModel) {
         const result = {};
