@@ -175,11 +175,11 @@ class ResourceService
             );
             $dataJson = json_decode($params["data"]);
             $this->linkCategoriesFromJson($resource, $dataJson, $resource->type);
+            $this->linkTagsFromJson($resource, $dataJson);
         }
         $this->saveAssociatedFiles($resource, $params);
         $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
         $resource->refresh();
-        $this->linkTagsFromJson($resource, $dataJson);
         return $resource;
     }
 
