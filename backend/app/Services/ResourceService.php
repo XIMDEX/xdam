@@ -7,6 +7,7 @@ use App\Enums\ResourceType;
 use App\Models\Category;
 use App\Models\DamResource;
 use App\Models\DamResourceUse;
+use App\Services\Solr\SolrService;
 use App\Utils\DamUrlUtil;
 use Exception;
 use Illuminate\Support\Collection;
@@ -17,11 +18,11 @@ class ResourceService
     /**
      * @var MediaService
      */
-    private $mediaService;
+    private MediaService $mediaService;
     /**
      * @var SolrService
      */
-    private $solr;
+    private SolrService $solr;
 
     /**
      * ResourceService constructor.
@@ -46,6 +47,7 @@ class ResourceService
         $class->name = $resource->name ?? '';
         $class->active = true;
         $class->type = ResourceType::fromValue($resource->type)->key;
+        $class->collection = $this->solr->getCollectionBySubType($class->type);
         $class->categories = $resource->categories()->pluck('name')->toArray() ?? [""];
         $previews = $this->mediaService->list($resource, MediaType::Preview()->key, true);
         foreach ($previews as $preview) {
@@ -74,6 +76,8 @@ class ResourceService
                 ["parent_id" => $model->id],
                 $params[MediaType::File()->key]
             );
+        } else {
+            $model->clearMediaCollection(MediaType::File()->key);
         }
 
         if (array_key_exists(MediaType::Preview()->key, $params) && $params[MediaType::Preview()->key]) {
@@ -84,6 +88,8 @@ class ResourceService
                 ["parent_id" => $model->id],
                 $params[MediaType::Preview()->key]
             );
+        } else {
+            $model->clearMediaCollection(MediaType::Preview()->key);
         }
     }
 

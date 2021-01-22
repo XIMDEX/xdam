@@ -4,14 +4,14 @@ namespace App\Models;
 
 use App\Enums\ResourceType;
 use App\Traits\UsesUuid;
+use Cartalyst\Tags\TaggableInterface;
 use Cartalyst\Tags\TaggableTrait;
-use Conner\Tagging\Taggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class DamResource extends Model implements HasMedia
+class DamResource extends Model implements HasMedia, TaggableInterface
 {
     use HasFactory, UsesUuid, TaggableTrait, InteractsWithMedia;
 
@@ -24,7 +24,8 @@ class DamResource extends Model implements HasMedia
         "data" => "object"
     ];
 
-    public function categories() {
+    public function categories()
+    {
         return $this->belongsToMany(Category::class);
     }
 

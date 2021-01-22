@@ -4,51 +4,55 @@
 namespace App\Services\Catalogue;
 
 
-use App\Enums\ResourceType;
-use App\Services\SolrService;
+use App\Services\Solr\SolrService;
+use phpDocumentor\GraphViz\Exception;
+use stdClass;
 
 class CatalogueService
 {
     /**
      * @var SolrService
      */
-    private $solrService;
+    private SolrService $solrService;
 
     /**
      * CatalogueService constructor.
      * @param SolrService $solrService
-     * @param FacetManager $facetManager
      */
     public function __construct(SolrService $solrService)
     {
         $this->solrService = $solrService;
     }
 
-    /**
-     * @param $pageParams
-     * @param $sortParams
-     * @param $facetsFilter
-     * @return \stdClass
-     */
-    public function indexByType($pageParams, $sortParams, $facetsFilter)
+    public function throwErrorIfNotValidCollection($collection)
     {
-        return $this->solrService->paginatedQueryByFacet($pageParams, $sortParams, $facetsFilter);
+        if (!$this->solrService->isValidCollection($collection)) {
+            throw new Exception("The param is not a valid collection");
+        }
     }
 
-    /**
-     * @param ResourceType $type
-     * @return array|\stdClass
-     */
-    public function exploreByType(ResourceType $type)
+    public function indexByCollection($pageParams, $sortParams, $facetsFilter, $collection): stdClass
     {
-        return $this->solrService->queryByFacet(['type' => $type->key]);
+        $this->throwErrorIfNotValidCollection($collection);
+        return $this->solrService->paginatedQueryByFacet($pageParams, $sortParams, $facetsFilter, $collection);
     }
 
-    /**
-     * @return \Solarium\QueryType\Update\Result
-     */
+    public function exploreByCollection($collection): stdClass
+    {
+        $this->throwErrorIfNotValidCollection($collection);
+        return $this->solrService->queryByFacet([], $collection);
+    }
+
     public function resetIndex()
     {
-        return $this->solrService->cleanSolr();
+        $this->solrService->cleanSolr();
+    }
+
+    public function checkSolr()
+    {
+        if ($this->solrService->solrServerIsReady()) {
+            return true;
+        }
+        return false;
     }
 }

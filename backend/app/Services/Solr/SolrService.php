@@ -1,40 +1,90 @@
 <?php
 
 
-namespace App\Services;
+namespace App\Services\Solr;
 
 
+use App\Enums\CollectionType;
 use App\Services\Catalogue\FacetManager;
+use Exception;
+use Solarium\Core\Query\Result\ResultInterface;
+use stdClass;
 use TSterker\Solarium\SolariumManager;
 
 class SolrService
 {
-    protected $collection = 'xdam';
+    protected array $collections = [
+        CollectionType::course => "xdam-course",
+        CollectionType::multimedia => "xdam-multimedia"
+    ];
+
     /**
      * @var SolariumManager
      */
-    private $solarium;
+    private SolariumManager $solarium;
     /**
      * @var FacetManager
      */
-    private $facetManager;
+    private FacetManager $facetManager;
+
+    /**
+     * @var SolrConfigService
+     */
+    private SolrConfigService $solrConfig;
 
     /**
      * SolrService constructor.
      * @param SolariumManager $solarium
      * @param FacetManager $facetManager
+     * @param SolrConfigService $solrConfig
      */
-    public function __construct(SolariumManager $solarium, FacetManager $facetManager)
+    public function __construct(SolariumManager $solarium, FacetManager $facetManager, SolrConfigService $solrConfig)
     {
-        $solarium->getEndpoint()->setCollection($this->collection);
         $this->solarium = $solarium;
         $this->facetManager = $facetManager;
+        $this->solrConfig = $solrConfig;
+        $this->solrConfig->config($this->solarium, $this->collections);
     }
 
-    /**
-     * @return bool
-     */
-    public function ping()
+    public function solrServerIsReady(): bool
+    {
+        foreach ($this->collections as $core) {
+            if (!$this->solrConfig->checkCoreAlreadyExists($core)) {
+                $this->solrConfig->createSolrCore($core);
+            }
+            $diffFields = $this->solrConfig->getSchemaDifferences($core);
+            if (!empty($diffFields)) {
+                $this->solrConfig->createSchemaForCore($core, $diffFields);
+            }
+        }
+        return true;
+    }
+
+    public function getCollectionBySubType(string $subType)
+    {
+        if ($subType == CollectionType::course) {
+            return CollectionType::course;
+        } else {
+            return CollectionType::multimedia;
+        }
+    }
+
+    public function isValidCollection(string $collection)
+    {
+        if (array_key_exists($collection, $this->collections)) {
+            return true;
+        }
+        return false;
+    }
+
+    public function setCollection(string $collection)
+    {
+        if ($this->isValidCollection($collection)) {
+           $this->solarium->getEndpoint()->setCollection($this->collections[$collection]);
+        }
+    }
+
+    public function ping(): bool
     {
         // create a ping query
         $ping = $this->solarium->createPing();
@@ -43,22 +93,18 @@ class SolrService
         try {
             $this->solarium->ping($ping);
             return true;
-        } catch (\Solarium\Exception $e) {
-            return false;
+        } catch (Exception $e) {
+            throw $e;
         }
     }
 
-    /**
-     * @param string $id
-     * @return array
-     */
-    public function getDocumentById(string $id)
+    public function getDocumentById(string $id): array
     {
         $select = $this->solarium->createRealtimeGet();
         $select->addId($id);
         $result = $this->solarium->realtimeGet($select);
-
         $document = [];
+
         foreach ($result->getDocument() as $field => $value) {
             $document[ucfirst($field)] = $value;
         }
@@ -66,15 +112,11 @@ class SolrService
         return $document;
     }
 
-    /**
-     * @param $data
-     * @return Solarium\QueryType\Update\Result
-     */
-    public function saveOrUpdateDocument($data)
+    public function saveOrUpdateDocument($data): ResultInterface
     {
+        $this->setCollection($data->collection);
         $createCommand = $this->solarium->createUpdate();
         $document = $createCommand->createDocument();
-
 
         foreach ($data as $key => $value) {
             $document->$key = $value;
@@ -85,41 +127,39 @@ class SolrService
         return $this->solarium->update($createCommand);
     }
 
-    /**
-     * @param string $id
-     * @return \Solarium\QueryType\Update\Result
-     */
-    public function deleteDocumentById(string $id)
+    public function deleteDocumentById(string $id, string $collection): ResultInterface
     {
+        $this->setCollection($collection);
         $deleteQuery = $this->solarium->createUpdate();
         $deleteQuery->addDeleteQuery('id:' . $id);
         $deleteQuery->addCommit();
         return $this->solarium->update($deleteQuery);
     }
 
-    /**
-     * @return \Solarium\QueryType\Update\Result
-     */
     public function cleanSolr()
     {
-        // get an update query instance
-        $update = $this->solarium->createUpdate();
+        foreach($this->collections as $collection)
+        {
+            $this->solarium->getEndpoint()->setCollection($collection);
 
-        // add the delete query and a commit command to the update query
-        $update->addDeleteQuery('*:*');
-        $update->addCommit();
+            // get an update query instance
+            $update = $this->solarium->createUpdate();
 
-        // this executes the query and returns the result
-        return $this->solarium->update($update);
+            // add the delete query and a commit command to the update query
+            $update->addDeleteQuery('*:*');
+            $update->addCommit();
+
+
+            // this executes the query and returns the result
+            $this->solarium->update($update);
+        }
+
     }
 
-    /**
-     * @param $facetsFilter
-     * @return array|\stdClass
-     */
-    public function queryByFacet($facetsFilter)
-    {
 
+    public function queryByFacet($facetsFilter, $collection): stdClass
+    {
+        $this->setCollection($collection);
         $query = $this->solarium->createSelect();
 
         $facetSet = $query->getFacetSet();
@@ -133,29 +173,27 @@ class SolrService
         $allDocuments = $this->solarium->select($query);
         $facets = $allDocuments->getFacetSet();
 
-        if (empty($facets))
-        {
-            return [];
+        $result = new stdClass();
+
+        if (!empty($facets)) {
+            $result->data = [];
+
+            foreach ($allDocuments as $document) {
+                $result->data[] = $document->getFields();
+            }
         }
 
-        $result = new \stdClass();
-        $result->data = [];
-
-        foreach ($allDocuments as $document) {
-                $result->data[]= $document->getFields();
-        }
         return $result;
-
     }
 
-    /**
-     * @param array $pageParams
-     * @param array $sortParams
-     * @param $facetsFilter
-     * @return \stdClass
-     */
-    public function paginatedQueryByFacet($pageParams = [], $sortParams = [], $facetsFilter = null)
-    {
+    public function paginatedQueryByFacet(
+        $pageParams = [],
+        $sortParams = [],
+        $facetsFilter,
+        $collection
+    ): stdClass {
+        $this->setCollection($collection);
+
         $search = $pageParams['search'];
         $currentPage = $pageParams['currentPage'];
         $limit = $pageParams['limit'];
