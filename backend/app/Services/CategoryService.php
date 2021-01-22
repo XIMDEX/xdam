@@ -51,14 +51,10 @@ class CategoryService
      */
     public function update(Category $category, $data)
     {
-        $updated = $category->update([
+        return $category->update([
             'name' => $this->satinizeCategoryName($data["name"]),
             'type' => ResourceType::fromKey($data["type"])->value
         ]);
-        if ($updated){
-            return $category;
-        }
-        return false;
     }
 
     /**
