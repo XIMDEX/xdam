@@ -51,8 +51,9 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
     });
 
     Route::group(['prefix' => 'catalogue'], function() {
-        Route::get('/{type}/index', [CatalogueController::class, 'index'])->name('catalogue.index');
-        Route::get('/{type}', [CatalogueController::class, 'get'])->name('catalogue.get');
+        Route::get('/checkSolr', [CatalogueController::class, 'checkSolr'])->name('catalogue.checkSolr');
+        Route::get('/{collection}/index', [CatalogueController::class, 'index'])->name('catalogue.index');
+        Route::get('/{collection}', [CatalogueController::class, 'get'])->name('catalogue.get');
         Route::delete('/clearAll', [CatalogueController::class, 'delete'])->name('catalogue.delete');
     });
 
