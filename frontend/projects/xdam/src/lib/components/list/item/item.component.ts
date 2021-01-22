@@ -21,6 +21,9 @@ export class ItemComponent {
     faTrash = faTrash;
     defaultImage = window.origin + '/assets/default_item_image.jpg';
 
+    imagePreview = null;
+    imageError = false;
+
     @Input() item: Item;
     @Input() settings: ListItemOptionI;
 
@@ -28,9 +31,6 @@ export class ItemComponent {
     @Output() download = new EventEmitter<Item>();
     @Output() edit = new EventEmitter<Item>();
     @Output() select = new EventEmitter<Item>();
-
-    
-
 
     constructor() {}
 
@@ -43,11 +43,16 @@ export class ItemComponent {
     }
 
     set preview(url: string) {
-        this.item.previews = url;
+        this.imagePreview  = this.defaultImage;
     }
 
     get preview(): string {
-        return this.item.previews;
+        if (!this.imageError && this.item.files){
+            this.imagePreview = this.item.files[0];
+            return this.settings.urlResource + '/resource/render/'+  this.imagePreview;
+        }else{
+            return this.defaultImage;
+        }
     }
 
     get actions(): ListItemActionsI | null {
@@ -79,14 +84,8 @@ export class ItemComponent {
     }
     
     imgError() {
-        // let image = null;
-        // if (hasIn(this.item.type.toLowerCase(), this.settings.placeholder)) {
-        //     image = this.settings.placeholder[this.item.type.toLowerCase()];
-        // } else if (hasIn('default', this.settings.placeholder)) {
-        //     image = this.settings.placeholder['default'];
-        // }
-        // this.img = image;
-        this.preview = this.defaultImage;
+        this.imageError = true;
+        //this.preview = this.defaultImage;
     }
 
     editItem(evt: Event) {

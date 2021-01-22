@@ -10,6 +10,7 @@ export interface ListItemOptionI {
     title?: string;
     placeholder?: {};
     actions?: ListItemActionsI;
+    urlResource?: string
 }
 
 export interface ListItemActionsI {

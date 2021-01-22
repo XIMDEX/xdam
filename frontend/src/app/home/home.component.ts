@@ -16,6 +16,7 @@ import { AuthService } from '../services/auth.service';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
 
+
 @Component({
     selector: 'app-home',
     templateUrl: './home.component.html',

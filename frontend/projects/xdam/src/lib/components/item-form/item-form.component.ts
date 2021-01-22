@@ -18,6 +18,7 @@ import swal2 from '../../profiles/swal2';
 export class ItemFormComponent implements OnChanges {
     @Input() action: ActionModel | null;
     @Input() settings: FormI;
+    @Input() resourceUrl: string;
     @Input() display: boolean;
     @Input() viewMode: boolean;
 
@@ -84,6 +85,7 @@ export class ItemFormComponent implements OnChanges {
                 this.modal.close();
             }
         }
+        console.log(this.resourceUrl)
     }
 
     get isEdition(): boolean {

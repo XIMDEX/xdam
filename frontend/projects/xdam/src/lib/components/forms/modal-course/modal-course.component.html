@@ -1,6 +1,6 @@
 <form #resourceForm="ngForm" [formGroup]="courseForm" (ngSubmit)="sendForm()">
 
-    <xdam-form-course [action]="action" formControlName="dataForm"></xdam-form-course>
+    <xdam-form-course [action]="action" formControlName="dataForm" [resourceUrl]="this.resourceUrl" #dataFormElement></xdam-form-course>
 
     <div class="form-actions">
         

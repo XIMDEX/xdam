@@ -83,6 +83,10 @@ export default class EndPointMapper {
         }
     }
 
+    public getBaseUrl(): string{
+        return this._baseUrl + this.api;
+    }
+
     /**
      * This method return the http method of the uri
      * @param model

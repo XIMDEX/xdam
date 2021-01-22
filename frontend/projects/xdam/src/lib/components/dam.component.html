@@ -50,6 +50,7 @@
         [action]="actionModel"
         [display]="displayForm"
         [settings]="settings.form"
+        [resourceUrl]="settings.list.items.urlResource"
         (save)="sendAction($event)"
         (close)="closeAction()"
     ></xdam-item-form>

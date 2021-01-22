@@ -10,19 +10,19 @@
             <div [ngSwitch]="action.item.type">
 
                 <div *ngSwitchCase="'course'">
-                    <xdam-modal-course [action]="action" [modal]="modal" (dataToSave)="sendForm($event)">
+                    <xdam-modal-course [action]="action" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" [settings]="settings" >
                     </xdam-modal-course>
                 </div>
 
                 <div *ngSwitchCase="'image'">
-                    <xdam-modal-image [modal]="modal"></xdam-modal-image>
+                    <xdam-modal-image [modal]="modal" ></xdam-modal-image>
                 </div>
 
             </div>
         </div>
 
         <ng-template #newAsset>
-            <xdam-modal-course [action]="action" [modal]="modal" (dataToSave)="sendForm($event)"></xdam-modal-course>
+            <xdam-modal-course [action]="action" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" ></xdam-modal-course>
         </ng-template>
 
     </ng-container>

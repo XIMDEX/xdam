@@ -1,8 +1,10 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import { faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
 import {  FormControl, FormGroup } from '@angular/forms';
 import { ActionModel } from '../../../../models/src/lib/ActionModel';
 import { is } from 'ramda';
+import { ListItemOptionI } from '@xdam/models/interfaces/ListOptions.interface';
+import { FormCourseComponent } from './form-course/form-course.component';
 
 @Component({
   selector: 'xdam-modal-course',
@@ -10,15 +12,18 @@ import { is } from 'ramda';
   styleUrls: ['./modal-course.component.scss']
 })
 export class ModalCourseComponent implements OnInit {
-   @Input() action: ActionModel;
-   @Input() modal: any;
+  @Input() action: ActionModel;
+  @Input() modal: any;
+  @Input() settings: ListItemOptionI;
+  @Input() resourceUrl: string;
+  @Output() dataToSave = new EventEmitter<ActionModel>();
 
-   @Output() dataToSave = new EventEmitter<ActionModel>();
+  @ViewChild('dataFormElement') dataFormElement: FormCourseComponent;
 
-   courseForm: FormGroup;
+  courseForm: FormGroup;
 
-   faSave = faSave;
-   faTimes = faTimes;
+  faSave = faSave;
+  faTimes = faTimes;
 
   constructor() {
     this.courseForm = new FormGroup({
@@ -40,7 +45,9 @@ export class ModalCourseComponent implements OnInit {
               action.method = this.action.method === 'show' ? 'edit' : this.action.method;
               action.data = this.prepareData(this.courseForm.value.dataForm);
               action.data['data'] = JSON.stringify({description: this.courseForm.value.dataForm['data']});
+              action.data['File'] = this.dataFormElement.getInputFiles().item(0);
               this.dataToSave.emit(action);
+
           }
       }
   }

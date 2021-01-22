@@ -1,5 +1,6 @@
+import EndPointMapper from 'src/app/mappers/EndPointMapper';
 import { XDamSettingsInterface } from '../interfaces/Settings.interface';
-
+const router = new EndPointMapper();
 export const standard: XDamSettingsInterface = {
     facets: true,
     search: {
@@ -49,7 +50,8 @@ export const standard: XDamSettingsInterface = {
                 download: true,
                 delete: true,
                 select: false
-            }
+            },
+            urlResource: router.baseUrl + router.api
         }
     }
 };

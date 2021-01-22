@@ -7,7 +7,7 @@
             <div class="fields column">
 
                 <div class="img-box">
-                    <img src="{{preview}}" />
+                    <img [src]="image" (error)="imgError()" />
                 </div>
 
                 <!--<div class="field-item">
@@ -16,7 +16,7 @@
                 </div>-->
                 <label class="field-item">
                     <label for="files">NEW FILE</label>
-                    <input type="file" id="files" class="custom-file-input" />
+                    <input type="file" id="files" class="custom-file-input" (change)="handleFileInput($event.target.files)" #InputFile/>
                 </label>
                 <div class="field-item">
                     <label for="thumb">THUMBNAIL SMALL</label>
