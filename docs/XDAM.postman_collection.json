@@ -138,37 +138,6 @@
 					"response": []
 				},
 				{
-					"name": "GET ASSOCIATED RESOURCES",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{url}}{{api}}/category/028acd38-33a5-4289-b495-95e4ccf2886b/getResources",
-							"host": [
-								"{{url}}{{api}}"
-							],
-							"path": [
-								"category",
-								"028acd38-33a5-4289-b495-95e4ccf2886b",
-								"getResources"
-							],
-							"query": [
-								{
-									"key": "",
-									"value": null,
-									"disabled": true
-								},
-								{
-									"key": "",
-									"value": null,
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "DELETE CATEGORY",
 					"request": {
 						"method": "DELETE",
@@ -237,17 +206,16 @@
 								{
 									"key": "File",
 									"type": "file",
-									"src": [],
-									"disabled": true
+									"src": "/Users/develop/Desktop/Captura de pantalla 2021-01-22 a las 17.06.49.png"
 								},
 								{
 									"key": "type",
-									"value": "course",
+									"value": "image",
 									"type": "text"
 								},
 								{
 									"key": "data",
-									"value": "{}",
+									"value": "{\"texto\":\"ejemplo\"}",
 									"type": "text"
 								},
 								{
@@ -316,13 +284,13 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/c4a09fff-e795-4acb-a3df-388cb5539d1d/update",
+							"raw": "{{url}}{{api}}/resource/e76295aa-08cb-40e7-a1ed-9c1d60937477/update",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
-								"c4a09fff-e795-4acb-a3df-388cb5539d1d",
+								"e76295aa-08cb-40e7-a1ed-9c1d60937477",
 								"update"
 							],
 							"query": [
@@ -572,17 +540,34 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"tags\" : [\n        \"aprendizaje ultramatico\",\n        \"automatico\"\n    ]\n }"
+							"raw": "{\n    \"tags\":[\n        \"tag1\",\n        \"tag2\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/c3cf5f39-d83f-414d-a6e0-99a192e075a8/setTags",
+							"raw": "{{url}}{{api}}/resource/26941677-fc23-4761-b967-25af67df4e89/setTags",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
-								"c3cf5f39-d83f-414d-a6e0-99a192e075a8",
+								"26941677-fc23-4761-b967-25af67df4e89",
 								"setTags"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
 							]
 						}
 					},
@@ -903,63 +888,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "DOWNLOAD",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "name",
-									"value": "Teacher Training",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "type",
-									"value": "course",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "_method",
-									"value": "PUT",
-									"type": "text",
-									"disabled": true
-								}
-							]
-						},
-						"url": {
-							"raw": "{{url}}{{api}}/resource/@@@dam:@video@f58f128f-3b64-4cb9-95a8-c8f582d25471@eb8b8ac1-2376-4d5e-a333-0595e949bc71@@@/download",
-							"host": [
-								"{{url}}{{api}}"
-							],
-							"path": [
-								"resource",
-								"@@@dam:@video@f58f128f-3b64-4cb9-95a8-c8f582d25471@eb8b8ac1-2376-4d5e-a333-0595e949bc71@@@",
-								"download"
-							],
-							"query": [
-								{
-									"key": "",
-									"value": null,
-									"disabled": true
-								},
-								{
-									"key": "",
-									"value": null,
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},
@@ -972,27 +900,30 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}{{api}}/catalogue/video/index?page=1&search=&limit=100",
+							"raw": "{{url}}{{api}}/catalogue/course/index",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"catalogue",
-								"video",
+								"course",
 								"index"
 							],
 							"query": [
 								{
 									"key": "page",
-									"value": "1"
+									"value": "1",
+									"disabled": true
 								},
 								{
 									"key": "search",
-									"value": ""
+									"value": "",
+									"disabled": true
 								},
 								{
 									"key": "limit",
-									"value": "100"
+									"value": "100",
+									"disabled": true
 								},
 								{
 									"key": "facets[categories]",
@@ -1002,6 +933,46 @@
 								{
 									"key": "facets[categories]",
 									"value": "Cats",
+									"disabled": true
+								},
+								{
+									"key": "facets[type]",
+									"value": "gatos",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CHECK SOLR",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}{{api}}/catalogue/checkSolr",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"catalogue",
+								"checkSolr"
+							],
+							"query": [
+								{
+									"key": "facets[categories]",
+									"value": "Horses",
+									"disabled": true
+								},
+								{
+									"key": "facets[categories]",
+									"value": "Cats",
+									"disabled": true
+								},
+								{
+									"key": "facets[type]",
+									"value": "video",
 									"disabled": true
 								}
 							]
@@ -1015,13 +986,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}{{api}}/catalogue/document",
+							"raw": "{{url}}{{api}}/catalogue/multimedia",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"catalogue",
-								"document"
+								"multimedia"
 							]
 						}
 					},
@@ -1112,8 +1083,27 @@
 				"method": "GET",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"1\",\n    \"2\",\n}"
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Teacher Training",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "type",
+							"value": "course",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "_method",
+							"value": "PUT",
+							"type": "text",
+							"disabled": true
+						}
+					]
 				},
 				"url": {
 					"raw": "{{url}}{{api}}/exploreCourses",
@@ -1163,7 +1153,8 @@
 	"variable": [
 		{
 			"key": "url",
-			"value": "http://xdam.pre-cloud.ximdex.net"
+			"value": "http://xdam.pre-cloud.ximdex.net",
+			"disabled": true
 		},
 		{
 			"key": "api",
@@ -1176,7 +1167,11 @@
 		},
 		{
 			"key": "url",
-			"value": "http://localhost/xdam/backend/public",
+			"value": "http://localhost/xdam/backend/public/"
+		},
+		{
+			"key": "url",
+			"value": "http://xdamv1.cloud.ximdex.net",
 			"disabled": true
 		}
 	]
