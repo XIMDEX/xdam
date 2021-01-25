@@ -39,7 +39,7 @@ class ResourceService
      * @param DamResource $resource
      * @return stdClass
      */
-    private function prepareResourceToBeIndexed(DamResource $resource)
+    private function prepareResourceToBeIndexed(DamResource $resource): stdClass
     {
         $class = new stdClass();
         $class->id = is_object($resource->id) ? $resource->id->toString() : $resource->id;
@@ -66,7 +66,7 @@ class ResourceService
      * @param $model
      * @param $params
      */
-    private function saveAssociatedFiles($model, $params)
+    private function saveAssociatedFiles($model, $params): void
     {
         if (array_key_exists(MediaType::File()->key, $params) && $params[MediaType::File()->key]) {
             $this->mediaService->addFromRequest(
@@ -100,7 +100,7 @@ class ResourceService
      * @return null
      * @throws Exception
      */
-    private function linkCategoriesFromJson($resource, $data, $type)
+    private function linkCategoriesFromJson($resource, $data, $type): void
     {
         if ($data && property_exists($data, "description")) {
             if (property_exists($data->description, "category")) {
@@ -111,8 +111,6 @@ class ResourceService
                 }
             }
         }
-
-        return null;
     }
 
 
@@ -122,20 +120,19 @@ class ResourceService
      * @return null
      * @throws Exception
      */
-    private function linkTagsFromJson($resource, $data)
+    private function linkTagsFromJson($resource, $data): void
     {
         if ($data && property_exists($data, "description")) {
             if (property_exists($data->description, "tags")) {
                 $this->setTags($resource, $data->description->tags);
             }
         }
-        return null;
     }
 
     /**
      * @return Collection
      */
-    public function getAll()
+    public function getAll(): Collection
     {
         return DamResource::all();
     }
@@ -152,7 +149,7 @@ class ResourceService
     /**
      * @return mixed
      */
-    public function exploreCourses()
+    public function exploreCourses(): Category
     {
         return Category::where('type', ResourceType::course)->get();
     }
@@ -163,7 +160,7 @@ class ResourceService
      * @return DamResource
      * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
      */
-    public function update(DamResource $resource, $params)
+    public function update(DamResource $resource, $params): DamResource
     {
         if (array_key_exists("type", $params) && $params["type"]) {
             $updated = $resource->update(
@@ -232,7 +229,7 @@ class ResourceService
      * @param $requestKey
      * @return DamResource
      */
-    public function addPreview(DamResource $resource, $requestKey)
+    public function addPreview(DamResource $resource, $requestKey): DamResource
     {
         $this->mediaService->addFromRequest(
             $resource,
@@ -249,7 +246,7 @@ class ResourceService
      * @param $requestKey
      * @return DamResource
      */
-    public function addFile(DamResource $resource, $requestKey)
+    public function addFile(DamResource $resource, $requestKey): DamResource
     {
         $this->mediaService->addFromRequest(
             $resource,
@@ -266,7 +263,7 @@ class ResourceService
      * @return DamResource
      * @throws Exception
      */
-    public function addCategoryTo(DamResource $resource, Category $category)
+    public function addCategoryTo(DamResource $resource, Category $category): DamResource
     {
         if ($category->type == $resource->type) {
             if (!$resource->hasCategory($category)) {
@@ -281,10 +278,10 @@ class ResourceService
 
     /**
      * @param DamResource $resource
-     * @param $requestKey
+     * @param array $tags
      * @return DamResource
      */
-    public function setTags(DamResource $resource, $tags = [])
+    public function setTags(DamResource $resource, array $tags = []): DamResource
     {
         $resource->setTags($tags);
         return $resource;
@@ -296,7 +293,7 @@ class ResourceService
      * @return DamResource
      * @throws Exception
      */
-    public function deleteCategoryFrom(DamResource $resource, Category $category)
+    public function deleteCategoryFrom(DamResource $resource, Category $category): DamResource
     {
         if ($category->type == $resource->type) {
             if ($resource->hasCategory($category)) {
@@ -314,7 +311,7 @@ class ResourceService
      * @param $params
      * @return DamResource
      */
-    public function addUse(DamResource $resource, $params)
+    public function addUse(DamResource $resource, $params): DamResource
     {
         $resource->uses()->create($params);
         return $resource;
@@ -326,7 +323,7 @@ class ResourceService
      * @return DamResource
      * @throws Exception
      */
-    public function deleteUse(DamResource $resource, DamResourceUse $damResourceUse)
+    public function deleteUse(DamResource $resource, DamResourceUse $damResourceUse): DamResource
     {
         $resource->uses()->findOrFail($damResourceUse->id)->delete();
         return $resource;
