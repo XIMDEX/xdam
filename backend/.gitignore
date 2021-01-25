@@ -2,3 +2,4 @@
 /.idea
 ###< Other files ###
 vendor/*
+bootstrap/cache/*
