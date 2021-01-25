@@ -78,7 +78,7 @@ class SolrConfigService
     }
 
 
-    public function createSchemaForCore(string $coreName, array $fields): bool
+    public function createSchemaForCore(string $coreName, array $fields)
     {
         $this->solarium->getEndpoint()->setCollection($coreName);
         $query = $this->solarium->createSelect();
