@@ -39,7 +39,7 @@ class ResourceService
      * @param DamResource $resource
      * @return stdClass
      */
-    private function prepareResourceToBeIndexed(DamResource $resource): stdClass
+    public function prepareResourceToBeIndexed(DamResource $resource): stdClass
     {
         $class = new stdClass();
         $class->id = is_object($resource->id) ? $resource->id->toString() : $resource->id;
