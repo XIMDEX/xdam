@@ -62,6 +62,9 @@ class SolrConfigService
         $createCoreAction->setCore($coreName);
         $coreAdminQuery->setAction($createCoreAction);
         $response = $this->solarium->coreAdmin($coreAdminQuery);
+        $statusResult = $response->getStatusResult();
+
+        return $statusResult->getStartTime() ? true : false;
     }
 
 
