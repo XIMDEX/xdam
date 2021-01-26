@@ -44,13 +44,18 @@ class SolrService
         $this->facetManager = $facetManager;
         $this->solrConfig = $solrConfig;
         $this->solrConfig->config($this->solarium, $this->collections);
+        $this->setDefaultCollection();
     }
 
     public function solrServerIsReady(): bool
     {
         foreach ($this->collections as $core) {
             if (!$this->solrConfig->checkCoreAlreadyExists($core)) {
-                $this->solrConfig->createSolrCore($core);
+                $response = $this->solrConfig->createSolrCore($core);
+                if ($response)
+                {
+                    throw new Exception("Failed to create Solr Cores");
+                }
             }
             $diffFields = $this->solrConfig->getSchemaDifferences($core);
             if (!empty($diffFields)) {
@@ -75,6 +80,11 @@ class SolrService
             return true;
         }
         return false;
+    }
+
+    public function setDefaultCollection()
+    {
+        $this->setCollection(CollectionType::multimedia);
     }
 
     public function setCollection(string $collection)
