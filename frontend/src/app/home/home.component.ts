@@ -243,7 +243,7 @@ export class HomeComponent implements OnInit {
             }else if (action.method === 'edit'){
                 actionType = this.mainService.updateForm(action);
             }else if (action.method === 'new'){
-                action.data['type'] = this.xdamMode;
+                //action.data['type'] = this.xdamMode;
                 actionType = this.mainService.saveForm(action);
             }
 

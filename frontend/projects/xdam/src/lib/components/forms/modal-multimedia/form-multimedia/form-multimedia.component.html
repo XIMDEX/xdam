@@ -9,11 +9,21 @@
                 <div class="img-box">
                     <img [src]="image" (error)="imgError()" />
                 </div>
-
+                
 
                 <label class="field-item">
                     <label for="files">NEW FILE</label>
                     <input type="file" id="files" class="custom-file-input" (change)="handleFileInput($event.target.files)" #InputFile/>
+                </label>
+                <label class="field-item">
+                    <label for="files">SELECT TYPE</label>
+                    <select formControlName="type">
+                        <option value="document">Document</option>
+                        <option value="video">Video</option>
+                        <option value="image">Image</option>
+                        <option value="Audio">Audio</option>
+                        <option value="Url">Url</option>
+                    </select>
                 </label>
                 <div class="field-item">
                     <label for="thumb">THUMBNAIL SMALL</label>

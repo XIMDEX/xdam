@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ModalImageComponent } from './modal-image.component';
+import { FormMultimediaComponent } from './form-multimedia.component';
 
-describe('FormImageComponent', () => {
-  let component: ModalImageComponent;
-  let fixture: ComponentFixture<ModalImageComponent>;
+describe('FormMultimediaMetadataComponent', () => {
+  let component: FormMultimediaComponent;
+  let fixture: ComponentFixture<FormMultimediaComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ModalImageComponent ]
+      declarations: [ FormMultimediaComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ModalImageComponent);
+    fixture = TestBed.createComponent(FormMultimediaComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

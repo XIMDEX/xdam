@@ -9,6 +9,7 @@ import { ActionModel } from '../../../models/src/lib/ActionModel';
 import { FormI } from '../../../models/src/lib/interfaces/FormI.interface';
 import { setQuestion } from '../../models/forms/Question';
 import swal2 from '../../profiles/swal2';
+import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
 
 @Component({
     selector: 'xdam-item-form',
@@ -21,6 +22,7 @@ export class ItemFormComponent implements OnChanges {
     @Input() resourceUrl: string;
     @Input() display: boolean;
     @Input() viewMode: boolean;
+    @Input() mode: XdamMode;
 
     @Output() close = new EventEmitter<any>();
     @Output() save = new EventEmitter<any>();
@@ -85,7 +87,6 @@ export class ItemFormComponent implements OnChanges {
                 this.modal.close();
             }
         }
-        console.log(this.resourceUrl)
     }
 
     get isEdition(): boolean {

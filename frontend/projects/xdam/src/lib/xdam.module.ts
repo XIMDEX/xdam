@@ -28,9 +28,14 @@ import { SelectComponent } from './components/forms/select/select.component';
 import { ThumbnailComponent } from './components/forms/thumbnail/thumbnail.component';
 import { MetadataComponent } from './components/forms/metadata/metadata.component';
 import { ModalCourseComponent } from './components/forms/modal-course/modal-course.component';
-import { ModalImageComponent } from './components/forms/modal-image/modal-image.component';
+import { ModalMultimediaComponent } from './components/forms/modal-multimedia/modal-multimedia.component';
 import { FormCourseComponent } from './components/forms/modal-course/form-course/form-course.component';
+import { FormMultimediaComponent } from './components/forms/modal-multimedia/form-multimedia/form-multimedia.component';
 import { GlobalService } from './services/global.service';
+import { InputSwitchComponent } from './components/forms/inputsFroms/Input-switch/input-switch.component';
+import { InputListComponent } from './components/forms/inputsFroms/input-list/input-list.component';
+import { InputCategoriesComponent } from './components/forms/inputsFroms/input-categories/input-categories.component';
+
 
 @NgModule({
     imports: [
@@ -73,8 +78,12 @@ import { GlobalService } from './services/global.service';
         ThumbnailComponent,
         MetadataComponent,
         ModalCourseComponent,
-        ModalImageComponent,
-        FormCourseComponent
+        ModalMultimediaComponent,
+        FormCourseComponent,
+        FormMultimediaComponent,
+        InputSwitchComponent,
+        InputListComponent,
+        InputCategoriesComponent
     ],
     exports: [DamComponent,
               FooterComponent]

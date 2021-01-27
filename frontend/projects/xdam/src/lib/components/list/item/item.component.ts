@@ -48,7 +48,7 @@ export class ItemComponent {
 
     get preview(): string {
         if (!this.imageError && this.item.files){
-            this.imagePreview = this.item.files[0];
+            this.imagePreview = this.item.files[this.item.files.length-1];
             return this.settings.urlResource + '/resource/render/'+  this.imagePreview;
         }else{
             return this.defaultImage;

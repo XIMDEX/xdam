@@ -74,18 +74,18 @@ export class MainService {
      * @returns {Observable} The response of getResources
      */
     list(xdamMode: XdamMode ,params: HttpParams = null) {
-        let recourse = 'course'
+        /*let recourse = 'course'
         switch(xdamMode){
             case XdamMode.Course:
                 recourse = 'course';
                 break
             case XdamMode.Multimedia:
-                recourse = 'video';
+                recourse = '';
                 break
-        }
+        }*/
 
 
-        return this.getResources(recourse, params);
+        return this.getResources(xdamMode, params);
     }
 
 
@@ -113,7 +113,7 @@ export class MainService {
      * @param {Object} params The parameters dict for the query
      * @returns {Observable} The response as a observable
      */
-    getResources(type ="course", params: HttpParams = null) {
+    getResources(type, params: HttpParams = null) {
         const url = this.router.getEndPointUrlString('catalogue', 'index', type);
         params = this.router.getBaseParams();
         this.httpOptions.params = params;

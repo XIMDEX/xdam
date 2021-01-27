@@ -14,23 +14,23 @@ import {isNil, hasIn} from 'ramda';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'xdam-form-course',
-  templateUrl: './form-course.component.html',
-  styleUrls: ['./form-course.component.scss'],
+  selector: 'xdam-form-multimedia',
+  templateUrl: './form-multimedia.component.html',
+  styleUrls: ['./form-multimedia.component.scss'],
   providers: [
     {
         provide: NG_VALUE_ACCESSOR,
-        useExisting: forwardRef(() => FormCourseComponent),
+        useExisting: forwardRef(() => FormMultimediaComponent),
         multi: true
     },
     {
         provide: NG_VALIDATORS,
-        useExisting: forwardRef(() => FormCourseComponent),
+        useExisting: forwardRef(() => FormMultimediaComponent),
         multi: true
     }
 ]
 })
-export class FormCourseComponent implements OnInit, ControlValueAccessor {
+export class FormMultimediaComponent implements OnInit, ControlValueAccessor {
   faDownload = faDownload;
   @Input() action: ActionModel;
   @Input() resourceUrl: string;

@@ -6,7 +6,7 @@
 
     <ng-container *swalPartial="swalTargets.content">
 
-        <div *ngIf="action.item; else newAsset">
+        <!--<div *ngIf="false; else newAsset">
             <div [ngSwitch]="action.item.type">
 
                 <div *ngSwitchCase="'course'">
@@ -19,11 +19,33 @@
                 </div>
 
             </div>
-        </div>
+        </div>-->
+        <!--<div [ngSwitch]="action.item.type">
 
-        <ng-template #newAsset>
-            <xdam-modal-course [action]="action" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" ></xdam-modal-course>
-        </ng-template>
+            <div *ngSwitchCase="'course'">
+                <xdam-modal-course [action]="action" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" ></xdam-modal-course>
+            </div>
+
+            <div *ngSwitchCase="'video'">
+                <xdam-modal-image [action]="action" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" ></xdam-modal-image>
+            </div>
+            <div *ngSwitchDefault>
+                <xdam-modal-image [action]="action" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" ></xdam-modal-image>
+            </div>
+
+        </div>-->
+        <div [ngSwitch]="mode">
+            <div *ngSwitchCase="'course'">
+                <xdam-modal-course [action]="action" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" ></xdam-modal-course>
+            </div>
+            <div *ngSwitchCase="'multimedia'">
+                <xdam-modal-multimedia [action]="action" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" ></xdam-modal-multimedia>
+            </div>
+        </div>
+        
+        <!--<ng-template #newAsset>
+            
+        </ng-template>-->
 
     </ng-container>
 </swal>

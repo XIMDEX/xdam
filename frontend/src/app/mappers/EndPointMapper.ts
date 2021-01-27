@@ -74,7 +74,6 @@ export default class EndPointMapper {
         if (this.endpoints.hasOwnProperty(model) && this.endpoints[model].hasOwnProperty(action)) {
             let url = this.baseUrl.concat(this.api.concat(this.endpoints[model][action].uri));
             if (!isNil(item)) {
-                console.log(url, item)
                 url = sprintf(url, item);
             }
             return url;

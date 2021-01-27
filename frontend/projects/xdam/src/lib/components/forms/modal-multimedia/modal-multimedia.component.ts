@@ -4,22 +4,21 @@ import {  FormControl, FormGroup } from '@angular/forms';
 import { ActionModel } from '../../../../models/src/lib/ActionModel';
 import { is } from 'ramda';
 import { ListItemOptionI } from '@xdam/models/interfaces/ListOptions.interface';
-import { FormCourseComponent } from './form-course/form-course.component';
-import { animation } from '@angular/animations';
+import { FormMultimediaComponent } from './form-multimedia/form-multimedia.component';
 
 @Component({
-  selector: 'xdam-modal-course',
-  templateUrl: './modal-course.component.html',
-  styleUrls: ['./modal-course.component.scss']
+  selector: 'xdam-modal-multimedia',
+  templateUrl: './modal-multimedia.component.html',
+  styleUrls: ['./modal-multimedia.component.scss']
 })
-export class ModalCourseComponent implements OnInit {
+export class ModalMultimediaComponent implements OnInit {
   @Input() action: ActionModel;
   @Input() modal: any;
   @Input() settings: ListItemOptionI;
   @Input() resourceUrl: string;
   @Output() dataToSave = new EventEmitter<ActionModel>();
 
-  @ViewChild('dataFormElement') dataFormElement: FormCourseComponent;
+  @ViewChild('dataFormElement') dataFormElement: FormMultimediaComponent;
 
   courseForm: FormGroup;
 
@@ -47,7 +46,6 @@ export class ModalCourseComponent implements OnInit {
               action.data = this.prepareData(this.courseForm.value.dataForm);
               action.data['data'] = JSON.stringify({description: this.courseForm.value.dataForm['data']});
               action.data['File'] = this.dataFormElement.getInputFiles();
-              action.data['type'] = "course";
               if(action.data['File'] == null) delete action.data['File'];
               this.dataToSave.emit(action);
           }
@@ -58,9 +56,9 @@ export class ModalCourseComponent implements OnInit {
     Object.keys(data).forEach(key => {
       if(data[key] === ''){
         delete data[key];
-      }else if(key  === 'type' && is(Array, data[key])){
+      }/*else if(key  === 'type' && is(Array, data[key])){
         data[key] = data[key][0];
-      }
+      }*/
     })
 
     return data;
