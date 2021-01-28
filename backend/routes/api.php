@@ -20,26 +20,28 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group(['prefix'=>'v1','as'=>'v1'], function(){
-    Route::get('', function(){
-        return "test";
-    })->name('api.index');
 
     Route::group(['prefix' => 'category'], function() {
         Route::get('', [CategoryController::class, 'getAll'])->name('category.getAll');
         Route::get('/{category}', [CategoryController::class, 'get'])->name('category.get');
+        Route::get('/{category}/getResources', [CategoryController::class, 'getResources'])->name('category.getResources');
         Route::post('/{category}', [CategoryController::class, 'update'])->name('category.update');
         Route::post('/', [CategoryController::class, 'store'])->name('category.store');
         Route::delete('/{category}', [CategoryController::class, 'delete'])->name('category.delete');
     });
 
+    Route::get('/exploreCourses', [ResourceController::class, 'exploreCourses'])->name('damResource.exploreCourses');
+
     Route::group(['prefix' => 'resource'], function() {
         Route::get('/', [ResourceController::class, 'getAll'])->name('damResource.getAll');
         Route::get('/render/{damUrl}', [ResourceController::class, 'render'])->name('damResource.render');
+        Route::get('/{damResource}/download', [ResourceController::class, 'download'])->name('damResource.download');
         Route::get('/listTypes', [ResourceController::class, 'listTypes'])->name('damResource.listTypes');
         Route::get('/{damResource}', [ResourceController::class, 'get'])->name('damResource.get');
-        Route::post('/{damResource}', [ResourceController::class, 'update'])->name('damResource.update');
+        Route::post('/{damResource}/update', [ResourceController::class, 'update'])->name('damResource.update');
         Route::post('/', [ResourceController::class, 'store'])->name('damResource.store');
         Route::post('/{damResource}/addPreview', [ResourceController::class, 'addPreview'])->name('damResource.addPreview');
+        Route::post('/{damResource}/setTags', [ResourceController::class, 'setTags'])->name('damResource.setTags');
         Route::post('/{damResource}/addFile', [ResourceController::class, 'addFile'])->name('damResource.addFile');
         Route::post('/{damResource}/addCategory/{category}', [ResourceController::class, 'addCategory'])->name('damResource.addCategory');
         Route::post('/{damResource}/addUse', [ResourceController::class, 'addUse'])->name('damResource.addUse');
@@ -49,8 +51,9 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
     });
 
     Route::group(['prefix' => 'catalogue'], function() {
-        Route::get('/{type}/index', [CatalogueController::class, 'index'])->name('catalogue.index');
-        Route::get('/{type}', [CatalogueController::class, 'get'])->name('catalogue.get');
+        Route::get('/checkSolr', [CatalogueController::class, 'checkSolr'])->name('catalogue.checkSolr');
+        Route::get('/{collection}/index', [CatalogueController::class, 'index'])->name('catalogue.index');
+        Route::get('/{collection}', [CatalogueController::class, 'get'])->name('catalogue.get');
         Route::delete('/clearAll', [CatalogueController::class, 'delete'])->name('catalogue.delete');
     });
 

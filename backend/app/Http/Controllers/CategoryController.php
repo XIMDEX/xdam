@@ -6,6 +6,7 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\ResourceCollection;
 use App\Models\Category;
 use App\Services\CategoryService;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,6 +27,9 @@ class CategoryController extends Controller
         $this->categoryService = $categoryService;
     }
 
+    /**
+     * @return \Illuminate\Http\JsonResponse|object
+     */
     public function getAll()
     {
        $categories =  $this->categoryService->getAll();
@@ -34,6 +38,10 @@ class CategoryController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    /**
+     * @param Category $category
+     * @return \Illuminate\Http\JsonResponse|object
+     */
     public function get(Category $category)
     {
         $category =  $this->categoryService->get($category);
@@ -42,6 +50,23 @@ class CategoryController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    /**
+     * @param Category $category
+     * @return \Illuminate\Http\JsonResponse|object
+     */
+    public function getResources(Category $category)
+    {
+        $resources =  $this->categoryService->getResources($category);
+        return (new ResourceCollection($resources))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    /**
+     * @param Category $category
+     * @param UpdateCategoryRequest $request
+     * @return \Illuminate\Http\JsonResponse|object
+     */
     public function update(Category $category, UpdateCategoryRequest $request)
     {
         $category =  $this->categoryService->update($category, $request->all());
@@ -50,6 +75,10 @@ class CategoryController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    /**
+     * @param StoreCategoryRequest $request
+     * @return \Illuminate\Http\JsonResponse|object
+     */
     public function store(StoreCategoryRequest $request)
     {
         $category = $this->categoryService->store($request->all());
@@ -58,6 +87,10 @@ class CategoryController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    /**
+     * @param Category $category
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
     public function delete(Category $category)
     {
         $this->categoryService->delete($category);

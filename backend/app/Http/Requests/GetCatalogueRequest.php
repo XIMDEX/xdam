@@ -26,18 +26,6 @@ class GetCatalogueRequest extends FormRequest
     public function rules()
     {
         return [
-            'type' => ['required', new EnumKey(ResourceType::class)],
         ];
-    }
-
-    public function validationData()
-    {
-        $requiredParameters = [
-            'type' => $this->type,
-        ];
-
-        $this->merge($requiredParameters);
-
-        return array_merge($this->all(), $requiredParameters);
     }
 }

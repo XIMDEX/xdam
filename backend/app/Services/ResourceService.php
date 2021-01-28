@@ -4,13 +4,13 @@ namespace App\Services;
 
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
-use App\Http\Resources\DamResourceUseResource;
-use App\Http\Resources\MediaResource;
 use App\Models\Category;
 use App\Models\DamResource;
 use App\Models\DamResourceUse;
+use App\Services\Solr\SolrService;
 use App\Utils\DamUrlUtil;
 use Exception;
+use Illuminate\Support\Collection;
 use stdClass;
 
 class ResourceService
@@ -18,15 +18,16 @@ class ResourceService
     /**
      * @var MediaService
      */
-    private $mediaService;
+    private MediaService $mediaService;
     /**
      * @var SolrService
      */
-    private $solr;
+    private SolrService $solr;
 
     /**
      * ResourceService constructor.
      * @param MediaService $mediaService
+     * @param SolrService $solr
      */
     public function __construct(MediaService $mediaService, SolrService $solr)
     {
@@ -34,7 +35,11 @@ class ResourceService
         $this->solr = $solr;
     }
 
-    private function prepareResourceToBeIndexed(DamResource $resource)
+    /**
+     * @param DamResource $resource
+     * @return stdClass
+     */
+    public function prepareResourceToBeIndexed(DamResource $resource): stdClass
     {
         $class = new stdClass();
         $class->id = is_object($resource->id) ? $resource->id->toString() : $resource->id;
@@ -42,100 +47,223 @@ class ResourceService
         $class->name = $resource->name ?? '';
         $class->active = true;
         $class->type = ResourceType::fromValue($resource->type)->key;
+        $class->collection = $this->solr->getCollectionBySubType($class->type);
         $class->categories = $resource->categories()->pluck('name')->toArray() ?? [""];
         $previews = $this->mediaService->list($resource, MediaType::Preview()->key, true);
-        foreach ($previews as $preview)
-        {
+        foreach ($previews as $preview) {
             $parent_id = $preview->hasCustomProperty('parent_id') ? $preview->getCustomProperty('parent_id') : "";
             $class->previews[] = DamUrlUtil::generateDamUrl($preview, $parent_id);
         }
         $files = $this->mediaService->list($resource, MediaType::File()->key, true);
-        foreach ($files as $file)
-        {
+        foreach ($files as $file) {
             $parent_id = $file->hasCustomProperty('parent_id') ? $file->getCustomProperty('parent_id') : "";
             $class->files[] = DamUrlUtil::generateDamUrl($file, $parent_id);
         }
         return $class;
     }
 
-    public function getAll()
+    /**
+     * @param $model
+     * @param $params
+     */
+    private function saveAssociatedFiles($model, $params): void
+    {
+        if (array_key_exists(MediaType::File()->key, $params) && $params[MediaType::File()->key]) {
+            $this->mediaService->addFromRequest(
+                $model,
+                null,
+                MediaType::File()->key,
+                ["parent_id" => $model->id],
+                $params[MediaType::File()->key]
+            );
+        } else {
+            $model->clearMediaCollection(MediaType::File()->key);
+        }
+
+        if (array_key_exists(MediaType::Preview()->key, $params) && $params[MediaType::Preview()->key]) {
+            $this->mediaService->addFromRequest(
+                $model,
+                null,
+                MediaType::Preview()->key,
+                ["parent_id" => $model->id],
+                $params[MediaType::Preview()->key]
+            );
+        } else {
+            $model->clearMediaCollection(MediaType::Preview()->key);
+        }
+    }
+
+    /**
+     * @param $resource
+     * @param $data
+     * @param $type
+     * @return null
+     * @throws Exception
+     */
+    private function linkCategoriesFromJson($resource, $data, $type): void
+    {
+        if ($data && property_exists($data, "description")) {
+            if (property_exists($data->description, "category")) {
+                $category = Category::where("type", "=", $type)->where("name", $data->description->category)->first();
+                if (null != $category) {
+                    $this->deleteCategoryFrom($resource, $category);
+                    $this->addCategoryTo($resource, $category);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * @param $resource
+     * @param $data
+     * @return null
+     * @throws Exception
+     */
+    private function linkTagsFromJson($resource, $data): void
+    {
+        if ($data && property_exists($data, "description")) {
+            if (property_exists($data->description, "tags")) {
+                $this->setTags($resource, $data->description->tags);
+            }
+        }
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getAll(): Collection
     {
         return DamResource::all();
     }
 
+    /**
+     * @param DamResource $resource
+     * @return DamResource
+     */
     public function get(DamResource $resource): DamResource
     {
         return $resource;
     }
 
-    public function update(DamResource $resource, $params)
+    /**
+     * @return mixed
+     */
+    public function exploreCourses(): Category
     {
-        $updated = $resource->update([
-            'data' => $params['data'],
-            'type' => ResourceType::fromKey($params["type"])->value,
-        ]);
-
-        if (array_key_exists("file", $params) && $params["file"]) {
-            $this->mediaService->addFromRequest($resource, "file", ["parent_id" => $resource->id]);
-        }
-
-        if (array_key_exists("preview", $params) && $params["preview"]) {
-            $this->mediaService->addFromRequest($resource, "preview", ["parent_id" => $resource->id]);
-        }
-
-        $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
-
-        if ($updated) {
-            return $resource;
-        }
-        return false;
+        return Category::where('type', ResourceType::course)->get();
     }
 
+    /**
+     * @param DamResource $resource
+     * @param $params
+     * @return DamResource
+     * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
+     */
+    public function update(DamResource $resource, $params): DamResource
+    {
+        if (array_key_exists("type", $params) && $params["type"]) {
+            $updated = $resource->update(
+                [
+                    'type' => ResourceType::fromKey($params["type"])->value,
+                ]
+            );
+        }
+
+        if (array_key_exists("data", $params) && $params["data"]) {
+            $updated = $resource->update(
+                [
+                    'data' => $params['data'],
+                ]
+            );
+            $dataJson = json_decode($params["data"]);
+            $this->linkCategoriesFromJson($resource, $dataJson, $resource->type);
+            $this->linkTagsFromJson($resource, $dataJson);
+        }
+        $this->saveAssociatedFiles($resource, $params);
+        $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
+        $resource->refresh();
+        return $resource;
+    }
+
+    /**
+     * @param $params
+     * @return DamResource
+     * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
+     */
     public function store($params): DamResource
     {
         $name = array_key_exists('name', $params) ? $params["name"] : "";
         if (empty($name) && array_key_exists(MediaType::File()->key, $params)) {
             $name = $params[MediaType::File()->key]->getClientOriginalName();
         }
-        $newResource = DamResource::create([
-            'data' => $params['data'],
-            'name' => $name,
-            'type' => ResourceType::fromKey($params["type"])->value,
-        ]);
-
-        if (array_key_exists(MediaType::File()->key, $params) && $params[MediaType::File()->key]) {
-            $this->mediaService->addFromRequest($newResource, MediaType::File()->key, MediaType::File()->key, ["parent_id" => $newResource->id]);
-        }
-
-        if (array_key_exists(MediaType::Preview()->key, $params) && $params[MediaType::Preview()->key]) {
-            $this->mediaService->addFromRequest($newResource, MediaType::Preview()->key, MediaType::File()->key, ["parent_id" => $newResource->id]);
-        }
-
+        $type = ResourceType::fromKey($params["type"])->value;
+        $newResource = DamResource::create(
+            [
+                'data' => $params['data'],
+                'name' => $name,
+                'type' => $type,
+            ]
+        );
+        $jsonData = json_decode($params["data"]);
+        $this->linkCategoriesFromJson($newResource, $jsonData, $type);
+        $this->saveAssociatedFiles($newResource, $params);
         $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($newResource));
-
+        $newResource->refresh();
+        $this->linkTagsFromJson($newResource, $jsonData);
         return $newResource;
     }
 
+    /**
+     * @param DamResource $resource
+     * @throws Exception
+     */
     public function delete(DamResource $resource)
     {
         $this->solr->deleteDocumentById($resource->id);
         $resource->delete();
     }
 
-    public function addPreview(DamResource $resource, $requestKey)
+    /**
+     * @param DamResource $resource
+     * @param $requestKey
+     * @return DamResource
+     */
+    public function addPreview(DamResource $resource, $requestKey): DamResource
     {
-        $this->mediaService->addFromRequest($resource, $requestKey, MediaType::Preview()->key, ["parent_id" => $resource->id]);
+        $this->mediaService->addFromRequest(
+            $resource,
+            $requestKey,
+            MediaType::Preview()->key,
+            ["parent_id" => $resource->id]
+        );
         $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
         return $resource;
     }
 
-    public function addFile(DamResource $resource, $requestKey)
+    /**
+     * @param DamResource $resource
+     * @param $requestKey
+     * @return DamResource
+     */
+    public function addFile(DamResource $resource, $requestKey): DamResource
     {
-        $this->mediaService->addFromRequest($resource, $requestKey, MediaType::File()->key, ["parent_id" => $resource->id]);
+        $this->mediaService->addFromRequest(
+            $resource,
+            $requestKey,
+            MediaType::File()->key,
+            ["parent_id" => $resource->id]
+        );
         return $resource;
     }
 
-    public function addCategoryTo(DamResource $resource, Category $category)
+    /**
+     * @param DamResource $resource
+     * @param Category $category
+     * @return DamResource
+     * @throws Exception
+     */
+    public function addCategoryTo(DamResource $resource, Category $category): DamResource
     {
         if ($category->type == $resource->type) {
             if (!$resource->hasCategory($category)) {
@@ -148,7 +276,24 @@ class ResourceService
         return $resource;
     }
 
-    public function deleteCategoryFrom(DamResource $resource, Category $category)
+    /**
+     * @param DamResource $resource
+     * @param array $tags
+     * @return DamResource
+     */
+    public function setTags(DamResource $resource, array $tags = []): DamResource
+    {
+        $resource->setTags($tags);
+        return $resource;
+    }
+
+    /**
+     * @param DamResource $resource
+     * @param Category $category
+     * @return DamResource
+     * @throws Exception
+     */
+    public function deleteCategoryFrom(DamResource $resource, Category $category): DamResource
     {
         if ($category->type == $resource->type) {
             if ($resource->hasCategory($category)) {
@@ -161,13 +306,24 @@ class ResourceService
         return $resource;
     }
 
-    public function addUse(DamResource $resource, $params)
+    /**
+     * @param DamResource $resource
+     * @param $params
+     * @return DamResource
+     */
+    public function addUse(DamResource $resource, $params): DamResource
     {
         $resource->uses()->create($params);
         return $resource;
     }
 
-    public function deleteUse(DamResource $resource, DamResourceUse $damResourceUse)
+    /**
+     * @param DamResource $resource
+     * @param DamResourceUse $damResourceUse
+     * @return DamResource
+     * @throws Exception
+     */
+    public function deleteUse(DamResource $resource, DamResourceUse $damResourceUse): DamResource
     {
         $resource->uses()->findOrFail($damResourceUse->id)->delete();
         return $resource;

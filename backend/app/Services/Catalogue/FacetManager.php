@@ -10,6 +10,7 @@ class FacetManager
     private $facetList = [
         "categories" => "categories",
         "active" => "active",
+        "type" => "type"
     ];
 
     /**
