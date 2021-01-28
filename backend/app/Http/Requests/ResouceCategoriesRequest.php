@@ -2,12 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\MediaType;
-use App\Enums\ResourceType;
-use BenSampo\Enum\Rules\EnumKey;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateResourceRequest extends FormRequest
+class ResouceCategoriesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,9 +24,11 @@ class UpdateResourceRequest extends FormRequest
     public function rules()
     {
         return [
-            'data' => 'string',
-            MediaType::File()->key => 'file',
-            MediaType::Preview()->key => 'file',
         ];
+    }
+
+    public function validationData()
+    {
+        return $this->json()->all();
     }
 }

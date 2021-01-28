@@ -4,38 +4,55 @@
 namespace App\Services\Catalogue;
 
 
-use App\Enums\ResourceType;
-use App\Services\SolrService;
+use App\Services\Solr\SolrService;
+use phpDocumentor\GraphViz\Exception;
+use stdClass;
 
 class CatalogueService
 {
     /**
      * @var SolrService
      */
-    private $solrService;
+    private SolrService $solrService;
 
     /**
      * CatalogueService constructor.
      * @param SolrService $solrService
-     * @param FacetManager $facetManager
      */
     public function __construct(SolrService $solrService)
     {
         $this->solrService = $solrService;
     }
 
-    public function indexByType($pageParams, $sortParams, $facetsFilter)
+    public function throwErrorIfNotValidCollection($collection)
     {
-        return $this->solrService->paginatedQueryByFacet($pageParams, $sortParams, $facetsFilter);
+        if (!$this->solrService->isValidCollection($collection)) {
+            throw new Exception("The param is not a valid collection");
+        }
     }
 
-    public function exploreByType(ResourceType $type)
+    public function indexByCollection($pageParams, $sortParams, $facetsFilter, $collection): stdClass
     {
-       return $this->solrService->queryByFacet(['type' => $type->key]);
+        $this->throwErrorIfNotValidCollection($collection);
+        return $this->solrService->paginatedQueryByFacet($pageParams, $sortParams, $facetsFilter, $collection);
+    }
+
+    public function exploreByCollection($collection): stdClass
+    {
+        $this->throwErrorIfNotValidCollection($collection);
+        return $this->solrService->queryByFacet([], $collection);
     }
 
     public function resetIndex()
     {
         $this->solrService->cleanSolr();
+    }
+
+    public function checkSolr()
+    {
+        if ($this->solrService->solrServerIsReady()) {
+            return true;
+        }
+        return false;
     }
 }
