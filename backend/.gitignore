@@ -3,3 +3,5 @@
 ###< Other files ###
 vendor/*
 bootstrap/cache/*
+storage/*.key
+.env
