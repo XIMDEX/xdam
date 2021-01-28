@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use App\Traits\RestExceptionHandlerTrait;
 use App\Traits\RestTrait;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Auth\AuthenticationException;
 
 class Handler extends ExceptionHandler
 {

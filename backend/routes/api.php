@@ -6,6 +6,7 @@ use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\TagController;
 use App\Models\DamResource;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +21,16 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group(['prefix'=>'v1','as'=>'v1'], function(){
+
+    Route::group(['prefix' => 'auth'], function(){
+        Route::post('login', [AuthController::class, 'login'])->name('auth.login');
+        Route::post('signup', [AuthController::class, 'signup'])->name('auth.signup');
+    });
+
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::get('user', [AuthController::class, 'user'])->name('user.get');
+        Route::post('logout', [AuthController::class, 'logout'])->name('user.logout');
+    });
 
     Route::group(['prefix' => 'category'], function() {
         Route::get('', [CategoryController::class, 'getAll'])->name('category.getAll');
