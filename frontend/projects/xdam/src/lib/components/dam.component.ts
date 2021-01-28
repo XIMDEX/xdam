@@ -169,8 +169,6 @@ export class DamComponent implements OnInit, OnChanges {
             this.search.update(parameters);
         }
 
-        console.log('prepare', parameters);
-
         if (parameters.reload) {
             this.sendSearch();
         }

@@ -69,7 +69,7 @@ export class FormMultimediaComponent implements OnInit, ControlValueAccessor {
 
   private initFormControls() {
       this.formMetadata.addControl('files', new FormControl(''));
-      this.formMetadata.addControl('type', new FormControl(''));
+      this.formMetadata.addControl('type', new FormControl('document'));
       this.formMetadata.addControl('active', new FormControl(''));
       let groupData: FormGroup = new FormGroup({});
       groupData.addControl('active', new FormControl(true));

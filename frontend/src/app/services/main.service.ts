@@ -115,7 +115,9 @@ export class MainService {
      */
     getResources(type, params: HttpParams = null) {
         const url = this.router.getEndPointUrlString('catalogue', 'index', type);
-        params = this.router.getBaseParams();
+        delete params['updates']['default'];
+        //delete params['updates']['limit'];
+        //params = this.router.getBaseParams();
         this.httpOptions.params = params;
         return this.http.get(url, this.httpOptions);
     }

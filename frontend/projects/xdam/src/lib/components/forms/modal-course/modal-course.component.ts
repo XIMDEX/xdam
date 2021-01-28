@@ -46,7 +46,9 @@ export class ModalCourseComponent implements OnInit {
               action.method = this.action.method === 'show' ? 'edit' : this.action.method;
               action.data = this.prepareData(this.courseForm.value.dataForm);
               action.data['data'] = JSON.stringify({description: this.courseForm.value.dataForm['data']});
-              action.data['File'] = this.dataFormElement.getInputFiles();
+              let file =  this.dataFormElement.getInputFiles();
+              if(file != null ) action.data['File'] = file;
+              
               action.data['type'] = "course";
               if(action.data['File'] == null) delete action.data['File'];
               this.dataToSave.emit(action);
@@ -61,7 +63,7 @@ export class ModalCourseComponent implements OnInit {
       }else if(key  === 'type' && is(Array, data[key])){
         data[key] = data[key][0];
       }
-    })
+    });
 
     return data;
   }

@@ -75,12 +75,12 @@ export class HomeComponent implements OnInit {
 
     private pagerSchema: PagerModelSchema = {
         total: 'total',
-        currentPage: 'current_page',
-        lastPage: 'last_page',
-        nextPage: 'next_page',
-        prevPage: 'prev_page',
+        currentPage: 'currentPage',
+        lastPage: 'lastPage',
+        nextPage: 'nextPage',
+        prevPage: 'prevPage',
         perPage: {
-            value: 'per_page'
+            value: 'perPage'
         }
     };
 
@@ -141,7 +141,7 @@ export class HomeComponent implements OnInit {
                 params = params.append(`facets[${index}]`, value.join(','));
             });
         }
-        params = params.append('default', this.default ? '1' : '0');
+        //params = params.append('default', this.default ? '1' : '0');
         params = params.append(this.limit, String(this.search.limit));
 
         this.mainService.list(this.xdamMode ,params).subscribe(
@@ -160,7 +160,7 @@ export class HomeComponent implements OnInit {
                     pager: new Pager(pager, this.pagerSchema),
                     facets: response['facets']
                 };
-                
+                console.log(this.items)
                 if (this.default) {
                     this.getDefaultFacet(response['facets']);
                 }
