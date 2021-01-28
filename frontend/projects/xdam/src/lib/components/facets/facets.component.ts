@@ -94,4 +94,13 @@ export class FacetsComponent implements OnChanges {
             this.openFacets.splice(i, 1);
         }
     }
+    
+    public onSelectorChange(element: any){
+        const params = new SearchModel();
+        params.facets = this.facets;
+        this.facets['resourceType'] = element.value;
+        params.reload = true;
+        this.cdr.detectChanges();
+        this.onChange.emit(params.only('facets', 'page', 'reload'));
+    }   
 }

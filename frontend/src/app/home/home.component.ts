@@ -13,7 +13,9 @@ import { XDamSettingsInterface } from '@xdam/models/interfaces/Settings.interfac
 
 import { JwtHelperService } from '../services/jwt-helper.service';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Route, Router } from '@angular/router';
+import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
+
 
 @Component({
     selector: 'app-home',
@@ -63,6 +65,13 @@ export class HomeComponent implements OnInit {
     action: ActionModel | null = null;
 
     reset = false;
+    /**
+     * 
+     */
+    xdamMode: XdamMode
+    /**
+     * 
+     */
 
     private pagerSchema: PagerModelSchema = {
         total: 'total',
@@ -85,6 +94,7 @@ export class HomeComponent implements OnInit {
         jwtHelper: JwtHelperService,
         private authService: AuthService,
         private router: Router,
+        private activatedRoute: ActivatedRoute,
         private mainService: MainService
     ) {
         this.accessToken = localStorage.getItem('access_token');
@@ -98,12 +108,21 @@ export class HomeComponent implements OnInit {
     ngOnInit() {
         this.settings = this.mainService.getGeneralConfigs();
         this.search = new SearchModel();
-
+        
         this.page = 'page';
         this.searchTerm = 'search';
         this.limit = 'limit';
 
-        this.sendSearch(this.search);
+        //We start the application in Course mode
+        this.xdamMode = XdamMode.Course;
+
+        //this.sendSearch(this.search);
+
+        this.activatedRoute.data.subscribe(data => {
+            this.xdamMode=data.mode;
+            this.sendSearch(this.search);
+        })
+        
     }
 
     /**
@@ -125,16 +144,25 @@ export class HomeComponent implements OnInit {
         params = params.append('default', this.default ? '1' : '0');
         params = params.append(this.limit, String(this.search.limit));
 
-        this.mainService.list(params).subscribe(
+        this.mainService.list(this.xdamMode ,params).subscribe(
             response => {
-                const { data } = response as any;
+                const pager:any = {
+                    total: response['total'],
+                    currentPage: response['current_page'],
+                    lastPage: response['last_page'],
+                    nextPage:response['next_page'],
+                    prevPage: response['prev_page'],
+                    perPage: response['per_page']
+                }
+
                 this.items = {
-                    data: data['data'],
-                    pager: new Pager(data, this.pagerSchema),
-                    facets: data['facets']
+                    data: response['data'],
+                    pager: new Pager(pager, this.pagerSchema),
+                    facets: response['facets']
                 };
+                
                 if (this.default) {
-                    this.getDefaultFacet(data['facets']);
+                    this.getDefaultFacet(response['facets']);
                 }
             },
             err => console.error(err)
@@ -168,7 +196,7 @@ export class HomeComponent implements OnInit {
 
                 downloadFile.style.display = 'none';
                 downloadFile.href = url;
-                downloadFile.download = item.title;
+                downloadFile.download = item.name;
                 downloadFile.click();
                 downloadFile.remove();
 
@@ -206,19 +234,21 @@ export class HomeComponent implements OnInit {
         if (action.method === 'select') {
             action.status = 'success';
             setTimeout(() => {
-                alert(`Selectd item ${action.item.title}`);
+                alert(`Selectd item ${action.item.name}`);
                 this.action = action;
             }, 2500);
         } else {
             if (action.method === 'show') {
                 actionType = this.mainService.getResource(action);
-            } else {
+            }else if (action.method === 'edit'){
+                actionType = this.mainService.updateForm(action);
+            }else if (action.method === 'new'){
+                //action.data['type'] = this.xdamMode;
                 actionType = this.mainService.saveForm(action);
             }
 
             actionType
-                .subscribe(
-                    ({ result }) => {
+                .subscribe( result => {
                         const { data } = result as any;
                         action.data = data;
                         action.status = 'success';
@@ -249,6 +279,11 @@ export class HomeComponent implements OnInit {
                 localStorage.removeItem('access_token');
                 this.router.navigate(['/login']);
             });
+    }
+
+    changeMode(newMode:XdamMode){
+        if(newMode === this.xdamMode) return;
+        this.router.navigate( ['/'+ newMode])
     }
 
 }

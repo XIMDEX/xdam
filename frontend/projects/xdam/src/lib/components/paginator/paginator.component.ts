@@ -29,7 +29,6 @@ export class PaginatorComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         const { pager = false } = changes;
-
         if (pager && !pager.isFirstChange()) {
             this.setPaginator();
         }

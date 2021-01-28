@@ -9,31 +9,50 @@ import { standard } from './profiles/standard';
  */
 export class Item extends BaseModel {
     /**
-     * The id of the resource
+     * Say if item is active or not
+     * @private
      */
-    protected _id: string | number;
+    //private _active: boolean;
     /**
-     * The title of the resource
+     * The metadata of the item
+     * @private
      */
-    protected _title: string;
+    private _data: string;
     /**
-     * The hash of the resource
+     * The related files with the item
+     * @private
      */
-    protected _hash: string | number;
+    private _files: any[];
     /**
-     * The file size of the resource
+     * The identifier of item
+     * @private
      */
-    protected _size: string | null;
+    private _id: string;
     /**
-     * The type of the resource
+     * The preview of the item
+     * @private
      */
-    protected _type: string;
+    private _previews: string;
     /**
-     * The image src of the resource
+     * The name of the item
+     * @private
      */
-    protected _image: string;
-
-    protected _context: string;
+    private _name: string;
+    /**
+     * The score of the item
+     * @private
+     */
+    //private _score: number;
+    /**
+     * The type/s or category/ies of the item
+     * @private
+     */
+    private _type: any[];
+    /**
+     * The version number of item
+     * @private
+     */
+    //private _version: number;
 
     /**@ignore */
     constructor(item: any = null, schema: ItemModel | null = null) {
@@ -46,62 +65,88 @@ export class Item extends BaseModel {
         }
     }
 
-    set id(id: string | number) {
-        this._id = id;
+    /*get active(): boolean {
+        return this._active;
     }
-    get id(): string | number {
+
+    set active(value: boolean) {
+        this._active = value;
+    }*/
+
+    get data(): string {
+        return this._data;
+    }
+
+    set data(value: string) {
+        this._data = value;
+    }
+
+    get files(): any[] {
+        return this._files;
+    }
+
+    set files(value: any[]) {
+        this._files = value;
+    }
+
+    get id(): string {
         return this._id;
     }
 
-    set title(title: string) {
-        this._title = title;
-    }
-    get title(): string {
-        return this._title;
+    set id(value: string) {
+        this._id = value;
     }
 
-    set hash(hash: string | number) {
-        this._hash = hash;
-    }
-    get hash(): string | number {
-        return this._hash;
+    get previews(): string {
+        return this._previews;
     }
 
-    set size(size: string | null) {
-        this._size = size;
+    set previews(value: string) {
+        this._previews = value;
     }
-    get size(): string | null {
-        return this._size;
+
+    get name(): string {
+        return this._name;
     }
-    set type(type: string) {
-        this._type = type;
+
+    set name(value: string) {
+        this._name = value;
     }
-    get type(): string {
+
+    /*get score(): number {
+        return this._score;
+    }
+
+    set score(value: number) {
+        this._score = value;
+    }*/
+
+    get type(): any[] {
         return this._type;
     }
 
-    set image(image: string) {
-        this._image = image;
-    }
-    get image(): string {
-        return this._image;
+    set type(value: any[]) {
+        this._type = value;
     }
 
-    set context(context: string) {
-        this._context = context;
+    /*get version(): number {
+        return this._version;
     }
-    get context(): string {
-        return this._context;
-    }
+
+    set version(value: number) {
+        this._version = value;
+    }*/
 
     protected prepareData(data: {}, schema: ItemModel) {
         const result = {};
-        for (let key of Object.keys(schema)) {
+        for (const key of Object.keys(schema)) {
             const itemKey = schema[key];
             if (hasIn(itemKey, data)) {
                 result[key] = data[itemKey];
             } else if (isNil(itemKey)) {
                 result[key] = null;
+            } else if (!hasIn(itemKey, data)) {
+                result[itemKey] = null;
             } else {
                 throw new Error(`Invalid item data, key ${key} is required, please check your Item model settings`);
             }

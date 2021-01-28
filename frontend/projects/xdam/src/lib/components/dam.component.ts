@@ -23,6 +23,8 @@ import { SearchComponent } from './search/search.component';
 import { SearchModel } from '../../models/src/lib/SearchModel';
 import { SearchOptionsI } from './../../models/src/lib/interfaces/SearchModel.interface';
 import { XDamSettings } from '../../models/src/lib/XDamSettings';
+import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
+import { GlobalService } from '../services/global.service';
 
 /**
  * Entry point component for the application, is the component in charge of the
@@ -38,6 +40,8 @@ export class DamComponent implements OnInit, OnChanges {
     @Input() settings: XDamSettings;
     @Input() action: ActionModel;
     @Input() reset: boolean;
+    @Input() xdamMode: XdamMode;
+    
 
     @Output() onSearch = new EventEmitter<any>();
     @Output() onDelete = new EventEmitter<Item>();
@@ -45,6 +49,8 @@ export class DamComponent implements OnInit, OnChanges {
     @Output() onSave = new EventEmitter<any>();
     @Output() onAction = new EventEmitter<ActionModel>();
     @Output() onLogout = new EventEmitter<boolean>();
+    @Output() onXdamChangeMode = new EventEmitter<XdamMode>();
+
 
     @ViewChild('search') searchComponent: SearchComponent;
     @ViewChildren('paginator') paginatorComponent: PaginatorComponent[];
@@ -63,28 +69,34 @@ export class DamComponent implements OnInit, OnChanges {
     searchOptions: SearchOptionsI;
     loading: boolean;
     actionModel: ActionModel | null;
-    displayForm: boolean = false;
+    displayForm = false;
 
-    /**@ignore */
-    constructor() {}
+    constructor(private globalService_: GlobalService) {}
 
     /**@ignore */
     ngOnInit() {
         this.loading = true;
 
         if (!isNil(this.items) && hasIn('data', this.items) && this.items.data.length > 0) {
-            this.perpareData();
+            this.prepareData();
         }
 
         if (!isNil(this.items) && hasIn('pager', this.items) && !isNil(this.items.pager)) {
             this.preparePager();
         }
+
+        this.globalService_.modeChange.subscribe((newMode: XdamMode)=>{
+            this.loading = true
+            this.onXdamChangeMode.emit(newMode);
+
+        });
+
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (hasIn('items', changes) && !changes.items.isFirstChange()) {
             this.preparePager();
-            this.perpareData();
+            this.prepareData();
         }
 
         if (hasIn('action', changes)) {
@@ -96,13 +108,17 @@ export class DamComponent implements OnInit, OnChanges {
             this.paginatorComponent.forEach(paginator => paginator.reset());
             this.facetsComponent.reset();
         }
+
+        if (hasIn('xdamMode', changes)){
+            this.searchComponent.currentMode = this.xdamMode;
+        }
     }
 
     /**
      * Map every raw row of data as a typed model class Item
      * @param data The model instance
      */
-    perpareData() {
+    prepareData() {
         let result = [];
 
         result = (this.items.data as [ItemModel?]).map(item => new Item(item, this.settings.list.model || null));

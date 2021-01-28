@@ -20,7 +20,7 @@
         > .search-input {
             display: flex;
             flex-direction: row;
-            flex-grow: 2;
+            flex-grow: 1;
             min-width: $search_bar_input_min_width;
             min-height: $search_bar_input_height;
             max-height: $search_bar_input_height;
@@ -30,6 +30,13 @@
             box-sizing: border-box;
             background-color: $input_bg_color;
             overflow: hidden;
+            
+            & .select-group{
+                border: none;
+                border-right: $input_border;
+                border-radius: 0px;
+                outline: none;
+            }
 
             > input[type='text'] {
                 flex-grow: 2;

@@ -1,0 +1,56 @@
+<ng-container [formGroup]="metadataForm">
+    <aside class="item-form item-form-tabs" *ngIf="metadataLength > 0">
+        <ngx-tabset>
+            <ngx-tab
+                *ngFor="let firstTab of metadata| keyvalue"
+                [tabTitle]="firstTab.value.name"
+                [bypassDOM]="true"
+            >
+                <ng-template>
+                    <ngx-tabset>
+                        <ngx-tab
+                            *ngFor="let tab of firstTab.value.tabs| keyvalue; let tabIndex = index"
+                            [tabTitle]="tab.value.name"
+                            [bypassDOM]="true"
+                        >
+                            <ng-template>
+                                <div class="fields table">
+                                    <!-- Comprobar que tipo de campo es y generarlo -->
+                                    <div *ngFor="let field of tab.value.fields| keyvalue; let fieldIndex = index">
+
+                                        <div [ngSwitch]="field.value.type" class="fields column">
+
+                                            <div *ngSwitchCase="'text'" class="field-item">
+                                                <label [for]="field.value.id">{{field.value.label}}</label>
+                                                <input
+                                                    [type]="field.value.type"
+                                                    [id]="field.value.id"
+                                                    [name]="field.value.name"
+                                                    [formControlName]="field.value.id"
+                                                />
+                                            </div>
+                                            <div *ngSwitchCase="'select'" class="field-item">
+                                                <label [for]="field.value.id">{{field.value.label}}</label>
+                                                <select
+                                                    [id]="field.value.id"
+                                                    [name]="field.value.name"
+                                                    [formControlName]="field.value.id"
+                                                >
+                                                    <option value=""></option>
+                                                    <option
+                                                        *ngFor="let option of field.value.options| keyvalue"
+                                                    >{{option.value.value}}</option>
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ngx-tab>
+                    </ngx-tabset>
+                </ng-template>
+            </ngx-tab>
+        </ngx-tabset>
+    </aside>
+</ng-container>

@@ -51,6 +51,7 @@ body {
 }
 
 input[type='text'],
+input[type='number'],
 textarea,
 select {
     min-height: $input_height;
@@ -86,13 +87,12 @@ select {
     }
 
     &.group:first-of-type {
-        border-right: unset;
         border-top-left-radius: $input_border_radius;
         border-bottom-left-radius: $input_border_radius;
+        
     }
 
     &.group:last-of-type {
-        border-left: unset;
         border-top-right-radius: $input_border_radius;
         border-bottom-right-radius: $input_border_radius;
     }

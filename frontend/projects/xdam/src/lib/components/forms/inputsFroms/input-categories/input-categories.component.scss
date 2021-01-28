@@ -1,0 +1,41 @@
+.categories-form-container{
+    margin-top: 5px;
+    & .input-form{
+        display: flex;
+        flex-direction: row;
+        & input{
+            width: 100%;
+            margin-right: 5px;
+        }
+        & .xdam-btn-base{
+            height: 30px !important;
+            margin: 1px 0;
+        }
+    }
+    & .list{
+        margin-top: 3px;
+        color: black;
+        text-align: left;
+        & .item{
+            border: solid 1px #c9c9c9;
+            border-radius: 10px;
+            display: inline-block;
+            padding: 3px 20px 3px 10px;
+            margin: 3px 4px;
+            position: relative;
+            & p{
+                font-size: 11px;
+                margin: 0px;
+
+            }
+            & .button-delete{
+                color:  #009e92;
+                transition: .3s;
+                position: absolute;
+                right: 7px;
+                top: 3px;
+                cursor: pointer;
+            }
+        }
+    }
+}

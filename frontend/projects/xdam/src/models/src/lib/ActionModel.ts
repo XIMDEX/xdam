@@ -61,17 +61,18 @@ export class ActionModel extends BaseModel implements ActionI {
     }
 
     private jsonToFormData(obj: any, formData: FormData, prefix: string = '') {
+
         if (is(Array, obj)) {
             obj.forEach((element, index) => {
                 formData = this.jsonToFormData(element, formData, `${prefix}[${index}]`);
             });
             return formData;
-        } else if (obj.constructor === FileList) {
+        } else if (is(FileList, obj) ) {
             for (let index = 0; index < (obj as FileList).length; index++) {
                 formData = this.jsonToFormData((obj as FileList).item(index), formData, `${prefix}[${index}]`);
             }
             return formData;
-        } else if (obj.constructor === File || !is(Object, obj)) {
+        } else if (is(File, obj) || !is(Object, obj)) {
             formData.append(prefix, obj);
             return formData;
         }

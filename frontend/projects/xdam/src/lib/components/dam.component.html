@@ -11,6 +11,7 @@
                 (search)="prepareSearch($event)"
                 (action)="setAction($event)"
                 (logout)="logout()"
+                (xdamMode)="xdamMode"
             ></xdam-search>
             <ng-container *ngIf="pager && settings.pager.top">
                 <xdam-paginator
@@ -48,8 +49,10 @@
     <xdam-item-form
         [action]="actionModel"
         [display]="displayForm"
-        (save)="sendAction($event)"
         [settings]="settings.form"
+        [resourceUrl]="settings.list.items.urlResource"
+        [mode]="xdamMode"
+        (save)="sendAction($event)"
         (close)="closeAction()"
     ></xdam-item-form>
 </div>
