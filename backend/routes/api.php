@@ -7,6 +7,11 @@ use App\Http\Controllers\TagController;
 use App\Models\DamResource;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\WorkspaceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,14 +27,50 @@ use App\Http\Controllers\Auth\AuthController;
 
 Route::group(['prefix'=>'v1','as'=>'v1'], function(){
 
+    Route::group(['prefix' => 'organization'], function(){
+        Route::post('create',   [OrganizationController::class, 'create'])->name('org.create');
+        Route::get('get/{id}',  [OrganizationController::class, 'get'])->name('org.get');
+        Route::get('index',     [OrganizationController::class, 'index'])->name('org.index');
+        Route::delete('/{id}',  [OrganizationController::class, 'delete'])->name('org.delete');
+        Route::post('update',   [OrganizationController::class, 'update'])->name('org.update');
+    });
+
+    Route::group(['prefix' => 'workspace'], function(){
+        Route::post('create',   [WorkspaceController::class, 'create'])->name('wsp.create');
+        Route::get('get/{id}',  [WorkspaceController::class, 'get'])->name('wsp.get');
+        Route::get('index',     [WorkspaceController::class, 'index'])->name('wsp.index');
+        Route::delete('/{id}',  [WorkspaceController::class, 'delete'])->name('wsp.delete');
+        Route::post('update',   [WorkspaceController::class, 'update'])->name('wsp.update');
+    });
+
+    Route::group(['prefix' => 'role'], function(){
+        Route::post('/store',           [RoleController::class, 'store'])->name('role.store');
+        Route::post('/update',          [RoleController::class, 'update'])->name('role.update');
+        Route::post('/getByName',       [RoleController::class, 'getByName'])->name('role.getByName');
+        Route::get('/all',              [RoleController::class, 'index'])->name('role.index');
+        Route::get('/{id}',             [RoleController::class, 'getById'])->name('role.getById');
+        Route::delete('/{id}',          [RoleController::class, 'delete'])->name('role.delete');
+        Route::post('/givePermission',  [RoleController::class, 'givePermission'])->name('role.givePermission');
+        Route::post('/revokePermission',[RoleController::class, 'revokePermission'])->name('role.revokePermission');
+    });
+
+    Route::group(['prefix' => 'permission'], function(){
+        Route::post('/store',       [PermissionController::class, 'store'])->name('permission.store');
+        Route::post('/update',      [PermissionController::class, 'update'])->name('permission.update');
+        Route::post('/getByName',   [PermissionController::class, 'getByName'])->name('permission.getByName');
+        Route::get('/all',          [PermissionController::class, 'index'])->name('permission.index');
+        Route::get('/{id}',         [PermissionController::class, 'getById'])->name('permission.getById');
+        Route::delete('/{id}',      [PermissionController::class, 'delete'])->name('permission.delete');
+    });
+
     Route::group(['prefix' => 'auth'], function(){
-        Route::post('login', [AuthController::class, 'login'])->name('auth.login');
-        Route::post('signup', [AuthController::class, 'signup'])->name('auth.signup');
+        Route::post('login',    [AuthController::class, 'login']    )->name('auth.login');
+        Route::post('signup',   [AuthController::class, 'signup']   )->name('auth.signup');
     });
 
     Route::group(['middleware' => 'auth:api'], function () {
-        Route::get('user', [AuthController::class, 'user'])->name('user.get');
-        Route::post('logout', [AuthController::class, 'logout'])->name('user.logout');
+        Route::get('user',      [UserController::class, 'user_auth'])->name('user.get');
+        Route::post('logout',   [AuthController::class, 'logout'])->name('user.logout');
     });
 
     Route::group(['prefix' => 'category'], function() {
