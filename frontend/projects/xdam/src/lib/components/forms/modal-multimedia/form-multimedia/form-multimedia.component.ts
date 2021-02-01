@@ -75,7 +75,7 @@ export class FormMultimediaComponent implements OnInit, ControlValueAccessor {
       groupData.addControl('active', new FormControl(true));
       groupData.addControl('course_title', new FormControl('', Validators.required));
       groupData.addControl('external_url', new FormControl('', Validators.required));
-      groupData.addControl('duration', new FormControl('', Validators.required));
+      // groupData.addControl('duration', new FormControl('', Validators.required));
       groupData.addControl('introduction', new FormControl('', Validators.required));
       groupData.addControl('description', new FormControl('', Validators.required));
       groupData.addControl('tags', new FormControl([]));
@@ -158,6 +158,9 @@ export class FormMultimediaComponent implements OnInit, ControlValueAccessor {
 
   handleFileInput(files: FileList) {
     this.fileToUpload = files;
+  }
+  changetype(value){
+    console.log(value)
   }
 
 }

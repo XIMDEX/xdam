@@ -17,12 +17,12 @@
                 </label>
                 <label class="field-item">
                     <label for="files">SELECT TYPE</label>
-                    <select formControlName="type" [value]="'document'">
+                    <select formControlName="type" [value]="'document'" (change)="changetype(selectType.value)" #selectType>
                         <option value="document">Document</option>
                         <option value="video">Video</option>
                         <option value="image">Image</option>
-                        <option value="Audio">Audio</option>
-                        <option value="Url">Url</option>
+                        <option value="audio">Audio</option>
+                        <option value="url">Url</option>
                     </select>
                 </label>
                 <div class="field-item">
@@ -57,17 +57,6 @@
                     </div>
                     
                 </div>
-
-                <!--<div class="field-item">
-                    <label>Activo</label>
-                    <div>
-                        <input type="radio" value="true" formControlName="active" />
-                        <span>Si</span>
-                        <input type="radio" value="false" formControlName="active" />
-                        <span>No</span>
-                    </div>
-                </div>-->
-
             </div>
         </div>
         <div class="item-form-group data" formGroupName="data">
@@ -86,10 +75,10 @@
                     <label for="externalUrl">External Course Source</label>
                     <input type="text" id="externalUrl" formControlName="external_url"/>
                 </div>
-                <div class="field-item">
+                <!--<div class="field-item">
                     <label for="duration">Duration (Minutes)</label>
                     <input type="number" id="duration" value="0" formControlName="duration"/>
-                </div>
+                </div>-->
                 <div class="field-item">
                     <label for="introduction">Introduction</label>
                     <textarea id="introduction" formControlName="introduction"></textarea>

@@ -28,7 +28,8 @@ export class ModalMultimediaComponent implements OnInit {
   constructor() {
     this.courseForm = new FormGroup({
       dataForm: new FormControl(''),
-      metadataForm: new FormControl('')
+      metadataForm: new FormControl(''),
+      partials: new FormControl('')
     });
   }
 
@@ -39,12 +40,16 @@ export class ModalMultimediaComponent implements OnInit {
   }
 
   sendForm(): any {
+    console.log('this.courseForm.valid: ', this.courseForm.valid)
       if (this.courseForm.valid) {
           if (this.courseForm.controls.dataForm.dirty || this.courseForm.controls.metadataForm.dirty) {
               const action = new ActionModel();
               action.method = this.action.method === 'show' ? 'edit' : this.action.method;
               action.data = this.prepareData(this.courseForm.value.dataForm);
-              action.data['data'] = JSON.stringify({description: this.courseForm.value.dataForm['data']});
+              let dataData = this.courseForm.value.dataForm['data'];
+              dataData['fields'] = this.courseForm.get('partials').value;
+              console.log(dataData)
+              action.data['data'] = JSON.stringify({description: dataData});
               action.data['File'] = this.dataFormElement.getInputFiles();
               if(action.data['File'] == null) delete action.data['File'];
               this.dataToSave.emit(action);

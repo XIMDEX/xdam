@@ -35,6 +35,7 @@ import { GlobalService } from './services/global.service';
 import { InputSwitchComponent } from './components/forms/inputsFroms/Input-switch/input-switch.component';
 import { InputListComponent } from './components/forms/inputsFroms/input-list/input-list.component';
 import { InputCategoriesComponent } from './components/forms/inputsFroms/input-categories/input-categories.component';
+import { PartialVideoComponent } from './components/forms/modal-multimedia/form-partials/partial-video/partial-video.component';
 
 
 @NgModule({
@@ -83,7 +84,8 @@ import { InputCategoriesComponent } from './components/forms/inputsFroms/input-c
         FormMultimediaComponent,
         InputSwitchComponent,
         InputListComponent,
-        InputCategoriesComponent
+        InputCategoriesComponent,
+        PartialVideoComponent
     ],
     exports: [DamComponent,
               FooterComponent]

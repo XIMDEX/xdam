@@ -45,9 +45,16 @@ export class ModalCourseComponent implements OnInit {
               const action = new ActionModel();
               action.method = this.action.method === 'show' ? 'edit' : this.action.method;
               action.data = this.prepareData(this.courseForm.value.dataForm);
-              action.data['data'] = JSON.stringify({description: this.courseForm.value.dataForm['data']});
+              //We choose the files and if there is no new one we insert the old File into data
               let file =  this.dataFormElement.getInputFiles();
-              if(file != null ) action.data['File'] = file;
+
+              if(file != null ) {
+                action.data['File'] = file;
+              }else{
+                action.data['data']['File'] = this.action.item.files; 
+              }
+
+              action.data['data'] = JSON.stringify({description: this.courseForm.value.dataForm['data']});
               
               action.data['type'] = "course";
               if(action.data['File'] == null) delete action.data['File'];
