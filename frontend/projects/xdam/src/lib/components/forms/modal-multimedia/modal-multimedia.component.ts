@@ -28,7 +28,7 @@ export class ModalMultimediaComponent implements OnInit {
   public data: FormGroup = new FormGroup({});
   public dataform: FormGroup = new FormGroup({data: this.data});
 
-  currentType = 'document';
+  currentType:string = 'document';
 
   @Input() action: ActionModel;
   @Input() modal: any;
@@ -119,6 +119,7 @@ export class ModalMultimediaComponent implements OnInit {
 
   private initFormControlsWithData() {
     const item = this.action.item;
+    this.currentType = this.action.item['type'] + "";
     let field: FormControl;
     Object.keys(item).forEach(key => {
       if (key.startsWith('_')) {

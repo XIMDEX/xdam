@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef } from '@angular/core';
+import { Component, Input, forwardRef, AfterContentInit } from '@angular/core';
 import {
   AbstractControl,
   ControlValueAccessor,
@@ -22,7 +22,7 @@ import {isNil} from 'ramda';
     }
 ]
 })
-export class PartialDocumentComponent implements ControlValueAccessor {
+export class PartialDocumentComponent implements AfterContentInit, ControlValueAccessor {
 
     @Input('action') inputAction: any;
 
@@ -33,7 +33,7 @@ export class PartialDocumentComponent implements ControlValueAccessor {
     
     currentValue = null;
 
-    ngOnInit(){
+    ngAfterContentInit(){
         if(this.currentValue == null){
             if (!isNil(this.inputAction) && this.inputAction.method === 'show') {
                 this.value = this.inputAction.data.description.fields;
