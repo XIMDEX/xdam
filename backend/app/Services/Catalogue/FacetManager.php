@@ -71,7 +71,6 @@ class FacetManager
      */
     public function getFacets($facetSet, $facetsFilter)
     {
-        $facetsFilter = $this->transformFacetsFilter($facetsFilter);
         $facetsArray = [];
         foreach ($this->facetList as $key => $value) {
             $facetItem = new \stdClass();
@@ -81,23 +80,8 @@ class FacetManager
             if ($facet) {
                 $property = new \stdClass();
                 foreach ($facet as $valueFaceSet => $count) {
-                    $foundInFilter = false;
-                    if (!empty($facetsFilter)) {
-                        foreach ($facetsFilter as $filterName => $filterValue) {
-                            if ($filterName == $value) {
-                                $facet = $facetSet->getFacet($filterValue);
-                                if ($facet) {
-                                    $property->$filterValue = $facet->getValue();
-                                    $facetItem->values = $property;
-                                    $foundInFilter = true;
-                                }
-                            }
-                        }
-                    }
-                    if (!$foundInFilter) {
                         $property->$valueFaceSet = $count;
                         $facetItem->values = $property;
-                    }
                 }
                 $facetsArray[] = $facetItem;
             }
