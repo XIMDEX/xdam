@@ -102,12 +102,21 @@ class ResourceService
      */
     private function linkCategoriesFromJson($resource, $data, $type): void
     {
+        // define the possible names to associate a category inside a json
+        $possibleKeyNameInJson = ["category", "categories"];
         if ($data && property_exists($data, "description")) {
-            if (property_exists($data->description, "category")) {
-                $category = Category::where("type", "=", $type)->where("name", $data->description->category)->first();
-                if (null != $category) {
-                    $this->deleteCategoryFrom($resource, $category);
-                    $this->addCategoryTo($resource, $category);
+            foreach ($possibleKeyNameInJson as $possibleKeyName) {
+                // for each one we iterate, if there is a corresponding key,
+                // we associate either a list of categories or a specific category to each resource
+                if (property_exists($data->description, $possibleKeyName)) {
+                    $property = $data->description->possibleKeyName;
+                    if (is_array($property)) {
+                        foreach ($property as $child) {
+                            $this->setCategories($resource, $child);
+                        }
+                    } else {
+                        $this->setCategories($resource, $property);
+                    }
                 }
             }
         }
@@ -285,6 +294,22 @@ class ResourceService
     {
         $resource->setTags($tags);
         return $resource;
+    }
+
+    /**
+     * Associated a category to a resource, always deletes the previous association
+     * @param DamResource $resource
+     * @param string $categoryName
+     * @return DamResource
+     * @throws Exception
+     */
+    public function setCategories(DamResource $resource, string $categoryName): DamResource
+    {
+        $category = Category::where("type", "=", $resource->type)->where("name", $categoryName)->first();
+        if (null != $category) {
+            $this->deleteCategoryFrom($resource, $category);
+            $this->addCategoryTo($resource, $category);
+        }
     }
 
     /**
