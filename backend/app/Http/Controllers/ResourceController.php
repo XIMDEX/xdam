@@ -238,4 +238,18 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    /**
+     * @param DamResource $damResource
+     * @param Media $media
+     * @return \Illuminate\Http\JsonResponse|object
+     * @throws \Exception
+     */
+    public function deleteAssociatedFile(DamResource $damResource, Media $media)
+    {
+        $resource = $this->resourceService->deleteAssociatedFile($damResource, $media);
+        return (new ResourceResource($resource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
 }
