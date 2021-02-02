@@ -7,6 +7,7 @@ use App\Enums\ResourceType;
 use App\Models\Category;
 use App\Models\DamResource;
 use App\Models\DamResourceUse;
+use App\Models\Media;
 use App\Services\Solr\SolrService;
 use App\Utils\DamUrlUtil;
 use Exception;
@@ -76,8 +77,6 @@ class ResourceService
                 ["parent_id" => $model->id],
                 $params[MediaType::File()->key]
             );
-        } else {
-            $model->clearMediaCollection(MediaType::File()->key);
         }
 
         if (array_key_exists(MediaType::Preview()->key, $params) && $params[MediaType::Preview()->key]) {
@@ -88,8 +87,6 @@ class ResourceService
                 ["parent_id" => $model->id],
                 $params[MediaType::Preview()->key]
             );
-        } else {
-            $model->clearMediaCollection(MediaType::Preview()->key);
         }
     }
 
@@ -100,14 +97,23 @@ class ResourceService
      * @return null
      * @throws Exception
      */
-    private function linkCategoriesFromJson($resource, $data, $type): void
+    private function linkCategoriesFromJson($resource, $data): void
     {
+        // define the possible names to associate a category inside a json
+        $possibleKeyNameInJson = ["category", "categories"];
         if ($data && property_exists($data, "description")) {
-            if (property_exists($data->description, "category")) {
-                $category = Category::where("type", "=", $type)->where("name", $data->description->category)->first();
-                if (null != $category) {
-                    $this->deleteCategoryFrom($resource, $category);
-                    $this->addCategoryTo($resource, $category);
+            foreach ($possibleKeyNameInJson as $possibleKeyName) {
+                // for each one we iterate, if there is a corresponding key,
+                // we associate either a list of categories or a specific category to each resource
+                if (property_exists($data->description, $possibleKeyName)) {
+                    $property = $data->description->$possibleKeyName;
+                    if (is_array($property)) {
+                        foreach ($property as $child) {
+                            $this->setCategories($resource, $child);
+                        }
+                    } else {
+                        $this->setCategories($resource, $property);
+                    }
                 }
             }
         }
@@ -177,7 +183,7 @@ class ResourceService
                 ]
             );
             $dataJson = json_decode($params["data"]);
-            $this->linkCategoriesFromJson($resource, $dataJson, $resource->type);
+            $this->linkCategoriesFromJson($resource, $dataJson);
             $this->linkTagsFromJson($resource, $dataJson);
         }
         $this->saveAssociatedFiles($resource, $params);
@@ -206,7 +212,7 @@ class ResourceService
             ]
         );
         $jsonData = json_decode($params["data"]);
-        $this->linkCategoriesFromJson($newResource, $jsonData, $type);
+        $this->linkCategoriesFromJson($newResource, $jsonData);
         $this->saveAssociatedFiles($newResource, $params);
         $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($newResource));
         $newResource->refresh();
@@ -288,6 +294,23 @@ class ResourceService
     }
 
     /**
+     * Associated a category to a resource, always deletes the previous association
+     * @param DamResource $resource
+     * @param string $categoryName
+     * @return DamResource
+     * @throws Exception
+     */
+    public function setCategories(DamResource $resource, string $categoryName): DamResource
+    {
+        $category = Category::where("type", "=", $resource->type)->where("name", $categoryName)->first();
+        if (null != $category) {
+            $this->deleteCategoryFrom($resource, $category);
+            $this->addCategoryTo($resource, $category);
+        }
+        return $resource;
+    }
+
+    /**
      * @param DamResource $resource
      * @param Category $category
      * @return DamResource
@@ -326,6 +349,19 @@ class ResourceService
     public function deleteUse(DamResource $resource, DamResourceUse $damResourceUse): DamResource
     {
         $resource->uses()->findOrFail($damResourceUse->id)->delete();
+        return $resource;
+    }
+
+    /**
+     * @param DamResource $resource
+     * @param Media $media
+     * @return DamResource
+     * @throws Exception
+     */
+    public function deleteAssociatedFile(DamResource $resource, Media $media): DamResource
+    {
+        $media->delete();
+        $resource->refresh();
         return $resource;
     }
 }
