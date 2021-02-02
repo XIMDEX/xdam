@@ -100,7 +100,7 @@ class ResourceService
      * @return null
      * @throws Exception
      */
-    private function linkCategoriesFromJson($resource, $data, $type): void
+    private function linkCategoriesFromJson($resource, $data): void
     {
         // define the possible names to associate a category inside a json
         $possibleKeyNameInJson = ["category", "categories"];
@@ -109,7 +109,7 @@ class ResourceService
                 // for each one we iterate, if there is a corresponding key,
                 // we associate either a list of categories or a specific category to each resource
                 if (property_exists($data->description, $possibleKeyName)) {
-                    $property = $data->description->possibleKeyName;
+                    $property = $data->description->$possibleKeyName;
                     if (is_array($property)) {
                         foreach ($property as $child) {
                             $this->setCategories($resource, $child);
@@ -186,7 +186,7 @@ class ResourceService
                 ]
             );
             $dataJson = json_decode($params["data"]);
-            $this->linkCategoriesFromJson($resource, $dataJson, $resource->type);
+            $this->linkCategoriesFromJson($resource, $dataJson);
             $this->linkTagsFromJson($resource, $dataJson);
         }
         $this->saveAssociatedFiles($resource, $params);
@@ -215,7 +215,7 @@ class ResourceService
             ]
         );
         $jsonData = json_decode($params["data"]);
-        $this->linkCategoriesFromJson($newResource, $jsonData, $type);
+        $this->linkCategoriesFromJson($newResource, $jsonData);
         $this->saveAssociatedFiles($newResource, $params);
         $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($newResource));
         $newResource->refresh();
@@ -310,6 +310,7 @@ class ResourceService
             $this->deleteCategoryFrom($resource, $category);
             $this->addCategoryTo($resource, $category);
         }
+        return $resource;
     }
 
     /**
