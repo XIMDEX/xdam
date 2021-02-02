@@ -76,8 +76,6 @@ class ResourceService
                 ["parent_id" => $model->id],
                 $params[MediaType::File()->key]
             );
-        } else {
-            $model->clearMediaCollection(MediaType::File()->key);
         }
 
         if (array_key_exists(MediaType::Preview()->key, $params) && $params[MediaType::Preview()->key]) {
@@ -88,8 +86,6 @@ class ResourceService
                 ["parent_id" => $model->id],
                 $params[MediaType::Preview()->key]
             );
-        } else {
-            $model->clearMediaCollection(MediaType::Preview()->key);
         }
     }
 
