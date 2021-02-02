@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\DefaultOrganizationWorkspace;
 use App\Enums\WorkspaceType;
+use App\Http\Requests\OrganizationWorkspace\SetOrganizationRequest;
 use App\Models\Organization;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
@@ -22,7 +22,7 @@ class OrganizationController extends Controller
         return $org;
     }
 
-    public function create(Request $request)
+    public function create(SetOrganizationRequest $request)
     {
         $org = new Organization(['name' => $request->name]);
         $wsp = new Workspace(

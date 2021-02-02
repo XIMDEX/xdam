@@ -9,12 +9,6 @@ use Illuminate\Support\Facades\Auth;
 class UserService
 {
 
-    public $user;
-
-    public function __construct()
-    {
-        $this->user = User::find(Auth::user()->id);
-    }
 
     public function user_auth()
     {
@@ -23,7 +17,8 @@ class UserService
 
     public function user_model()
     {
-        return $this->user;
+        $user = User::find($this->user_auth()->id);
+        return $user;
     }
 
     public function setOrganization($orgID)

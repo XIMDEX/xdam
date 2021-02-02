@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RolePermission\AssignRoleRequest;
 use App\Http\Requests\RolePermission\RolePermissionRequest;
 use App\Http\Requests\RolePermission\RoleRequest;
+use App\Http\Resources\RoleResource;
 use App\Services\RoleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -60,10 +62,26 @@ class RoleController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    public function assign(AssignRoleRequest $assignRoleRequest): JsonResponse
+    {
+        $role = $this->roleService->assign($assignRoleRequest);
+        return (new JsonResource($role))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function unassign(AssignRoleRequest $assignRoleRequest): JsonResponse
+    {
+        $role = $this->roleService->unassign($assignRoleRequest);
+        return (new JsonResource($role))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
     public function getByName(RoleRequest $roleRequest): JsonResponse
     {
         $role = $this->roleService->getByName($roleRequest->name);
-        return (new JsonResource($role))
+        return (new RoleResource($role))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
@@ -71,7 +89,7 @@ class RoleController extends Controller
     public function getById(Request $request): JsonResponse
     {
         $role = $this->roleService->getById($request->id);
-        return (new JsonResource($role))
+        return (new RoleResource($role))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }

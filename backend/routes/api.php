@@ -52,6 +52,8 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
         Route::delete('/{id}',          [RoleController::class, 'delete'])->name('role.delete');
         Route::post('/givePermission',  [RoleController::class, 'givePermission'])->name('role.givePermission');
         Route::post('/revokePermission',[RoleController::class, 'revokePermission'])->name('role.revokePermission');
+        Route::post('/assign',          [RoleController::class, 'assign'])->name('role.assign');
+        Route::post('/unassign',        [RoleController::class, 'unassign'])->name('role.unassign');
     });
 
     Route::group(['prefix' => 'permission'], function(){
@@ -69,8 +71,9 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
     });
 
     Route::group(['middleware' => 'auth:api'], function () {
-        Route::get('user',      [UserController::class, 'user_auth'])->name('user.get');
-        Route::post('logout',   [AuthController::class, 'logout'])->name('user.logout');
+        Route::get('user/authenticated',    [UserController::class, 'userAuth'])->name('user.get');
+        Route::get('user',                  [UserController::class, 'userModel'])->name('userModel.get');
+        Route::post('logout',               [AuthController::class, 'logout'])->name('user.logout');
     });
 
     Route::group(['prefix' => 'category'], function() {

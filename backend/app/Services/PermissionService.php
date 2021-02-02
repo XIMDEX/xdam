@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Permission;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -64,6 +65,10 @@ class PermissionService
     public function delete($id)
     {
         $permission = Permission::findOrFail($id);
+        $roles = Role::all();
+        foreach ($roles as  $role) {
+            $role->revokePermissionTo($permission);
+        }
         $permission->delete();
         return $permission;
     }

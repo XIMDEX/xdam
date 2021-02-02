@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 use App\Models\Role;
+use App\Models\User;
 
 class RoleService
 {
@@ -29,6 +30,40 @@ class RoleService
         $permission = $this->permissionService->getById($request->permission_id);
         $role->revokePermissionTo($permission);
         return $role;
+    }
+
+    public function assign($request)
+    {
+        $role = $this->getById($request->role_id);
+        $user = User::find($request->user_id);
+
+        $user->assignRole($role);
+        //or multiple assign
+        //$user->assignRole([$role->name, 'admin']);
+        return [
+            'role' => [
+                'id' => $role->id,
+                'name' => $role->name,
+                'permissions' => $role->permissions
+            ],
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+            ]
+        ];
+    }
+
+    public function unassign($request)
+    {
+        $role = $this->getById($request->role_id);
+        $user = User::find($request->user_id);
+        if($user->hasRole($role)) {
+            $user->removeRole($role);
+            return ["unassigned" => $role];
+        } else {
+            return ["error"=>"This user hasn't the ".$role->name ." role assigned."];
+        }
+
     }
     /**
      * @param Request $request
