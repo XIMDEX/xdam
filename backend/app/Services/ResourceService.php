@@ -220,7 +220,7 @@ class ResourceService
      */
     public function delete(DamResource $resource)
     {
-        $this->solr->deleteDocumentById($resource->id);
+        $this->solr->deleteDocumentById($resource->id, $this->solr->getCollectionBySubType($resource->type));
         $resource->delete();
     }
 
