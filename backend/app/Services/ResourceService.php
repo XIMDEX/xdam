@@ -7,6 +7,7 @@ use App\Enums\ResourceType;
 use App\Models\Category;
 use App\Models\DamResource;
 use App\Models\DamResourceUse;
+use App\Models\Media;
 use App\Services\Solr\SolrService;
 use App\Utils\DamUrlUtil;
 use Exception;
@@ -348,6 +349,19 @@ class ResourceService
     public function deleteUse(DamResource $resource, DamResourceUse $damResourceUse): DamResource
     {
         $resource->uses()->findOrFail($damResourceUse->id)->delete();
+        return $resource;
+    }
+
+    /**
+     * @param DamResource $resource
+     * @param Media $media
+     * @return DamResource
+     * @throws Exception
+     */
+    public function deleteAssociatedFile(DamResource $resource, Media $media): DamResource
+    {
+        $media->delete();
+        $resource->refresh();
         return $resource;
     }
 }
