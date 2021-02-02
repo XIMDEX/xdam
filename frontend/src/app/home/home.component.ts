@@ -160,7 +160,6 @@ export class HomeComponent implements OnInit {
                     pager: new Pager(pager, this.pagerSchema),
                     facets: response['facets']
                 };
-                console.log(this.items)
                 if (this.default) {
                     this.getDefaultFacet(response['facets']);
                 }

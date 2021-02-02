@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild, AfterContentChecked, HostListener} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
 import { SwalComponent, SwalPartialTargets } from '@sweetalert2/ngx-sweetalert2';
 import { equals, hasIn, is, isNil } from 'ramda';
 import { faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
@@ -10,6 +10,8 @@ import { FormI } from '../../../models/src/lib/interfaces/FormI.interface';
 import { setQuestion } from '../../models/forms/Question';
 import swal2 from '../../profiles/swal2';
 import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
+import { ModalCourseComponent } from '../forms/modal-course/modal-course.component';
+import { ModalMultimediaComponent } from '../forms/modal-multimedia/modal-multimedia.component';
 
 @Component({
     selector: 'xdam-item-form',
@@ -28,8 +30,10 @@ export class ItemFormComponent implements OnChanges {
     @Output() save = new EventEmitter<any>();
 
     @ViewChild('swalModal') swalModal: SwalComponent;
+    @ViewChild('fromCourse') xdamModalCourse!: ModalCourseComponent;
+    @ViewChild('fromMultimedia') xdamModalMultimedia!: ModalMultimediaComponent;
 
-    private modal;
+    modal;
 
     faTimes = faTimes;
     faSave = faSave;
@@ -266,5 +270,14 @@ export class ItemFormComponent implements OnChanges {
         }
 
         return obj;
+    }
+
+    formSended(e){
+        this.xdamModalMultimedia;
+        if(this.mode == 'course'){
+            this.xdamModalCourse.sendForm(e);
+        }else{
+            this.xdamModalMultimedia.sendForm(e);
+        }
     }
 }

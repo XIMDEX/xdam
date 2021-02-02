@@ -7,21 +7,22 @@ import {
   NG_VALUE_ACCESSOR,
   ValidationErrors
 } from '@angular/forms';
+
 import {isNil} from 'ramda';
 
 @Component({
-  selector: 'xdam-form-partial-video',
-  templateUrl: './partial-video.component.html',
-  styleUrls: ['./partial-video.component.scss'],
+  selector: 'xdam-form-partial-document',
+  templateUrl: './partial-document.component.html',
+  styleUrls: ['./partial-document.component.scss'],
   providers: [
     {
         provide: NG_VALUE_ACCESSOR,
-        useExisting: forwardRef(() => PartialVideoComponent),
+        useExisting: forwardRef(() => PartialDocumentComponent),
         multi: true
     }
 ]
 })
-export class PartialVideoComponent implements ControlValueAccessor {
+export class PartialDocumentComponent implements ControlValueAccessor {
 
     @Input('action') inputAction: any;
 

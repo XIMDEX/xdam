@@ -160,7 +160,7 @@ export class FormMultimediaComponent implements OnInit, ControlValueAccessor {
     this.fileToUpload = files;
   }
   changetype(value){
-    console.log(value)
+    
   }
 
 }

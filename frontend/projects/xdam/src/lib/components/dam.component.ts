@@ -176,7 +176,6 @@ export class DamComponent implements OnInit, OnChanges {
 
     sendSearch() {
         this.loading = true;
-        console.log('send', this.search);
         this.onSearch.emit(this.search);
     }
 

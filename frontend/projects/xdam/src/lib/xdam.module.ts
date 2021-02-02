@@ -36,6 +36,7 @@ import { InputSwitchComponent } from './components/forms/inputsFroms/Input-switc
 import { InputListComponent } from './components/forms/inputsFroms/input-list/input-list.component';
 import { InputCategoriesComponent } from './components/forms/inputsFroms/input-categories/input-categories.component';
 import { PartialVideoComponent } from './components/forms/modal-multimedia/form-partials/partial-video/partial-video.component';
+import { PartialDocumentComponent } from './components/forms/modal-multimedia/form-partials/partial-document/partial-document.component';
 
 
 @NgModule({
@@ -85,7 +86,8 @@ import { PartialVideoComponent } from './components/forms/modal-multimedia/form-
         InputSwitchComponent,
         InputListComponent,
         InputCategoriesComponent,
-        PartialVideoComponent
+        PartialVideoComponent,
+        PartialDocumentComponent
     ],
     exports: [DamComponent,
               FooterComponent]
