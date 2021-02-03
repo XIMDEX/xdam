@@ -22,7 +22,14 @@ class FacetManager
     {
         if (!empty($facetsFilter)) {
             foreach ($facetsFilter as $filterName => $filterValue) {
-                $query->createFilterQuery($filterValue)->setQuery($filterName . ":"  . $filterValue);
+                // The filter value can be single or an array
+                if (is_array($filterValue)) {
+                    foreach ($filterValue as $value) {
+                        $query->createFilterQuery($value)->setQuery($filterName . ":" . $value);
+                    }
+                } else {
+                    $query->createFilterQuery($filterValue)->setQuery($filterName . ":" . $filterValue);
+                }
             }
         }
     }
@@ -72,16 +79,35 @@ class FacetManager
     public function getFacets($facetSet, $facetsFilter)
     {
         $facetsArray = [];
-        foreach ($this->facetList as $key => $value) {
+        // go through each of the facets list
+        foreach ($this->facetList as $facetLabel => $facetKey) {
             $facetItem = new \stdClass();
-            $facetItem->key = $value;
-            $facetItem->label = $key;
-            $facet = $facetSet->getFacet($value);
+            $facetItem->key = $facetKey;
+            $facetItem->label = $facetLabel;
+            $facet = $facetSet->getFacet($facetKey);
             if ($facet) {
                 $property = new \stdClass();
+                // iterates through each faceted collection
                 foreach ($facet as $valueFaceSet => $count) {
-                        $property->$valueFaceSet = $count;
-                        $facetItem->values = $property;
+                    $isSelected = false;
+                    // if it exists in the parameter filter, mark it as selected
+                    if (array_key_exists($facetKey, $facetsFilter)) {
+                        if (is_array($facetsFilter[$facetKey])) {
+                            foreach ($facetsFilter[$facetKey] as $filterValue) {
+                                if ($filterValue === $valueFaceSet) {
+                                    $isSelected = true;
+                                }
+                            }
+                        } else {
+                            if ($facetsFilter[$facetKey] === $valueFaceSet)
+                            {
+                                $isSelected = true;
+                            }
+                        }
+                    }
+                    // return the occurrence count and if it is selected or not
+                    $property->$valueFaceSet = ["count" => $count, "selected" => $isSelected];
+                    $facetItem->values = $property;
                 }
                 $facetsArray[] = $facetItem;
             }
