@@ -53,7 +53,7 @@ class CatalogueController extends Controller
         $sortParams['orderBy'] = $request->get('order_by');
         $sortParams['order'] = $request->get('order');
 
-        $facetsFilter = $request->get('facets');
+        $facetsFilter = $request->get('facets', []);
 
         $response = $this->catalogueService->indexByCollection(
             $pageParams,
