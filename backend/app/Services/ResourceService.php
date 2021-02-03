@@ -24,15 +24,21 @@ class ResourceService
      * @var SolrService
      */
     private SolrService $solr;
+    /**
+     * @var CategoryService
+     */
+    private CategoryService $categoryService;
 
     /**
      * ResourceService constructor.
      * @param MediaService $mediaService
      * @param SolrService $solr
+     * @param CategoryService $categoryService
      */
-    public function __construct(MediaService $mediaService, SolrService $solr)
+    public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService)
     {
         $this->mediaService = $mediaService;
+        $this->categoryService = $categoryService;
         $this->solr = $solr;
     }
 
@@ -305,6 +311,9 @@ class ResourceService
         $category = Category::where("type", "=", $resource->type)->where("name", $categoryName)->first();
         if (null != $category) {
             $this->deleteCategoryFrom($resource, $category);
+            $this->addCategoryTo($resource, $category);
+        } else {
+            $category = $this->categoryService->store(["name" => $categoryName, "type" => $resource->type->key]);
             $this->addCategoryTo($resource, $category);
         }
         return $resource;
