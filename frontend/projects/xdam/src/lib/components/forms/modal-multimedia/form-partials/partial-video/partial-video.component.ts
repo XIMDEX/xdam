@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef } from '@angular/core';
+import { Component, Input, forwardRef, AfterContentInit } from '@angular/core';
 import {
   AbstractControl,
   ControlValueAccessor,
@@ -8,6 +8,10 @@ import {
   ValidationErrors
 } from '@angular/forms';
 import {isNil} from 'ramda';
+
+const partialFields = [
+    "duration"
+]
 
 @Component({
   selector: 'xdam-form-partial-video',
@@ -21,7 +25,7 @@ import {isNil} from 'ramda';
     }
 ]
 })
-export class PartialVideoComponent implements ControlValueAccessor {
+export class PartialVideoComponent implements AfterContentInit, ControlValueAccessor {
 
     @Input('action') inputAction: any;
 
@@ -32,7 +36,7 @@ export class PartialVideoComponent implements ControlValueAccessor {
     
     currentValue = null;
 
-    ngOnInit(){
+    ngAfterContentInit(){
         if(this.currentValue == null){
             if (!isNil(this.inputAction) && this.inputAction.method === 'show') {
                 this.value = this.inputAction.data.description.fields;
@@ -49,7 +53,9 @@ export class PartialVideoComponent implements ControlValueAccessor {
 
     initFormControlsWithData(values: Object){
         Object.keys(values).forEach(keyData => {
-            this.partialForm.addControl(keyData, new FormControl(values[keyData]));
+            if(partialFields.includes(keyData)){
+                this.partialForm.addControl(keyData, new FormControl(values[keyData]));
+            }
         });
     }
 
@@ -62,7 +68,7 @@ export class PartialVideoComponent implements ControlValueAccessor {
     }
 
     set value(obj:  any) {
-        if(obj === '' || obj === null){
+        if(obj === '' || obj === null || obj === {} || obj === undefined){
             this.initFormControlsWithOutData();
         } else {
             this.initFormControlsWithData(obj);

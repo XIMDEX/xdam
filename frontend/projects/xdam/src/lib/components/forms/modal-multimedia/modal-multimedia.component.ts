@@ -1,10 +1,9 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import { faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
 import {  FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActionModel } from '../../../../models/src/lib/ActionModel';
 import {isNil, hasIn, is} from 'ramda';
 import { ListItemOptionI } from '@xdam/models/interfaces/ListOptions.interface';
-import { FormMultimediaComponent } from './form-multimedia/form-multimedia.component';
 
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
 
@@ -44,8 +43,8 @@ export class ModalMultimediaComponent implements OnInit {
   imageError= false;
 
 
-  constructor() {}
-
+  constructor(private ref: ChangeDetectorRef) {}
+  
   ngOnInit() {
       if (!isNil(this.action) && this.action.method === 'show') {
         this.initFormControlsWithData();
@@ -81,7 +80,7 @@ export class ModalMultimediaComponent implements OnInit {
     }
 
     //Detete Fields not required
-    delete data['files'];
+    //delete data['files'];
 
     return data;
   }
@@ -103,7 +102,7 @@ export class ModalMultimediaComponent implements OnInit {
   }
 
   private initFormControls() {
-    this.dataform.addControl('files', new FormControl(''));
+    //this.dataform.addControl('files', new FormControl(''));
     this.dataform.addControl('type', new FormControl('document'));
     this.dataform.addControl('active', new FormControl(''));
     let groupData: FormGroup = new FormGroup({});
@@ -179,6 +178,5 @@ export class ModalMultimediaComponent implements OnInit {
   changetype(value){
     this.currentType = value;
   }
-
 
 }

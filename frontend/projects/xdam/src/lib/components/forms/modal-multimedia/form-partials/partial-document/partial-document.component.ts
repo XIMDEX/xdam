@@ -10,6 +10,10 @@ import {
 
 import {isNil} from 'ramda';
 
+const partialFields = [
+    "pages"
+]
+
 @Component({
   selector: 'xdam-form-partial-document',
   templateUrl: './partial-document.component.html',
@@ -50,12 +54,14 @@ export class PartialDocumentComponent implements AfterContentInit, ControlValueA
 
     initFormControlsWithData(values: Object){
         Object.keys(values).forEach(keyData => {
-            this.partialForm.addControl(keyData, new FormControl(values[keyData]));
+            if(partialFields.includes(keyData)){
+                this.partialForm.addControl(keyData, new FormControl(values[keyData]));
+            }
         });
     }
 
     initFormControlsWithOutData(){
-        this.partialForm.addControl('duration', new FormControl(0));
+        this.partialForm.addControl('pages', new FormControl(0));
     }
 
     get value(): any {
@@ -63,7 +69,7 @@ export class PartialDocumentComponent implements AfterContentInit, ControlValueA
     }
 
     set value(obj:  any) {
-        if(obj === '' || obj === null){
+        if(obj === '' || obj === null || obj === {} || obj === undefined){
             this.initFormControlsWithOutData();
         } else {
             this.initFormControlsWithData(obj);

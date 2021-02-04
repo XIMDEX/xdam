@@ -32,8 +32,8 @@
         "ramda": "^0.26.1",
         "sprintf-js": "^1.1.2",
         "ngx-loading": "^3.0.1",
-        "@sweetalert2/ngx-sweetalert2": "^5.1.0",
-        "sweetalert2": "^8.12.1",
+        "@sweetalert2/ngx-sweetalert2": "^9.0.0",
+        "sweetalert2": "^10.14.0",
         "ngx-tabset": "^2.1.0"
     }
 }
