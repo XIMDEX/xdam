@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\OrganizationWorkspace;
+namespace App\Http\Requests\RoleAbility;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SetOrganizationRequest extends FormRequest
+class RoleAbilityRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,11 @@ class SetOrganizationRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'string|required',
-            'organization_ids' => 'array|required|min:1',
-            'organization_ids.*' => 'required|distinct|min:0'
+            'role_id'    => 'required|string',
+            'ability_id' => 'required_without_all:ability,tile',
+            'ability'    => 'required_without_all:ability_id|string|min:3',
+            'title'      => 'required_without_all:ability_id|string|min:3',
+
         ];
     }
 }

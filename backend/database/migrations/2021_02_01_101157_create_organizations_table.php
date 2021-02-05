@@ -14,8 +14,9 @@ class CreateOrganizationsTable extends Migration
     public function up()
     {
         Schema::create('organizations', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('name');
+            // $table->uuid('id')->primary();
+            $table->increments('id');
+            $table->string('name')->unique();
             $table->timestamps();
         });
     }

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\RolePermission\AssignRoleRequest;
-use App\Http\Requests\RolePermission\RolePermissionRequest;
-use App\Http\Requests\RolePermission\RoleRequest;
+use App\Http\Requests\RoleAbility\RoleAbilityRequest;
+use App\Http\Requests\RoleAbility\RoleRemoveAbilityRequest;
+use App\Http\Requests\RoleAbility\RoleRequest;
 use App\Http\Resources\RoleResource;
 use App\Services\RoleService;
 use Illuminate\Http\JsonResponse;
@@ -32,7 +32,7 @@ class RoleController extends Controller
 
     public function store(RoleRequest $roleRequest): JsonResponse
     {
-        $role = $this->roleService->store($roleRequest);
+        $role = $this->roleService->store($roleRequest->name, $roleRequest->title);
         return (new JsonResource($role))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -46,49 +46,26 @@ class RoleController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function givePermission(RolePermissionRequest $rolePermissionRequest): JsonResponse
+    public function giveAbility(RoleAbilityRequest $roleAbilityRequest): JsonResponse
     {
-        $role = $this->roleService->givePermission($rolePermissionRequest);
+        $role = $this->roleService->giveAbility($roleAbilityRequest->role_id, $roleAbilityRequest->ability, $roleAbilityRequest->title, $roleAbilityRequest->ability_id);
         return (new JsonResource($role))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function revokePermission(RolePermissionRequest $rolePermissionRequest): JsonResponse
+    public function removeAbility(RoleRemoveAbilityRequest $roleAbilityRequest): JsonResponse
     {
-        $role = $this->roleService->revokePermission($rolePermissionRequest);
+        $role = $this->roleService->removeAbility($roleAbilityRequest->role_id, $roleAbilityRequest->ability_id);
         return (new JsonResource($role))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function assign(AssignRoleRequest $assignRoleRequest): JsonResponse
-    {
-        $role = $this->roleService->assign($assignRoleRequest);
-        return (new JsonResource($role))
-            ->response()
-            ->setStatusCode(Response::HTTP_OK);
-    }
 
-    public function unassign(AssignRoleRequest $assignRoleRequest): JsonResponse
+    public function get(Request $request): JsonResponse
     {
-        $role = $this->roleService->unassign($assignRoleRequest);
-        return (new JsonResource($role))
-            ->response()
-            ->setStatusCode(Response::HTTP_OK);
-    }
-
-    public function getByName(RoleRequest $roleRequest): JsonResponse
-    {
-        $role = $this->roleService->getByName($roleRequest->name);
-        return (new RoleResource($role))
-            ->response()
-            ->setStatusCode(Response::HTTP_OK);
-    }
-
-    public function getById(Request $request): JsonResponse
-    {
-        $role = $this->roleService->getById($request->id);
+        $role = $this->roleService->get($request->id);
         return (new RoleResource($role))
             ->response()
             ->setStatusCode(Response::HTTP_OK);

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\RolePermission;
+namespace App\Http\Requests\RoleAbility;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AssignRoleRequest extends FormRequest
+class AbilityRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,8 @@ class AssignRoleRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required',
-            'role_id' => 'required',
+            'name' => 'required|string|min:3',
+            'title' => 'required|string|min:3'
         ];
     }
 }

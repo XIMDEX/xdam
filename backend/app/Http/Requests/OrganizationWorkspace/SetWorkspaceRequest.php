@@ -24,8 +24,9 @@ class SetWorkspaceRequest extends FormRequest
     public function rules()
     {
         return [
-            'organization_id' => 'required|string',
-            'name' => 'required|string|min:3'
+            'user_id' => 'string|required',
+            'workspace_ids' => 'array|required|min:1',
+            'workspace_ids.*' => 'required|distinct|min:0'
         ];
     }
 }

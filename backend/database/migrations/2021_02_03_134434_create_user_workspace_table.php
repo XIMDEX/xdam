@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOrganizationUserTable extends Migration
+class CreateUserWorkspaceTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,13 @@ class CreateOrganizationUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('organization_user', function (Blueprint $table) {
+        Schema::create('user_workspace', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('organization_id');
             $table->unsignedInteger('user_id');
+            $table->unsignedInteger('workspace_id');
             $table->timestamps();
-            //
-            $table->foreign('organization_id', 'org_user_id_fk')->references('id')->on('organizations')->onDelete('cascade');
-            $table->foreign('user_id', 'user_org_id_fk')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id', 'user_workspace_id_fk')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('workspace_id', 'workspace_user_id_fk')->references('id')->on('workspaces')->onDelete('cascade');
         });
     }
 
@@ -31,6 +30,6 @@ class CreateOrganizationUserTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('organization_user');
+        Schema::dropIfExists('user_workspace');
     }
 }

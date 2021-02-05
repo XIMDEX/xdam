@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
 use App\Services\UserService;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
@@ -28,18 +27,34 @@ class UserController extends Controller
         /**
      * @return \Illuminate\Http\JsonResponse|object
      */
-    public function userAuth()
+    public function user()
     {
-        $userResource = $this->userService->user_auth();
+        $userResource = $this->userService->user();
+        return (new UserResource($userResource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function getOrganizations()
+    {
+        $userResource = $this->userService->getOrganizations();
         return (new JsonResource($userResource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function userModel()
+    public function getWorkspaces()
     {
-        $userResource = $this->userService->user_model();
-        return (new UserResource($userResource))
+        $userResource = $this->userService->getWorkspaces();
+        return (new JsonResource($userResource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function getWorkspacesOfOrganization(Request $request)
+    {
+        $userResource = $this->userService->getWorkspacesOfOrganization($request->organization_id);
+        return (new JsonResource($userResource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }

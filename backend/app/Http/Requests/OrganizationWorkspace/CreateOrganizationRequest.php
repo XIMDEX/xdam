@@ -4,7 +4,7 @@ namespace App\Http\Requests\OrganizationWorkspace;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SetOrganizationRequest extends FormRequest
+class CreateOrganizationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,7 @@ class SetOrganizationRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'string|required',
-            'organization_ids' => 'array|required|min:1',
-            'organization_ids.*' => 'required|distinct|min:0'
+            'name' => 'required|string|min:3'
         ];
     }
 }

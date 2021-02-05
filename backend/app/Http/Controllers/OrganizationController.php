@@ -2,37 +2,60 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\WorkspaceType;
-use App\Http\Requests\OrganizationWorkspace\SetOrganizationRequest;
-use App\Models\Organization;
-use App\Models\Workspace;
+use App\Http\Requests\OrganizationWorkspace\CreateOrganizationRequest;
+use App\Http\Resources\OrganizationCollection;
+use App\Services\OrganizationWorkspace\OrganizationService;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Symfony\Component\HttpFoundation\Response;
 
 class OrganizationController extends Controller
 {
+
+    /**
+     * @var OrganizationService
+     */
+    private $organizationService;
+
+    /**
+     * OrganizationController constructor.
+     * @param OrganizationService $organizationService
+     */
+    public function __construct(OrganizationService $organizationService)
+    {
+        $this->organizationService = $organizationService;
+    }
+
     public function index()
     {
-        $orgs = Organization::all();
-        return $orgs;
+        $orgs = $this->organizationService->index();
+        return (new OrganizationCollection($orgs))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     public function get(Request $request)
     {
-        $org = Organization::findOne($request->id);
-        return $org;
+        $orgs = $this->organizationService->get($request);
+        return (new JsonResource($orgs))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function create(SetOrganizationRequest $request)
+    public function create(CreateOrganizationRequest $request)
     {
-        $org = new Organization(['name' => $request->name]);
-        $wsp = new Workspace(
-            [
-                'name' => $request->name,
-                'type' => WorkspaceType::corporation
-            ]
-        );
-        $org->save();
-        $org->workspaces()->save($wsp);
-        return $org;
+        $org = $this->organizationService->create($request);
+        return (new JsonResource($org))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
+
+    public function delete(Request $request)
+    {
+        $org = $this->organizationService->delete($request->id);
+        return (new JsonResource($org))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
 }

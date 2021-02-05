@@ -18,15 +18,10 @@ class OrganizationSeeder extends Seeder
      */
     public function run()
     {
-        $id = Str::orderedUuid();
         DB::table('organizations')->insert([
-            'id' => Str::orderedUuid(),
             'name' => DefaultOrganizationWorkspace::public_organization,
             'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
             'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
         ]);
-
-        //Organization::find($id);
-
     }
 }

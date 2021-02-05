@@ -2,44 +2,31 @@
 
 namespace App\Services;
 
-use App\Models\User;
+use App\Models\UserOrganizationWorkspace;
+use App\Models\Workspace;
 use Illuminate\Support\Facades\Auth;
-
 
 class UserService
 {
 
-
-    public function user_auth()
+    public function user()
     {
         return Auth::user();
     }
 
-    public function user_model()
-    {
-        $user = User::find($this->user_auth()->id);
-        return $user;
-    }
-
-    public function setOrganization($orgID)
-    {
-        $this->user->organizations()->attach($orgID);
-        return $this->user;
-    }
-
-    public function setWorkspace($wspID)
-    {
-        $this->user->workspaces()->attach($wspID);
-        return $this->user;
-    }
-
     public function getWorkspaces()
     {
-        return $this->user->workspaces()->get();
+        return Auth::user()->workspaces()->get();
     }
 
     public function getOrganizations()
     {
-        return $this->user->organization()->get();
+        return Auth::user()->organizations()->get();
+    }
+
+    public function getWorkspacesOfOrganization($organization_id)
+    {
+        return Auth::user()->workspaces()->where('organization_id', $organization_id)->get();
+
     }
 }

@@ -2,85 +2,26 @@
 
 namespace App\Services;
 
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
-use App\Models\Role;
-use App\Models\User;
+use Silber\Bouncer\BouncerFacade as Bouncer;
+use Silber\Bouncer\Database\Ability;
+use Silber\Bouncer\Database\Role;
 
 class RoleService
 {
-    private $permissionService;
 
-    public function __construct(PermissionService $permissionService)
+    public function store($name, $title): Role
     {
-        $this->permissionService = $permissionService;
-    }
-
-    public function givePermission($request)
-    {
-        $role = $this->getById($request->role_id);
-        $permission = $this->permissionService->getById($request->permission_id);
-        $role->givePermissionTo($permission);
-        return $role;
-    }
-
-    public function revokePermission($request)
-    {
-        $role = $this->getById($request->role_id);
-        $permission = $this->permissionService->getById($request->permission_id);
-        $role->revokePermissionTo($permission);
-        return $role;
-    }
-
-    public function assign($request)
-    {
-        $role = $this->getById($request->role_id);
-        $user = User::find($request->user_id);
-
-        $user->assignRole($role);
-        //or multiple assign
-        //$user->assignRole([$role->name, 'admin']);
-        return [
-            'role' => [
-                'id' => $role->id,
-                'name' => $role->name,
-                'permissions' => $role->permissions
-            ],
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-            ]
-        ];
-    }
-
-    public function unassign($request)
-    {
-        $role = $this->getById($request->role_id);
-        $user = User::find($request->user_id);
-        if($user->hasRole($role)) {
-            $user->removeRole($role);
-            return ["unassigned" => $role];
-        } else {
-            return ["error"=>"This user hasn't the ".$role->name ." role assigned."];
-        }
-
-    }
-    /**
-     * @param Request $request
-     * @return Role
-     */
-    public function store($request): Role
-    {
-        $role = Role::create(["name" => $request->name]);
+        $role = Bouncer::role()->firstOrCreate([
+            'name' => $name,
+            'title' => $title,
+        ]);
         return $role;
     }
 
     public function index(): Collection
     {
         $roles = Role::all();
-        foreach ($roles as $key=>$role) {
-            $roles[$key]->permission = $role->permissions()->get();
-        }
         return $roles;
     }
 
@@ -88,22 +29,9 @@ class RoleService
      * @param Role $role
      * @throws \Exception
      */
-    public function getByName($name): Role
+    public function get($id): Role
     {
-        $role = Role::findByName($name);
-        $role->permissions = $role->permissions()->get();
-        return $role;
-    }
-
-    /**
-     * @param Role $role
-     * @throws \Exception
-     */
-    public function getById($id): Role
-    {
-
-        $role = Role::findByUuId($id);
-        $role->permissions = $role->permissions()->get();
+        $role = Role::find($id);
         return $role;
     }
 
@@ -129,4 +57,25 @@ class RoleService
         return $role;
     }
 
+    public function giveAbility($role_id, $ability = null, $ability_title = null, $ability_id = null)
+    {
+        $role = Role::find($role_id);
+        if($ability_id) {
+            $ability = Ability::find($ability_id);
+        } else {
+            $ability = Bouncer::ability()->firstOrCreate([
+                'name' => $ability,
+                'title' => $ability_title,
+            ]);
+        }
+        $res = Bouncer::allow($role)->to($ability);
+        return $res;
+    }
+    public function removeAbility($role_id, $ability_id)
+    {
+        $role = Role::find($role_id);
+        $ability = Ability::find($ability_id);
+        $res = Bouncer::disallow($role)->to($ability);
+        return [$res];
+    }
 }

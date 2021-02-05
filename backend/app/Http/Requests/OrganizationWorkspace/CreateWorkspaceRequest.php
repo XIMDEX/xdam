@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\RolePermission;
+namespace App\Http\Requests\OrganizationWorkspace;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PermissionRequest extends FormRequest
+class CreateWorkspaceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,18 +25,7 @@ class PermissionRequest extends FormRequest
     {
         return [
             'name' => 'required|string|min:3',
+            'organization_id' => 'required',
         ];
     }
-
-    // public function validationData()
-    // {
-    //     $requiredParameters = [
-    //         'name' => $this->data ?? "{}",
-    //         'type' => $this->type
-    //     ];
-
-    //     $this->merge($requiredParameters);
-
-    //     return array_merge($this->all(), $requiredParameters);
-    // }
 }
