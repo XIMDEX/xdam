@@ -213,18 +213,23 @@ class SolrService
         $facetSet = $query->getFacetSet();
 
         /* the facets to be applied to the query  */
-        $this->facetManager->setFacets($facetSet, $facetsFilter);
+        $this->facetManager->setFacets($facetSet, []);
         /*  limit the query to facets that the user has marked us */
-        $this->facetManager->setQueryByFacets($query, $facetsFilter);
+        $this->facetManager->setQueryByFacets($query, []);
 
         /* if we have a search param, restrict the query */
         if (!empty($search)) {
             $query->setQuery("data:*" . $search . "*");
         }
 
+        // the query is done without the facet filter, so that it returns the complete list of facets and the counter present in the entire index
+        $allDocuments = $this->solarium->select($query);
+        $faceSetFound = $allDocuments->getFacetSet();
+
+        // make a new request, filtering for each facet
+        $this->facetManager->setQueryByFacets($query, $facetsFilter);
         $allDocuments = $this->solarium->select($query);
         $documentsFound = $allDocuments->getNumFound();
-        $faceSetFound = $allDocuments->getFacetSet();
 
         $totalPages = ceil($documentsFound / $limit);
         $currentPageFrom = ($currentPage - 1) * $limit;
@@ -244,6 +249,8 @@ class SolrService
 
         /* Response with pagination data */
         $response = new \stdClass();
+
+        // the facets returned here are a complete unfiltered list, only the one that has been selected is marked as selected
         $response->facets = $this->facetManager->getFacets($faceSetFound, $facetsFilter);
         $response->current_page = $currentPage;
         $response->data = $documentsResponse;

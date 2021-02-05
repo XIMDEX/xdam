@@ -24,6 +24,7 @@ use App\Services\MediaService;
 use App\Services\ResourceService;
 use App\Utils\DamUrlUtil;
 use App\Utils\FileUtil;
+use Mimey\MimeTypes;
 use Symfony\Component\HttpFoundation\Response;
 
 class ResourceController extends Controller
@@ -201,7 +202,9 @@ class ResourceController extends Controller
     {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         $media = Media::findOrFail($mediaId);
-        return response()->download($media->getPath(), $media->file_name);
+        $mimes = new MimeTypes;
+        $fileName = $damUrl. "." . $mimes->getExtension($media->mime_type); // json
+        return response()->download($media->getPath(), $fileName);
     }
 
     /**
