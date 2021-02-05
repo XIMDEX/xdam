@@ -313,6 +313,7 @@ class ResourceService
             $this->deleteCategoryFrom($resource, $category);
             $this->addCategoryTo($resource, $category);
         } else {
+            // If category not exists, create it
             $category = $this->categoryService->store(["name" => $categoryName, "type" => $resource->type->key]);
             $this->addCategoryTo($resource, $category);
         }
