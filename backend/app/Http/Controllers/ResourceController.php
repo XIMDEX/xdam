@@ -203,7 +203,7 @@ class ResourceController extends Controller
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         $media = Media::findOrFail($mediaId);
         $mimes = new MimeTypes;
-        $fileName = "$damUrl." . $mimes->getExtension($media->mime_type); // json
+        $fileName = $damUrl. "." . $mimes->getExtension($media->mime_type); // json
         return response()->download($media->getPath(), $fileName);
     }
 
