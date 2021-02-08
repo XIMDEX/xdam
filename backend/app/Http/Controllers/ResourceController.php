@@ -47,6 +47,22 @@ class ResourceController extends Controller
         $this->mediaService = $mediaService;
     }
 
+    private function getThumbnailBySize($size, $media)
+    {
+        if (null !== $size)
+        {
+            $supportedThumbnails = ThumbnailTypes::getValues();
+            preg_match_all('!\d+!', $size, $matches);
+            $thumbSize = implode("x", $matches[0]);
+            foreach($supportedThumbnails as $supportedThumbnail)
+            {
+                if (str_contains($supportedThumbnail, $thumbSize)) {
+                    return $media->getPath($supportedThumbnail);
+                }
+            }
+        }
+        return false;
+    }
     /**
      * @return \Illuminate\Http\JsonResponse|object
      */
@@ -195,31 +211,30 @@ class ResourceController extends Controller
     {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         $media = Media::findOrFail($mediaId);
-        if (null !== $size)
+        $thumb = $this->getThumbnailBySize($size, $media);
+        if ($thumb)
         {
-            $supportedThumbnails = ThumbnailTypes::getValues();
-            preg_match_all('!\d+!', $size, $matches);
-            $thumbSize = implode("x", $matches[0]);
-            foreach($supportedThumbnails as $supportedThumbnail)
-            {
-                if (str_contains($supportedThumbnail, $thumbSize)) {
-                    return response()->file($media->getPath($supportedThumbnail));
-                }
-            }
+            return response()->file($thumb);
         }
         return response()->file($this->mediaService->preview(Media::findOrFail($mediaId)));
     }
 
     /**
      * @param $damUrl
+     * @param null $size
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function download($damUrl)
+    public function download($damUrl, $size = null)
     {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         $media = Media::findOrFail($mediaId);
         $mimes = new MimeTypes;
         $fileName = $damUrl. "." . $mimes->getExtension($media->mime_type); // json
+        $thumb = $this->getThumbnailBySize($size, $media);
+        if ($thumb)
+        {
+            return response()->download($thumb, $fileName);
+        }
         return response()->download($media->getPath(), $fileName);
     }
 
