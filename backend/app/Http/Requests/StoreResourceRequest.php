@@ -27,22 +27,10 @@ class StoreResourceRequest extends FormRequest
     public function rules()
     {
         return [
+            'Preview' => 'file',
             'data' => 'string',
-            MediaType::File()->key => 'file',
-            MediaType::Preview()->key => 'file',
             'type' => ['required', new EnumKey(ResourceType::class)]
         ];
     }
 
-    public function validationData()
-    {
-        $requiredParameters = [
-            'data' => $this->data ?? "{}",
-            'type' => $this->type
-        ];
-
-        $this->merge($requiredParameters);
-
-        return array_merge($this->all(), $requiredParameters);
-    }
 }

@@ -28,7 +28,6 @@ class UpdateResourceRequest extends FormRequest
     {
         return [
             'data' => 'string',
-            MediaType::File()->key => 'file',
             MediaType::Preview()->key => 'file',
         ];
     }
