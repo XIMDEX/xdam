@@ -204,9 +204,9 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "File",
+									"key": "File[]",
 									"type": "file",
-									"src": "/Users/develop/Desktop/Captura de pantalla 2021-01-22 a las 17.06.49.png"
+									"src": []
 								},
 								{
 									"key": "type",
@@ -221,8 +221,7 @@
 								{
 									"key": "Preview",
 									"type": "file",
-									"src": [],
-									"disabled": true
+									"src": "/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@7d9ae497-2950-4e8a-b534-2e08275c67ba@eaca770d-ba3c-49fd-a2b5-a82838a1f39d@@@.jpg"
 								}
 							]
 						},
@@ -261,8 +260,10 @@
 								{
 									"key": "File",
 									"type": "file",
-									"src": "/Users/develop/Desktop/Captura de pantalla 2020-12-01 a las 13.14.18.png",
-									"disabled": true
+									"src": [
+										"/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@27d604f2-198e-426e-b013-b9f5c3b55f6a@91790a1b-b120-4b5c-8652-d45e4bb1ece8@@@.png",
+										"/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@31e05aec-f7a3-4cb9-9df7-b28db0d275d4@2c676e2a-8e1d-4429-bded-95c8e4740540@@@.jpg"
+									]
 								},
 								{
 									"key": "type",
@@ -272,25 +273,24 @@
 								},
 								{
 									"key": "data",
-									"value": "\"id\": \"a76045ca-bae6-4d08-be2e-360dc622f507\",\n        \"description\": {\n          \"type\": \"Payment\",\n          \"price\": \"10000\",\n          \"skills\": [\n            \"classroom management\",\n            \"teaching\",\n            \"group work\"\n          ],\n          \"category\": \"classroom_management\",\n          \"duration\": \"120\",\n          \"visibility\": \"Public\",\n          \"description\": \"In this project-centered course, you will create a meaningful procedures plan that will help you to save time in your classroom and improve the efficacy of your teaching. You’ll identify the time-wasting moments and minimise the time spent in procedures (such as moving students around the classroom) that tend the consume valuable teaching time. You’ll explore first how your behaviour influences your students’, looking at how you control emotional responses and interact with students. Then, you’ll learn techniques and develop your capability to achieve consistency in managing behaviour, recognise positive behaviour and build trust in your classroom.\",\n          \"achievements\": [\n            \"Learn how to manage groups\",\n            \"Learn how to transition between activities\",\n            \"Manage noisy groups\"\n          ],\n          \"course_title\": \"Course One \",\n          \"external_url\": \"\",\n          \"media_upload\": \"@@@dam:@image@f19d1eec-ed50-4de5-8f88-5c0c24010d3a@2e447905-069c-4ff8-92b9-c72484509d38@@@\",\n          \"preparations\": []",
+									"value": "{\"description\": {\"categories\" : [1,2]}}",
 									"type": "text"
 								},
 								{
 									"key": "Preview",
 									"type": "file",
-									"src": [],
-									"disabled": true
+									"src": "/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@72ca76b8-0ae2-4c9a-8895-15bac935ef0d@86a53539-b321-42e7-8b6a-7bfcc319059f@@@.jpg"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/e76295aa-08cb-40e7-a1ed-9c1d60937477/update",
+							"raw": "{{url}}{{api}}/resource/2700193d-1450-48c0-98af-15264462405e/update",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
-								"e76295aa-08cb-40e7-a1ed-9c1d60937477",
+								"2700193d-1450-48c0-98af-15264462405e",
 								"update"
 							],
 							"query": [
@@ -366,36 +366,18 @@
 								{
 									"key": "Preview",
 									"type": "file",
-									"src": "/Users/develop/Desktop/Captura de pantalla 2020-12-01 a las 13.14.18.png"
-								},
-								{
-									"key": "type",
-									"value": "course",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "data",
-									"value": "{\"test\":123}",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "category_id",
-									"value": "",
-									"type": "text",
-									"disabled": true
+									"src": "/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@2f26f29d-61ff-4dd1-b32b-4a1130f22ad8@54bbb320-4df9-436b-aec1-1fec9e2e2536@@@.png"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/4581d7e6-6dc3-4cc0-a4f1-99d38d31ef48/addPreview",
+							"raw": "{{url}}{{api}}/resource/13102607-e9ae-4cf4-9922-6efed656d31f/addPreview",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
-								"4581d7e6-6dc3-4cc0-a4f1-99d38d31ef48",
+								"13102607-e9ae-4cf4-9922-6efed656d31f",
 								"addPreview"
 							],
 							"query": [
@@ -735,6 +717,61 @@
 					"response": []
 				},
 				{
+					"name": "DELETE ASSOCIATED FILE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Teacher Training",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "_method",
+									"value": "PUT",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource/2fa01536-6da3-45e3-8d4d-c36146ad0195/associatedFile/f792ac03-5b81-4784-a374-bc8b22d1c184",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"2fa01536-6da3-45e3-8d4d-c36146ad0195",
+								"associatedFile",
+								"f792ac03-5b81-4784-a374-bc8b22d1c184"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "DELETE CATEGORY FROM RESOURCE",
 					"request": {
 						"method": "DELETE",
@@ -864,14 +901,72 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/render/@@@dam:@video@f58f128f-3b64-4cb9-95a8-c8f582d25471@eb8b8ac1-2376-4d5e-a333-0595e949bc71@@@",
+							"raw": "{{url}}{{api}}/resource/render/@@@dam:@image@3bcdeb31-313e-4376-aa2c-308fe2332d6a@a0e65c2e-f7e1-4f97-85e4-9d4aefe89e1f@@@/64x64",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
 								"render",
-								"@@@dam:@video@f58f128f-3b64-4cb9-95a8-c8f582d25471@eb8b8ac1-2376-4d5e-a333-0595e949bc71@@@"
+								"@@@dam:@image@3bcdeb31-313e-4376-aa2c-308fe2332d6a@a0e65c2e-f7e1-4f97-85e4-9d4aefe89e1f@@@",
+								"64x64"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DOWNLOAD",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Teacher Training",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "_method",
+									"value": "PUT",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource/download/@@@dam:@video@ab03fb1b-68cd-4a2e-938b-bab0424d9ff6@2cb1fa9d-53b1-4f98-a2bb-eb57b19d7322@@@",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"download",
+								"@@@dam:@video@ab03fb1b-68cd-4a2e-938b-bab0424d9ff6@2cb1fa9d-53b1-4f98-a2bb-eb57b19d7322@@@"
 							],
 							"query": [
 								{
@@ -900,13 +995,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}{{api}}/catalogue/course/index",
+							"raw": "{{url}}{{api}}/catalogue/multimedia/index?limit=100&facets[type][]=audio",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"catalogue",
-								"course",
+								"multimedia",
 								"index"
 							],
 							"query": [
@@ -922,22 +1017,25 @@
 								},
 								{
 									"key": "limit",
-									"value": "100",
-									"disabled": true
+									"value": "100"
 								},
 								{
-									"key": "facets[categories]",
+									"key": "facets[categories][]",
 									"value": "Horses",
 									"disabled": true
 								},
 								{
-									"key": "facets[categories]",
+									"key": "facets[categories][]",
 									"value": "Cats",
 									"disabled": true
 								},
 								{
-									"key": "facets[type]",
-									"value": "gatos",
+									"key": "facets[type][]",
+									"value": "audio"
+								},
+								{
+									"key": "facets[type][]",
+									"value": "video",
 									"disabled": true
 								}
 							]
@@ -1011,150 +1109,6 @@
 							"path": [
 								"catalogue",
 								"clearAll"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "AUTH",
-			"item": [
-				{
-					"name": "LOGIN",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "email",
-									"value": "test@test.com",
-									"type": "text"
-								},
-								{
-									"key": "password",
-									"value": "123123",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{url}}{{api}}/auth/login",
-							"host": [
-								"{{url}}{{api}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "SIGN UP",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "name",
-									"value": "name test",
-									"type": "text"
-								},
-								{
-									"key": "email",
-									"value": "test@test.com",
-									"type": "text"
-								},
-								{
-									"key": "password",
-									"value": "123123",
-									"type": "text"
-								},
-								{
-									"key": "password_confirmation",
-									"value": "123123",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{url}}{{api}}/auth/signup",
-							"host": [
-								"{{url}}{{api}}"
-							],
-							"path": [
-								"auth",
-								"signup"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "LOGOUT",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer token_here",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{url}}{{api}}/logout",
-							"host": [
-								"{{url}}{{api}}"
-							],
-							"path": [
-								"logout"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GET USER",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"warning": "This is a duplicate header and will be overridden by the Authorization header generated by Postman.",
-								"key": "Authorization",
-								"value": "Bearer token_here",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{url}}{{api}}/user",
-							"host": [
-								"{{url}}{{api}}"
-							],
-							"path": [
-								"user"
 							]
 						}
 					},
@@ -1274,16 +1228,6 @@
 			"response": []
 		}
 	],
-	"auth": {
-		"type": "bearer",
-		"bearer": [
-			{
-				"key": "token",
-				"value": "token_here",
-				"type": "string"
-			}
-		]
-	},
 	"event": [
 		{
 			"listen": "prerequest",
