@@ -49,26 +49,25 @@ class ResourceController extends Controller
 
     private function getThumbnailBySize($size, $media)
     {
-        if (null !== $size)
-        {
+        if (null !== $size) {
             $supportedThumbnails = ThumbnailTypes::getValues();
             preg_match_all('!\d+!', $size, $matches);
             $thumbSize = implode("x", $matches[0]);
-            foreach($supportedThumbnails as $supportedThumbnail)
-            {
-                if (str_contains($supportedThumbnail, $thumbSize)) {
+            foreach ($supportedThumbnails as $supportedThumbnail) {
+                if (strpos($supportedThumbnail, $thumbSize) !== false) {
                     return $media->getPath($supportedThumbnail);
                 }
             }
         }
         return false;
     }
+
     /**
      * @return \Illuminate\Http\JsonResponse|object
      */
     public function getAll()
     {
-        $resources =  $this->resourceService->getAll();
+        $resources = $this->resourceService->getAll();
         return (new ResourceCollection($resources))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -80,7 +79,7 @@ class ResourceController extends Controller
      */
     public function get(DamResource $damResource)
     {
-        $damResource =  $this->resourceService->get($damResource);
+        $damResource = $this->resourceService->get($damResource);
         return (new ResourceResource($damResource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -212,8 +211,7 @@ class ResourceController extends Controller
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         $media = Media::findOrFail($mediaId);
         $thumb = $this->getThumbnailBySize($size, $media);
-        if ($thumb)
-        {
+        if ($thumb) {
             return response()->file($thumb);
         }
         return response()->file($this->mediaService->preview(Media::findOrFail($mediaId)));
@@ -229,10 +227,9 @@ class ResourceController extends Controller
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         $media = Media::findOrFail($mediaId);
         $mimes = new MimeTypes;
-        $fileName = $damUrl. "." . $mimes->getExtension($media->mime_type); // json
+        $fileName = $damUrl . "." . $mimes->getExtension($media->mime_type); // json
         $thumb = $this->getThumbnailBySize($size, $media);
-        if ($thumb)
-        {
+        if ($thumb) {
             return response()->download($thumb, $fileName);
         }
         return response()->download($media->getPath(), $fileName);
