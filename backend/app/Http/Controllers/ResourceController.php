@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
+use App\Enums\ThumbnailTypes;
 use App\Http\Requests\addFileToResourceRequest;
 use App\Http\Requests\addPreviewToResourceRequest;
 use App\Http\Requests\addUseRequest;
@@ -186,11 +187,26 @@ class ResourceController extends Controller
 
     /**
      * @param $damUrl
+     * @param null $size
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @throws \Exception
      */
-    public function render($damUrl)
+    public function render($damUrl, $size = null)
     {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
+        $media = Media::findOrFail($mediaId);
+        if (null !== $size)
+        {
+            $supportedThumbnails = ThumbnailTypes::getValues();
+            preg_match_all('!\d+!', $size, $matches);
+            $thumbSize = implode("x", $matches[0]);
+            foreach($supportedThumbnails as $supportedThumbnail)
+            {
+                if (str_contains($supportedThumbnail, $thumbSize)) {
+                    return response()->file($media->getPath($supportedThumbnail));
+                }
+            }
+        }
         return response()->file($this->mediaService->preview(Media::findOrFail($mediaId)));
     }
 

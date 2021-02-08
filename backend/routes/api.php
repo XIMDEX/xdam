@@ -45,6 +45,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
 
     Route::group(['prefix' => 'resource'], function() {
         Route::get('/', [ResourceController::class, 'getAll'])->name('damResource.getAll');
+        Route::get('/render/{damUrl}/{size}', [ResourceController::class, 'render'])->name('damResource.renderWithSize');
         Route::get('/render/{damUrl}', [ResourceController::class, 'render'])->name('damResource.render');
         Route::get('/download/{damResource}', [ResourceController::class, 'download'])->name('damResource.download');
         Route::get('/listTypes', [ResourceController::class, 'listTypes'])->name('damResource.listTypes');
