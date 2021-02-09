@@ -69,31 +69,49 @@ class ResourceService
         return $class;
     }
 
+
+    private function saveAssociateFile($type, $params, $model)
+    {
+        if (array_key_exists($type, $params) && $params[$type]) {
+            if ($type === MediaType::Preview()->key)
+            {
+                // only one associated preview file is allowed
+                $this->mediaService->deleteAllPreviews($model);
+            }
+            // If is a array of files, add a association from each item
+            if (is_array($params[$type])) {
+                foreach ($params[$type] as $file) {
+                    $this->mediaService->addFromRequest(
+                        $model,
+                        null,
+                        $type,
+                        ["parent_id" => $model->id],
+                        $file
+                    );
+                }
+            } else {
+                // If is not a array, associate file directly
+                $this->mediaService->addFromRequest(
+                    $model,
+                    null,
+                    $type,
+                    ["parent_id" => $model->id],
+                    $params[$type]
+                );
+            }
+        }
+    }
+
     /**
      * @param $model
      * @param $params
      */
     private function saveAssociatedFiles($model, $params): void
     {
-        if (array_key_exists(MediaType::File()->key, $params) && $params[MediaType::File()->key]) {
-            $this->mediaService->addFromRequest(
-                $model,
-                null,
-                MediaType::File()->key,
-                ["parent_id" => $model->id],
-                $params[MediaType::File()->key]
-            );
-        }
-
-        if (array_key_exists(MediaType::Preview()->key, $params) && $params[MediaType::Preview()->key]) {
-            $this->mediaService->addFromRequest(
-                $model,
-                null,
-                MediaType::Preview()->key,
-                ["parent_id" => $model->id],
-                $params[MediaType::Preview()->key]
-            );
-        }
+        // Save Associated Files
+        $this->saveAssociateFile(MediaType::File()->key, $params, $model);
+        // Save Associated Previews
+        $this->saveAssociateFile(MediaType::Preview()->key, $params, $model);
     }
 
     /**
@@ -175,7 +193,7 @@ class ResourceService
     public function update(DamResource $resource, $params): DamResource
     {
         if (array_key_exists("type", $params) && $params["type"]) {
-            $updated = $resource->update(
+            $resource->update(
                 [
                     'type' => ResourceType::fromKey($params["type"])->value,
                 ]
@@ -183,7 +201,7 @@ class ResourceService
         }
 
         if (array_key_exists("data", $params) && $params["data"]) {
-            $updated = $resource->update(
+            $resource->update(
                 [
                     'data' => $params['data'],
                 ]
@@ -206,9 +224,6 @@ class ResourceService
     public function store($params): DamResource
     {
         $name = array_key_exists('name', $params) ? $params["name"] : "";
-        if (empty($name) && array_key_exists(MediaType::File()->key, $params)) {
-            $name = $params[MediaType::File()->key]->getClientOriginalName();
-        }
         $type = ResourceType::fromKey($params["type"])->value;
         $newResource = DamResource::create(
             [
