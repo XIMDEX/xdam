@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Organization;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class SetOrganizationsToUserRequest extends FormRequest
 {
@@ -13,6 +14,23 @@ class SetOrganizationsToUserRequest extends FormRequest
      */
     public function authorize()
     {
+        if($this->user_id == 1)
+            return false;
+
+
+
+        $enabled_orgs = [];
+        foreach (Auth::user()->organizations()->get() as $org) {
+            $enabled_orgs[] = (string)$org->id;
+        }
+        $ids_to_set = [];
+        foreach ($this->organization_ids as $req_wid) {
+            if(in_array($req_wid, $enabled_orgs)) {
+                $ids_to_set[] = $req_wid;
+            }
+        }
+        $this->request->set('organization_ids', $ids_to_set);
+
         return true;
     }
 

@@ -24,25 +24,18 @@ class BouncerSeeder extends Seeder
         Bouncer::allow('gestor')->to(Abilities::canViewWorkspace);
         Bouncer::allow('gestor')->to(Abilities::canUpdateWorkspace);
         Bouncer::allow('gestor')->to(Abilities::canDeleteWorkspace);
+        Bouncer::allow('gestor')->to(Abilities::canManageRoles);
 
         Bouncer::allow('editor')->to(Abilities::canViewWorkspace);
         Bouncer::allow('editor')->to(Abilities::canUpdateWorkspace);
 
         Bouncer::allow('lector')->to(Abilities::canViewWorkspace);
 
-        //Organizations
-        Bouncer::allow('gestor')->to(Abilities::canCreateOrganization);
-        Bouncer::allow('gestor')->to(Abilities::canViewOrganization);
-        Bouncer::allow('gestor')->to(Abilities::canUpdateOrganization);
-        Bouncer::allow('gestor')->to(Abilities::canDeleteOrganization);
-
-        Bouncer::allow('editor')->to(Abilities::canViewOrganization);
-        Bouncer::allow('editor')->to(Abilities::canUpdateOrganization);
-
-        Bouncer::allow('lector')->to(Abilities::canViewOrganization);
 
         //User assign
         Bouncer::assign('admin')->to(User::find(1));
+        Bouncer::assign('gestor')->to(User::find(2));
+
 
     }
 }

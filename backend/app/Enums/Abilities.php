@@ -15,4 +15,6 @@ final class Abilities extends Enum
     const canUpdateOrganization = "update-organization";
     const canViewOrganization = "view-organization";
     const canDeleteOrganization = "delete-organization";
+
+    const canManageRoles = "manage-roles";
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RoleAbility\DeleteRoleRequest;
 use App\Http\Requests\RoleAbility\RoleAbilityRequest;
 use App\Http\Requests\RoleAbility\RoleRemoveAbilityRequest;
 use App\Http\Requests\RoleAbility\RoleRequest;
@@ -80,7 +81,7 @@ class RoleController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function delete(Request $request): JsonResponse
+    public function delete(DeleteRoleRequest $request): JsonResponse
     {
         $role = $this->roleService->delete($request->id);
         return (new JsonResource($role))

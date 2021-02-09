@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\WorkspaceType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class SetRoleAbilitiesOnWorkspaceRequest extends FormRequest
 {
@@ -13,7 +15,18 @@ class SetRoleAbilitiesOnWorkspaceRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        if($this->workspace_id == 1)
+            return false;
+
+        foreach (Auth::user()->workspaces()->get() as $wsp) {
+            if($wsp->type == WorkspaceType::personal)
+                continue;
+
+            if($this->workspace_id == $wsp->id)
+                return true;
+
+        }
+        return false;
     }
 
     /**

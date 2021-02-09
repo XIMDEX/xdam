@@ -56,9 +56,9 @@ class AdminService
         foreach ($workspaces_id as $oid) {
             if(!$user->workspaces()->get()->contains($oid)) {
                 $user->workspaces()->attach($oid);
-                $log['success']['organization_id'] = $oid;
+                $log['success']['workspace_id'] = $oid;
             } else {
-                $log['already_exists']['organization_id'] = $oid;
+                $log['already_exists']['workspace_id'] = $oid;
             }
         }
         return ['user' => $user, 'log' => $log];
