@@ -58,15 +58,4 @@ class AuthController extends Controller
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
-
-    /**
-     * @return \Illuminate\Http\JsonResponse|object
-     */
-    public function user()
-    {
-        $authResource = $this->authService->user();
-        return (new JsonResource($authResource))
-            ->response()
-            ->setStatusCode(Response::HTTP_OK);
-    }
 }

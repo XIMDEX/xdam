@@ -30,11 +30,6 @@ class AuthService
         return $this->token($this->getPersonalAccessToken(), 'User Created', 201);
     }
 
-    public function user()
-    {
-        return $this->success(Auth::user());
-    }
-
     public function logout()
     {
         Auth::user()->token()->revoke();
