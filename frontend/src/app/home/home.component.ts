@@ -249,6 +249,7 @@ export class HomeComponent implements OnInit {
             actionType
                 .subscribe( result => {
                         const { data } = result as any;
+
                         action.data = data;
                         action.status = 'success';
                     },

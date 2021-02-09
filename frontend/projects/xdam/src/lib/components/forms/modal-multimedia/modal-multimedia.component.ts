@@ -1,9 +1,10 @@
 import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import { faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faTimes, faDownload, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import {  FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActionModel } from '../../../../models/src/lib/ActionModel';
 import {isNil, hasIn, is} from 'ramda';
 import { ListItemOptionI } from '@xdam/models/interfaces/ListOptions.interface';
+
 
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
 
@@ -18,7 +19,10 @@ export class ModalMultimediaComponent implements OnInit {
   faUpload = faUpload;
   faSave = faSave;
   faTimes = faTimes;
-
+  faDownload= faDownload;
+  faEdit = faEdit;
+  faTrash = faTrash;
+  
   //Input Files
   fileToUpload:FileList = null;
   coverToUpload:FileList = null;
@@ -40,6 +44,7 @@ export class ModalMultimediaComponent implements OnInit {
   //Image
   defaultImage = window.origin + '/assets/default_item_image.jpg';
   image = null;
+  imageDelete = false;
   imageError= false;
 
 
@@ -51,7 +56,8 @@ export class ModalMultimediaComponent implements OnInit {
         this.initImage();
       } else if (this.action.method === 'new') {
           this.initFormControls();
-          this.image = this.defaultImage;
+          this.initImage();
+          //this.image = this.defaultImage;
       } else {
           this.initFormControls();
       }
@@ -74,9 +80,11 @@ export class ModalMultimediaComponent implements OnInit {
 
     if(this.coverToUpload != null && this.coverToUpload.length > 0){
       data['File'] = this.coverToUpload.item(0);
+      data['Preview'] = this.coverToUpload.item(0);
       //data['data']['mimetype'] = this.coverToUpload.item(0).type.split('/')[0];
     } else {
       delete data['File'];
+      delete data['Preview'];
     }
 
     //Detete Fields not required
@@ -87,12 +95,13 @@ export class ModalMultimediaComponent implements OnInit {
 
 
   //Form Data
-
   initImage(){
-    if (this.resourceUrl && !this.imageError && this.action.item.files){
-        this.image= this.resourceUrl + '/resource/render/' + this.action.item.files[this.action.item.files.length-1] ;
+    if (this.resourceUrl && !this.imageError && this.action.item.previews){
+      this.image= this.resourceUrl + '/resource/render/' + this.action.item.previews[this.action.item.previews.length-1] ;
+      this.image
     } else {
-        this.image = this.defaultImage;
+      this.imageError = true;
+      this.image = this.defaultImage;
     }
   }
 
@@ -162,9 +171,9 @@ export class ModalMultimediaComponent implements OnInit {
   }
   handleImageInput(files: FileList){
     var file = files.item(0);
-
     if (file.type.match(/image\/*/) == null) return;
 
+    this.imageDelete = false;
     this.coverToUpload = files;
     var reader = new FileReader();
     reader.onload = (e)=>{
@@ -179,4 +188,9 @@ export class ModalMultimediaComponent implements OnInit {
     this.currentType = value;
   }
 
+  deleteImage(e){
+    e.preventDefault();
+    this.image = this.defaultImage;
+    this.imageDelete = true;
+  }
 }

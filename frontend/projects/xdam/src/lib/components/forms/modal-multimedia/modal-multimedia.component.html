@@ -41,9 +41,10 @@
                             <div class="img-input">
                                 <input type="file" id="cover" (change)="handleImageInput($event.target.files)">
                                 <label for="cover"><fa-icon [icon]="faUpload"></fa-icon></label>
+                                <button *ngIf="image != defaultImage" (click)="deleteImage($event)"><fa-icon [icon]="faTrash"></fa-icon></button>
                             </div>
                         </div>
-                        <label class="field-item">
+                        <div class="field-item">
                             <label for="files">SELECT TYPE</label>
                             <select [value]="currentType" (change)="changetype(selectType.value)" #selectType>
                                 <option value="document">Document</option>
@@ -52,11 +53,91 @@
                                 <option value="audio">Audio</option>
                                 <option value="url">Url</option>
                             </select>
-                        </label>
-                        <label class="field-item">
+                        </div>
+                        <div class="field-item">
                             <label for="files">MULTIMEDIA FILES</label>
                             <input type="file" id="files" class="custom-file-input" (change)="handleFileInput($event.target.files)" #InputFile/>
-                        </label>
+                        </div>
+                        <div class="list-files">    
+                            <div class="item-file-description">
+                                <p>Nombre del fichero a sda sdasdasda  sdasd asd</p> 
+                                <div class="dam-buttons-actions">
+                                    <button  class="btn-action-transparent" title="Edit" >
+                                        <fa-icon [icon]="faEdit"></fa-icon>
+                                    </button>
+                                    <button class="btn-action-transparent" title="Download">
+                                        <fa-icon [icon]="faDownload"></fa-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="item-file-description">
+                                <p>Nombre del fichero</p> 
+                                <div class="dam-buttons-actions">
+                                    <button  class="btn-action-transparent" title="Edit" >
+                                        <fa-icon [icon]="faEdit"></fa-icon>
+                                    </button>
+                                    <button class="btn-action-transparent" title="Download">
+                                        <fa-icon [icon]="faDownload"></fa-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="item-file-description">
+                                <p>Nombre del fichero</p> 
+                                <div class="dam-buttons-actions">
+                                    <button  class="btn-action-transparent" title="Edit" >
+                                        <fa-icon [icon]="faEdit"></fa-icon>
+                                    </button>
+                                    <button class="btn-action-transparent" title="Download">
+                                        <fa-icon [icon]="faDownload"></fa-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="item-file-description">
+                                <p>Nombre del fichero</p> 
+                                <div class="dam-buttons-actions">
+                                    <button  class="btn-action-transparent" title="Edit" >
+                                        <fa-icon [icon]="faEdit"></fa-icon>
+                                    </button>
+                                    <button class="btn-action-transparent" title="Download">
+                                        <fa-icon [icon]="faDownload"></fa-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="item-file-description">
+                                <p>Nombre del fichero</p> 
+                                <div class="dam-buttons-actions">
+                                    <button  class="btn-action-transparent" title="Edit" >
+                                        <fa-icon [icon]="faEdit"></fa-icon>
+                                    </button>
+                                    <button class="btn-action-transparent" title="Download">
+                                        <fa-icon [icon]="faDownload"></fa-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="item-file-description">
+                                <p>Nombre del fichero</p> 
+                                <div class="dam-buttons-actions">
+                                    <button  class="btn-action-transparent" title="Edit" >
+                                        <fa-icon [icon]="faEdit"></fa-icon>
+                                    </button>
+                                    <button class="btn-action-transparent" title="Download">
+                                        <fa-icon [icon]="faDownload"></fa-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="item-file-description">
+                                <p>Nombre del fichero</p> 
+                                <div class="dam-buttons-actions">
+                                    <button  class="btn-action-transparent" title="Edit" >
+                                        <fa-icon [icon]="faEdit"></fa-icon>
+                                    </button>
+                                    <button class="btn-action-transparent" title="Download">
+                                        <fa-icon [icon]="faDownload"></fa-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </aside>

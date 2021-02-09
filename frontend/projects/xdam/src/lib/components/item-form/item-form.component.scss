@@ -82,6 +82,7 @@
                     width: 100%;
                     margin-bottom: 10px;
                 }
+
                 & .field-item input[type='file']{
                     display: inline-block;
                     white-space: nowrap;
@@ -107,7 +108,62 @@
                         font-size: $font_size_normal;
                         
                     }
-                    
+                }
+
+                & .list-files{
+                    scroll-behavior: smooth;
+                    max-height: 200px;
+                    overflow: scroll;
+                    padding-right: 3px;
+
+                    &::-webkit-scrollbar {
+                        width: 4px;
+                    }
+                
+                    &::-webkit-scrollbar-track {
+                        opacity: 0;
+                    }
+                
+                    &::-webkit-scrollbar-thumb {
+                        background-color: darkgrey;
+                        opacity: 0.5;
+                    }
+                   
+
+                    & .item-file-description{
+                        /*display: flex;
+                        flex-direction: column;
+                        flex-wrap: wrap;
+                        justify-content: center;
+                        align-content: center;*/
+                        margin: 5px auto;
+                        border-bottom: solid 1px rgb(199, 199, 199);
+                        padding: 1px 0px 5px 0px;
+
+                        & p { 
+                            display: inline-block;
+                            width: 75%;
+                            font-size: 13px;
+                            margin: 5px 0px;
+                        }
+    
+                        & .dam-buttons-actions{
+                            display: inline-block;
+                            align-items: center;
+                            justify-content: center;
+                            & button{
+                                background-color: transparent;
+                                background-repeat: no-repeat;
+                                border: none;
+                                cursor: pointer;
+                                overflow: hidden;
+                                outline: none;
+                                color: #009e92;
+                                padding: 0;
+                                margin: 0px 2px;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -185,8 +241,8 @@
                 visibility: hidden;
                 opacity: 0%;
                 transition: .3s;
+
                 > input[type='file']{
-                    
                     cursor: pointer;
                     display: none;
                     opacity: 0;
@@ -203,6 +259,20 @@
                     cursor: pointer;
                     color: black;
                     font-size: 30px;
+                }
+                > button{
+                    background-color: transparent;
+                    position: absolute;
+                    top: 0px;
+                    right: 0px;
+                    cursor: pointer;
+                    background-color: transparent;
+                    background-repeat: no-repeat;
+                    border: none;
+                    padding: 5px;
+                    &:hover {
+                        opacity: 80%;
+                    }
                 }
             }
 
