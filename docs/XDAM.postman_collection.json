@@ -1132,7 +1132,7 @@
 							"formdata": [
 								{
 									"key": "email",
-									"value": "lector@xdam.com",
+									"value": "gestor@xdam.com",
 									"type": "text"
 								},
 								{
@@ -1173,7 +1173,7 @@
 								},
 								{
 									"key": "email",
-									"value": "user@test.com",
+									"value": "pepega@test.com",
 									"type": "text"
 								},
 								{
@@ -1295,13 +1295,13 @@
 				},
 				{
 					"name": "GET WORKSPACES OF ORG",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}{{api}}/user/organization/1/workspaces",
 							"host": [
@@ -1374,77 +1374,159 @@
 			]
 		},
 		{
-			"name": "ORGANIZATIONS",
+			"name": "ADMIN",
 			"item": [
 				{
-					"name": "WORKSPACES",
+					"name": "ORGANIZATIONS",
 					"item": [
 						{
-							"name": "LIST ALL",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [],
-								"body": {},
-								"url": {
-									"raw": "{{url}}{{api}}/organization/workspace/index",
-									"host": [
-										"{{url}}{{api}}"
-									],
-									"path": [
-										"organization",
-										"workspace",
-										"index"
-									]
+							"name": "WORKSPACES",
+							"item": [
+								{
+									"name": "LIST ALL",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{url}}{{api}}/admin/organization/workspace/index",
+											"host": [
+												"{{url}}{{api}}"
+											],
+											"path": [
+												"admin",
+												"organization",
+												"workspace",
+												"index"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GET ONE",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{url}}{{api}}/admin/organization/workspace/get/1",
+											"host": [
+												"{{url}}{{api}}"
+											],
+											"path": [
+												"admin",
+												"organization",
+												"workspace",
+												"get",
+												"1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "DELETE",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{url}}{{api}}/admin/organization/workspace/1",
+											"host": [
+												"{{url}}{{api}}"
+											],
+											"path": [
+												"admin",
+												"organization",
+												"workspace",
+												"1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "CREATE",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "name",
+													"value": "Primero A",
+													"type": "text"
+												},
+												{
+													"key": "organization_id",
+													"value": "1",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{url}}{{api}}/admin/organization/workspace/create",
+											"host": [
+												"{{url}}{{api}}"
+											],
+											"path": [
+												"admin",
+												"organization",
+												"workspace",
+												"create"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "UPDATE",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "workspace_id",
+													"value": "7",
+													"type": "text"
+												},
+												{
+													"key": "name",
+													"value": "Public WSP",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{url}}{{api}}/admin/organization/workspace/update",
+											"host": [
+												"{{url}}{{api}}"
+											],
+											"path": [
+												"admin",
+												"organization",
+												"workspace",
+												"update"
+											]
+										}
+									},
+									"response": []
 								}
-							},
-							"response": []
-						},
-						{
-							"name": "GET ONE",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [],
-								"body": {},
-								"url": {
-									"raw": "{{url}}{{api}}/organization/workspace/get/1",
-									"host": [
-										"{{url}}{{api}}"
-									],
-									"path": [
-										"organization",
-										"workspace",
-										"get",
-										"1"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "DELETE",
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"body": {},
-								"url": {
-									"raw": "{{url}}{{api}}/organization/workspace/1",
-									"host": [
-										"{{url}}{{api}}"
-									],
-									"path": [
-										"organization",
-										"workspace",
-										"1"
-									]
-								}
-							},
-							"response": []
+							],
+							"_postman_isSubFolder": true
 						},
 						{
 							"name": "CREATE",
@@ -1456,25 +1538,90 @@
 									"formdata": [
 										{
 											"key": "name",
-											"value": "Primero A",
-											"type": "text"
-										},
-										{
-											"key": "organization_id",
-											"value": "1",
+											"value": "Organization ",
 											"type": "text"
 										}
 									]
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/organization/workspace/create",
+									"raw": "{{url}}{{api}}/admin/organization/create",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
+										"admin",
 										"organization",
-										"workspace",
 										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}{{api}}/admin/organization/1",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"organization",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ORG INDEX",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}{{api}}/admin/organization/index",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"organization",
+										"index"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}{{api}}/admin/organization/get/1",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"organization",
+										"get",
+										"1"
 									]
 								}
 							},
@@ -1489,25 +1636,25 @@
 									"mode": "formdata",
 									"formdata": [
 										{
-											"key": "workspace_id",
+											"key": "organization_id",
 											"value": "1",
 											"type": "text"
 										},
 										{
 											"key": "name",
-											"value": "Public WSP",
+											"value": "Public ORG",
 											"type": "text"
 										}
 									]
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/organization/workspace/update",
+									"raw": "{{url}}{{api}}/admin/organization/update",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
+										"admin",
 										"organization",
-										"workspace",
 										"update"
 									]
 								}
@@ -1517,136 +1664,6 @@
 					],
 					"_postman_isSubFolder": true
 				},
-				{
-					"name": "CREATE",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "name",
-									"value": "Organization ",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{url}}{{api}}/organization/create",
-							"host": [
-								"{{url}}{{api}}"
-							],
-							"path": [
-								"organization",
-								"create"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DELETE",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "{{url}}{{api}}/organization/1",
-							"host": [
-								"{{url}}{{api}}"
-							],
-							"path": [
-								"organization",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ORG INDEX",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{url}}{{api}}/organization/index",
-							"host": [
-								"{{url}}{{api}}"
-							],
-							"path": [
-								"organization",
-								"index"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GET",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "{{url}}{{api}}/organization/get/1",
-							"host": [
-								"{{url}}{{api}}"
-							],
-							"path": [
-								"organization",
-								"get",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UPDATE",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "organization_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "name",
-									"value": "Public ORG",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{url}}{{api}}/organization/update",
-							"host": [
-								"{{url}}{{api}}"
-							],
-							"path": [
-								"organization",
-								"update"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "ADMIN",
-			"item": [
 				{
 					"name": "SET ORGANIZATION TO USER",
 					"request": {
@@ -1662,7 +1679,7 @@
 								},
 								{
 									"key": "organization_ids[]",
-									"value": "2",
+									"value": "3",
 									"type": "text"
 								}
 							]
@@ -1701,7 +1718,7 @@
 								},
 								{
 									"key": "workspace_id",
-									"value": "3",
+									"value": "5",
 									"type": "text"
 								}
 							]
@@ -1741,7 +1758,7 @@
 								},
 								{
 									"key": "workspace_id",
-									"value": "3",
+									"value": "1",
 									"type": "text"
 								}
 							]
@@ -1770,13 +1787,23 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "user_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
 									"key": "workspace_ids[]",
 									"value": "1",
 									"type": "text"
 								},
 								{
-									"key": "user_id",
-									"value": "1",
+									"key": "workspace_ids[]",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "workspace_ids[]",
+									"value": "5",
 									"type": "text"
 								}
 							]
@@ -1889,12 +1916,11 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/admin/role/store",
+							"raw": "{{url}}{{api}}/role/store",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
-								"admin",
 								"role",
 								"store"
 							]
@@ -1907,16 +1933,18 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
-							"raw": "{{url}}{{api}}/admin/role/1",
+							"raw": "{{url}}{{api}}/role/3",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
-								"admin",
 								"role",
-								"1"
+								"3"
 							]
 						}
 					},
@@ -1932,12 +1960,11 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/admin/role/all",
+							"raw": "{{url}}{{api}}/role/all",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
-								"admin",
 								"role",
 								"all"
 							]
@@ -1947,20 +1974,19 @@
 				},
 				{
 					"name": "GET",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
-							"raw": "{{url}}{{api}}/admin/role/1",
+							"raw": "{{url}}{{api}}/role/1",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
-								"admin",
 								"role",
 								"1"
 							]
@@ -1984,12 +2010,11 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/admin/role/update",
+							"raw": "{{url}}{{api}}/role/update",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
-								"admin",
 								"role",
 								"update"
 							]
@@ -2030,12 +2055,11 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/admin/role/giveAbility",
+							"raw": "{{url}}{{api}}/role/giveAbility",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
-								"admin",
 								"role",
 								"giveAbility"
 							]
@@ -2064,12 +2088,11 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/admin/role/removeAbility",
+							"raw": "{{url}}{{api}}/role/removeAbility",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
-								"admin",
 								"role",
 								"removeAbility"
 							]
@@ -2103,12 +2126,11 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/admin/ability/store",
+							"raw": "{{url}}{{api}}/ability/store",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
-								"admin",
 								"ability",
 								"store"
 							]
@@ -2121,14 +2143,16 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
-							"raw": "{{url}}{{api}}/admin/ability/1",
+							"raw": "{{url}}{{api}}/ability/1",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
-								"admin",
 								"ability",
 								"1"
 							]
@@ -2146,12 +2170,11 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/admin/ability/all",
+							"raw": "{{url}}{{api}}/ability/all",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
-								"admin",
 								"ability",
 								"all"
 							]
@@ -2161,20 +2184,19 @@
 				},
 				{
 					"name": "GET",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
-							"raw": "{{url}}{{api}}/admin/ability/1",
+							"raw": "{{url}}{{api}}/ability/1",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
-								"admin",
 								"ability",
 								"1"
 							]
@@ -2198,12 +2220,11 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/admin/ability/update",
+							"raw": "{{url}}{{api}}/ability/update",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
-								"admin",
 								"ability",
 								"update"
 							]
