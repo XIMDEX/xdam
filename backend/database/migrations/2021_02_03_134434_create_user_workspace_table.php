@@ -20,6 +20,7 @@ class CreateUserWorkspaceTable extends Migration
             $table->timestamps();
             $table->foreign('user_id', 'user_workspace_id_fk')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('workspace_id', 'workspace_user_id_fk')->references('id')->on('workspaces')->onDelete('cascade');
+            $table->foreign('user_id', 'user_org_workspaces_fk')->references('user_id')->on('organization_user')->onDelete('cascade');
         });
     }
 

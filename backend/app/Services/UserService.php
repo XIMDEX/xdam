@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\UserOrganizationWorkspace;
-use App\Models\Workspace;
 use Illuminate\Support\Facades\Auth;
 
 class UserService

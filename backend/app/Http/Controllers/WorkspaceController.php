@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\OrganizationWorkspace\CreateWorkspaceRequest;
+use App\Http\Requests\Workspace\GetWorkspaceRequest;
+use App\Http\Requests\Workspace\ListWorkspacesRequest;
+use App\Http\Requests\Workspace\CreateWorkspaceRequest;
+use App\Http\Requests\Workspace\DeleteWorkspaceRequest;
+use App\Http\Requests\Workspace\UpdateWorkspaceRequest;
 use App\Http\Resources\WorkspaceCollection;
 use App\Http\Resources\WorkspaceResource;
 use App\Services\OrganizationWorkspace\WorkspaceService;
-use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Symfony\Component\HttpFoundation\Response;
 
 class WorkspaceController extends Controller
@@ -27,7 +31,7 @@ class WorkspaceController extends Controller
         $this->workspaceService = $workspaceService;
     }
 
-    public function index()
+    public function index(ListWorkspacesRequest $request)
     {
         $wsps = $this->workspaceService->index();
         return (new WorkspaceCollection($wsps))
@@ -35,9 +39,9 @@ class WorkspaceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function get(Request $request)
+    public function get(GetWorkspaceRequest $request)
     {
-        $wsp = $this->workspaceService->get($request->id);
+        $wsp = $this->workspaceService->get($request->workspace_id);
         return (new WorkspaceResource($wsp))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -51,10 +55,18 @@ class WorkspaceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function delete(Request $request)
+    public function delete(DeleteWorkspaceRequest $request)
     {
-        $wsp = $this->workspaceService->delete($request->id);
-        return (new WorkspaceResource($wsp))
+        $wsp = $this->workspaceService->delete($request->workspace_id);
+        return (new JsonResource($wsp))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function update(UpdateWorkspaceRequest $request)
+    {
+        $wsp = $this->workspaceService->update($request->workspace_id, $request->name);
+        return (new JsonResource($wsp))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }

@@ -20,7 +20,8 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'current_org_wsp' => [],
             'organizations' => OrganizationResource::collection($this->organizations()->get()),
-            'workspaces' => WorkspaceResource::collection($this->workspaces()->get())
+            'workspaces' => WorkspaceResource::collection($this->workspaces()->get()),
+            'roles' => $this->getAbilities()
         ];
     }
 }

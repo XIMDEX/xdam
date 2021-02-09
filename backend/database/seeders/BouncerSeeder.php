@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Abilities;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Silber\Bouncer\BouncerFacade as Bouncer;
 
@@ -14,18 +16,33 @@ class BouncerSeeder extends Seeder
      */
     public function run()
     {
-        // Bouncer::allow('superadmin')->everything();
 
-        // Bouncer::allow('admin')->everything();
-        // Bouncer::forbid('admin')->toManage(User::class);
+        Bouncer::allow('admin')->everything();
 
-        // Bouncer::allow('gestor')->to('create', Post::class);
-        // Bouncer::allow('gestor')->toOwn(Post::class);
+        //Workspaces
+        Bouncer::allow('gestor')->to(Abilities::canCreateWorkspace);
+        Bouncer::allow('gestor')->to(Abilities::canViewWorkspace);
+        Bouncer::allow('gestor')->to(Abilities::canUpdateWorkspace);
+        Bouncer::allow('gestor')->to(Abilities::canDeleteWorkspace);
 
-        // Bouncer::allow('editor')->to('create', Post::class);
-        // Bouncer::allow('editor')->toOwn(Post::class);
+        Bouncer::allow('editor')->to(Abilities::canViewWorkspace);
+        Bouncer::allow('editor')->to(Abilities::canUpdateWorkspace);
 
-        // Bouncer::allow('lector')->to('create', Post::class);
-        // Bouncer::allow('lector')->toOwn(Post::class);
+        Bouncer::allow('lector')->to(Abilities::canViewWorkspace);
+
+        //Organizations
+        Bouncer::allow('gestor')->to(Abilities::canCreateOrganization);
+        Bouncer::allow('gestor')->to(Abilities::canViewOrganization);
+        Bouncer::allow('gestor')->to(Abilities::canUpdateOrganization);
+        Bouncer::allow('gestor')->to(Abilities::canDeleteOrganization);
+
+        Bouncer::allow('editor')->to(Abilities::canViewOrganization);
+        Bouncer::allow('editor')->to(Abilities::canUpdateOrganization);
+
+        Bouncer::allow('lector')->to(Abilities::canViewOrganization);
+
+        //User assign
+        Bouncer::assign('admin')->to(User::find(1));
+
     }
 }

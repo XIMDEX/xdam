@@ -3,6 +3,7 @@
 
 namespace App\Traits;
 
+use App\Enums\Abilities;
 use App\Enums\DefaultOrganizationWorkspace;
 use App\Models\Organization;
 use App\Models\Workspace;
@@ -18,6 +19,7 @@ trait SetDefaultOrganizationAndWorkspace
             $user_id = $model->id;
             $adminService->setOrganizations($user_id, [$public_org->id]);
             $adminService->setWorkspaces($user_id, [$public_wsp->id]);
+            $model->allow(Abilities::canViewWorkspace, $public_wsp);
         });
     }
 }

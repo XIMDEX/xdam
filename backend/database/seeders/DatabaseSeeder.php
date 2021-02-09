@@ -16,8 +16,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             OrganizationSeeder::class,
             WorkspaceSeeder::class,
-            BouncerSeeder::class,
             UserSeeder::class,
+            BouncerSeeder::class,
         ]);
     }
 }

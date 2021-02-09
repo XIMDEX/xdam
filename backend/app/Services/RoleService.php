@@ -69,8 +69,9 @@ class RoleService
             ]);
         }
         $res = Bouncer::allow($role)->to($ability);
-        return $res;
+        return [$res];
     }
+
     public function removeAbility($role_id, $ability_id)
     {
         $role = Role::find($role_id);

@@ -18,16 +18,11 @@ class CreateWorkspacesTable extends Migration
             //$table->uuid('id')->primary();
             $table->increments('id');
             $table->string('name');
-            $table->unsignedInteger('organization_id');
+            $table->unsignedInteger('organization_id')->nullable();
             $table->string('type')->default(WorkspaceType::generic);
             $table->timestamps();
             $table->foreign('organization_id', 'workspaces_organization_id_fk')->references('id')->on('organizations')->onDelete('cascade');
         });
-
-
-
-
-
     }
 
     /**

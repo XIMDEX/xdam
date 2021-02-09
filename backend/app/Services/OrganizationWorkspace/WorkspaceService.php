@@ -16,17 +16,19 @@ class WorkspaceService
 
     public function get($id)
     {
-        $org = Workspace::find($id);
-        return $org;
+        $wsp = Workspace::find($id);
+        return $wsp;
     }
 
     public function create($oid, $wsp_name)
     {
         try {
             $org = Organization::find($oid);
-            $wsp = Workspace::create(['name' => $wsp_name, 'type' => WorkspaceType::generic]);
-            $org->workspaces()->save($wsp);
-            return $org;
+            if($org) {
+                $wsp = Workspace::create(['name' => $wsp_name, 'type' => WorkspaceType::generic]);
+                $org->workspaces()->save($wsp);
+                return $wsp;
+            }
         } catch (\Throwable $th) {
             return [$th];
         }
@@ -35,11 +37,22 @@ class WorkspaceService
     public function delete($id)
     {
         $wsp = Workspace::find($id);
-        if($wsp != null) {
+        if($wsp != null && $wsp->type != WorkspaceType::public) {
             $wsp->delete();
             return ['deleted' => $wsp];
         } else {
-            return ['Organization not exists'];
+            return ['Workspace not exists or cannot be deleted', $wsp];
+        }
+    }
+
+    public function update($id, $name)
+    {
+        $wsp = Workspace::find($id);
+        if($wsp != null) {
+            $wsp->update(['name' => $name]);
+            return ['updated' => $wsp];
+        } else {
+            return ['Workspace not exists'];
         }
     }
 }

@@ -13,7 +13,6 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkspaceController;
 
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,61 +27,57 @@ use App\Http\Controllers\WorkspaceController;
 
 Route::group(['prefix'=>'v1','as'=>'v1'], function(){
 
-    Route::group(['prefix' => 'admin'], function(){
-        Route::post('user/setOrganizations',    [AdminController::class, 'setOrganizations'])->name('adm.usr.set.org');
-        Route::post('user/setWorkspaces',       [AdminController::class, 'setWorkspaces'])->name('adm.usr.set.wsp');
-        Route::post('user/unsetOrganizations',  [AdminController::class, 'unsetOrganizations'])->name('adm.usr.unset.org');
-        Route::post('user/unsetWorkspaces',     [AdminController::class, 'unsetWorkspaces'])->name('adm.usr.unset.wsp');
-    });
-
-
-    Route::group(['prefix' => 'organization'], function(){
-        Route::post('create',   [OrganizationController::class, 'create'])->name('org.create');
-        Route::get('get/{id}',  [OrganizationController::class, 'get'])->name('org.get');
-        Route::get('index',     [OrganizationController::class, 'index'])->name('org.index');
-        Route::delete('/{id}',  [OrganizationController::class, 'delete'])->name('org.delete');
-        Route::post('update',   [OrganizationController::class, 'update'])->name('org.update');
-        //Route::post('user/setRole', [OrganizationController::class, 'setUserRol'])->name('org.user.rol.set');
-        Route::group(['prefix' => 'workspace'], function(){
-            Route::post('create',   [WorkspaceController::class, 'create'])->name('wsp.create');
-            Route::get('/get/{id}', [WorkspaceController::class, 'get'])->name('wsp.get');
-            Route::get('index',     [WorkspaceController::class, 'index'])->name('wsp.index');
-            Route::delete('/{id}',  [WorkspaceController::class, 'delete'])->name('wsp.delete');
-            Route::post('update',   [WorkspaceController::class, 'update'])->name('wsp.update');
-        });
-    });
-
-    Route::group(['prefix' => 'role'], function() {
-        Route::post('store',            [RoleController::class, 'store'])->name('role.store');
-        Route::post('update',           [RoleController::class, 'update'])->name('role.update');
-        Route::get('all',               [RoleController::class, 'index'])->name('role.index');
-        Route::get('/{id}',             [RoleController::class, 'get'])->name('role.get');
-        Route::delete('/{id}',          [RoleController::class, 'delete'])->name('role.delete');
-        Route::post('giveAbility',      [RoleController::class, 'giveAbility'])->name('role.giveAbility');
-        Route::post('removeAbility',    [RoleController::class, 'removeAbility'])->name('role.removeAbility');
-    });
-
-    Route::group(['prefix' => 'ability'], function(){
-        Route::post('/store',   [AbilityController::class, 'store'])->name('ability.store');
-        Route::post('/update',  [AbilityController::class, 'update'])->name('ability.update');
-        Route::get('/all',      [AbilityController::class, 'index'])->name('ability.index');
-        Route::get('/{id}',     [AbilityController::class, 'get'])->name('ability.get');
-        Route::delete('/{id}',  [AbilityController::class, 'delete'])->name('ability.delete');
-    });
-
     Route::group(['prefix' => 'auth'], function(){
-        Route::post('login',    [AuthController::class, 'login']    )->name('auth.login');
-        Route::post('signup',   [AuthController::class, 'signup']   )->name('auth.signup');
+        Route::post('login',    [AuthController::class, 'login'])->name('auth.login');
+        Route::post('signup',   [AuthController::class, 'signup'])->name('auth.signup');
     });
 
     Route::group(['middleware' => 'auth:api'], function () {
+        Route::group(['prefix' => 'admin', 'middleware' => 'can:*'], function(){
+            Route::post('user/setOrganizations',                [AdminController::class, 'setOrganizations'])->name('adm.usr.set.org');
+            Route::post('user/setWorkspaces',                   [AdminController::class, 'setWorkspaces'])->name('adm.usr.set.wsp');
+            Route::post('user/unsetOrganizations',              [AdminController::class, 'unsetOrganizations'])->name('adm.usr.unset.org');
+            Route::post('user/unsetWorkspaces',                 [AdminController::class, 'unsetWorkspaces'])->name('adm.usr.unset.wsp');
+            Route::post('user/set/roleAbilitiesOnWorkspace',    [AdminController::class, 'setRoleAbilitiesOnWorkspace'])->name('adm.usr.set.role');
+            Route::post('user/unset/roleAbilitiesOnWorkspace',  [AdminController::class, 'unsetRoleAbilitiesOnWorkspace'])->name('adm.usr.unset.role');
 
-        Route::post('role_test', [UserController::class, 'role_test'])->name('role.test');
+            Route::group(['prefix' => 'role'], function() {
+                Route::post('store',            [RoleController::class, 'store'])->name('role.store');
+                Route::post('update',           [RoleController::class, 'update'])->name('role.update');
+                Route::get('all',               [RoleController::class, 'index'])->name('role.index');
+                Route::get('/{id}',             [RoleController::class, 'get'])->name('role.get');
+                Route::delete('/{id}',          [RoleController::class, 'delete'])->name('role.delete');
+                Route::post('giveAbility',      [RoleController::class, 'giveAbility'])->name('role.giveAbility');
+                Route::post('removeAbility',    [RoleController::class, 'removeAbility'])->name('role.removeAbility');
+            });
+            Route::group(['prefix' => 'ability'], function(){
+                Route::post('/store',   [AbilityController::class, 'store'])->name('ability.store');
+                Route::post('/update',  [AbilityController::class, 'update'])->name('ability.update');
+                Route::get('/all',      [AbilityController::class, 'index'])->name('ability.index');
+                Route::get('/{id}',     [AbilityController::class, 'get'])->name('ability.get');
+                Route::delete('/{id}',  [AbilityController::class, 'delete'])->name('ability.delete');
+            });
+
+        });
+
+        Route::group(['prefix' => 'organization'], function(){
+            Route::post('create',               [OrganizationController::class, 'create'])  ->name('org.create');
+            Route::get('get/{organization_id}', [OrganizationController::class, 'get'])     ->name('org.get')   ;
+            Route::get('index',                 [OrganizationController::class, 'index'])   ->name('org.index') ;
+            Route::delete('/{organization_id}', [OrganizationController::class, 'delete'])  ->name('org.delete');
+            Route::post('update',               [OrganizationController::class, 'update'])  ->name('org.update');
+            Route::group(['prefix' => 'workspace'], function(){
+                Route::post('create',               [WorkspaceController::class, 'create']) ->name('wsp.create');
+                Route::get('/get/{workspace_id}',   [WorkspaceController::class, 'get'])    ->name('wsp.get');
+                Route::get('index',                 [WorkspaceController::class, 'index'])  ->name('wsp.index');
+                Route::delete('/{workspace_id}',    [WorkspaceController::class, 'delete']) ->name('wsp.delete');
+                Route::post('update',               [WorkspaceController::class, 'update']) ->name('wsp.update');
+            });
+        });
 
         Route::group(['prefix' => 'user'], function(){
-            Route::get('/',                                         [UserController::class, 'user'])->name('user.model.get');
             Route::post('logout',                                   [AuthController::class, 'logout'])->name('user.logout');
-            //Route::post('setCurrentOrgWsp',                         [AuthController::class, 'logout'])->name('user.logout');
+            Route::get('/',                                         [UserController::class, 'user'])->name('user.model.get');
             Route::get('workspaces',                                [UserController::class, 'getWorkspaces'])->name('user.wsps.get');
             Route::get('organizations',                             [UserController::class, 'getOrganizations'])->name('user.org.get');
             Route::get('organization/{organization_id}/workspaces', [UserController::class, 'getWorkspacesOfOrganization'])->name('user.org.wsps.get');

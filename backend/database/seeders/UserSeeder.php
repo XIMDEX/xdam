@@ -3,12 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Traits\SetDefaultOrganizationAndWorkspace;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+
 
 class UserSeeder extends Seeder
 {
@@ -20,8 +17,25 @@ class UserSeeder extends Seeder
     public function run()
     {
         User::create([
-            'name' => 'user test',
-            'email' => 'test@test.com',
+            'name' => 'Admin user',
+            'email' => 'admin@xdam.com',
+            'password' => Hash::make('123123')
+        ]);
+        User::create([
+            'name' => 'Gestor user',
+            'email' => 'gestor@xdam.com',
+            'password' => Hash::make('123123')
+        ]);
+
+        User::create([
+            'name' => 'Editor user',
+            'email' => 'editor@xdam.com',
+            'password' => Hash::make('123123')
+        ]);
+
+        User::create([
+            'name' => 'Lector user',
+            'email' => 'lector@xdam.com',
             'password' => Hash::make('123123')
         ]);
 

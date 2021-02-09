@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Requests\OrganizationWorkspace;
+namespace App\Http\Requests\Workspace;
 
+use App\Enums\Abilities;
+use App\Models\Workspace;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateOrganizationRequest extends FormRequest
+class CreateWorkspaceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +15,10 @@ class CreateOrganizationRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        if($this->user()->can(Abilities::canCreateWorkspace, Workspace::class)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -24,7 +29,8 @@ class CreateOrganizationRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|min:3'
+            'name' => 'required|string|min:3',
+            'organization_id' => 'required',
         ];
     }
 }
