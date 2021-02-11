@@ -18,7 +18,7 @@ class DamResource extends Model implements HasMedia, TaggableInterface
 {
     use HasFactory, UsesUuid, TaggableTrait, InteractsWithMedia;
 
-    protected $fillable = ['type', 'data', 'name'];
+    protected $fillable = ['type', 'data', 'name', 'active'];
 
     protected $table = "dam_resources";
 

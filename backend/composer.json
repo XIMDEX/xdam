@@ -18,9 +18,10 @@
         "laravel/framework": "^8.12",
         "laravel/passport": "^10.1",
         "laravel/tinker": "^2.5",
-        "silber/bouncer": "v1.0.0-rc.10",
+        "opis/json-schema": "^1.0",
         "php-ffmpeg/php-ffmpeg": "^0.17.0",
         "ralouphie/mimey": "^2.1",
+        "silber/bouncer": "v1.0.0-rc.10",
         "spatie/laravel-medialibrary": "^9.4.1",
         "tsterker/solarium": "^1.1"
     },

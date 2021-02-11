@@ -50,9 +50,9 @@ class ResourceService
     {
         $class = new stdClass();
         $class->id = is_object($resource->id) ? $resource->id->toString() : $resource->id;
-        $class->data = $resource->data;
+        $class->data = json_encode($resource->data);
         $class->name = $resource->name ?? '';
-        $class->active = true;
+        $class->active = $resource->data->description->active;
         $class->type = ResourceType::fromValue($resource->type)->key;
         $class->collection = $this->solr->getCollectionBySubType($class->type);
         $class->categories = $resource->categories()->pluck('name')->toArray() ?? [""];
@@ -200,15 +200,15 @@ class ResourceService
             );
         }
 
-        if (array_key_exists("data", $params) && $params["data"]) {
+        if (array_key_exists("data", $params) && !empty($params["data"])) {
             $resource->update(
                 [
                     'data' => $params['data'],
+                    'active' => $params['data']->description->active
                 ]
             );
-            $dataJson = json_decode($params["data"]);
-            $this->linkCategoriesFromJson($resource, $dataJson);
-            $this->linkTagsFromJson($resource, $dataJson);
+            $this->linkCategoriesFromJson($resource, $params['data']);
+            $this->linkTagsFromJson($resource, $params['data']);
         }
         $this->saveAssociatedFiles($resource, $params);
         $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
@@ -227,17 +227,17 @@ class ResourceService
         $type = ResourceType::fromKey($params["type"])->value;
         $newResource = DamResource::create(
             [
-                'data' => $params['data'],
+                'data' =>  $params['data'],
                 'name' => $name,
                 'type' => $type,
+                'active' => $params['data']->description->active
             ]
         );
-        $jsonData = json_decode($params["data"]);
-        $this->linkCategoriesFromJson($newResource, $jsonData);
+        $this->linkCategoriesFromJson($newResource, $params['data']);
         $this->saveAssociatedFiles($newResource, $params);
         $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($newResource));
         $newResource->refresh();
-        $this->linkTagsFromJson($newResource, $jsonData);
+        $this->linkTagsFromJson($newResource, $params['data']);
         return $newResource;
     }
 
