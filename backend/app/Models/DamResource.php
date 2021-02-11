@@ -30,21 +30,16 @@ class DamResource extends Model implements HasMedia, TaggableInterface
 
     public function registerMediaConversions(\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
-        if ($media->type == MediaType::Preview()->key)
-        {
-            $this->addMediaConversion(ThumbnailTypes::thumb_64x64)
-                ->width(64)
-                ->height(64)
-                ->performOnCollections(MediaType::Preview()->key);
 
-            $this->addMediaConversion(ThumbnailTypes::thumb_200x400)
-                ->width(200)
-                ->height(400)
-                ->performOnCollections(MediaType::Preview()->key);
+        $this->addMediaConversion(ThumbnailTypes::thumb_64x64)
+            ->width(64)
+            ->height(64)
+            ->performOnCollections(MediaType::Preview()->key);
 
-        }
-
-
+        $this->addMediaConversion(ThumbnailTypes::thumb_200x400)
+            ->width(200)
+            ->height(400)
+            ->performOnCollections(MediaType::Preview()->key);
     }
 
     public function categories()
