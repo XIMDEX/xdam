@@ -174,11 +174,42 @@ export class MainService {
         let url;
 
         formData = data.toFormData();
-        url = this.router.getEndPointUrl('resource', 'update', new Item(data.data));
+        url = this.router.getEndPointUrl('resource', 'update', new Item(data.data.dataToSave));
 
         /*if (method === 'put') {
             formData.append('_method', 'PUT');
         }*/
+        return this.http.post(url, formData, { headers: heads });
+    }
+
+    /**
+     * 
+     * @param item 
+     */
+    deleteFileToResource(fileToDelete: {id: string; idFile: string}) {
+        const heads = new HttpHeaders({
+            'Access-Control-Allow-Origin': '*',
+            Accept: 'application/json'
+        });
+
+        const url = this.router.getEndPointUrl('resource', 'deleteFile', fileToDelete );
+
+        return this.http.delete(url, { headers: heads });
+    }
+
+    /**
+     * 
+     * @param item 
+     */
+    addFileToResource(data: ActionModel, index) {
+        const heads = new HttpHeaders({
+            'Access-Control-Allow-Origin': '*',
+            Accept: 'application/json'
+        });
+
+        let formData = data.filesToUploadToFormData(index);
+        const url = this.router.getEndPointUrl('resource', 'addFile', new Item(data.data.dataToSave));
+
         return this.http.post(url, formData, { headers: heads });
     }
 

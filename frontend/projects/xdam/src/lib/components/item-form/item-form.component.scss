@@ -29,14 +29,14 @@
         margin: 0px 28px;
         flex-grow: 1;
         display: grid;
-        grid-template-columns: auto 35%;
+        grid-template-columns: 35% auto;
         grid-gap: $item_form_group_border_weight;
         box-sizing: border-box;
         
-        @media (max-width: 650px){
+        /*@media (max-width: 650px){
             display: flex;
             flex-direction: column-reverse;
-        }
+        }*/
         
         
         > .item-form-group {

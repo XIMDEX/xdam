@@ -15,6 +15,7 @@ import { JwtHelperService } from '../services/jwt-helper.service';
 import { AuthService } from '../services/auth.service';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
+import { concat } from 'rxjs';
 
 
 @Component({
@@ -229,7 +230,7 @@ export class HomeComponent implements OnInit {
     damAction(data: ActionModel) {
         const action = new ActionModel(data);
         let actionType = null;
-
+        let deleteFilesSubcribe = null;
         if (action.method === 'select') {
             action.status = 'success';
             setTimeout(() => {
@@ -240,7 +241,32 @@ export class HomeComponent implements OnInit {
             if (action.method === 'show') {
                 actionType = this.mainService.getResource(action);
             }else if (action.method === 'edit'){
-                actionType = this.mainService.updateForm(action);
+
+                if(action.data.filesToDelete.length > 0){
+                    let filesToDelete: any[] = action.data.filesToDelete
+                    for(let i = 0; i < filesToDelete.length ; i++){
+                        actionType = this.concatObservables(
+                            actionType, 
+                            this.mainService.deleteFileToResource(
+                                {
+                                    id: action.data.dataToSave.id,
+                                    idFile: filesToDelete[i].id
+                                }
+                            )
+                        )                        
+                    }
+                }
+
+                if(action.data.filesToUpload.length > 0){
+                    let filesToUpload: any[] = action.data.filesToUpload
+                    for(let i = 0; i < filesToUpload.length ; i++){
+                        actionType = this.concatObservables(
+                            actionType, 
+                            this.mainService.addFileToResource(action, i)
+                        )                        
+                    }
+                }
+                actionType = this.concatObservables(actionType, this.mainService.updateForm(action))
             }else if (action.method === 'new'){
                 //action.data['type'] = this.xdamMode;
                 actionType = this.mainService.saveForm(action);
@@ -250,7 +276,7 @@ export class HomeComponent implements OnInit {
                 .subscribe( result => {
                         const { data } = result as any;
 
-                        action.data = data;
+                        action.data = result;
                         action.status = 'success';
                     },
                     ({ error, message, statusText }) => {
@@ -286,4 +312,15 @@ export class HomeComponent implements OnInit {
         this.router.navigate( ['/'+ newMode])
     }
 
+    concatObservables(fisthObs, secondObs){
+        if (fisthObs){
+            fisthObs = concat(
+                fisthObs,
+                secondObs
+            );
+        }else{
+            fisthObs = secondObs;
+        }
+        return fisthObs;
+    }
 }

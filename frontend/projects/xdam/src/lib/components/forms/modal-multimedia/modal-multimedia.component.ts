@@ -24,8 +24,8 @@ export class ModalMultimediaComponent implements OnInit {
   faTrash = faTrash;
   
   //Input Files
-  fileToUpload:FileList = null;
-  coverToUpload:FileList = null;
+  filesToUpload: File[] = [];
+  coverToUpload: FileList = null;
 
   //form Grups
   public data: FormGroup = new FormGroup({});
@@ -44,30 +44,36 @@ export class ModalMultimediaComponent implements OnInit {
   //Image
   defaultImage = window.origin + '/assets/default_item_image.jpg';
   image = null;
-  imageDelete = false;
+  previewDelete = false;
   imageError= false;
 
+  //Files
+  filesToDelete = [];
+  files =[]
 
   constructor(private ref: ChangeDetectorRef) {}
   
   ngOnInit() {
-      if (!isNil(this.action) && this.action.method === 'show') {
-        this.initFormControlsWithData();
+    if (!isNil(this.action) && this.action.method === 'show') {
+      this.initFormControlsWithData();
+      this.initImage();
+      this.files = this.action.data.files;
+
+    } else if (this.action.method === 'new') {
+        this.initFormControls();
         this.initImage();
-      } else if (this.action.method === 'new') {
-          this.initFormControls();
-          this.initImage();
-          //this.image = this.defaultImage;
-      } else {
-          this.initFormControls();
-      }
+        //this.image = this.defaultImage;
+    } else {
+        this.initFormControls();
+    }
   }
 
   public sendForm(e): any {
     if(this.dataform.valid){
-      if(this.dataform.dirty || this.fileToUpload != null || this.coverToUpload != null){
+      if(this.dataform.dirty || this.filesToUpload.length > 0 || this.coverToUpload != null || this.deleteImage){
         const action = new ActionModel();
         action.method = this.action.method === 'show' ? 'edit' : this.action.method;
+        //action.data.deletePreview = [];
         action.data = this.prepareData(this.dataform.value)
         this.dataToSave.emit(action);
       }
@@ -75,22 +81,40 @@ export class ModalMultimediaComponent implements OnInit {
   }
 
   prepareData(data){
+    const objToSave:any = {
+      dataToSave: null,
+      filesToDelete: [],
+      filesToUpload: []
+    }
+   
+    if(this.action.method == 'new' && this.filesToUpload.length > 0){
+      data['File[]'] = this.filesToUpload;
+    }
+    
+    data['data'] = JSON.stringify({description: data['data']});
     data['type'] = this.currentType;
-    data['data'] = JSON.stringify({description: data['data']})
 
-    if(this.coverToUpload != null && this.coverToUpload.length > 0){
-      data['File'] = this.coverToUpload.item(0);
+    if(this.coverToUpload != null && this.coverToUpload.length > 0 ){
       data['Preview'] = this.coverToUpload.item(0);
-      //data['data']['mimetype'] = this.coverToUpload.item(0).type.split('/')[0];
-    } else {
-      delete data['File'];
-      delete data['Preview'];
+    }else if(this.previewDelete){
+      objToSave.filesToDelete.push( this.action.data.previews[0])
     }
 
-    //Detete Fields not required
-    //delete data['files'];
+    if(this.filesToDelete.length > 0){
+      objToSave.filesToDelete = objToSave.filesToDelete.concat(this.filesToDelete);
+    }
 
-    return data;
+    
+    if(this.action.method === 'new'){
+      data['File[]'] = this.filesToUpload;
+    }else if(this.filesToUpload.length > 0){
+      objToSave.filesToUpload = this.filesToUpload;
+    }
+
+    
+
+    objToSave.dataToSave = data;
+    return objToSave;
   }
 
 
@@ -111,9 +135,6 @@ export class ModalMultimediaComponent implements OnInit {
   }
 
   private initFormControls() {
-    //this.dataform.addControl('files', new FormControl(''));
-    this.dataform.addControl('type', new FormControl('document'));
-    this.dataform.addControl('active', new FormControl(''));
     let groupData: FormGroup = new FormGroup({});
     groupData.addControl('active', new FormControl(true));
     groupData.addControl('name', new FormControl('', Validators.required));
@@ -126,34 +147,24 @@ export class ModalMultimediaComponent implements OnInit {
   }
 
   private initFormControlsWithData() {
-    const item = this.action.item;
+    const item = this.action.data;
     this.currentType = this.action.item['type'] + "";
     let field: FormControl;
-    Object.keys(item).forEach(key => {
-      if (key.startsWith('_')) {
-          key = key.slice(1);
-      }
-      if(key === 'data'){
-          let groupData: FormGroup = new FormGroup({});
-          let {data} = this.action.item;
-          Object.keys(data['description']).forEach(keyData => {
-              groupData.addControl(keyData, new FormControl(data['description'][keyData]))
-          });
-          this.dataform.setControl('data', groupData);
-          return
-      } else if (!isNil(item[key]) && key !== 'files' ) {
-          field = new FormControl(item[key]);
-          field.markAsDirty();
-      } else {
-          field = new FormControl('');
-      }
-        this.dataform.addControl(key, field);
+    this.dataform.addControl("id", new FormControl(item.id));
+    let groupData: FormGroup = new FormGroup({});
+    let {data} = this.action.data;
+    Object.keys(data['description']).forEach(keyData => {
+        groupData.addControl(keyData, new FormControl(data['description'][keyData]))
     });
+    this.dataform.setControl('data', groupData);
   }
 
   handleFileInput(files: FileList) {
-    this.fileToUpload = files;
-    const type = this.fileToUpload.item(0).type.split('/')[0];
+
+    this.filesToUpload.push(files.item(0));
+    console.log(files.item(0))
+    //this.filesToUpload = files;
+    const type = files.item(0).type.split('/')[0];
     switch(type){
       case 'image':
         this.currentType = 'image';
@@ -173,7 +184,7 @@ export class ModalMultimediaComponent implements OnInit {
     var file = files.item(0);
     if (file.type.match(/image\/*/) == null) return;
 
-    this.imageDelete = false;
+    this.previewDelete = false;
     this.coverToUpload = files;
     var reader = new FileReader();
     reader.onload = (e)=>{
@@ -191,6 +202,14 @@ export class ModalMultimediaComponent implements OnInit {
   deleteImage(e){
     e.preventDefault();
     this.image = this.defaultImage;
-    this.imageDelete = true;
+    this.previewDelete = true;
   }
+
+  deleteFile(e, file){
+    e.preventDefault();
+    var i = this.files.indexOf( file );
+    this.files.splice( i, 1 );
+    this.filesToDelete.push(file);
+  } 
+
 }

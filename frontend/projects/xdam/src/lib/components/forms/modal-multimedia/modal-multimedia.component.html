@@ -3,6 +3,57 @@
     <div class="item-form" [formGroup]="dataform">
         <div formGroupName="data" >
             <aside class="item-form-general" >
+                <div class="item-form-group media">
+                    
+                    <div class="fields column">
+                        <div class="img-box">
+                            <img [src]="image" (error)="imgError()" #imgPreview />
+                            <div class="img-input">
+                                <input type="file" id="cover" (change)="handleImageInput($event.target.files)">
+                                <label for="cover"><fa-icon [icon]="faUpload"></fa-icon></label>
+                                <button *ngIf="image != defaultImage" (click)="deleteImage($event)"><fa-icon [icon]="faTrash"></fa-icon></button>
+                            </div>
+                        </div>
+                        <div class="field-item">
+                            <label for="files">SELECT TYPE</label>
+                            <select [value]="currentType" (change)="changetype(selectType.value)" #selectType>
+                                <option value="document">Document</option>
+                                <option value="video">Video</option>
+                                <option value="image">Image</option>
+                                <option value="audio">Audio</option>
+                                <option value="url">Url</option>
+                            </select>
+                        </div>
+                        <div class="field-item">
+                            <label for="files">MULTIMEDIA FILES</label>
+                            <input type="file" id="files" class="custom-file-input" (change)="handleFileInput($event.target.files)" #InputFile/>
+                        </div>
+                        <div class="list-files">  
+                            <div class="item-file-description" *ngFor="let item of filesToUpload">
+                                <p>{{item.name}}</p> 
+                                <div class="dam-buttons-actions">
+                                    <button  class="btn-action-transparent" title="Edit" (click)="deleteFile($event, item)">
+                                        <fa-icon [icon]="faTrash"></fa-icon>
+                                    </button>
+                                    <button class="btn-action-transparent" title="Download">
+                                        <fa-icon [icon]="faDownload"></fa-icon>
+                                    </button>
+                                </div>
+                            </div>  
+                            <div class="item-file-description" *ngFor="let item of files">
+                                <p>{{item.file_name}}</p> 
+                                <div class="dam-buttons-actions">
+                                    <button  class="btn-action-transparent" title="Edit" (click)="deleteFile($event, item)">
+                                        <fa-icon [icon]="faTrash"></fa-icon>
+                                    </button>
+                                    <button class="btn-action-transparent" title="Download">
+                                        <fa-icon [icon]="faDownload"></fa-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="item-form-group data" >
                     <div class="group-title">
                         <p class="title-data-info">Information</p>
@@ -33,113 +84,7 @@
                     </div>
                     
                 </div>
-                <div class="item-form-group media">
-                    
-                    <div class="fields column">
-                        <div class="img-box">
-                            <img [src]="image" (error)="imgError()" #imgPreview />
-                            <div class="img-input">
-                                <input type="file" id="cover" (change)="handleImageInput($event.target.files)">
-                                <label for="cover"><fa-icon [icon]="faUpload"></fa-icon></label>
-                                <button *ngIf="image != defaultImage" (click)="deleteImage($event)"><fa-icon [icon]="faTrash"></fa-icon></button>
-                            </div>
-                        </div>
-                        <div class="field-item">
-                            <label for="files">SELECT TYPE</label>
-                            <select [value]="currentType" (change)="changetype(selectType.value)" #selectType>
-                                <option value="document">Document</option>
-                                <option value="video">Video</option>
-                                <option value="image">Image</option>
-                                <option value="audio">Audio</option>
-                                <option value="url">Url</option>
-                            </select>
-                        </div>
-                        <div class="field-item">
-                            <label for="files">MULTIMEDIA FILES</label>
-                            <input type="file" id="files" class="custom-file-input" (change)="handleFileInput($event.target.files)" #InputFile/>
-                        </div>
-                        <div class="list-files">    
-                            <div class="item-file-description">
-                                <p>Nombre del fichero a sda sdasdasda  sdasd asd</p> 
-                                <div class="dam-buttons-actions">
-                                    <button  class="btn-action-transparent" title="Edit" >
-                                        <fa-icon [icon]="faEdit"></fa-icon>
-                                    </button>
-                                    <button class="btn-action-transparent" title="Download">
-                                        <fa-icon [icon]="faDownload"></fa-icon>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="item-file-description">
-                                <p>Nombre del fichero</p> 
-                                <div class="dam-buttons-actions">
-                                    <button  class="btn-action-transparent" title="Edit" >
-                                        <fa-icon [icon]="faEdit"></fa-icon>
-                                    </button>
-                                    <button class="btn-action-transparent" title="Download">
-                                        <fa-icon [icon]="faDownload"></fa-icon>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="item-file-description">
-                                <p>Nombre del fichero</p> 
-                                <div class="dam-buttons-actions">
-                                    <button  class="btn-action-transparent" title="Edit" >
-                                        <fa-icon [icon]="faEdit"></fa-icon>
-                                    </button>
-                                    <button class="btn-action-transparent" title="Download">
-                                        <fa-icon [icon]="faDownload"></fa-icon>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="item-file-description">
-                                <p>Nombre del fichero</p> 
-                                <div class="dam-buttons-actions">
-                                    <button  class="btn-action-transparent" title="Edit" >
-                                        <fa-icon [icon]="faEdit"></fa-icon>
-                                    </button>
-                                    <button class="btn-action-transparent" title="Download">
-                                        <fa-icon [icon]="faDownload"></fa-icon>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="item-file-description">
-                                <p>Nombre del fichero</p> 
-                                <div class="dam-buttons-actions">
-                                    <button  class="btn-action-transparent" title="Edit" >
-                                        <fa-icon [icon]="faEdit"></fa-icon>
-                                    </button>
-                                    <button class="btn-action-transparent" title="Download">
-                                        <fa-icon [icon]="faDownload"></fa-icon>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="item-file-description">
-                                <p>Nombre del fichero</p> 
-                                <div class="dam-buttons-actions">
-                                    <button  class="btn-action-transparent" title="Edit" >
-                                        <fa-icon [icon]="faEdit"></fa-icon>
-                                    </button>
-                                    <button class="btn-action-transparent" title="Download">
-                                        <fa-icon [icon]="faDownload"></fa-icon>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="item-file-description">
-                                <p>Nombre del fichero</p> 
-                                <div class="dam-buttons-actions">
-                                    <button  class="btn-action-transparent" title="Edit" >
-                                        <fa-icon [icon]="faEdit"></fa-icon>
-                                    </button>
-                                    <button class="btn-action-transparent" title="Download">
-                                        <fa-icon [icon]="faDownload"></fa-icon>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
+                
             </aside>
             <div [ngSwitch]="currentType">
                 <xdam-form-partial-document *ngSwitchCase="'document'" formControlName="partials" [action]="action"></xdam-form-partial-document>
