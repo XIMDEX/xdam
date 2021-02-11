@@ -10,6 +10,7 @@ use Cartalyst\Tags\TaggableInterface;
 use Cartalyst\Tags\TaggableTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Solarium\QueryType\ManagedResources\RequestBuilder\Resource;
 use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -29,16 +30,20 @@ class DamResource extends Model implements HasMedia, TaggableInterface
 
     public function registerMediaConversions(\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
+        if ($media->type == MediaType::Preview()->key)
+        {
+            $this->addMediaConversion(ThumbnailTypes::thumb_64x64)
+                ->width(64)
+                ->height(64)
+                ->performOnCollections(MediaType::Preview()->key);
 
-        $this->addMediaConversion(ThumbnailTypes::thumb_64x64)
-            ->width(64)
-            ->height(64)
-            ->performOnCollections(MediaType::Preview()->key);
+            $this->addMediaConversion(ThumbnailTypes::thumb_200x400)
+                ->width(200)
+                ->height(400)
+                ->performOnCollections(MediaType::Preview()->key);
 
-        $this->addMediaConversion(ThumbnailTypes::thumb_200x400)
-            ->width(200)
-            ->height(400)
-            ->performOnCollections(MediaType::Preview()->key);
+        }
+
 
     }
 

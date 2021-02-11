@@ -20,18 +20,7 @@ class addPreviewToResourceRequest extends FormRequest
     public function rules()
     {
         return [
-            MediaType::Preview()->key => 'file',
+
         ];
-    }
-
-    public function validationData()
-    {
-        $requiredParameters = [
-            MediaType::Preview()->key => $this->file(MediaType::Preview()->key)
-        ];
-
-        $this->merge($requiredParameters);
-
-        return array_merge($this->all(), $requiredParameters);
     }
 }

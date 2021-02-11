@@ -73,8 +73,7 @@ class ResourceService
     private function saveAssociateFile($type, $params, $model)
     {
         if (array_key_exists($type, $params) && $params[$type]) {
-            if ($type === MediaType::Preview()->key)
-            {
+            if ($type === MediaType::Preview()->key) {
                 // only one associated preview file is allowed
                 $this->mediaService->deleteAllPreviews($model);
             }
@@ -227,7 +226,7 @@ class ResourceService
         $type = ResourceType::fromKey($params["type"])->value;
         $newResource = DamResource::create(
             [
-                'data' =>  $params['data'],
+                'data' => $params['data'],
                 'name' => $name,
                 'type' => $type,
                 'active' => $params['data']->description->active
@@ -253,34 +252,27 @@ class ResourceService
 
     /**
      * @param DamResource $resource
-     * @param $requestKey
+     * @param array $params
      * @return DamResource
      */
-    public function addPreview(DamResource $resource, $requestKey): DamResource
+    public function addPreview(DamResource $resource, array $params): DamResource
     {
-        $this->mediaService->addFromRequest(
-            $resource,
-            $requestKey,
-            MediaType::Preview()->key,
-            ["parent_id" => $resource->id]
-        );
+        $this->saveAssociateFile(MediaType::Preview()->key, $params, $resource);
+        $resource->refresh();
         $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
         return $resource;
     }
 
     /**
      * @param DamResource $resource
-     * @param $requestKey
+     * @param array $params
      * @return DamResource
      */
-    public function addFile(DamResource $resource, $requestKey): DamResource
+    public function addFile(DamResource $resource, array $params): DamResource
     {
-        $this->mediaService->addFromRequest(
-            $resource,
-            $requestKey,
-            MediaType::File()->key,
-            ["parent_id" => $resource->id]
-        );
+        $this->saveAssociateFile(MediaType::File()->key, $params, $resource);
+        $resource->refresh();
+        $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
         return $resource;
     }
 
@@ -379,6 +371,21 @@ class ResourceService
 
     /**
      * @param DamResource $resource
+     * @param array $ids
+     * @return void
+     * @throws Exception
+     */
+    public function deleteAssociatedFiles(DamResource $resource, array $ids): DamResource
+    {
+        foreach ($ids as $id) {
+            $media = Media::findOrFail($id);
+            $media->delete();
+        }
+        return $resource->refresh();
+    }
+
+    /**
+     * @param DamResource $resource
      * @param Media $media
      * @return DamResource
      * @throws Exception
@@ -386,7 +393,6 @@ class ResourceService
     public function deleteAssociatedFile(DamResource $resource, Media $media): DamResource
     {
         $media->delete();
-        $resource->refresh();
-        return $resource;
+        return $resource->refresh();
     }
 }

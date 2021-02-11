@@ -114,6 +114,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
         Route::delete('/{damResource}', [ResourceController::class, 'delete'])->name('damResource.delete');
         Route::delete('/{damResource}/deleteCategory/{category}', [ResourceController::class, 'deleteCategory'])->name('damResource.deleteCategory');
         Route::delete('/{damResource}/associatedFile/{media}', [ResourceController::class, 'deleteAssociatedFile'])->name('damResource.deleteAssociatedFile');
+        Route::delete('/{damResource}/associatedFiles', [ResourceController::class, 'deleteAssociatedFiles'])->name('damResource.deleteAssociatedFiles');
     });
 
     Route::group(['prefix' => 'catalogue'], function() {
