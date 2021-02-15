@@ -106,7 +106,33 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::delete('/{category}', [CategoryController::class, 'delete'])->name('category.delete');
         });
 
+<<<<<<< HEAD
         Route::get('/exploreCourses', [ResourceController::class, 'exploreCourses'])->name('damResource.exploreCourses');
+=======
+    Route::get('/exploreCourses', [ResourceController::class, 'exploreCourses'])->name('damResource.exploreCourses');
+
+    Route::group(['prefix' => 'resource'], function() {
+        Route::get('/', [ResourceController::class, 'getAll'])->name('damResource.getAll');
+        Route::get('/render/{damUrl}/{size}', [ResourceController::class, 'render'])->name('damResource.renderWithSize');
+        Route::get('/render/{damUrl}', [ResourceController::class, 'render'])->name('damResource.render');
+        Route::get('/download/{damResource}/{size}', [ResourceController::class, 'download'])->name('damResource.download');
+        Route::get('/download/{damResource}', [ResourceController::class, 'download'])->name('damResource.downloadWithSize');
+        Route::get('/listTypes', [ResourceController::class, 'listTypes'])->name('damResource.listTypes');
+        Route::get('/{damResource}', [ResourceController::class, 'get'])->name('damResource.get');
+        Route::post('/{damResource}/update', [ResourceController::class, 'update'])->name('damResource.update');
+        Route::post('/', [ResourceController::class, 'store'])->name('damResource.store');
+        Route::post('/{damResource}/setTags', [ResourceController::class, 'setTags'])->name('damResource.setTags');
+        Route::post('/{damResource}/addPreview', [ResourceController::class, 'addPreview'])->name('damResource.addPreview');
+        Route::post('/{damResource}/addFile', [ResourceController::class, 'addFile'])->name('damResource.addFile');
+        Route::post('/{damResource}/addCategory/{category}', [ResourceController::class, 'addCategory'])->name('damResource.addCategory');
+        Route::post('/{damResource}/addUse', [ResourceController::class, 'addUse'])->name('damResource.addUse');
+        Route::delete('/{damResource}/deleteUse/{damResourceUse}', [ResourceController::class, 'deleteUse'])->name('damResource.deleteUse');
+        Route::delete('/{damResource}', [ResourceController::class, 'delete'])->name('damResource.delete');
+        Route::delete('/{damResource}/deleteCategory/{category}', [ResourceController::class, 'deleteCategory'])->name('damResource.deleteCategory');
+        Route::delete('/{damResource}/associatedFile/{media}', [ResourceController::class, 'deleteAssociatedFile'])->name('damResource.deleteAssociatedFile');
+        Route::delete('/{damResource}/associatedFiles', [ResourceController::class, 'deleteAssociatedFiles'])->name('damResource.deleteAssociatedFiles');
+    });
+>>>>>>> fa2eab878a846152cee4962d9d21086f3b4072d4
 
         Route::group(['prefix' => 'resource'], function() {
             Route::get('/',                                             [ResourceController::class, 'getAll'])->name('damResource.getAll');

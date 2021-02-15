@@ -19,10 +19,11 @@ class ResourceResource extends BaseResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'active' => $this->active,
             'type' => ResourceType::fromValue($this->type)->key,
             'tags' => $this->tags,
             'categories' => CategoryResource::collection($this->categories),
-            'data' => @json_decode($this->data) ?? [],
+            'data' => $this->data ?? [],
             'files' => MediaResource::collection($this->getMedia(MediaType::File()->key)),
             'previews' => MediaResource::collection($this->getMedia(MediaType::Preview()->key)),
             'uses' => DamResourceUseResource::collection($this->uses),

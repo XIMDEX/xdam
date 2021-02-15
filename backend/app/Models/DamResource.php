@@ -10,6 +10,7 @@ use Cartalyst\Tags\TaggableInterface;
 use Cartalyst\Tags\TaggableTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Solarium\QueryType\ManagedResources\RequestBuilder\Resource;
 use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -18,7 +19,7 @@ class DamResource extends Model implements HasMedia, TaggableInterface
 {
     use HasFactory, UsesUuid, TaggableTrait, InteractsWithMedia;
 
-    protected $fillable = ['type', 'data', 'name'];
+    protected $fillable = ['type', 'data', 'name', 'active'];
 
     protected $table = "dam_resources";
 
@@ -39,7 +40,6 @@ class DamResource extends Model implements HasMedia, TaggableInterface
             ->width(200)
             ->height(400)
             ->performOnCollections(MediaType::Preview()->key);
-
     }
 
     public function categories()

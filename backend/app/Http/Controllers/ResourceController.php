@@ -25,6 +25,7 @@ use App\Services\MediaService;
 use App\Services\ResourceService;
 use App\Utils\DamUrlUtil;
 use App\Utils\FileUtil;
+use Illuminate\Support\Facades\Request;
 use Mimey\MimeTypes;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -138,7 +139,7 @@ class ResourceController extends Controller
      */
     public function addPreview(DamResource $damResource, addPreviewToResourceRequest $request)
     {
-        $resource = $this->resourceService->addPreview($damResource, MediaType::Preview()->key);
+        $resource = $this->resourceService->addPreview($damResource, $request->all());
         return (new ResourceResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -151,7 +152,7 @@ class ResourceController extends Controller
      */
     public function addFile(DamResource $damResource, addFileToResourceRequest $request)
     {
-        $resource = $this->resourceService->addFile($damResource, MediaType::File()->key);
+        $resource = $this->resourceService->addFile($damResource, $request->all());
         return (new ResourceResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -270,6 +271,7 @@ class ResourceController extends Controller
     }
 
     /**
+     * Method to delete a concrete media id associated with a damResource
      * @param DamResource $damResource
      * @param Media $media
      * @return \Illuminate\Http\JsonResponse|object
@@ -283,4 +285,23 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    /**
+     * Method to delete a array of media ids associated with a damResource
+     * @param DamResource $damResource
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|object
+     * @throws \Exception
+     */
+    public function deleteAssociatedFiles(damResource $damResource, Request $request)
+    {
+        $idsToDelete = $request->all();
+        if (!empty($idsToDelete)) {
+            $resource = $this->resourceService->deleteAssociatedFiles($damResource, array_values($idsToDelete));
+            return (new ResourceResource($resource))
+                ->response()
+                ->setStatusCode(Response::HTTP_OK);
+        } else {
+            return response(['error' => 'need to send a array of media ids']);
+        }
+    }
 }

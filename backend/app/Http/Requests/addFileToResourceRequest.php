@@ -25,18 +25,8 @@ class addFileToResourceRequest extends FormRequest
     public function rules()
     {
         return [
-            MediaType::File()->key => 'file',
+
         ];
     }
 
-    public function validationData()
-    {
-        $requiredParameters = [
-            MediaType::File()->key => $this->file(MediaType::File()->key)
-        ];
-
-        $this->merge($requiredParameters);
-
-        return array_merge($this->all(), $requiredParameters);
-    }
 }
