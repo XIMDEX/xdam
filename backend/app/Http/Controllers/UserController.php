@@ -58,4 +58,20 @@ class UserController extends Controller
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
+
+    public function selectOrganization(Request $request)
+    {
+        $userResource = $this->userService->selectOrganization($request->organization_id);
+        return (new JsonResource($userResource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function selectWorkspace(Request $request)
+    {
+        $userResource = $this->userService->selectWorkspace($request->workspace_id);
+        return (new JsonResource($userResource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
 }

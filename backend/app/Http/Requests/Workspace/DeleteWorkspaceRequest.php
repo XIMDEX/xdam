@@ -15,7 +15,7 @@ class DeleteWorkspaceRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->user()->can(Abilities::canDeleteWorkspace, Workspace::find($this->workspace_id))) {
+        if($this->user()->can(Abilities::canDeleteWorkspace, Workspace::find($this->workspace_id)) && $this->workspace_id != null) {
             return true;
         }
         return false;
@@ -29,7 +29,6 @@ class DeleteWorkspaceRequest extends FormRequest
     public function rules()
     {
         return [
-            'workspace_id' => 'required'
         ];
     }
 }

@@ -25,6 +25,7 @@ class BouncerSeeder extends Seeder
         Bouncer::allow('gestor')->to(Abilities::canUpdateWorkspace);
         Bouncer::allow('gestor')->to(Abilities::canDeleteWorkspace);
         Bouncer::allow('gestor')->to(Abilities::canManageRoles);
+        Bouncer::allow('gestor')->to(Abilities::canManageWorkspace);
 
         Bouncer::allow('editor')->to(Abilities::canViewWorkspace);
         Bouncer::allow('editor')->to(Abilities::canUpdateWorkspace);

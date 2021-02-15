@@ -26,6 +26,8 @@ class ResourceResource extends BaseResource
             'files' => MediaResource::collection($this->getMedia(MediaType::File()->key)),
             'previews' => MediaResource::collection($this->getMedia(MediaType::Preview()->key)),
             'uses' => DamResourceUseResource::collection($this->uses),
+            'collection' => $this->resource->collection()->get(),
+            'workspace' => $this->resource->workspaces()->get(),
         ];
     }
 }

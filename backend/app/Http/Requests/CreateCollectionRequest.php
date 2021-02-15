@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Organization;
+namespace App\Http\Requests;
 
-use App\Enums\Abilities;
-use App\Models\Organization;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
-class DeleteOrganizationRequest extends FormRequest
+class CreateCollectionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,7 +14,8 @@ class DeleteOrganizationRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->user()->can(Abilities::canDeleteOrganization, Organization::find($this->organization_id)) && $this->organization_id != null) {
+        $user_has_organization = Auth::user()->organizations()->where('organization_id', $this->organization_id)->first();
+        if($user_has_organization) {
             return true;
         }
         return false;
@@ -29,7 +29,9 @@ class DeleteOrganizationRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'organization_id' => 'required',
+            'name' => 'required',
+            'type_id' => 'required',
         ];
     }
 }

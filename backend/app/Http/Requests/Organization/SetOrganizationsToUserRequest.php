@@ -17,8 +17,6 @@ class SetOrganizationsToUserRequest extends FormRequest
         if($this->user_id == 1)
             return false;
 
-
-
         $enabled_orgs = [];
         foreach (Auth::user()->organizations()->get() as $org) {
             $enabled_orgs[] = (string)$org->id;
@@ -30,6 +28,8 @@ class SetOrganizationsToUserRequest extends FormRequest
             }
         }
         $this->request->set('organization_ids', $ids_to_set);
+        if(count($this->organization_ids) < 1)
+            return false;
 
         return true;
     }
@@ -43,8 +43,7 @@ class SetOrganizationsToUserRequest extends FormRequest
     {
         return [
             'user_id' => 'string|required',
-            'organization_ids' => 'array|required|min:1',
-            'organization_ids.*' => 'required|distinct|min:0'
+            'organization_ids' => 'array|required',
         ];
     }
 }

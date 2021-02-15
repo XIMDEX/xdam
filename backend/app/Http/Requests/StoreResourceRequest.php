@@ -6,6 +6,7 @@ use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use BenSampo\Enum\Rules\EnumKey;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StoreResourceRequest extends FormRequest
 {
@@ -16,6 +17,18 @@ class StoreResourceRequest extends FormRequest
      */
     public function authorize()
     {
+        if($this->collection_id) {
+            foreach (Auth::user()->organizations()->get() as $org) {
+                foreach ($org->collections()->get() as $collection) {
+                    if($collection->id != $this->collection_id) {
+                        continue;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         return true;
     }
 
@@ -29,7 +42,7 @@ class StoreResourceRequest extends FormRequest
         return [
             'Preview' => 'file',
             'data' => 'string',
-            'type' => ['required', new EnumKey(ResourceType::class)]
+            'type' => ['required', new EnumKey(ResourceType::class)],
         ];
     }
 

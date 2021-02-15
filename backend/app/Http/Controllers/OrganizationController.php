@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateCollectionRequest;
 use App\Http\Requests\Organization\CreateOrganizationRequest;
 use App\Http\Requests\Organization\DeleteOrganizationRequest;
 use App\Http\Requests\Organization\GetOrganizationRequest;
@@ -10,6 +11,7 @@ use App\Http\Requests\Organization\UpdateOrganizationRequest;
 use App\Http\Resources\OrganizationCollection;
 use App\Services\OrganizationWorkspace\OrganizationService;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class OrganizationController extends Controller
@@ -53,9 +55,25 @@ class OrganizationController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    public function createCollection(CreateCollectionRequest $request)
+    {
+        $collection = $this->organizationService->createCollection($request->organization_id, $request->name, $request->type_id);
+        return (new JsonResource($collection))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function indexCollections()
+    {
+        $collection = $this->organizationService->indexCollections();
+        return (new JsonResource($collection))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
     public function delete(DeleteOrganizationRequest $request)
     {
-        $org = $this->organizationService->delete($request->id);
+        $org = $this->organizationService->delete($request->organization_id);
         return (new JsonResource($org))
             ->response()
             ->setStatusCode(Response::HTTP_OK);

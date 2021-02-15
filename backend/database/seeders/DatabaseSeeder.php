@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             WorkspaceSeeder::class,
             UserSeeder::class,
             BouncerSeeder::class,
+            CollectionTypeSeeder::class
         ]);
     }
 }

@@ -56,4 +56,14 @@ class DamResource extends Model implements HasMedia, TaggableInterface
     {
         return $this->hasMany(DamResourceUse::class);
     }
+
+    public function collection()
+    {
+        return $this->belongsTo(Collection::class);
+    }
+
+    public function workspaces()
+    {
+        return $this->belongsToMany(Workspace::class);
+    }
 }

@@ -70,4 +70,12 @@ class WorkspaceController extends Controller
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
+
+    public function getResources(GetWorkspaceRequest $request)
+    {
+        $wsp = $this->workspaceService->getResources($request->workspace_id);
+        return (new JsonResource($wsp))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
 }

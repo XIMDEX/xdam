@@ -21,6 +21,7 @@ class CreateDamResourcesTable extends Migration
             $table->enum('type', ResourceType::getValues())
                 ->default(ResourceType::document);
             $table->json("data")->nullable();
+            $table->integer('collection_id')->nullable();
             $table->timestamps();
         });
     }

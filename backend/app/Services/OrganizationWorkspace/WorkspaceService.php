@@ -5,6 +5,7 @@ namespace App\Services\OrganizationWorkspace;
 use App\Enums\WorkspaceType;
 use App\Models\Organization;
 use App\Models\Workspace;
+use Illuminate\Support\Facades\Auth;
 
 class WorkspaceService
 {
@@ -54,5 +55,11 @@ class WorkspaceService
         } else {
             return ['Workspace not exists'];
         }
+    }
+
+    public function getResources($wid)
+    {
+        $wsp = Workspace::find($wid);
+        return $wsp->resources()->get();
     }
 }
