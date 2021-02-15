@@ -37,6 +37,7 @@ import { InputListComponent } from './components/forms/inputsFroms/input-list/in
 import { InputCategoriesComponent } from './components/forms/inputsFroms/input-categories/input-categories.component';
 import { PartialVideoComponent } from './components/forms/modal-multimedia/form-partials/partial-video/partial-video.component';
 import { PartialDocumentComponent } from './components/forms/modal-multimedia/form-partials/partial-document/partial-document.component';
+import { QuestionComponent } from './components/forms/inputsFroms/question/question.component';
 
 
 @NgModule({
@@ -87,7 +88,8 @@ import { PartialDocumentComponent } from './components/forms/modal-multimedia/fo
         InputListComponent,
         InputCategoriesComponent,
         PartialVideoComponent,
-        PartialDocumentComponent
+        PartialDocumentComponent,
+        QuestionComponent
     ],
     exports: [DamComponent,
               FooterComponent]

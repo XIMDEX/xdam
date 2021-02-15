@@ -25,19 +25,12 @@
 
     .item-form-general {
         border-radius: 4px;
-        //border: solid 1px $item_form_group_border_color;
         margin: 0px 28px;
         flex-grow: 1;
         display: grid;
         grid-template-columns: 35% auto;
         grid-gap: $item_form_group_border_weight;
         box-sizing: border-box;
-        
-        /*@media (max-width: 650px){
-            display: flex;
-            flex-direction: column-reverse;
-        }*/
-        
         
         > .item-form-group {
             background-color: $xdam_modal_bg;
@@ -73,7 +66,6 @@
                     }
                 }
 
-                
             }
 
             &.media{
@@ -84,29 +76,23 @@
                 }
 
                 & .field-item input[type='file']{
+                    display: none;
+                }
+
+                & .btn-files{
+                    margin: 10px 0 ;
+                    text-align: center;
+                    background: $actions_color;
+                    border-radius: $input_border_radius;
+                    padding: 5px 8px;
+                    
                     display: inline-block;
-                    white-space: nowrap;
-                    width: 80%;
-                    font-size: 10px;
+                    font-size: $font_size_normal;
+                    cursor: pointer;
+                    color: #fff;
 
-                    &::-webkit-file-upload-button {
-                        display: none;
-                    }
-
-                    &::before {
-                        content: 'Select files';
-                        text-align: center;
-                        color: white;
-                        display: inline-block;
-                        background: $actions_color;
-                        border-radius: $input_border_radius;
-                        padding: 5px 8px;
-                        outline: none;
-                        -webkit-user-select: none;
-                        cursor: pointer;
-                        margin-right: 5px;
-                        font-size: $font_size_normal;
-                        
+                    &:hover{
+                        background-color: $actions_font_color_clearly;
                     }
                 }
 
@@ -131,11 +117,6 @@
                    
 
                     & .item-file-description{
-                        /*display: flex;
-                        flex-direction: column;
-                        flex-wrap: wrap;
-                        justify-content: center;
-                        align-content: center;*/
                         margin: 5px auto;
                         border-bottom: solid 1px rgb(199, 199, 199);
                         padding: 1px 0px 5px 0px;
@@ -304,8 +285,5 @@
 }
 
 .ng-invalid:not(form)  {
-    border-left: 5px solid #a94442; /* red */
+    border-left: 5px solid #a94442;
 }
-//@import './file'
-
-

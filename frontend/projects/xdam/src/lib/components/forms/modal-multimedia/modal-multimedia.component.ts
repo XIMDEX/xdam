@@ -7,6 +7,8 @@ import { ListItemOptionI } from '@xdam/models/interfaces/ListOptions.interface';
 
 
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
+import Swal from 'sweetalert2'
+import { QuestionComponent, ResultQuestionI } from '../inputsFroms/question/question.component';
 
 @Component({
   selector: 'xdam-modal-multimedia',
@@ -40,7 +42,7 @@ export class ModalMultimediaComponent implements OnInit {
   @Output() dataToSave = new EventEmitter<ActionModel>();
 
   @ViewChild('imgPreview') imgPreview: ElementRef;
-
+  @ViewChild('questionDeletedFile') questionDeletedFile!: QuestionComponent;
   //Image
   defaultImage = window.origin + '/assets/default_item_image.jpg';
   image = null;
@@ -50,6 +52,8 @@ export class ModalMultimediaComponent implements OnInit {
   //Files
   filesToDelete = [];
   files =[]
+  
+  fileToDeleteAfterPopupAccept = {};
 
   constructor(private ref: ChangeDetectorRef) {}
   
@@ -121,8 +125,7 @@ export class ModalMultimediaComponent implements OnInit {
   //Form Data
   initImage(){
     if (this.resourceUrl && !this.imageError && this.action.item.previews){
-      this.image= this.resourceUrl + '/resource/render/' + this.action.item.previews[this.action.item.previews.length-1] ;
-      this.image
+      this.image= this.resourceUrl + '/resource/render/' + this.action.item.previews[this.action.item.previews.length-1];
     } else {
       this.imageError = true;
       this.image = this.defaultImage;
@@ -160,26 +163,11 @@ export class ModalMultimediaComponent implements OnInit {
   }
 
   handleFileInput(files: FileList) {
-
-    this.filesToUpload.push(files.item(0));
-    console.log(files.item(0))
-    //this.filesToUpload = files;
-    const type = files.item(0).type.split('/')[0];
-    switch(type){
-      case 'image':
-        this.currentType = 'image';
-        break;
-      case 'video':
-        this.currentType = 'video';
-        break;
-      case 'aplication':
-          this.currentType = 'document';
-          break;
-      case 'text':
-        this.currentType = 'document';
-        break;
+    for(let i = 0; i < files.length; i++){
+      this.filesToUpload.push(files.item(i));
     }
   }
+
   handleImageInput(files: FileList){
     var file = files.item(0);
     if (file.type.match(/image\/*/) == null) return;
@@ -188,7 +176,7 @@ export class ModalMultimediaComponent implements OnInit {
     this.coverToUpload = files;
     var reader = new FileReader();
     reader.onload = (e)=>{
-        this.imgPreview.nativeElement.src = reader.result;
+        this.image = reader.result;
     }
 
     reader.readAsDataURL(file);
@@ -205,11 +193,26 @@ export class ModalMultimediaComponent implements OnInit {
     this.previewDelete = true;
   }
 
+  deleteFileToUpload(e, file){
+    e.preventDefault();
+    var i = this.filesToUpload.indexOf( file );
+    this.filesToUpload.splice( i, 1 );
+  }
+
   deleteFile(e, file){
     e.preventDefault();
-    var i = this.files.indexOf( file );
-    this.files.splice( i, 1 );
-    this.filesToDelete.push(file);
-  } 
+    this.fileToDeleteAfterPopupAccept = file;
+    this.questionDeletedFile.show();
+  }
+
+  acceptedDeleteFiles(result: ResultQuestionI){
+    console.log(result)
+    if(result.accept === true){
+      var i = this.files.indexOf( this.fileToDeleteAfterPopupAccept );
+      this.files.splice( i, 1 );
+      this.filesToDelete.push(this.fileToDeleteAfterPopupAccept);
+    }
+  }
+
 
 }
