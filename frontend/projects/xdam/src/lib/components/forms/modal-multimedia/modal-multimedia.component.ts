@@ -52,7 +52,6 @@ export class ModalMultimediaComponent implements OnInit {
   //Files
   filesToDelete = [];
   files =[]
-  
   fileToDeleteAfterPopupAccept = {};
 
   constructor(private ref: ChangeDetectorRef) {}
