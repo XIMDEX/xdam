@@ -14,21 +14,29 @@ class SetOrganizationsToUserRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->user_id == 1)
+        if($this->with_role_id == 1)
             return false;
+
+        if(Auth::user()->isA('admin'))
+            return true;
+
+
+        //se verifica que el usuario que esta haciendo el request
+        //esté relacionado con la/las organizaciones y que su rol sea el adecuado para setear organizaciones
 
         $enabled_orgs = [];
         foreach (Auth::user()->organizations()->get() as $org) {
             $enabled_orgs[] = (string)$org->id;
         }
-        $ids_to_set = [];
-        foreach ($this->organization_ids as $req_wid) {
-            if(in_array($req_wid, $enabled_orgs)) {
-                $ids_to_set[] = $req_wid;
-            }
+
+        $id_to_set = null;
+        if(in_array($this->organization_id, $enabled_orgs)) {
+            $id_to_set = $this->organization_id;
         }
-        $this->request->set('organization_ids', $ids_to_set);
-        if(count($this->organization_ids) < 1)
+
+        $this->request->set('organization_id', $id_to_set);
+
+        if(!$this->organization_id)
             return false;
 
         return true;
@@ -42,8 +50,9 @@ class SetOrganizationsToUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'string|required',
-            'organization_ids' => 'array|required',
+            'user_id' => 'required|exists:users,id',
+            'organization_id' => 'required|exists:organizations,id',
+            'with_role_id' => 'required|exists:roles,id'
         ];
     }
 }

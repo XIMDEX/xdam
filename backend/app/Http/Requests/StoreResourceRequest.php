@@ -65,18 +65,6 @@ class StoreResourceRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->collection_id) {
-            foreach (Auth::user()->organizations()->get() as $org) {
-                foreach ($org->collections()->get() as $collection) {
-                    if($collection->id != $this->collection_id) {
-                        continue;
-                    } else {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
         return true;
     }
 

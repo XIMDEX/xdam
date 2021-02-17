@@ -9,6 +9,7 @@ use Tests\TestCase;
 
 class SignUpTest extends TestCase
 {
+    use WithFaker;
     /**
      * A basic feature test example.
      *

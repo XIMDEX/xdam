@@ -25,9 +25,9 @@ trait SetDefaultOrganizationAndWorkspace
                 'type' => WorkspaceType::personal
             ]);
 
-            $adminService->setOrganizations($user_id, [$public_org->id]);
-            $adminService->setWorkspaces($user_id, [$public_wsp->id, $personal_wsp->id]);
-
+            $adminService->setOrganizations($user_id, $public_org->id);
+            $adminService->setWorkspaces($user_id, $public_wsp->id);
+            $adminService->setWorkspaces($user_id, $personal_wsp->id);
             $model->allow(Abilities::canViewWorkspace, $public_wsp);
             $model->allow('*', $personal_wsp);
         });

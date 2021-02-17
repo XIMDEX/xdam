@@ -3,8 +3,9 @@
 namespace App\Http\Requests\Workspace;
 
 use App\Enums\Abilities;
-use App\Models\Workspace;
+use App\Models\Organization;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class CreateWorkspaceRequest extends FormRequest
 {
@@ -15,9 +16,11 @@ class CreateWorkspaceRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->user()->can(Abilities::canCreateWorkspace, Workspace::class)) {
+        if($this->user()->can(Abilities::canManageOrganization, Organization::find($this->organization_id)))
             return true;
-        }
+        // if(count($this->user()->organizations()->where('organizations.id', $this->organization_id)->get()) > 0 || $this->user()->isA('admin')) {
+        //     return true;
+        // }
         return false;
     }
 

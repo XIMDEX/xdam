@@ -2,10 +2,13 @@
 
 namespace App\Services\OrganizationWorkspace;
 
+use App\Enums\Abilities;
 use App\Enums\WorkspaceType;
 use App\Models\Organization;
+use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Support\Facades\Auth;
+use Silber\Bouncer\BouncerFacade as Bouncer;
 
 class WorkspaceService
 {
@@ -28,6 +31,7 @@ class WorkspaceService
             if($org) {
                 $wsp = Workspace::create(['name' => $wsp_name, 'type' => WorkspaceType::generic]);
                 $org->workspaces()->save($wsp);
+                Bouncer::allow(Auth::user())->to(Abilities::canManageWorkspace, $wsp);
                 return $wsp;
             }
         } catch (\Throwable $th) {

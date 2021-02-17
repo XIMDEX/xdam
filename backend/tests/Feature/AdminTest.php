@@ -19,7 +19,9 @@ class AdminTest extends TestCase
      */
     public function test_admin_features()
     {
-        $this->actingAs($this->getUser(['admin', 'gestor'], ['*']), 'api');
+        $user_role = $this->getUserWithRole(1);
+
+        $this->actingAs($user_role, 'api');
 
         $user = User::factory()->create();
         $org = Organization::factory()
@@ -38,11 +40,11 @@ class AdminTest extends TestCase
         / ATTACH ORGANIZATIONS TO USER
         /
         */
-        $response = $this->json('POST', '/api/v1/admin/user/setOrganizations', [
+        $response = $this->json('POST', '/api/v1/organization/set/user', [
             'user_id' => (string)$user->id,
-            'organization_ids' => [(string)$org->id, (string)$org2->id],
+            'organization_id' => (string)$org->id,
+            'with_role_id' => '4'
         ]);
-
 
         $response
             ->assertStatus(200)
@@ -57,16 +59,13 @@ class AdminTest extends TestCase
         / ATTACH WORKSPACES TO USER
         /
         */
-        $response = $this->json('POST', '/api/v1/admin/user/setWorkspaces', [
-            'user_id' => (string)$user->id,
-            'workspace_ids' => [
-                (string)$org->corporateWorkspace()->id,
-                (string)$org2->corporateWorkspace()->id,
-                (string)Workspace::where('type', WorkspaceType::public)->first()->id,
-                (string)$org->workspaces()->where('name', 'a generic faker wsp')->first()->id,
-                (string)$org2->workspaces()->where('name', 'a generic faker wsp 2')->first()->id
-            ],
+        $generic_wsp = (string)$org->workspaces()->where('name', 'a generic faker wsp')->first()->id;
+        $generic_wsp2 = (string)$org2->workspaces()->where('name', 'a generic faker wsp 2')->first()->id;
 
+        $response = $this->json('POST', '/api/v1/workspace/set/user', [
+            'user_id' => (string)$user->id,
+            'workspace_id' => (string)$org->corporateWorkspace()->id,
+            'with_role_id' => 2
         ]);
 
         $response
@@ -80,21 +79,64 @@ class AdminTest extends TestCase
 
         /*
         /
+        / SET USER ROLE ON SPECIFIC WORKSPACE
+        /
+        */
+
+        $response = $this->json('POST', '/api/v1/role/user/set/abilitiesOnOrganizationOrWorkspace', [
+            'user_id' => (string)$user->id,
+            'role_id' => "2",
+            'wo_id' => $generic_wsp2,
+            'type' => 'set',
+            'on' => 'wsp',
+        ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    'user' => true,
+                    'set_abilities' => true,
+                    'on_wsp' => true,
+                ],
+            ]);
+
+        /*
+        /
+        / UNSET USER ROLE ON SPECIFIC WORKSPACE
+        /
+        */
+
+        $response = $this->json('POST', '/api/v1/role/user/set/abilitiesOnOrganizationOrWorkspace', [
+            'user_id' => (string)$user->id,
+            'role_id' => "2",
+            'wo_id' => $generic_wsp2,
+            'type' => 'unset',
+            'on' => 'wsp',
+        ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    'user' => true,
+                    'unset_abilities' => true,
+                    'on_wsp' => true,
+                ],
+            ]);
+
+        /*
+        /
         / UNATTACH WORKSPACES TO USER
         /
         */
 
-        $response = $this->json('POST', '/api/v1/admin/user/unsetWorkspaces', [
+        $response = $this->json('POST', '/api/v1/workspace/unset/user', [
             'user_id' => (string)$user->id,
-            'workspace_ids' => [
-                (string)$org->corporateWorkspace()->id,
-                (string)$org2->corporateWorkspace()->id,
-                (string)Workspace::where('type', WorkspaceType::public)->first()->id,
-                (string)$org->workspaces()->where('name', 'a generic faker wsp')->first()->id,
-                (string)$org2->workspaces()->where('name', 'a generic faker wsp 2')->first()->id
-            ],
-
+            'workspace_id' => (string)$org->corporateWorkspace()->id,
+            'with_role_id' => 2
         ]);
+
 
         $response
             ->assertStatus(200)
@@ -109,12 +151,9 @@ class AdminTest extends TestCase
         / UNATTACH ORGANIZATIONS TO USER
         /
         */
-        $response = $this->json('POST', '/api/v1/admin/user/unsetOrganizations', [
+        $response = $this->json('POST', '/api/v1/organization/unset/user', [
             'user_id' => (string)$user->id,
-            'organization_ids' => [
-                (string)$org->id,
-                (string)$org2->id
-            ],
+            'organization_id' => (string)$org->id,
 
         ]);
 

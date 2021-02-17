@@ -19,7 +19,7 @@ class DamResource extends Model implements HasMedia, TaggableInterface
 {
     use HasFactory, UsesUuid, TaggableTrait, InteractsWithMedia;
 
-    protected $fillable = ['type', 'data', 'name', 'active'];
+    protected $fillable = ['type', 'data', 'name', 'active', 'user_owner_id'];
 
     protected $table = "dam_resources";
 
@@ -46,6 +46,12 @@ class DamResource extends Model implements HasMedia, TaggableInterface
     {
         return $this->belongsToMany(Category::class);
     }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 
     public function hasCategory(Category $category)
     {

@@ -55,6 +55,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Workspace::class);
     }
 
+    public function resources()
+    {
+        return DamResource::where('user_owner_id', $this->id)->get();
+    }
+
     public function personalWorkspace()
     {
         return $this->workspaces()->where('type', WorkspaceType::personal)->first();

@@ -20,11 +20,8 @@ class BouncerSeeder extends Seeder
         Bouncer::allow('admin')->everything();
 
         //Workspaces
-        Bouncer::allow('gestor')->to(Abilities::canCreateWorkspace);
-        Bouncer::allow('gestor')->to(Abilities::canViewWorkspace);
-        Bouncer::allow('gestor')->to(Abilities::canUpdateWorkspace);
-        Bouncer::allow('gestor')->to(Abilities::canDeleteWorkspace);
         Bouncer::allow('gestor')->to(Abilities::canManageRoles);
+        Bouncer::allow('gestor')->to(Abilities::canManageOrganization);
         Bouncer::allow('gestor')->to(Abilities::canManageWorkspace);
 
         Bouncer::allow('editor')->to(Abilities::canViewWorkspace);
@@ -32,11 +29,7 @@ class BouncerSeeder extends Seeder
 
         Bouncer::allow('lector')->to(Abilities::canViewWorkspace);
 
-
         //User assign
         Bouncer::assign('admin')->to(User::find(1));
-        Bouncer::assign('gestor')->to(User::find(2));
-
-
     }
 }

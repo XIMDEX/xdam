@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\WorkspaceType;
+use App\Models\DamResource;
 use App\Models\Organization;
 use App\Models\Workspace;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +14,12 @@ class UserService
     public function user()
     {
         return Auth::user();
+    }
+
+    public function resources()
+    {
+
+        return Auth::user()->resources();
     }
 
     public function getWorkspaces()

@@ -15,7 +15,7 @@ class DeleteOrganizationRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->user()->can(Abilities::canDeleteOrganization, Organization::find($this->organization_id)) && $this->organization_id != null) {
+        if($this->user()->can(Abilities::canManageOrganization, Organization::find($this->organization_id)) && $this->organization_id != null) {
             return true;
         }
         return false;

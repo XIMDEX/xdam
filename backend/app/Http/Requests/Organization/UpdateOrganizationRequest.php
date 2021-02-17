@@ -15,7 +15,7 @@ class UpdateOrganizationRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->user()->can(Abilities::canUpdateOrganization, Organization::find($this->organization_id))) {
+        if($this->user()->can(Abilities::canManageOrganization, Organization::find($this->organization_id))) {
             return true;
         }
         return false;

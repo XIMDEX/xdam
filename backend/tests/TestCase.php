@@ -5,23 +5,34 @@ namespace Tests;
 use App\Models\User;
 use Error;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Silber\Bouncer\Bouncer;
+use Silber\Bouncer\BouncerFacade;
+use Silber\Bouncer\Database\Role;
 
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
-    public function getUser(iterable $roles = null, array $abilities = null)
+    public function getUserWithRole($rol_id, $entity = null)
     {
-        $the_user = null;
-        $users = User::all();
-        foreach ($users as $user) {
-            if($roles && $user->isAn(...$roles) || $user->canAny($abilities)) {
-                $the_user = $user;
-                break;
-            } else {
-                throw new Error("NO PERMISSION FOUND");
-            }
+        $user = User::factory()->create();
+        $rol = Role::find($rol_id);
+        if($rol->name == 'admin') {
+            BouncerFacade::assign($rol)->to($user);
+            return $user;
         }
-        return $the_user;
+
+        $abilities = [];
+        foreach ($rol->getAbilities()->toArray() as $ability) {
+            $abilities[] = $ability['name'];
+        }
+        $user->abilities = $abilities;
+
+        if($entity)
+            BouncerFacade::allow($user)->to($abilities, $entity);
+        else
+            BouncerFacade::allow($user)->to($abilities);
+
+        return $user;
     }
 }

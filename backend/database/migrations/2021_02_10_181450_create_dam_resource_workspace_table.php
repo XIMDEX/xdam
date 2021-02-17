@@ -18,6 +18,7 @@ class CreateDamResourceWorkspaceTable extends Migration
             $table->integer('workspace_id');
             $table->string('dam_resource_id');
             $table->timestamps();
+            //$table->foreign('dam_resource_id', 'dam_resource_workspaces_fk')->references('id')->on('dam_resource')->onDelete('cascade');
         });
     }
 

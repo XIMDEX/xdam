@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Organization;
+namespace App\Http\Requests;
 
-use App\Enums\Abilities;
-use App\Models\Organization;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
-class CreateOrganizationRequest extends FormRequest
+class SelectOrganizationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,9 +14,10 @@ class CreateOrganizationRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->user()->can('*', Organization::class)) {
+        if(count(Auth::user()->organizations()->where('organizations.id', $this->organization_id)->get()) > 0)
             return true;
-        }
+
+        return false;
     }
 
     /**
@@ -28,7 +28,7 @@ class CreateOrganizationRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|min:3'
+            //
         ];
     }
 }

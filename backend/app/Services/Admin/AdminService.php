@@ -13,77 +13,74 @@ use Silber\Bouncer\Database\Role;
 class AdminService
 {
 
-    public function setOrganizations(string $user_id, array $organization_ids)
+    public function setOrganizations(string $user_id, string $organization_id, string $role_id = null)
     {
-        $user = User::find($user_id);
         $log = [];
-        foreach ($organization_ids as $oid) {
-            if(!$user->organizations()->get()->contains($oid)) {
-                $org = Organization::find($oid);
-                if(!$org) {
-                    $log['not_exists'][] = "organization with id " . $oid . " doesn't exists";
-                    continue;
-                }
-                $user->organizations()->attach($oid);
-                $this->enableDefaultWorkspace($org, $user);
-                $log['success'][] = "attached to " . $oid;
-            } else {
-                $log['already_exists'][] = "user already attached to organization " . $oid;
+
+        $user = User::find($user_id);
+
+        if(!$user->organizations()->get()->contains($organization_id)) {
+            $org = Organization::find($organization_id);
+            if(!$org) {
+                $log['not_exists'][] = "organization with id " . $organization_id . " doesn't exists";
+                return;
             }
+            $user->organizations()->attach($organization_id);
+            if($role_id)
+                $this->roleAbilitiesOnWorkspaceOrOrganization($user_id, $role_id, $organization_id, 'set', 'org');
+
+            $this->enableDefaultWorkspace($org, $user);
+            $log['success'][] = ["user_id" => $user_id, "attached to" => $organization_id];
+        } else {
+            $log['already_exists'][] = "user already attached to organization " . $organization_id;
         }
+
         return $log;
     }
 
-    public function unsetOrganizations(string $user_id, array $organization_ids)
+    public function unsetOrganizations(string $user_id, string $organization_id)
     {
         $user = User::find($user_id);
         $log = [];
-        foreach ($organization_ids as $oid) {
-            if($user->organizations()->get()->contains($oid)) {
-                $user->organizations()->detach($oid);
-                $log['success']['organization_id'] = $oid;
-            } else {
-                $log['not_exists']['organization_id'] = $oid;
-            }
+
+        if($user->organizations()->get()->contains($organization_id)) {
+            $user->organizations()->detach($organization_id);
+            $log['success']['organization_id'] = $organization_id;
+        } else {
+            $log['not_exists']['organization_id'] = $organization_id;
         }
+
         return ['user' => $user, 'log' => $log];
     }
 
-    public function setWorkspaces(string $user_id, array $workspaces_id)
+    public function setWorkspaces(string $user_id, string $workspace_id)
     {
         $user = User::find($user_id);
         $log = [];
-        foreach ($workspaces_id as $oid) {
-            if(!$user->workspaces()->get()->contains($oid)) {
-                $user->workspaces()->attach($oid);
-                $log['success']['workspace_id'] = $oid;
-            } else {
-                $log['already_exists']['workspace_id'] = $oid;
-            }
+
+        if(!$user->workspaces()->get()->contains($workspace_id)) {
+            $user->workspaces()->attach($workspace_id);
+            $log['success']['workspace_id'] = $workspace_id;
+        } else {
+            $log['already_exists']['workspace_id'][] = $workspace_id;
         }
+
         return ['user' => $user, 'log' => $log];
     }
 
-    public function unsetWorkspaces($user_id, array $workspaces_id)
+    public function unsetWorkspaces($user_id, string $workspace_id)
     {
         $user = User::find($user_id);
         $log = [];
-        $checkForPublic = true;
-        foreach ($workspaces_id as $wid) {
-            if($checkForPublic) {
-                if($user->workspaces()->where('workspaces.id', $wid)->first()->type == WorkspaceType::public ? true : false) {
-                    $log['error'][] = 'cannot unset public workspace';
-                    $checkForPublic = false;
-                    continue;
-                }
-            }
-            if($user->workspaces()->get()->contains($wid)) {
-                $user->workspaces()->detach($wid);
-                $log['success']['workspace_id'] = $wid;
-            } else {
-                $log['relation_not_exists']['workspace_id'] = $wid;
-            }
-
+        if($user->workspaces()->where('workspaces.id', $workspace_id)->first()->type == WorkspaceType::public ? true : false) {
+            $log['error'][] = 'cannot unset public workspace';
+            return $log;
+        }
+        if($user->workspaces()->get()->contains($workspace_id)) {
+            $user->workspaces()->detach($workspace_id);
+            $log['success']['workspace_id'] = $workspace_id;
+        } else {
+            $log['relation_not_exists']['workspace_id'] = $workspace_id;
         }
         return ['user' => $user, 'log' => $log];
     }
@@ -95,7 +92,7 @@ class AdminService
         } else {
             $default_org_wsp_id = $org->workspaces()->where('type', WorkspaceType::corporation)->first()->id;
         }
-        $this->setWorkspaces($user->id, [$default_org_wsp_id]);
+        $this->setWorkspaces($user->id, $default_org_wsp_id);
     }
 
     public function getRoleAbilities( $rid) {
@@ -107,19 +104,23 @@ class AdminService
         return $abilities;
     }
 
-    public function setRoleAbilitiesOnWorkspace($uid, $rid, $wid) {
+    public function roleAbilitiesOnWorkspaceOrOrganization($uid, $rid, $owid, $type, $on) {
         $user = User::find($uid);
-        $wsp = Workspace::find($wid);
+        $entity = null;
         $abilities = $this->getRoleAbilities($rid);
-        Bouncer::allow($user)->to($abilities, $wsp);
-        return ['user' => $user, 'added_abilities' => $abilities, 'on_workspace' => $wsp];
-    }
+        if($on == 'wsp') {
+            $wsp = Workspace::find($owid);
+            $entity = $wsp;
+        } else {
+            $org = Organization::find($owid);
+            $entity = $org;
+        }
+        if($type == 'set') {
+            Bouncer::allow($user)->to($abilities, $entity);
+        } else {
+            Bouncer::disallow($user)->to($abilities, $entity);
+        }
+        return ['user' => $user, $type.'_abilities' => $abilities, 'on_'.$on => $entity];
 
-    public function unsetRoleAbilitiesOnWorkspace($uid, $rid, $wid) {
-        $user = User::find($uid);
-        $wsp = Workspace::find($wid);
-        $abilities = $this->getRoleAbilities($rid);
-        Bouncer::disallow($user)->to($abilities, $wsp);
-        return ['user' => $user, 'removed_abilities' => $abilities, 'on_workspace' => $wsp];
     }
 }

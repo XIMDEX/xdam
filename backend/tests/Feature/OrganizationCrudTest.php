@@ -17,11 +17,17 @@ class OrganizationCrudTest extends TestCase
      *
      * @return void
      */
-    public function test_organization_crud()
+    public function test_organization_crud_managed_only_by_admin()
     {
-        $this->actingAs($this->getUser(['admin', 'gestor']), 'api');
+        $this->actingAs($this->getUserWithRole(1), 'api');
         $org_name = 'Org test ' . Str::orderedUuid();
-        $created = $this->json('POST', '/api/v1/organization/create', [
+
+        /*
+        /
+        /CREATE
+        /
+        */
+        $created = $this->json('POST', '/api/v1/admin/organization/create', [
             'name' => $org_name,
         ]);
         $created
@@ -30,7 +36,12 @@ class OrganizationCrudTest extends TestCase
                 'data'=> ['name' => true],
             ]);
 
-        $updated = $this->json('POST', '/api/v1/organization/update', [
+        /*
+        /
+        /UPDATE
+        /
+        */
+        $updated = $this->json('POST', '/api/v1/admin/organization/update', [
             'organization_id' => $created->original->id,
             'name' => $org_name . ' updated'
         ]);
@@ -45,7 +56,12 @@ class OrganizationCrudTest extends TestCase
                     ],
             ]);
 
-        $deleted = $this->delete('/api/v1/organization/' . (string)$created->original->id);
+        /*
+        /
+        /DELETE
+        /
+        */
+        $deleted = $this->delete('/api/v1/admin/organization/' . (string)$created->original->id);
         $deleted
             ->assertStatus(200)
             ->assertJson([
