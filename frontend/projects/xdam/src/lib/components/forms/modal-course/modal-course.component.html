@@ -1,26 +1,82 @@
-<form #resourceForm="ngForm" [formGroup]="courseForm" (ngSubmit)="sendForm()">
-
-    <xdam-form-course [action]="action" formControlName="dataForm" [resourceUrl]="this.resourceUrl" #dataFormElement></xdam-form-course>
-
-    <div class="form-actions">
-        
-        <button (click)="modal.close()" class="xdam-btn-base group">
-            <fa-icon [icon]="faTimes"></fa-icon>
-            Cancel
-        </button>
-        <button type="submit" class="xdam-btn-base group" [disabled]="!courseForm.valid &&
-                (courseForm.controls.dataForm.dirty || courseForm.controls.metadataForm.dirty)">
-            <fa-icon [icon]="faSave"></fa-icon>
-            Save & Update
-        </button>
-        
+<form #resourceForm="ngForm" (ngSubmit)="sendForm($event)">
+    <div class="item-form" [formGroup]="dataform">
+        <div formGroupName="data" >
+            <aside class="item-form-general" >
+                <div class="item-form-group media">
+                    
+                    <div class="fields column">
+                        <div class="img-box">
+                            <img [src]="image" (error)="imgError()" #imgPreview />
+                            <div class="img-input">
+                                <input type="file" id="cover" (change)="handleImageInput($event.target.files)">
+                                <label for="cover"><fa-icon [icon]="faUpload"></fa-icon></label>
+                                <button *ngIf="image != defaultImage" (click)="deleteImage($event)"><fa-icon [icon]="faTrash"></fa-icon></button>
+                            </div>
+                        </div>
+                        <div class="field-item">
+                            <label for="files">MULTIMEDIA FILES</label>
+                            <input type="file" id="files" class="custom-file-input" (change)="handleFileInput($event.target.files)" #InputFile multiple/>
+                            <label for="files" class="btn-files">Select Files</label>
+                        </div>
+                        <div class="list-files">  
+                            <div class="item-file-description" *ngFor="let item of filesToUpload">
+                                <p>{{item.name}}</p> 
+                                <div class="dam-buttons-actions">
+                                    <button  class="btn-action-transparent" title="Edit" (click)="deleteFileToUpload($event, item)">
+                                        <fa-icon [icon]="faTrash"></fa-icon>
+                                    </button>
+                                    <button class="btn-action-transparent" title="Download">
+                                        <fa-icon [icon]="faDownload"></fa-icon>
+                                    </button>
+                                </div>
+                            </div>  
+                            <div class="item-file-description" *ngFor="let item of files">
+                                <p>{{item.file_name}}</p> 
+                                <div class="dam-buttons-actions">
+                                    <button  class="btn-action-transparent" title="Edit" (click)="deleteFile($event, item)">
+                                        <fa-icon [icon]="faTrash"></fa-icon>
+                                    </button>
+                                    <button class="btn-action-transparent" title="Download">
+                                        <fa-icon [icon]="faDownload"></fa-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item-form-group data" >
+                    <div class="group-title">
+                        <p class="title-data-info">Information</p>
+                        <xdam-input-switch formControlName="active"></xdam-input-switch>
+                    </div>
+                    <div class="fields column">
+                        <div class="field-item">
+                            <label for="name">TITLE</label>
+                            <input type="text" id="name" formControlName="name"/>
+                        </div>
+                        <div class="field-item">
+                            <label for="external_url">EXTERNAL URL</label>
+                            <input type="text" id="external_url" formControlName="external_url"/>
+                        </div>
+                        
+                        <div class="field-item">
+                            <label for="description">Description</label>
+                            <textarea id="description" formControlName="description"></textarea>
+                        </div>
+                        <div class="field-item">
+                            <label for="tags">Tags</label>
+                            <xdam-input-categories id="tags" formControlName="tags"></xdam-input-categories>
+                        </div>
+                        <div class="field-item">
+                            <label for="categories">Categories</label>
+                            <xdam-input-categories id="categories" formControlName="categories"></xdam-input-categories>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+            </aside>
+        </div>
     </div>
-
-    <!--<xdam-metadata
-        [action]="action"
-        formControlName="metadataForm"
-    ></xdam-metadata>-->
-
-    
-
 </form>
+<xdam-question title="Are you sure you want to delete this file?" (accepted)="acceptedDeleteFiles($event)" #questionDeletedFile></xdam-question>

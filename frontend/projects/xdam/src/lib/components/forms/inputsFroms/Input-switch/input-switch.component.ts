@@ -93,7 +93,6 @@ export class InputSwitchComponent implements AfterContentInit, ControlValueAcces
   }
   changeSwitch(e){
     this.isChecked = !this.isChecked;
-    console.log(this.isChecked)
     this.onChange(this.value);
     this.onTouched();
     e.preventDefault();

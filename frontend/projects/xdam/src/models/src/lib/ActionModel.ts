@@ -57,14 +57,18 @@ export class ActionModel extends BaseModel implements ActionI {
     }
 
     public toFormData() {
-        return this.jsonToFormData(this.data, new FormData());
+        return this.jsonToFormData(this.data.dataToSave, new FormData());
+    }
+
+    public filesToUploadToFormData(index) {
+        return this.jsonToFormData(this.data.filesToUpload[index], new FormData(), 'File');
     }
 
     private jsonToFormData(obj: any, formData: FormData, prefix: string = '') {
 
         if (is(Array, obj)) {
             obj.forEach((element, index) => {
-                formData = this.jsonToFormData(element, formData, `${prefix}[${index}]`);
+                formData = this.jsonToFormData(element, formData, `${prefix}`);
             });
             return formData;
         } else if (is(FileList, obj) ) {

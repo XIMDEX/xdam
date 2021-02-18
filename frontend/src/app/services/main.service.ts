@@ -115,7 +115,9 @@ export class MainService {
      */
     getResources(type, params: HttpParams = null) {
         const url = this.router.getEndPointUrlString('catalogue', 'index', type);
-        params = this.router.getBaseParams();
+        delete params['updates']['default'];
+        //delete params['updates']['limit'];
+        //params = this.router.getBaseParams();
         this.httpOptions.params = params;
         return this.http.get(url, this.httpOptions);
     }
@@ -172,11 +174,42 @@ export class MainService {
         let url;
 
         formData = data.toFormData();
-        url = this.router.getEndPointUrl('resource', 'update', new Item(data.data));
+        url = this.router.getEndPointUrl('resource', 'update', new Item(data.data.dataToSave));
 
         /*if (method === 'put') {
             formData.append('_method', 'PUT');
         }*/
+        return this.http.post(url, formData, { headers: heads });
+    }
+
+    /**
+     * 
+     * @param item 
+     */
+    deleteFileToResource(fileToDelete: {id: string; idFile: string}) {
+        const heads = new HttpHeaders({
+            'Access-Control-Allow-Origin': '*',
+            Accept: 'application/json'
+        });
+
+        const url = this.router.getEndPointUrl('resource', 'deleteFile', fileToDelete );
+
+        return this.http.delete(url, { headers: heads });
+    }
+
+    /**
+     * 
+     * @param item 
+     */
+    addFileToResource(data: ActionModel, index) {
+        const heads = new HttpHeaders({
+            'Access-Control-Allow-Origin': '*',
+            Accept: 'application/json'
+        });
+
+        let formData = data.filesToUploadToFormData(index);
+        const url = this.router.getEndPointUrl('resource', 'addFile', new Item(data.data.dataToSave));
+
         return this.http.post(url, formData, { headers: heads });
     }
 

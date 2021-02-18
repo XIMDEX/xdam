@@ -10,7 +10,7 @@ export default class SettingsMapper extends XDamSettings {
     /**@ignore */
     constructor() {
         // const xdam = hasIn('$xdam', window) ? (<any>window).$xdam : {};
-        const _settings = settings;
+        const _settings = settings['default'];
         let params = null;
         if (hasIn('settings', _settings)) {
             params = _settings;

@@ -9,7 +9,8 @@
                 "name": "name",
                 "score": "score",
                 "type": "type",
-                "version": "version"
+                "version": "version",
+                "previews": "previews"
             }
         }
     }
