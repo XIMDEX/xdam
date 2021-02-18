@@ -32,7 +32,8 @@ export const standard: XDamSettingsInterface = {
             name: 'name',
             score: 'score',
             type: 'type',
-            version: '_version_'
+            version: '_version_',
+            previews:'previews'
         },
         items: {
             type: '%s',

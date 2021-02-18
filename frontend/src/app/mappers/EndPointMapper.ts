@@ -52,7 +52,7 @@ export default class EndPointMapper {
      * @param item
      * @return url
      */
-    public getEndPointUrl(model: string = null, action: string = null, item: Item = null ): string {
+    public getEndPointUrl(model: string = null, action: string = null, item: any = null ): string {
         if (isNil(model) || isNil(action)) {
             throw new Error('Model and Action can not be null');
         }

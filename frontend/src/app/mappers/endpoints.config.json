@@ -53,6 +53,14 @@
             "delete": {
                 "uri": "/resource/%(id)s",
                 "method": "DELETE"
+            },
+            "deleteFile":{
+                "uri": "/resource/%(id)s/associatedFile/%(idFile)s",
+                "method": "DELETE"
+            },
+            "addFile":{
+                "uri": "/resource/%(id)s/addFile",
+                "method": "POST"
             }
         },
         "tag": {}

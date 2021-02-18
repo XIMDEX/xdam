@@ -1,8 +1,19 @@
 <swal #swalModal identifier="swalModal" [customClass]="swalCustomClass" [showCancelButton]="false" 
-    [showConfirmButton]="false" [showCloseButton]="true" [title]="false" (close)="closeForm()" >
-    <!--<ng-container *swalPartial="swalTargets.title">
-        <div class="form-title">{{title}}</div>
-    </ng-container>-->
+    [showConfirmButton]="false" [showCloseButton]="false" [title]="true" (close)="closeForm()" >
+    <ng-container *swalPartial="swalTargets.title">
+        <div class="form-actions send-buttons">
+            <button type="submit" class="xdam-btn-base" [disabled]="false" (click)="formSended($event)">
+                <fa-icon [icon]="faSave"></fa-icon>
+                Save & Update
+            </button>
+            <button (click)="modal.close()" class="xdam-btn-base ">
+                <fa-icon [icon]="faTimes"></fa-icon>
+                Cancel
+            </button>
+        </div>
+        
+        
+    </ng-container>
 
     <ng-container *swalPartial="swalTargets.content">
 
@@ -36,10 +47,10 @@
         </div>-->
         <div [ngSwitch]="mode">
             <div *ngSwitchCase="'course'">
-                <xdam-modal-course [action]="action" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" ></xdam-modal-course>
+                <xdam-modal-course [action]="action" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" #fromCourse></xdam-modal-course>
             </div>
             <div *ngSwitchCase="'multimedia'">
-                <xdam-modal-multimedia [action]="action" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" ></xdam-modal-multimedia>
+                <xdam-modal-multimedia [action]="action" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" #fromMultimedia></xdam-modal-multimedia>
             </div>
         </div>
         

@@ -9,6 +9,13 @@ import { hasIn } from 'ramda';
 import { sprintf } from 'sprintf-js';
 
 const CAN_BE_DOWNLOADED:string[] = ["video"];
+const titles = {
+    document: 'name',
+    video: 'name',
+    audio: 'name',
+    url: 'name',
+    course: 'name'
+}
 
 @Component({
     selector: 'xdam-item',
@@ -39,7 +46,11 @@ export class ItemComponent {
     }
 
     get title(): string {
-        return sprintf(this.settings.title, this.item.data['description']['course_title']);
+        if(this.type.toLocaleLowerCase() === 'course'){
+            return sprintf(this.settings.title, this.item.data['description']['name']);
+        }else{
+            return sprintf(this.settings.title, this.item.data['description']['name']);
+        }
     }
 
     set preview(url: string) {
@@ -47,8 +58,8 @@ export class ItemComponent {
     }
 
     get preview(): string {
-        if (!this.imageError && this.item.files){
-            this.imagePreview = this.item.files[this.item.files.length-1];
+        if (!this.imageError && this.item.previews){
+            this.imagePreview = this.item.previews[this.item.previews.length-1];
             return this.settings.urlResource + '/resource/render/'+  this.imagePreview;
         }else{
             return this.defaultImage;

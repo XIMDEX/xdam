@@ -13,32 +13,52 @@
         margin: 0 0.5px;
     }
 }
+.send-buttons{
+    button{
+        margin-right: 4px;
+    }
+}
 
 .item-form {
     display: flex;
     flex-direction: column;
 
-    > .item-form-general {
+    .item-form-general {
+        border-radius: 4px;
+        margin: 0px 28px;
         flex-grow: 1;
         display: grid;
-        grid-template-columns: 40% auto;
-        //border: $item_form_group_border;
+        grid-template-columns: 35% auto;
         grid-gap: $item_form_group_border_weight;
-        background-color: $item_form_group_border_color;
         box-sizing: border-box;
-
+        
         > .item-form-group {
             background-color: $xdam_modal_bg;
-            padding: 15px 20px;
+            padding: 15px 15px;
 
+            
+            
             &.data {
-                padding: 0px 30px;
+                padding: 10px 25px 10px 25px;
+                border: solid 1px $item_form_group_border_color;
                 > .title {
                     color: $actions_color;
                 }
+                .group-title{
+                    width: 100%;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+
+                    &> .title-data-info{
+                        display: inline-block;
+                        font-weight: bold;
+                        color: $actions_font_color_clearly;
+                    }
+
+                }
 
                 > .fields {
-                    margin-top: 10px;
                     div.thumbnail{
                         display: flex;
                         background-color: red;
@@ -46,40 +66,85 @@
                     }
                 }
 
-                > .title-data-info{
-                    font-weight: bold;
-                    text-align: left;
-                    color: $actions_font_color_clearly;
-                }
             }
 
             &.media{
-                input[type='file']{
-                    display: inline-block;
-                    white-space: nowrap;
-                    width: 80%;
-                    font-size: 10px;
+                //border-right: solid 1px $item_form_group_border_color;
+                > .xdam-btn-base{
+                    width: 100%;
+                    margin-bottom: 10px;
+                }
 
-                    &::-webkit-file-upload-button {
-                        display: none;
-                    }
+                & .field-item input[type='file']{
+                    display: none;
+                }
 
-                    &::before {
-                        content: 'Select files';
-                        text-align: center;
-                        color: white;
-                        display: inline-block;
-                        background: $actions_color;
-                        border-radius: $input_border_radius;
-                        padding: 5px 8px;
-                        outline: none;
-                        -webkit-user-select: none;
-                        cursor: pointer;
-                        margin-right: 5px;
-                        font-size: $font_size_normal;
-                        
-                    }
+                & .btn-files{
+                    margin: 10px 0 ;
+                    text-align: center;
+                    background: $actions_color;
+                    border-radius: $input_border_radius;
+                    padding: 5px 8px;
                     
+                    display: inline-block;
+                    font-size: $font_size_normal;
+                    cursor: pointer;
+                    color: #fff;
+
+                    &:hover{
+                        background-color: $actions_font_color_clearly;
+                    }
+                }
+
+                & .list-files{
+                    scroll-behavior: smooth;
+                    max-height: 200px;
+                    overflow: scroll;
+                    padding-right: 3px;
+
+                    &::-webkit-scrollbar {
+                        width: 4px;
+                    }
+                
+                    &::-webkit-scrollbar-track {
+                        opacity: 0;
+                    }
+                
+                    &::-webkit-scrollbar-thumb {
+                        background-color: darkgrey;
+                        opacity: 0.5;
+                    }
+                   
+
+                    & .item-file-description{
+                        margin: 5px auto;
+                        border-bottom: solid 1px rgb(199, 199, 199);
+                        padding: 1px 0px 5px 0px;
+
+                        & p { 
+                            display: inline-block;
+                            width: 75%;
+                            font-size: 13px;
+                            margin: 5px 0px;
+                        }
+    
+                        & .dam-buttons-actions{
+                            display: inline-block;
+                            align-items: center;
+                            justify-content: center;
+                            & button{
+                                background-color: transparent;
+                                background-repeat: no-repeat;
+                                border: none;
+                                cursor: pointer;
+                                overflow: hidden;
+                                outline: none;
+                                color: #009e92;
+                                padding: 0;
+                                margin: 0px 2px;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -142,9 +207,59 @@
             align-items: center;
             margin: 0 auto;
             width: 100%;
+            position: relative;
 
             > img {
                 width: 100%;
+            }
+            > .img-input{
+                position: absolute;
+                bottom: auto;
+                left: auto;
+                width: 100%;
+                height: 100%;
+                background-color: white;
+                visibility: hidden;
+                opacity: 0%;
+                transition: .3s;
+
+                > input[type='file']{
+                    cursor: pointer;
+                    display: none;
+                    opacity: 0;
+                    &::-webkit-file-upload-button {
+                        display: none;
+                    }
+                }
+                > label{
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+                    height: 100%;
+                    cursor: pointer;
+                    color: black;
+                    font-size: 30px;
+                }
+                > button{
+                    background-color: transparent;
+                    position: absolute;
+                    top: 0px;
+                    right: 0px;
+                    cursor: pointer;
+                    background-color: transparent;
+                    background-repeat: no-repeat;
+                    border: none;
+                    padding: 5px;
+                    &:hover {
+                        opacity: 80%;
+                    }
+                }
+            }
+
+            &:hover > .img-input{
+                visibility: visible;
+                opacity: 60%;
             }
         }
     }
@@ -169,7 +284,6 @@
     }
 }
 
-
-//@import './file'
-
-
+.ng-invalid:not(form)  {
+    border-left: 5px solid #a94442;
+}

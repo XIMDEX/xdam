@@ -4,7 +4,7 @@ import { Base as QuestionBase } from './../../../models/forms/questions/Base';
 import { Text as QuestionText } from '../../../models/forms/questions/Text';
 
 @Component({
-    selector: 'xdam-question',
+    selector: 'xdam-question-old',
     templateUrl: './questions.component.html',
     styleUrls: ['./questions.component.scss']
 })

@@ -10,6 +10,7 @@ export interface ItemModel {
     score: string;
     type: string;
     version: string;
+    previews?: string;
 }
 
 export interface XDamData {
