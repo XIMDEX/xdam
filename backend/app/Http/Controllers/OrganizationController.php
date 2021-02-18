@@ -11,7 +11,6 @@ use App\Http\Requests\Organization\UpdateOrganizationRequest;
 use App\Http\Resources\OrganizationCollection;
 use App\Services\OrganizationWorkspace\OrganizationService;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class OrganizationController extends Controller
@@ -41,7 +40,7 @@ class OrganizationController extends Controller
 
     public function get(GetOrganizationRequest $request)
     {
-        $orgs = $this->organizationService->get($request->id);
+        $orgs = $this->organizationService->get($request->organization_id);
         return (new JsonResource($orgs))
             ->response()
             ->setStatusCode(Response::HTTP_OK);

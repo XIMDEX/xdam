@@ -54,8 +54,8 @@ class UserService
         $user = Auth::user();
         $wsp = Workspace::find($wid);
         $org = null;
-        if($wsp) {
-            if($wsp->type == WorkspaceType::personal) {
+        if ($wsp) {
+            if ($wsp->type == WorkspaceType::personal) {
                 $org = $this->selectOrganization(null);
             } else {
                 $org = $this->selectOrganization($wsp->organization()->first()->id);

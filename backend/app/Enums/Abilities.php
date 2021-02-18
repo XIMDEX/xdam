@@ -8,6 +8,7 @@ final class Abilities extends Enum
 {
     const canUpdateWorkspace = "update-workspace";
     const canViewWorkspace = "view-workspace";
+    const canDeleteWorkspace = "delete-workspace";
 
     const canManageRoles = "manage-roles";
     const canManageOrganization = "manage-organizations";

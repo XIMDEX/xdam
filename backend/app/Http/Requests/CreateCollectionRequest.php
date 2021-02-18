@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
 class CreateCollectionRequest extends FormRequest
 {
@@ -14,8 +13,8 @@ class CreateCollectionRequest extends FormRequest
      */
     public function authorize()
     {
-        $user_has_organization = Auth::user()->organizations()->where('organization_id', $this->organization_id)->first();
-        if($user_has_organization) {
+        //check if the user belongs to requested organization
+        if ($this->user()->organizations()->where('organization_id', $this->organization_id)->first()) {
             return true;
         }
         return false;

@@ -5,6 +5,7 @@ namespace App\Http\Requests\Workspace;
 use App\Enums\Abilities;
 use App\Enums\WorkspaceType;
 use App\Models\Organization;
+use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -18,16 +19,23 @@ class SetWorkspacesToUserRequest extends FormRequest
      */
     public function authorize()
     {
-
-        if($this->user_id == 1)
+        if ($this->user_id == 1) {
             return false;
+        }
 
+        //Checks that the user to set abilities is attached to the organization of the worksapce
+        $wsp = Workspace::find($this->workspace_id);
+        $usr = User::find($this->user_id);
+        if (!$usr->organizations()->get()->contains($wsp->organization()->first()->id)) {
+            return false;
+        }
+
+        //get the organization of the workspace to set
         $oid_of_wsp = Workspace::find($this->workspace_id)->organization()->first()->id;
 
-        if($this->user()->can(Abilities::canManageWorkspace, Organization::find($oid_of_wsp)))
-            return true;
+        //to know if the user who make the request had permissions to set workspaces in the specified organization
+        return $this->user()->can(Abilities::canManageOrganization, Organization::find($oid_of_wsp)) ?? false;
 
-        return false;
     }
 
     /**

@@ -16,13 +16,13 @@ class DeleteWorkspaceRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->user_id == 1)
+        if ($this->user_id == 1) {
             return false;
-
-        $oid_of_wsp = Workspace::find($this->workspace_id)->organization()->first()->id;
-
-        if($this->user()->can(Abilities::canManageWorkspace, Organization::find($oid_of_wsp)))
+        }
+        //check if user has the delete-workspace ability on the specified entity
+        if ($this->user()->can(Abilities::canDeleteWorkspace, Workspace::find($this->workspace_id))) {
             return true;
+        }
 
         return false;
     }

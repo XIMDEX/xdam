@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-
+use Silber\Bouncer\BouncerFacade as Bouncer;
 
 class UserSeeder extends Seeder
 {
@@ -38,6 +38,9 @@ class UserSeeder extends Seeder
             'email' => 'lector@xdam.com',
             'password' => Hash::make('123123')
         ]);
+
+
+        Bouncer::assign('admin')->to(User::find(1));
 
     }
 }

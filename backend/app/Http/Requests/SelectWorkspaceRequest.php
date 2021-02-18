@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
 class SelectWorkspaceRequest extends FormRequest
 {
@@ -14,9 +13,10 @@ class SelectWorkspaceRequest extends FormRequest
      */
     public function authorize()
     {
-
-        if(count(Auth::user()->workspaces()->where('workspaces.id', $this->workspace_id)->get()) > 0)
+        //check if the user belongs to the requested workspace
+        if (count($this->user()->workspaces()->where('workspaces.id', $this->workspace_id)->get()) > 0) {
             return true;
+        }
 
         return false;
     }
@@ -29,7 +29,7 @@ class SelectWorkspaceRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'workspace_id' => 'required|exists:workspaces,id'
         ];
     }
 }

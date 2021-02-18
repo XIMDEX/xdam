@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Enums\Abilities;
 use App\Models\Organization;
 use App\Models\Workspace;
 use Error;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+
 use Tests\TestCase;
 
 class WorkspaceCrudTest extends TestCase
@@ -25,14 +27,33 @@ class WorkspaceCrudTest extends TestCase
             ->has(Workspace::factory(['type' => 'generic'])->count(1))
             ->create();
 
-        $user = $this->getUserWithRole(2, $org);
-        $this->actingAs($user, 'api');
+        $admin = $this->getUserWithRole(1);
+        $gestor = $this->getUserWithRole(2, $org);
+        $editor = $this->getUserWithRole(3);
+
+        $this->actingAs($admin, 'api');
 
         $org_user = $this->json('POST', '/api/v1/organization/set/user', [
-            'user_id' => $user->id,
+            'user_id' => $gestor->id,
             'organization_id' => $org->id,
             'with_role_id' => 2
         ]);
+
+
+        $org_user
+            ->assertStatus(200)
+            ->assertJson([
+                'data'=> true
+            ]);
+
+
+        //EDITOR
+        $org_user = $this->json('POST', '/api/v1/organization/set/user', [
+            'user_id' => $editor->id,
+            'organization_id' => $org->id,
+            'with_role_id' => 3
+        ]);
+
 
         $org_user
             ->assertStatus(200)
@@ -41,10 +62,12 @@ class WorkspaceCrudTest extends TestCase
             ]);
 
 
-        $created_wsp = $this->json('POST', '/api/v1/workspace/create', [
+        $created_wsp = $this->json('POST', '/api/v1/organization/workspace/create', [
             'organization_id' => $org->id,
             'name' => $org->name . ' - Workspace'
         ]);
+
+
         $created_wsp
             ->assertStatus(200)
             ->assertJson([
@@ -52,15 +75,30 @@ class WorkspaceCrudTest extends TestCase
             ]);
 
 
+        $this->actingAs($admin, 'api');
 
-        $user_setted_to_wsp = $this->json('POST', '/api/v1/workspace/set/user', [
-            'user_id' => $user->id,
+        $org_user = $this->json('POST', '/api/v1/workspace/set/user', [
+            'user_id' => $gestor->id,
             'workspace_id' => $created_wsp->original->id,
             'with_role_id' => 2
         ]);
 
 
-        $user_setted_to_wsp
+        $org_user
+            ->assertStatus(200)
+            ->assertJson([
+                'data'=> true
+            ]);
+
+
+
+        $gestor_setted_to_wsp = $this->json('POST', '/api/v1/workspace/set/user', [
+            'user_id' => $editor->id,
+            'workspace_id' => $created_wsp->original->id,
+            'with_role_id' => 3
+        ]);
+
+        $gestor_setted_to_wsp
             ->assertStatus(200)
             ->assertJson([
                 'data'=> [

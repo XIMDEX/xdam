@@ -29,12 +29,6 @@ class AdminTest extends TestCase
             ->has(Workspace::factory(['name' => 'a generic faker wsp'])->count(1))
             ->create();
 
-        $org2 = Organization::factory()
-            ->has(Workspace::factory(['type' => 'corporation'])->count(1))
-            ->has(Workspace::factory(['name' => 'a generic faker wsp 2'])->count(1))
-            ->create();
-
-
         /*
         /
         / ATTACH ORGANIZATIONS TO USER
@@ -59,8 +53,8 @@ class AdminTest extends TestCase
         / ATTACH WORKSPACES TO USER
         /
         */
+
         $generic_wsp = (string)$org->workspaces()->where('name', 'a generic faker wsp')->first()->id;
-        $generic_wsp2 = (string)$org2->workspaces()->where('name', 'a generic faker wsp 2')->first()->id;
 
         $response = $this->json('POST', '/api/v1/workspace/set/user', [
             'user_id' => (string)$user->id,
@@ -79,14 +73,14 @@ class AdminTest extends TestCase
 
         /*
         /
-        / SET USER ROLE ON SPECIFIC WORKSPACE
+        / SET USER ROLE ON SPECIFIC WORKSPACE. IT REQUIRES THE USER ATACHED TO THE ORGANIZATION OF WORKSPACE
         /
         */
 
         $response = $this->json('POST', '/api/v1/role/user/set/abilitiesOnOrganizationOrWorkspace', [
             'user_id' => (string)$user->id,
-            'role_id' => "2",
-            'wo_id' => $generic_wsp2,
+            'role_id' => "4",
+            'wo_id' => $generic_wsp,
             'type' => 'set',
             'on' => 'wsp',
         ]);
@@ -110,7 +104,7 @@ class AdminTest extends TestCase
         $response = $this->json('POST', '/api/v1/role/user/set/abilitiesOnOrganizationOrWorkspace', [
             'user_id' => (string)$user->id,
             'role_id' => "2",
-            'wo_id' => $generic_wsp2,
+            'wo_id' => $generic_wsp,
             'type' => 'unset',
             'on' => 'wsp',
         ]);

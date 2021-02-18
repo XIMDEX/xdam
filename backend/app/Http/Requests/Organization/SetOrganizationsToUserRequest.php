@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Organization;
 
+use App\Enums\Abilities;
+use App\Enums\Roles;
+use App\Models\Organization;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
 class SetOrganizationsToUserRequest extends FormRequest
 {
@@ -14,32 +16,40 @@ class SetOrganizationsToUserRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->with_role_id == 1)
+
+        //can't assign the admin role
+        if ($this->with_role_id == Roles::admin) {
             return false;
-
-        if(Auth::user()->isA('admin'))
-            return true;
-
-
-        //se verifica que el usuario que esta haciendo el request
-        //esté relacionado con la/las organizaciones y que su rol sea el adecuado para setear organizaciones
-
-        $enabled_orgs = [];
-        foreach (Auth::user()->organizations()->get() as $org) {
-            $enabled_orgs[] = (string)$org->id;
         }
 
+        //this line prevents you from authorizing the request yourself. It can be deleted if this request can be executed by the requester.
+        if ($this->user()->id == $this->user_id) {
+            return false;
+        }
+
+        if ($this->user()->isA('admin')) {
+            return true;
+        }
+
+        //checks if the user who make the request is related with the organization
+        $related_organizations = [];
+        foreach ($this->user()->organizations()->get() as $org) {
+            $related_organizations[] = (string)$org->id;
+        }
+
+
         $id_to_set = null;
-        if(in_array($this->organization_id, $enabled_orgs)) {
+        if (in_array($this->organization_id, $related_organizations)) {
             $id_to_set = $this->organization_id;
         }
 
-        $this->request->set('organization_id', $id_to_set);
-
-        if(!$this->organization_id)
+        //checks if the user has permissions to manage the specified entity.
+        if ($this->user()->can(Abilities::canManageOrganization, Organization::find($id_to_set)) && $id_to_set != null) {
+            $this->request->set('organization_id', $id_to_set);
+            return true;
+        } else {
             return false;
-
-        return true;
+        }
     }
 
     /**

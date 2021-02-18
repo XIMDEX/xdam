@@ -5,6 +5,7 @@ namespace App\Traits;
 
 use App\Enums\Abilities;
 use App\Enums\DefaultOrganizationWorkspace;
+use App\Enums\Roles;
 use App\Enums\WorkspaceType;
 use App\Models\Organization;
 use App\Models\Workspace;
@@ -25,7 +26,7 @@ trait SetDefaultOrganizationAndWorkspace
                 'type' => WorkspaceType::personal
             ]);
 
-            $adminService->setOrganizations($user_id, $public_org->id);
+            $adminService->setOrganizations($user_id, $public_org->id, Roles::editor);
             $adminService->setWorkspaces($user_id, $public_wsp->id);
             $adminService->setWorkspaces($user_id, $personal_wsp->id);
             $model->allow(Abilities::canViewWorkspace, $public_wsp);

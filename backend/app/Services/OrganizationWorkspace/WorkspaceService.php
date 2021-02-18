@@ -2,16 +2,23 @@
 
 namespace App\Services\OrganizationWorkspace;
 
-use App\Enums\Abilities;
+use App\Enums\Roles;
 use App\Enums\WorkspaceType;
 use App\Models\Organization;
-use App\Models\User;
 use App\Models\Workspace;
+use App\Services\Admin\AdminService;
 use Illuminate\Support\Facades\Auth;
-use Silber\Bouncer\BouncerFacade as Bouncer;
 
 class WorkspaceService
 {
+
+    private $adminService;
+
+    public function __construct(AdminService $adminService)
+    {
+        $this->adminService = $adminService;
+    }
+
     public function index()
     {
         $wsps = Workspace::all();
@@ -28,10 +35,13 @@ class WorkspaceService
     {
         try {
             $org = Organization::find($oid);
-            if($org) {
+            if ($org) {
                 $wsp = Workspace::create(['name' => $wsp_name, 'type' => WorkspaceType::generic]);
                 $org->workspaces()->save($wsp);
-                Bouncer::allow(Auth::user())->to(Abilities::canManageWorkspace, $wsp);
+                if (Auth::user()) {
+                    $this->adminService->roleAbilitiesOnWorkspaceOrOrganization(Auth::user()->id, Roles::gestor, $wsp->id, 'set', 'wsp');
+                    $this->adminService->setWorkspaces(Auth::user()->id, $wsp->id);
+                }
                 return $wsp;
             }
         } catch (\Throwable $th) {
@@ -42,7 +52,7 @@ class WorkspaceService
     public function delete($id)
     {
         $wsp = Workspace::find($id);
-        if($wsp != null && $wsp->type != WorkspaceType::public) {
+        if ($wsp != null && $wsp->type != WorkspaceType::public) {
             $wsp->delete();
             return ['deleted' => $wsp];
         } else {
@@ -53,7 +63,7 @@ class WorkspaceService
     public function update($id, $name)
     {
         $wsp = Workspace::find($id);
-        if($wsp != null) {
+        if ($wsp != null) {
             $wsp->update(['name' => $name]);
             return ['updated' => $wsp];
         } else {

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Enums\Abilities;
-use App\Models\User;
 use Illuminate\Database\Seeder;
 use Silber\Bouncer\BouncerFacade as Bouncer;
 
@@ -29,7 +28,5 @@ class BouncerSeeder extends Seeder
 
         Bouncer::allow('lector')->to(Abilities::canViewWorkspace);
 
-        //User assign
-        Bouncer::assign('admin')->to(User::find(1));
     }
 }

@@ -15,10 +15,8 @@ class GetOrganizationRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->user()->can(Abilities::canManageOrganization, Organization::find($this->organization_id))) {
-            return true;
-        }
-        return false;
+        //request protected by middleware can:*
+        return true;
     }
 
     /**
@@ -29,7 +27,7 @@ class GetOrganizationRequest extends FormRequest
     public function rules()
     {
         return [
-            'organization_id' => 'required'
+
         ];
     }
 }

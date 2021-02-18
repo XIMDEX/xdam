@@ -1132,7 +1132,7 @@
 							"formdata": [
 								{
 									"key": "email",
-									"value": "gestor@xdam.com",
+									"value": "admin@xdam.com",
 									"type": "text"
 								},
 								{
@@ -1238,17 +1238,17 @@
 							"formdata": [
 								{
 									"key": "user_id",
-									"value": "2",
+									"value": "4",
 									"type": "text"
 								},
 								{
 									"key": "workspace_id",
-									"value": "5",
+									"value": "3",
 									"type": "text"
 								},
 								{
 									"key": "with_role_id",
-									"value": "2",
+									"value": "3",
 									"type": "text"
 								}
 							]
@@ -1276,7 +1276,7 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "workspace_ids[]",
+									"key": "workspace_id",
 									"value": "2",
 									"type": "text"
 								},
@@ -1378,7 +1378,7 @@
 							"formdata": [
 								{
 									"key": "name",
-									"value": "Primero C",
+									"value": "Segundo D",
 									"type": "text"
 								},
 								{
@@ -1389,11 +1389,12 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/workspace/create",
+							"raw": "{{url}}{{api}}/organization/workspace/create",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
+								"organization",
 								"workspace",
 								"create"
 							]
@@ -1530,7 +1531,7 @@
 							"formdata": [
 								{
 									"key": "user_id",
-									"value": "3",
+									"value": "4",
 									"type": "text"
 								},
 								{
@@ -1540,7 +1541,7 @@
 								},
 								{
 									"key": "with_role_id",
-									"value": "2",
+									"value": "3",
 									"type": "text"
 								}
 							]
@@ -1561,6 +1562,46 @@
 					"response": []
 				},
 				{
+					"name": "SET ALL WORKSPACES OF ORGANIZATION TO USER",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "user_id",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "organization_id",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "with_role_id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/organization/workspaces/setAll/user",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"organization",
+								"workspaces",
+								"setAll",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "UNSET ORGANIZATION TO USER",
 					"request": {
 						"method": "POST",
@@ -1570,7 +1611,7 @@
 							"formdata": [
 								{
 									"key": "user_id",
-									"value": "2",
+									"value": "4",
 									"type": "text"
 								},
 								{
@@ -1605,17 +1646,17 @@
 							"formdata": [
 								{
 									"key": "user_id",
-									"value": "3",
-									"type": "text"
-								},
-								{
-									"key": "role_id",
 									"value": "4",
 									"type": "text"
 								},
 								{
+									"key": "role_id",
+									"value": "3",
+									"type": "text"
+								},
+								{
 									"key": "wo_id",
-									"value": "1",
+									"value": "10",
 									"type": "text"
 								},
 								{
@@ -1861,7 +1902,7 @@
 									"formdata": [
 										{
 											"key": "name",
-											"value": "Escuela 22",
+											"value": "La Escuela 22",
 											"type": "text"
 										}
 									]
@@ -1936,7 +1977,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/admin/organization/get/1",
+									"raw": "{{url}}{{api}}/admin/organization/get/2",
 									"host": [
 										"{{url}}{{api}}"
 									],
@@ -1944,7 +1985,7 @@
 										"admin",
 										"organization",
 										"get",
-										"1"
+										"2"
 									]
 								}
 							},

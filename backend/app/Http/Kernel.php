@@ -61,6 +61,7 @@ class Kernel extends HttpKernel
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'manage.organizations' => \App\Http\Middleware\CanManageOrganization::class,
         'manage.roles' => \App\Http\Middleware\CanManageRoles::class,
+        'manage.workspaces' => \App\Http\Middleware\CanManageWorkspace::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,

@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
 class SelectOrganizationRequest extends FormRequest
 {
@@ -14,9 +13,10 @@ class SelectOrganizationRequest extends FormRequest
      */
     public function authorize()
     {
-        if(count(Auth::user()->organizations()->where('organizations.id', $this->organization_id)->get()) > 0)
+        //check if user belongs to the requested organization
+        if (count($this->user()->organizations()->where('organizations.id', $this->organization_id)->get()) > 0) {
             return true;
-
+        }
         return false;
     }
 
@@ -28,7 +28,7 @@ class SelectOrganizationRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'organization_id' => 'required|exists:organizations,id'
         ];
     }
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Organization;
+namespace App\Http\Requests;
 
 use App\Enums\Abilities;
 use App\Models\Organization;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateOrganizationRequest extends FormRequest
+class UnsetOrganizationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,7 +15,11 @@ class UpdateOrganizationRequest extends FormRequest
      */
     public function authorize()
     {
-        //checks that the user has permissions to update in the specified entity.
+        //can't unset public organization
+        if ($this->organization_id == 1) {
+            return false;
+        }
+
         if ($this->user()->can(Abilities::canManageOrganization, Organization::find($this->organization_id))) {
             return true;
         }
@@ -30,8 +34,8 @@ class UpdateOrganizationRequest extends FormRequest
     public function rules()
     {
         return [
+            'user_id' => 'required',
             'organization_id' => 'required',
-            'name' => 'required|min:3|string',
         ];
     }
 }

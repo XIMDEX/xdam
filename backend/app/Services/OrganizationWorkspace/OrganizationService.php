@@ -43,7 +43,7 @@ class OrganizationService
         try {
             $org = Organization::find($oid);
             $collType = CollectionType::find($type_id);
-            if($org && $collType) {
+            if ($org && $collType) {
 
                 $collection = Collection::create([
                     "name" => $name
@@ -63,7 +63,7 @@ class OrganizationService
     public function indexCollections()
     {
         $selected_org = Auth::user()->selected_organization;
-        if($selected_org) {
+        if ($selected_org) {
             $org = Organization::find($selected_org);
             return $org->collections()->get();
         }
@@ -72,11 +72,12 @@ class OrganizationService
 
     public function delete($id)
     {
-        if($id == 1)
+        if ($id == 1) {
             return ['Public organization cannot be deleted'];
+        }
 
         $org = Organization::find($id);
-        if($org != null) {
+        if ($org != null) {
             $org->delete();
             return ['deleted' => $org];
         } else {
@@ -87,7 +88,7 @@ class OrganizationService
     public function update($id, $name)
     {
         $org = Organization::find($id);
-        if($org != null) {
+        if ($org != null) {
             $org->update(['name' => $name]);
             return ['updated' => $org];
         } else {

@@ -15,10 +15,8 @@ class DeleteOrganizationRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->user()->can(Abilities::canManageOrganization, Organization::find($this->organization_id)) && $this->organization_id != null) {
-            return true;
-        }
-        return false;
+        //request protected by middleware can:*
+        return true;
     }
 
     /**
