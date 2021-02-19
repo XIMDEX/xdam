@@ -33,13 +33,17 @@ Nos dirigimos a carpeta /opt con:
 y descargamos e instalamos SOLR:
 
 `wget https://archive.apache.org/dist/lucene/solr/8.5.2/solr-8.5.2.tgz`
+
 `tar xzf solr-8.5.2.tgz solr-8.5.2/bin/install_solr_service.sh --strip-components=2`
-`sudo bash ./install_solr_service.sh solr-8.5.2.tgz
-`
+
+`sudo bash ./install_solr_service.sh solr-8.5.2.tgz`
 
 Para manejar la parada o arranque del servicio solr, tenemos disponible:
+
 `sudo service solr stop`
+
 `sudo service solr start`
+
 `sudo service solr status`
 
 Una vez iniciado el servicio tendremos disponible una interfaz web corriendo en el puerto 8983 ( por defecto ).
@@ -52,8 +56,11 @@ Creamos 2 cores necesarios para que funcione XDAM ejecutando en la terminal:
 #### 	INSTALACIÓN BACKEND:
 
 Hacemos un git clone del proyecto con:
+
 `git clone https://github.com/XIMDEX/xdam.git`
+
 y nos dirigimos a la carpeta backend, en su interior ejecutamos:
+
 `composer install`
 
 Copiamos el fichero de ejemplo .env.example a .env
@@ -71,9 +78,11 @@ También se debe modificar las variables referentes a SOLR dentro de este ficher
 `SOLR_PATH="/"`
 
 Instalamos los optimizadores de imagen que requiere la librería media-library, con la que se gestionan los ficheros.
+
 ###### En Linux:
 `sudo apt install jpegoptim optipng pngquant gifsicle`
 `npm install -g svgo`
+
 ###### En MACOS:
 `brew install jpegoptim &&
 brew install optipng &&
