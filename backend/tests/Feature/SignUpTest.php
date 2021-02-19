@@ -24,12 +24,6 @@ class SignUpTest extends TestCase
             'password_confirmation'=> '123123'
         ]);
 
-        // $response->dumpHeaders();
-
-        // $response->dumpSession();
-
-        // $response->dump();
-
         $response
             ->assertStatus(200)
             ->assertJson([

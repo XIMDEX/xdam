@@ -3,10 +3,12 @@
 namespace App\Services\Admin;
 
 use App\Enums\DefaultOrganizationWorkspace;
+use App\Enums\OrganizationType;
 use App\Enums\WorkspaceType;
 use App\Models\Organization;
 use App\Models\User;
 use App\Models\Workspace;
+use Error;
 use Silber\Bouncer\BouncerFacade as Bouncer;
 use Silber\Bouncer\Database\Role;
 
@@ -33,7 +35,7 @@ class AdminService
 
             $this->roleAbilitiesOnWorkspaceOrOrganization($user_id, $role_id, $organization_id, 'set', 'org');
 
-            $this->enableDefaultWorkspace($org, $user);
+            $this->enableDefaultWorkspace($org, $user, $role_id);
 
             $log['success'][] = [
                 "user_id" => $user_id,
@@ -92,13 +94,14 @@ class AdminService
         return ['user' => $user, 'log' => $log];
     }
 
-    public function setWorkspaces(string $user_id, string $workspace_id)
+    public function setWorkspaces(string $user_id, string $workspace_id, string $with_role_id)
     {
         $user = User::find($user_id);
         $log = [];
 
         if (!$user->workspaces()->get()->contains($workspace_id)) {
             $user->workspaces()->attach($workspace_id);
+            $this->roleAbilitiesOnWorkspaceOrOrganization($user_id, $with_role_id, $workspace_id, 'set', 'wsp');
             $log['success']['workspace_id'] = $workspace_id;
         } else {
             $log['already_exists']['workspace_id'][] = $workspace_id;
@@ -126,11 +129,29 @@ class AdminService
         return ['user' => $user, 'log' => $log];
     }
 
-    public function enableDefaultWorkspace($org, $user)
+    public function enableDefaultWorkspace($org, $user, $role_id)
     {
-        $org->name == DefaultOrganizationWorkspace::public_organization ? $wsp_type = WorkspaceType::public : $wsp_type = WorkspaceType::corporation;
+
+        switch ($org->type) {
+            case OrganizationType::public:
+                $wsp_type = WorkspaceType::public ;
+                break;
+
+            case OrganizationType::personal:
+                $wsp_type = WorkspaceType::personal ;
+                break;
+
+            case OrganizationType::corporate:
+                $wsp_type = WorkspaceType::corporate ;
+                break;
+
+            default:
+                throw new Error('Undefined organizationtype');
+                break;
+        }
+
         $default_org_wsp_id = $org->workspaces()->where('type', $wsp_type)->first()->id;
-        $this->setWorkspaces($user->id, $default_org_wsp_id);
+        $this->setWorkspaces($user->id, $default_org_wsp_id, $role_id);
     }
 
     public function getRoleAbilities($rid)

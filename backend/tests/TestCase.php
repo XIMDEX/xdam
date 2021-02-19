@@ -25,8 +25,6 @@ abstract class TestCase extends BaseTestCase
             $abilities[] = $ability->name;
         }
 
-        $user->abilities = $abilities;
-
         if ($entity) {
             $user->organizations()->attach($entity->id);
             Bouncer::allow($user)->to($abilities, $entity);

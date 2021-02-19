@@ -24,7 +24,7 @@ class UserResource extends JsonResource
             ],
             'organizations' => OrganizationResource::collection($this->organizations()->get()),
             'workspaces' => WorkspaceResource::collection($this->workspaces()->get()),
-            'roles' => $this->getAbilities()
+            'abilities' => $this->getAbilities()
         ];
     }
 }

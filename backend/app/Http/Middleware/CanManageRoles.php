@@ -23,6 +23,7 @@ class CanManageRoles
         $user = Auth::user();
         $entity = null;
         $user->isAn('admin') ? $next($request) : null;
+        $userAbilities = $user->getAbilities();
         $request->on == 'org' ? $entity = Organization::find($request->wo_id) : $entity = Workspace::find($request->wo_id);
         return $user->can(Abilities::canManageRoles, $entity) ? $next($request) : response()->json(['error' => 'Unauthorized.'], 401);
     }

@@ -15,10 +15,20 @@ class CreateDamResourceWorkspaceTable extends Migration
     {
         Schema::create('dam_resource_workspace', function (Blueprint $table) {
             $table->id();
-            $table->integer('workspace_id');
-            $table->string('dam_resource_id');
+            $table->unsignedInteger('workspace_id');
+            $table->uuid('dam_resource_id')->nullable();
             $table->timestamps();
-            //$table->foreign('dam_resource_id', 'dam_resource_workspaces_fk')->references('id')->on('dam_resource')->onDelete('cascade');
+
+            $table->foreign('dam_resource_id', 'dam_resource_workspaces_fk')
+                ->references('id')
+                ->on('dam_resources')
+                ->onDelete('cascade');
+
+            $table->foreign('workspace_id', 'workspaces_dam_resource_fk')
+                ->references('id')
+                ->on('workspaces')
+                ->onDelete('cascade');
+
         });
     }
 

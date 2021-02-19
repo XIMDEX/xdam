@@ -19,13 +19,13 @@ class AdminTest extends TestCase
      */
     public function test_admin_features()
     {
-        $user_role = $this->getUserWithRole(1);
+        $admin = $this->getUserWithRole(1);
 
-        $this->actingAs($user_role, 'api');
+        $this->actingAs($admin, 'api');
 
         $user = User::factory()->create();
         $org = Organization::factory()
-            ->has(Workspace::factory(['type' => 'corporation'])->count(1))
+            ->has(Workspace::factory(['type' => WorkspaceType::corporate])->count(1))
             ->has(Workspace::factory(['name' => 'a generic faker wsp'])->count(1))
             ->create();
 

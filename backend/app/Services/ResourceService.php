@@ -225,7 +225,6 @@ class ResourceService
      */
     public function store($params): DamResource
     {
-
         $oid = Auth::user()->selected_organization;
         $wid = Auth::user()->selected_workspace;
         $org = Organization::find($oid);
@@ -239,7 +238,8 @@ class ResourceService
                 'name' => $name,
                 'type' => $type,
                 'active' => $params['data']->description->active,
-                'user_owner_id' => Auth::user()->id
+                'user_owner_id' => Auth::user()->id,
+                'collection_id' => $params['collection_id']
             ]
         );
 

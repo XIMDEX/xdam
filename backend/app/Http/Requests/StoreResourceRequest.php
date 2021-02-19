@@ -77,7 +77,9 @@ class StoreResourceRequest extends FormRequest
     {
         return [
             'Preview' => 'file',
-            'type' => ['required', new EnumKey(ResourceType::class)]
+            'type' => ['required', new EnumKey(ResourceType::class)],
+            'collection_id' => 'required|exists:collections,id',
+            'data' => 'required'
         ];
     }
 

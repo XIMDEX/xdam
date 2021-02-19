@@ -29,9 +29,12 @@ class OrganizationService
     {
         try {
             $org = Organization::create(['name' => $name]);
-            $wsp = Workspace::create(['name' => $name, 'type' => WorkspaceType::corporation]);
+            Workspace::create([
+                'name' => $name,
+                'type' => WorkspaceType::corporate,
+                'organization_id' => $org->id
+            ]);
             $org->save();
-            $org->workspaces()->save($wsp);
             return $org;
         } catch (\Throwable $th) {
             return [$th];

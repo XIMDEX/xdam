@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Enums\Abilities;
+use App\Enums\OrganizationType;
+use App\Enums\WorkspaceType;
 use App\Models\Organization;
 use App\Models\Workspace;
-use Error;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 
@@ -23,8 +23,8 @@ class WorkspaceCrudTest extends TestCase
     {
 
         $org = Organization::factory()
-            ->has(Workspace::factory(['type' => 'corporation'])->count(1))
-            ->has(Workspace::factory(['type' => 'generic'])->count(1))
+            ->has(Workspace::factory(['type' => WorkspaceType::corporate])->count(1))
+            ->has(Workspace::factory(['type' => WorkspaceType::generic])->count(1))
             ->create();
 
         $admin = $this->getUserWithRole(1);

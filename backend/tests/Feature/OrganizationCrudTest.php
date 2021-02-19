@@ -23,9 +23,7 @@ class OrganizationCrudTest extends TestCase
         $org_name = 'Org test ' . Str::orderedUuid();
 
         /*
-        /
-        /CREATE
-        /
+            Create...
         */
         $created = $this->json('POST', '/api/v1/admin/organization/create', [
             'name' => $org_name,

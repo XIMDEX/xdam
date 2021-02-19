@@ -183,8 +183,8 @@ export class MainService {
     }
 
     /**
-     * 
-     * @param item 
+     *
+     * @param item
      */
     deleteFileToResource(fileToDelete: {id: string; idFile: string}) {
         const heads = new HttpHeaders({
@@ -198,8 +198,8 @@ export class MainService {
     }
 
     /**
-     * 
-     * @param item 
+     *
+     * @param item
      */
     addFileToResource(data: ActionModel, index) {
         const heads = new HttpHeaders({

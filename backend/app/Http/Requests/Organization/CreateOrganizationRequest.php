@@ -15,8 +15,13 @@ class CreateOrganizationRequest extends FormRequest
      */
     public function authorize()
     {
+        //prevent intentional type of organization
+        if($this->type) {
+            return false;
+        }
         //request protected by middleware can:*
         return true;
+
     }
 
     /**

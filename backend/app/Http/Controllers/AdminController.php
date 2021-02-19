@@ -38,7 +38,7 @@ class AdminController extends Controller
 
     public function setWorkspaces(SetWorkspacesToUserRequest $request)
     {
-        $adminResource = $this->adminService->setWorkspaces($request->user_id, $request->workspace_id);
+        $adminResource = $this->adminService->setWorkspaces($request->user_id, $request->workspace_id, $request->with_role_id);
         return (new JsonResource($adminResource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
