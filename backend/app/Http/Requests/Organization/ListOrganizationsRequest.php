@@ -15,10 +15,8 @@ class ListOrganizationsRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->user()->can(Abilities::canViewOrganization, Organization::class)) {
-            return true;
-        }
-        return false;
+        //request protected by middleware can:*
+        return true;
     }
 
     /**

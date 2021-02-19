@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Workspace;
 
 use App\Enums\Abilities;
+use App\Models\Organization;
 use App\Models\Workspace;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -15,9 +16,14 @@ class DeleteWorkspaceRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->user()->can(Abilities::canDeleteWorkspace, Workspace::find($this->workspace_id))) {
+        if ($this->user_id == 1) {
+            return false;
+        }
+        //check if user has the delete-workspace ability on the specified entity
+        if ($this->user()->can(Abilities::canDeleteWorkspace, Workspace::find($this->workspace_id))) {
             return true;
         }
+
         return false;
     }
 
@@ -29,7 +35,6 @@ class DeleteWorkspaceRequest extends FormRequest
     public function rules()
     {
         return [
-            'workspace_id' => 'required'
         ];
     }
 }

@@ -16,12 +16,15 @@ class CreateDamResourcesTable extends Migration
     {
         Schema::create('dam_resources', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->integer('user_owner_id');
             $table->string("external_id")->nullable();
             $table->string("name")->nullable();
             $table->enum('type', ResourceType::getValues())
                 ->default(ResourceType::document);
             $table->json("data")->nullable();
+            $table->integer('collection_id')->nullable();
             $table->timestamps();
+
         });
     }
 

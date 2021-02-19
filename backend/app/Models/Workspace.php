@@ -29,4 +29,15 @@ class Workspace extends Model
     {
         return $this->belongsTo(Organization::class);
     }
+
+    public function resources()
+    {
+        return $this->belongsToMany(DamResource::class);
+    }
+
+    public function collections()
+    {
+        return $this->belongsToMany(Collection::class);
+    }
+
 }

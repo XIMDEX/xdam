@@ -15,9 +15,8 @@ class DeleteOrganizationRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->user()->can(Abilities::canDeleteOrganization, Organization::find($this->organization_id))) {
-            return true;
-        }
+        //request protected by middleware can:*
+        return true;
     }
 
     /**
@@ -28,7 +27,7 @@ class DeleteOrganizationRequest extends FormRequest
     public function rules()
     {
         return [
-            'organization_id' => 'required'
+            //
         ];
     }
 }

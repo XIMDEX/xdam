@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateCollectionRequest;
 use App\Http\Requests\Organization\CreateOrganizationRequest;
 use App\Http\Requests\Organization\DeleteOrganizationRequest;
 use App\Http\Requests\Organization\GetOrganizationRequest;
@@ -39,7 +40,7 @@ class OrganizationController extends Controller
 
     public function get(GetOrganizationRequest $request)
     {
-        $orgs = $this->organizationService->get($request->id);
+        $orgs = $this->organizationService->get($request->organization_id);
         return (new JsonResource($orgs))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -53,9 +54,25 @@ class OrganizationController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    public function createCollection(CreateCollectionRequest $request)
+    {
+        $collection = $this->organizationService->createCollection($request->organization_id, $request->name, $request->type_id);
+        return (new JsonResource($collection))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function indexCollections()
+    {
+        $collection = $this->organizationService->indexCollections();
+        return (new JsonResource($collection))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
     public function delete(DeleteOrganizationRequest $request)
     {
-        $org = $this->organizationService->delete($request->id);
+        $org = $this->organizationService->delete($request->organization_id);
         return (new JsonResource($org))
             ->response()
             ->setStatusCode(Response::HTTP_OK);

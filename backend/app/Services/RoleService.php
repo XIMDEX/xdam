@@ -61,7 +61,7 @@ class RoleService
     public function giveAbility($role_id, $ability = null, $ability_title = null, $ability_id = null)
     {
         $role = Role::find($role_id);
-        if($ability_id) {
+        if ($ability_id) {
             $ability = Ability::find($ability_id);
         } else {
             $ability = Bouncer::ability()->firstOrCreate([

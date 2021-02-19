@@ -2,16 +2,19 @@
 
 namespace App\Services;
 
+use App\Enums\DefaultOrganizationWorkspace;
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use App\Models\Category;
 use App\Models\DamResource;
 use App\Models\DamResourceUse;
 use App\Models\Media;
+use App\Models\Organization;
 use App\Services\Solr\SolrService;
 use App\Utils\DamUrlUtil;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use stdClass;
 
 class ResourceService
@@ -222,22 +225,58 @@ class ResourceService
      */
     public function store($params): DamResource
     {
+
+        $oid = Auth::user()->selected_organization;
+        $wid = Auth::user()->selected_workspace;
+        $org = Organization::find($oid);
+
         $name = array_key_exists('name', $params) ? $params["name"] : "";
         $type = ResourceType::fromKey($params["type"])->value;
+
         $newResource = DamResource::create(
             [
                 'data' => $params['data'],
                 'name' => $name,
                 'type' => $type,
-                'active' => $params['data']->description->active
+                'active' => $params['data']->description->active,
+                'user_owner_id' => Auth::user()->id
             ]
         );
+
+        $this->setResourceWorkspaceAndCollection($oid, $wid, $newResource, $org);
+        $newResource->save();
         $this->linkCategoriesFromJson($newResource, $params['data']);
         $this->saveAssociatedFiles($newResource, $params);
         $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($newResource));
         $newResource->refresh();
         $this->linkTagsFromJson($newResource, $params['data']);
         return $newResource;
+    }
+
+    public function setResourceWorkspaceAndCollection($oid, $wid, DamResource $newResource, $org): void
+    {
+        // if ($params['collection_id']) {
+        //     //Ahora este resource es accesible unicamente por la organización owner de la collection_id
+        //     $newResource->collection_id = $params['collection_id'];
+        // } else {
+        //     //asignar a la colección pública o personal basado en user->selected_org/wsp
+        // }
+
+        if ($oid && $wid) {
+            $newResource->workspaces()->attach($wid);
+        }
+        //attach resource to public workspace or organization corporate workspace based on selected organization
+        if ($oid && $wid == null) {
+            if ($org->name == DefaultOrganizationWorkspace::public_organization) {
+                $newResource->workspaces()->attach($org->publicWorkspace()->id);
+            } else {
+                $newResource->workspaces()->attach($org->corporateWorkspace()->id);
+            }
+        }
+        //attach resource to personal workspace if no workspace is selected
+        if ($oid == null && $wid || $oid == null && $wid == null) {
+            $newResource->workspaces()->attach(Auth::user()->personalWorkspace()->id);
+        }
     }
 
     /**

@@ -15,9 +15,8 @@ class CreateOrganizationRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->user()->can(Abilities::canCreateOrganization, Organization::class)) {
-            return true;
-        }
+        //request protected by middleware can:*
+        return true;
     }
 
     /**

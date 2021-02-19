@@ -2,7 +2,11 @@
 
 namespace App\Http\Requests\Workspace;
 
+use App\Enums\Abilities;
 use App\Enums\WorkspaceType;
+use App\Models\Organization;
+use App\Models\User;
+use App\Models\Workspace;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,24 +19,23 @@ class SetWorkspacesToUserRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->user_id == 1)
+        if ($this->user_id == 1) {
             return false;
-
-        $enabled_wsps = [];
-        foreach (Auth::user()->workspaces()->get() as $wsp) {
-            if($wsp->type == WorkspaceType::personal)
-                continue;
-
-            $enabled_wsps[] = (string)$wsp->id;
         }
-        $ids_to_set = [];
-        foreach ($this->workspace_ids as $req_wid) {
-            if(in_array($req_wid, $enabled_wsps)) {
-                $ids_to_set[] = $req_wid;
-            }
+
+        //Checks that the user to set abilities is attached to the organization of the worksapce
+        $wsp = Workspace::find($this->workspace_id);
+        $usr = User::find($this->user_id);
+        if (!$usr->organizations()->get()->contains($wsp->organization()->first()->id)) {
+            return false;
         }
-        $this->request->set('workspace_ids', $ids_to_set);
-        return true;
+
+        //get the organization of the workspace to set
+        $oid_of_wsp = Workspace::find($this->workspace_id)->organization()->first()->id;
+
+        //to know if the user who make the request had permissions to set workspaces in the specified organization
+        return $this->user()->can(Abilities::canManageOrganization, Organization::find($oid_of_wsp)) ?? false;
+
     }
 
     /**
@@ -43,9 +46,9 @@ class SetWorkspacesToUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'string|required',
-            'workspace_ids' => 'array|required|min:1',
-            'workspace_ids.*' => 'required|distinct|min:0'
+            'user_id' => 'required|exists:users,id',
+            'workspace_id' => 'required|exists:workspaces,id',
+            'with_role_id' => 'required|exists:roles,id'
         ];
     }
 }

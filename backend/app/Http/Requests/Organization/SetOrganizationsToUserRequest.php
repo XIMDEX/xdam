@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Organization;
 
+use App\Enums\Abilities;
+use App\Enums\Roles;
+use App\Models\Organization;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
 class SetOrganizationsToUserRequest extends FormRequest
 {
@@ -14,24 +16,40 @@ class SetOrganizationsToUserRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->user_id == 1)
+
+        //can't assign the admin role
+        if ($this->with_role_id == Roles::admin) {
             return false;
-
-
-
-        $enabled_orgs = [];
-        foreach (Auth::user()->organizations()->get() as $org) {
-            $enabled_orgs[] = (string)$org->id;
         }
-        $ids_to_set = [];
-        foreach ($this->organization_ids as $req_wid) {
-            if(in_array($req_wid, $enabled_orgs)) {
-                $ids_to_set[] = $req_wid;
-            }
-        }
-        $this->request->set('organization_ids', $ids_to_set);
 
-        return true;
+        //this line prevents you from authorizing the request yourself. It can be deleted if this request can be executed by the requester.
+        if ($this->user()->id == $this->user_id) {
+            return false;
+        }
+
+        if ($this->user()->isA('admin')) {
+            return true;
+        }
+
+        //checks if the user who make the request is related with the organization
+        $related_organizations = [];
+        foreach ($this->user()->organizations()->get() as $org) {
+            $related_organizations[] = (string)$org->id;
+        }
+
+
+        $id_to_set = null;
+        if (in_array($this->organization_id, $related_organizations)) {
+            $id_to_set = $this->organization_id;
+        }
+
+        //checks if the user has permissions to manage the specified entity.
+        if ($this->user()->can(Abilities::canManageOrganization, Organization::find($id_to_set)) && $id_to_set != null) {
+            $this->request->set('organization_id', $id_to_set);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -42,9 +60,9 @@ class SetOrganizationsToUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'string|required',
-            'organization_ids' => 'array|required|min:1',
-            'organization_ids.*' => 'required|distinct|min:0'
+            'user_id' => 'required|exists:users,id',
+            'organization_id' => 'required|exists:organizations,id',
+            'with_role_id' => 'required|exists:roles,id'
         ];
     }
 }

@@ -6,6 +6,7 @@ use App\Enums\ResourceType;
 use App\Traits\JsonValidatorTrait;
 use BenSampo\Enum\Rules\EnumKey;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StoreResourceRequest extends FormRequest
 {

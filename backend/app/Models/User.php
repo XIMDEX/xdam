@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\WorkspaceType;
 use App\Traits\SetDefaultOrganizationAndWorkspace;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -52,5 +53,15 @@ class User extends Authenticatable
     public function workspaces()
     {
         return $this->belongsToMany(Workspace::class);
+    }
+
+    public function resources()
+    {
+        return DamResource::where('user_owner_id', $this->id)->get();
+    }
+
+    public function personalWorkspace()
+    {
+        return $this->workspaces()->where('type', WorkspaceType::personal)->first();
     }
 }

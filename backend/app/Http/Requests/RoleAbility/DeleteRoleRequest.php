@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\RoleAbility;
 
+use App\Enums\Roles;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
 class DeleteRoleRequest extends FormRequest
 {
@@ -14,12 +14,9 @@ class DeleteRoleRequest extends FormRequest
      */
     public function authorize()
     {
-        foreach (Auth::user()->roles()->get() as $rol) {
-            if($rol->id < (int)$this->id) {
-                return true;
-            } else {
-                continue;
-            }
+        //only admin can delete role and roles
+        if ($this->user()->isAn('admin') && $this->id > Roles::admin) {
+            return true;
         }
         return false;
     }

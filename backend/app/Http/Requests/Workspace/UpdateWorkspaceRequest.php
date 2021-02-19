@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Workspace;
 
 use App\Enums\Abilities;
+use App\Models\Organization;
 use App\Models\Workspace;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -15,9 +16,14 @@ class UpdateWorkspaceRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->user()->can(Abilities::canUpdateWorkspace, Workspace::find($this->workspace_id))) {
+        if ($this->user_id == 1) {
+            return false;
+        }
+        //check if user has the update-workspace ability on the specified entity
+        if ($this->user()->can(Abilities::canUpdateWorkspace, Workspace::find($this->workspace_id))) {
             return true;
         }
+
         return false;
     }
 

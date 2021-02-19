@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SelectOrganizationRequest;
+use App\Http\Requests\SelectWorkspaceRequest;
+use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\UserResource;
 use App\Services\UserService;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -35,6 +38,14 @@ class UserController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    public function resources()
+    {
+        $userResource = $this->userService->resources();
+        return (new ResourceCollection($userResource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
     public function getOrganizations()
     {
         $userResource = $this->userService->getOrganizations();
@@ -54,6 +65,22 @@ class UserController extends Controller
     public function getWorkspacesOfOrganization(Request $request)
     {
         $userResource = $this->userService->getWorkspacesOfOrganization($request->organization_id);
+        return (new JsonResource($userResource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function selectOrganization(SelectOrganizationRequest $request)
+    {
+        $userResource = $this->userService->selectOrganization($request->organization_id);
+        return (new JsonResource($userResource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function selectWorkspace(SelectWorkspaceRequest $request)
+    {
+        $userResource = $this->userService->selectWorkspace($request->workspace_id);
         return (new JsonResource($userResource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
