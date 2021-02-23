@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AttachResourceToCollectionRequest;
 use App\Http\Requests\SelectOrganizationRequest;
 use App\Http\Requests\SelectWorkspaceRequest;
 use App\Http\Resources\ResourceCollection;
@@ -46,6 +47,13 @@ class UserController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    public function attachResourceToCollection(AttachResourceToCollectionRequest $request) {
+        $userResource = $this->userService->attachResourceToCollection($request->collection_id, $request->resource_id, $request->organization_id);
+        return (new JsonResource($userResource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
     public function getOrganizations()
     {
         $userResource = $this->userService->getOrganizations();
@@ -65,14 +73,6 @@ class UserController extends Controller
     public function getWorkspacesOfOrganization(Request $request)
     {
         $userResource = $this->userService->getWorkspacesOfOrganization($request->organization_id);
-        return (new JsonResource($userResource))
-            ->response()
-            ->setStatusCode(Response::HTTP_OK);
-    }
-
-    public function selectOrganization(SelectOrganizationRequest $request)
-    {
-        $userResource = $this->userService->selectOrganization($request->organization_id);
         return (new JsonResource($userResource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);

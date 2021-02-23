@@ -19,13 +19,17 @@ class CanManageWorkspace
      */
     public function handle(Request $request, Closure $next)
     {
-        $wsp = Workspace::find($request->workspace_id);
-        $user = Auth::user();
+        if($request->workspace_id) {
+            $wsp = Workspace::find($request->workspace_id);
+            $user = Auth::user();
 
-        if ($user->can(Abilities::canManageWorkspace, $wsp) ||  $user->isAn('admin')) {
+            if ($user->can(Abilities::canManageWorkspace, $wsp) ||  $user->isAn('admin')) {
+                return $next($request);
+            }
+
+            return response()->json(['error_wsp' => 'Unauthorized.'], 401);
+        } else {
             return $next($request);
         }
-
-        return response()->json(['error' => 'Unauthorized.'], 401);
     }
 }

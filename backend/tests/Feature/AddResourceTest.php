@@ -29,7 +29,7 @@ class AddResourceTest extends TestCase
 
         /*
             Create users.
-            we set gestor role to $user in $org
+            we set manager role to $user in $org
             then, create an $admin
         */
         $user = $this->getUserWithRole(2, $org);
@@ -53,7 +53,7 @@ class AddResourceTest extends TestCase
             ]);
 
         /*
-            now as $user (with role gestor in the organization and set workspace)
+            now as $user (with role manager in the organization and set workspace)
             the user must select in which workspace is going to add the resource.
             It can be a public, personal or a specific wsp, like in this test, the $org->firstGenericWorkspace()
         */
@@ -61,6 +61,7 @@ class AddResourceTest extends TestCase
         $wsp_user = $this->json('POST', '/api/v1/user/workspaces/select', [
             'workspace_id' => $org->firstGenericWorkspace()->id,
         ]);
+
 
         $wsp_user
             ->assertStatus(200)
@@ -82,6 +83,26 @@ class AddResourceTest extends TestCase
             'type' => 'image',
             'data' => '{"description": {"active": true, "partials": {"pages": 10}}}',
             'collection_id' => $org->collections()->where('type_id', 2)->first()->id,
+            'workspace_id' => $user->selected_workspace
+        ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'id' => true
+            ]);
+
+        /*
+            Test the other addResource endpoint
+        */
+
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
+
+        $response = $this->json('POST', '/api/v1/resource/'.$org->collections()->where('type_id', 2)->first()->id.'/create', [
+            'File' => [$file],
+            'type' => 'image',
+            'data' => '{"description": {"active": true, "partials": {"pages": 10}}}',
             'workspace_id' => $user->selected_workspace
         ]);
 

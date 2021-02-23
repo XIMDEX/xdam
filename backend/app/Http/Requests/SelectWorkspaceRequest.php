@@ -13,6 +13,10 @@ class SelectWorkspaceRequest extends FormRequest
      */
     public function authorize()
     {
+        //if null, user is working in personal context
+        if($this->workspace_id == null) {
+            return true;
+        }
         //check if the user belongs to the requested workspace
         if (count($this->user()->workspaces()->where('workspaces.id', $this->workspace_id)->get()) > 0) {
             return true;
@@ -29,7 +33,7 @@ class SelectWorkspaceRequest extends FormRequest
     public function rules()
     {
         return [
-            'workspace_id' => 'required|exists:workspaces,id'
+
         ];
     }
 }

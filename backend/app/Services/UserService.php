@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\OrganizationType;
 use App\Enums\WorkspaceType;
 use App\Models\DamResource;
 use App\Models\Organization;
@@ -37,37 +38,25 @@ class UserService
         return Auth::user()->workspaces()->where('organization_id', $organization_id)->get();
     }
 
-    public function selectOrganization($oid)
-    {
-        $user = Auth::user();
-        $org = Organization::find($oid);
-
-        $user->selected_organization = $org ? $org->id : null;
-        $user->save();
-        $this->selectWorkspace(null);
-
-        return ["selected organization" => $org];
-    }
-
     public function selectWorkspace($wid)
     {
         $user = Auth::user();
         $wsp = Workspace::find($wid);
-        $org = null;
-        if ($wsp) {
-            if ($wsp->type == WorkspaceType::personal) {
-                $org = $this->selectOrganization(null);
-            } else {
-                $org = $this->selectOrganization($wsp->organization()->first()->id);
-            }
+        $wsp_id = $wsp->id ?? null;
+        $user->selected_workspace = $wsp_id;
+        $user->save();
+        return [$wsp ? $wsp->organization()->first() : 'organization_null', ['selected workspace' => $wsp_id]];
 
-            $user->selected_workspace = $wid;
-            $user->save();
-        } else {
-            $user->selected_workspace = $wid;
-            $user->save();
-        }
-        return [$org, ['selected workspace' => $wsp]];
 
+    }
+
+    public function attachResourceToCollection($cid, $rid, $oid) {
+        $res = DamResource::find($rid);
+        $res->collection_id = $cid;
+        $res->save();
+        $org_corporate_wsp = Organization::where('id', $oid)->first();
+        $org_corporate_wsp->type == OrganizationType::public ? $wsp = $org_corporate_wsp->publicWorkspace() : $wsp = $org_corporate_wsp->corporateWorkspace();
+        $res->workspaces()->attach($wsp);
+        return $res;
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\Roles;
+use App\Models\Organization;
 use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Foundation\Http\FormRequest;
@@ -30,11 +31,17 @@ class SetRoleAbilitiesOnWorkspaceRequest extends FormRequest
             return false;
         }
 
-        //Checks if the user to set abilities is attached to the organization of the worksapce
+
+        //Checks if the user to set abilities is attached to the organization and/or worksapce
+        $usr = User::find($this->user_id);
         if ($this->on == 'wsp') {
             $wsp = Workspace::find($this->wo_id);
-            $usr = User::find($this->user_id);
             if (!$usr->organizations()->get()->contains($wsp->organization()->first()->id)) {
+                return false;
+            }
+        } else {
+            $org = Organization::find($this->wo_id);
+            if (!$usr->organizations()->get()->contains($org->id)) {
                 return false;
             }
         }

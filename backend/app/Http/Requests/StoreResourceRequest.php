@@ -78,7 +78,7 @@ class StoreResourceRequest extends FormRequest
         return [
             'Preview' => 'file',
             'type' => ['required', new EnumKey(ResourceType::class)],
-            'collection_id' => 'required|exists:collections,id',
+            //'collection_id' => 'required|exists:collections,id',
             'data' => 'required'
         ];
     }
@@ -98,6 +98,15 @@ class StoreResourceRequest extends FormRequest
         $this->throwErrorWithValidator($factory,  "data");
         return $factory;
     }
+
+    // public function all($keys = null)
+    // {
+    //     $data = parent::all($keys);
+    //     if($this->route('collection_id')) {
+    //         $data['collection_id'] = $this->route('collection_id');
+    //     }
+    //     return $data;
+    // }
 
 
 }

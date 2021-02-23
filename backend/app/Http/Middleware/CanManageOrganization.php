@@ -21,11 +21,12 @@ class CanManageOrganization
     {
         $org = Organization::find($request->organization_id);
         $user =  Auth::user();
+        $ua = $user->getAbilities()->toArray();
 
         if ($user->can(Abilities::canManageOrganization, $org) ||  $user->isAn('admin')) {
             return $next($request);
         }
 
-        return response()->json(['error' => 'Unauthorized.'], 401);
+        return response()->json(['error_org' => 'Unauthorized.'], 401);
     }
 }

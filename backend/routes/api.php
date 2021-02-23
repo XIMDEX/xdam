@@ -67,7 +67,6 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::post('workspace/setAll/user',[AdminController::class, 'setAllWorkspacesOfOrganization']) ->name('adm.usr.set.all.wsp');
             Route::group(['prefix' => 'collection'], function(){
                 Route::post('create',                           [OrganizationController::class, 'createCollection'])    ->name('org.collection.create');
-                Route::post('resource/{collection_id}/create',  [ResourceController::class, 'store'])                   ->name('org.collection.damResource.store');
                 Route::get('all',                               [OrganizationController::class, 'indexCollections'])    ->name('org.collection.list.all');
                 Route::get('types/all',                         [OrganizationController::class, 'indexCollectionTypes'])->name('org.collectionType.all');
             });
@@ -86,9 +85,10 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
         });
 
         Route::group(['prefix' => 'user'], function(){
-            Route::post('logout',   [AuthController::class, 'logout'])      ->name('user.logout');
-            Route::get('/',         [UserController::class, 'user'])        ->name('user.get');
-            Route::get('resources', [UserController::class, 'resources'])   ->name('user.get.resources');
+            Route::post('logout',                       [AuthController::class, 'logout'])                      ->name('user.logout');
+            Route::get('/',                             [UserController::class, 'user'])                        ->name('user.get');
+            Route::get('resources',                     [UserController::class, 'resources'])                   ->name('user.get.resources');
+            Route::post('resource/collection/attach',   [UserController::class, 'attachResourceToCollection'])  ->name('user.resource.collection.attach');
 
             Route::group(['prefix' => 'workspaces'], function(){
                 Route::get('/',                         [UserController::class, 'getWorkspaces'])       ->name('user.wsps.get');
@@ -124,6 +124,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::get('/{damResource}',                                [ResourceController::class, 'get'])->name('damResource.get');
             Route::post('/{damResource}/update',                        [ResourceController::class, 'update'])->name('damResource.update');
             Route::post('/',                                            [ResourceController::class, 'store'])->name('damResource.store');
+            Route::post('/{collection_id}/create',                      [ResourceController::class, 'store'])->name('collection.damResource.store');
             Route::post('/{damResource}/setTags',                       [ResourceController::class, 'setTags'])->name('damResource.setTags');
             Route::post('/{damResource}/addPreview',                    [ResourceController::class, 'addPreview'])->name('damResource.addPreview');
             Route::post('/{damResource}/addFile',                       [ResourceController::class, 'addFile'])->name('damResource.addFile');
