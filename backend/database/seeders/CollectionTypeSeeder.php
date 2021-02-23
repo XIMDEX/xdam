@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\CollectionType as EnumsCollectionType;
 use App\Models\CollectionType;
 use Illuminate\Database\Seeder;
 
@@ -14,12 +15,10 @@ class CollectionTypeSeeder extends Seeder
      */
     public function run()
     {
-        CollectionType::create([
-            'name' => 'multimedia',
-        ]);
-
-        CollectionType::create([
-            'name' => 'course',
-        ]);
+        foreach (EnumsCollectionType::valuesToArray() as $name) {
+            CollectionType::create([
+                'name' => $name,
+            ]);
+        }
     }
 }

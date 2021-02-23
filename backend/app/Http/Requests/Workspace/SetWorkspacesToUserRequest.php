@@ -23,6 +23,10 @@ class SetWorkspacesToUserRequest extends FormRequest
             return false;
         }
 
+        if ($this->with_role_id == 1) {
+            return false;
+        }
+
         //Checks that the user to set abilities is attached to the organization of the worksapce
         $wsp = Workspace::find($this->workspace_id);
         $usr = User::find($this->user_id);

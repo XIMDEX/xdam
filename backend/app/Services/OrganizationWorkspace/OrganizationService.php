@@ -29,9 +29,12 @@ class OrganizationService
     {
         try {
             $org = Organization::create(['name' => $name]);
-            $wsp = Workspace::create(['name' => $name, 'type' => WorkspaceType::corporation]);
+            Workspace::create([
+                'name' => $name,
+                'type' => WorkspaceType::corporate,
+                'organization_id' => $org->id
+            ]);
             $org->save();
-            $org->workspaces()->save($wsp);
             return $org;
         } catch (\Throwable $th) {
             return [$th];
@@ -60,12 +63,11 @@ class OrganizationService
         }
     }
 
-    public function indexCollections()
+    public function indexCollections($oid)
     {
-        $selected_org = Auth::user()->selected_organization;
+        $selected_org = Organization::find($oid);
         if ($selected_org) {
-            $org = Organization::find($selected_org);
-            return $org->collections()->get();
+            return $selected_org->collections()->get();
         }
         return ['warning'=>'organization not selected'];
     }

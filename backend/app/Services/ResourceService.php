@@ -10,6 +10,7 @@ use App\Models\DamResource;
 use App\Models\DamResourceUse;
 use App\Models\Media;
 use App\Models\Organization;
+use App\Models\Workspace;
 use App\Services\Solr\SolrService;
 use App\Utils\DamUrlUtil;
 use Exception;
@@ -225,10 +226,8 @@ class ResourceService
      */
     public function store($params): DamResource
     {
-
-        $oid = Auth::user()->selected_organization;
         $wid = Auth::user()->selected_workspace;
-        $org = Organization::find($oid);
+        $org = Workspace::find($wid) ? Workspace::find($wid)->organization()->first() : null;
 
         $name = array_key_exists('name', $params) ? $params["name"] : "";
         $type = ResourceType::fromKey($params["type"])->value;
@@ -239,11 +238,12 @@ class ResourceService
                 'name' => $name,
                 'type' => $type,
                 'active' => $params['data']->description->active,
-                'user_owner_id' => Auth::user()->id
+                'user_owner_id' => Auth::user()->id,
+                'collection_id' => $params['collection_id'] ?? null
             ]
         );
 
-        $this->setResourceWorkspaceAndCollection($oid, $wid, $newResource, $org);
+        $this->setResourceWorkspaceAndCollection($org->id ?? null, $wid, $newResource);
         $newResource->save();
         $this->linkCategoriesFromJson($newResource, $params['data']);
         $this->saveAssociatedFiles($newResource, $params);
@@ -253,20 +253,13 @@ class ResourceService
         return $newResource;
     }
 
-    public function setResourceWorkspaceAndCollection($oid, $wid, DamResource $newResource, $org): void
+    public function setResourceWorkspaceAndCollection($org = null, $wid = null, DamResource $newResource): void
     {
-        // if ($params['collection_id']) {
-        //     //Ahora este resource es accesible unicamente por la organización owner de la collection_id
-        //     $newResource->collection_id = $params['collection_id'];
-        // } else {
-        //     //asignar a la colección pública o personal basado en user->selected_org/wsp
-        // }
-
-        if ($oid && $wid) {
+        if ($org && $wid) {
             $newResource->workspaces()->attach($wid);
         }
         //attach resource to public workspace or organization corporate workspace based on selected organization
-        if ($oid && $wid == null) {
+        if ($org && $wid == null) {
             if ($org->name == DefaultOrganizationWorkspace::public_organization) {
                 $newResource->workspaces()->attach($org->publicWorkspace()->id);
             } else {
@@ -274,8 +267,8 @@ class ResourceService
             }
         }
         //attach resource to personal workspace if no workspace is selected
-        if ($oid == null && $wid || $oid == null && $wid == null) {
-            $newResource->workspaces()->attach(Auth::user()->personalWorkspace()->id);
+        if ($org == null && $wid || $org == null && $wid == null) {
+            $newResource->workspaces()->attach(null);
         }
     }
 

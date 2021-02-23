@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Enums\Abilities;
+use App\Enums\OrganizationType;
+use App\Enums\WorkspaceType;
 use App\Models\Organization;
 use App\Models\Workspace;
-use Error;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 
@@ -23,18 +23,18 @@ class WorkspaceCrudTest extends TestCase
     {
 
         $org = Organization::factory()
-            ->has(Workspace::factory(['type' => 'corporation'])->count(1))
-            ->has(Workspace::factory(['type' => 'generic'])->count(1))
+            ->has(Workspace::factory(['type' => WorkspaceType::corporate])->count(1))
+            ->has(Workspace::factory(['type' => WorkspaceType::generic])->count(1))
             ->create();
 
         $admin = $this->getUserWithRole(1);
-        $gestor = $this->getUserWithRole(2, $org);
+        $manager = $this->getUserWithRole(2, $org);
         $editor = $this->getUserWithRole(3);
 
         $this->actingAs($admin, 'api');
 
         $org_user = $this->json('POST', '/api/v1/organization/set/user', [
-            'user_id' => $gestor->id,
+            'user_id' => $manager->id,
             'organization_id' => $org->id,
             'with_role_id' => 2
         ]);
@@ -78,7 +78,7 @@ class WorkspaceCrudTest extends TestCase
         $this->actingAs($admin, 'api');
 
         $org_user = $this->json('POST', '/api/v1/workspace/set/user', [
-            'user_id' => $gestor->id,
+            'user_id' => $manager->id,
             'workspace_id' => $created_wsp->original->id,
             'with_role_id' => 2
         ]);
@@ -92,13 +92,13 @@ class WorkspaceCrudTest extends TestCase
 
 
 
-        $gestor_setted_to_wsp = $this->json('POST', '/api/v1/workspace/set/user', [
+        $manager_setted_to_wsp = $this->json('POST', '/api/v1/workspace/set/user', [
             'user_id' => $editor->id,
             'workspace_id' => $created_wsp->original->id,
             'with_role_id' => 3
         ]);
 
-        $gestor_setted_to_wsp
+        $manager_setted_to_wsp
             ->assertStatus(200)
             ->assertJson([
                 'data'=> [

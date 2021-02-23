@@ -22,8 +22,8 @@ class UserSeeder extends Seeder
             'password' => Hash::make('123123')
         ]);
         User::create([
-            'name' => 'Gestor user',
-            'email' => 'gestor@xdam.com',
+            'name' => 'Manager user',
+            'email' => 'manager@xdam.com',
             'password' => Hash::make('123123')
         ]);
 
@@ -34,8 +34,8 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
-            'name' => 'Lector user',
-            'email' => 'lector@xdam.com',
+            'name' => 'Reader user',
+            'email' => 'reader@xdam.com',
             'password' => Hash::make('123123')
         ]);
 

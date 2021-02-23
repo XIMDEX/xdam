@@ -19,14 +19,14 @@ class BouncerSeeder extends Seeder
         Bouncer::allow('admin')->everything();
 
         //Workspaces
-        Bouncer::allow('gestor')->to(Abilities::canManageRoles);
-        Bouncer::allow('gestor')->to(Abilities::canManageOrganization);
-        Bouncer::allow('gestor')->to(Abilities::canManageWorkspace);
+        Bouncer::allow('manager')->to(Abilities::canManageRoles);
+        Bouncer::allow('manager')->to(Abilities::canManageOrganization);
+        Bouncer::allow('manager')->to(Abilities::canManageWorkspace);
 
         Bouncer::allow('editor')->to(Abilities::canViewWorkspace);
         Bouncer::allow('editor')->to(Abilities::canUpdateWorkspace);
 
-        Bouncer::allow('lector')->to(Abilities::canViewWorkspace);
+        Bouncer::allow('reader')->to(Abilities::canViewWorkspace);
 
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCollectionWorkspaceTable extends Migration
+class SetConstraintsOnDamResources extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,9 @@ class CreateCollectionWorkspaceTable extends Migration
      */
     public function up()
     {
-        Schema::create('collection_workspace', function (Blueprint $table) {
-            $table->id();
-            $table->integer('workspace_id');
-            $table->string('collection_id');
-            $table->timestamps();
+        //it's in different migration, because requires the table "collections" created
+        Schema::table('dam_resources', function (Blueprint $table) {
+            $table->foreign('collection_id', 'dam_resource_collection_fk')->references('id')->on('collections')->onDelete('cascade');
         });
     }
 
@@ -28,6 +26,6 @@ class CreateCollectionWorkspaceTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('collection_workspace');
+        //
     }
 }

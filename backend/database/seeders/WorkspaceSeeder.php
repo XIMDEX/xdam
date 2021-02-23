@@ -29,7 +29,7 @@ class WorkspaceSeeder extends Seeder
         Workspace::create([
             'name' => 'Escuela N-5 - Corporation',
             'organization_id' => 2,
-            'type' => WorkspaceType::corporation,
+            'type' => WorkspaceType::corporate,
             'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
             'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
         ]);

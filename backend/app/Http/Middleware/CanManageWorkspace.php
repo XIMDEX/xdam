@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use App\Enums\Abilities;
-use App\Models\Organization;
 use App\Models\Workspace;
 use Closure;
 use Illuminate\Http\Request;
@@ -20,16 +19,17 @@ class CanManageWorkspace
      */
     public function handle(Request $request, Closure $next)
     {
-        $wsp = Workspace::find($request->workspace_id);
-        $user = Auth::user();
-        if ($user->isAn('admin')) {
+        if($request->workspace_id) {
+            $wsp = Workspace::find($request->workspace_id);
+            $user = Auth::user();
+
+            if ($user->can(Abilities::canManageWorkspace, $wsp) ||  $user->isAn('admin')) {
+                return $next($request);
+            }
+
+            return response()->json(['error_wsp' => 'Unauthorized.'], 401);
+        } else {
             return $next($request);
         }
-
-        if ($user->can(Abilities::canManageWorkspace, $wsp) ||  $user->isAn('admin')) {
-            return $next($request);
-        }
-
-        return response()->json(['error' => 'Unauthorized.'], 401);
     }
 }

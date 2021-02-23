@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\OrganizationType;
 use App\Enums\WorkspaceType;
 use App\Traits\SetDefaultOrganizationAndWorkspace;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -63,5 +64,10 @@ class User extends Authenticatable
     public function personalWorkspace()
     {
         return $this->workspaces()->where('type', WorkspaceType::personal)->first();
+    }
+
+    public function personalOrganization()
+    {
+        return $this->organizations()->where('type', OrganizationType::personal)->first();
     }
 }

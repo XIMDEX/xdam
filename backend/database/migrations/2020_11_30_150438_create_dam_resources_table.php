@@ -18,13 +18,12 @@ class CreateDamResourcesTable extends Migration
             $table->uuid('id')->primary();
             $table->integer('user_owner_id');
             $table->string("external_id")->nullable();
-            $table->string("name")->nullable();
+            $table->string('name')->nullable();
             $table->enum('type', ResourceType::getValues())
                 ->default(ResourceType::document);
             $table->json("data")->nullable();
-            $table->integer('collection_id')->nullable();
+            $table->unsignedInteger('collection_id')->nullable();
             $table->timestamps();
-
         });
     }
 
