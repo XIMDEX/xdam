@@ -4,6 +4,7 @@
 namespace App\Traits;
 
 
+use App\Models\Collection;
 use Opis\JsonSchema\Validator;
 
 trait JsonValidatorTrait
@@ -17,10 +18,12 @@ trait JsonValidatorTrait
     protected function throwErrorWithValidator($factory, $fieldName)
     {
         $result = $factory->getData();
+        $collectionType = Collection::findOrFail($result["collection_id"])->type;
+        $validator = $collectionType->getValidator();
         $data = $result[$fieldName];
         $factory->after(
-            function ($factory) use ($fieldName, $data) {
-                $resultValidation = $this->validateWithSchema($data, json_decode($this->schema));
+            function ($factory) use ($fieldName, $data, $validator) {
+                $resultValidation = $this->validateWithSchema($data, $validator);
                 if ($resultValidation->hasErrors()) {
                     $errors = $resultValidation->getErrors();
                     foreach ($errors as $error) {
