@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateCollectionRequest;
+use App\Http\Requests\IndexCollectionRequest;
 use App\Http\Requests\Organization\CreateOrganizationRequest;
 use App\Http\Requests\Organization\DeleteOrganizationRequest;
 use App\Http\Requests\Organization\GetOrganizationRequest;
 use App\Http\Requests\Organization\ListOrganizationsRequest;
 use App\Http\Requests\Organization\UpdateOrganizationRequest;
+use App\Http\Resources\CollectionCollections;
 use App\Http\Resources\OrganizationCollection;
 use App\Services\OrganizationWorkspace\OrganizationService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -62,10 +65,18 @@ class OrganizationController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function indexCollections()
+    public function indexCollections(IndexCollectionRequest $request)
     {
-        $collection = $this->organizationService->indexCollections();
-        return (new JsonResource($collection))
+        $collections = $this->organizationService->indexCollections($request->organization_id);
+        return (new CollectionCollections($collections))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function indexCollectionTypes(Request $request)
+    {
+        $collectionTypes = $this->organizationService->indexCollectionTypes();
+        return (new JsonResource($collectionTypes))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }

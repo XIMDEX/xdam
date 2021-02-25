@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\Abilities;
+use App\Enums\WorkspaceType;
 use App\Models\Workspace;
 use Closure;
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ class CanManageWorkspace
             $wsp = Workspace::find($request->workspace_id);
             $user = Auth::user();
 
-            if ($user->can(Abilities::canManageWorkspace, $wsp) ||  $user->isAn('admin')) {
+            if ($user->can(Abilities::ManageWorkspace, $wsp) ||  $user->isAn(Roles::super_admin) || $wsp->type == WorkspaceType::public) {
                 return $next($request);
             }
 

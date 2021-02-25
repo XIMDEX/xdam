@@ -6,19 +6,16 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class GetAllUserResourcesTest extends TestCase
+class PermissionOnResourceTest extends TestCase
 {
-    use WithFaker;
     /**
      * A basic feature test example.
      *
      * @return void
      */
-    public function test_get_all_user_resources()
+    public function test_example()
     {
-        $this->actingAs($this->getUserWithRole(2), 'api');
-
-        $response = $this->json('GET', '/api/v1/user/resource');
+        $response = $this->get('/');
 
         $response->assertStatus(200);
     }

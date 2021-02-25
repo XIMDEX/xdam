@@ -206,7 +206,7 @@
 								{
 									"key": "File[]",
 									"type": "file",
-									"src": []
+									"src": ""
 								},
 								{
 									"key": "type",
@@ -215,18 +215,18 @@
 								},
 								{
 									"key": "data",
-									"value": "{\"texto\":\"ejemplo\"}",
+									"value": "{\"description\": {\"active\": true, \"partials\": {\"pages\": 10}}}",
 									"type": "text"
 								},
 								{
 									"key": "Preview",
 									"type": "file",
-									"src": "/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@7d9ae497-2950-4e8a-b534-2e08275c67ba@eaca770d-ba3c-49fd-a2b5-a82838a1f39d@@@.jpg"
+									"src": ""
 								}
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource",
+							"raw": "{{url}}{{api}}/resource?",
 							"host": [
 								"{{url}}{{api}}"
 							],
@@ -1132,7 +1132,7 @@
 							"formdata": [
 								{
 									"key": "email",
-									"value": "admin@xdam.com",
+									"value": "superadmin@xdam.com",
 									"type": "text"
 								},
 								{
@@ -1243,7 +1243,7 @@
 								},
 								{
 									"key": "workspace_id",
-									"value": "3",
+									"value": "9",
 									"type": "text"
 								},
 								{
@@ -1383,7 +1383,7 @@
 								},
 								{
 									"key": "organization_id",
-									"value": "3",
+									"value": "7",
 									"type": "text"
 								}
 							]
@@ -1466,14 +1466,14 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/organization/create/collection",
+							"raw": "{{url}}{{api}}/organization/collection/create",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"organization",
-								"create",
-								"collection"
+								"collection",
+								"create"
 							]
 						}
 					},
@@ -1508,14 +1508,15 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/organization/list/collections",
+							"raw": "{{url}}{{api}}/organization/1/collection/all",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"organization",
-								"list",
-								"collections"
+								"1",
+								"collection",
+								"all"
 							]
 						}
 					},
@@ -1536,7 +1537,7 @@
 								},
 								{
 									"key": "organization_id",
-									"value": "2",
+									"value": "7",
 									"type": "text"
 								},
 								{
@@ -1587,13 +1588,13 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/organization/workspaces/setAll/user",
+							"raw": "{{url}}{{api}}/organization/workspace/setAll/user",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"organization",
-								"workspaces",
+								"workspace",
 								"setAll",
 								"user"
 							]
@@ -1655,8 +1656,8 @@
 									"type": "text"
 								},
 								{
-									"key": "wo_id",
-									"value": "10",
+									"key": "entity_id",
+									"value": "9",
 									"type": "text"
 								},
 								{
@@ -1672,7 +1673,7 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/role/user/set/abilitiesOnOrganizationOrWorkspace",
+							"raw": "{{url}}{{api}}/role/user/set/abilitiesOnEntity",
 							"host": [
 								"{{url}}{{api}}"
 							],
@@ -1680,7 +1681,7 @@
 								"role",
 								"user",
 								"set",
-								"abilitiesOnOrganizationOrWorkspace"
+								"abilitiesOnEntity"
 							]
 						}
 					},
@@ -1722,13 +1723,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/user/resources",
+							"raw": "{{url}}{{api}}/user/resource",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"user",
-								"resources"
+								"resource"
 							]
 						}
 					},
@@ -1797,35 +1798,6 @@
 								"organizations",
 								"1",
 								"workspaces"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "SELECT ORGANIZATION",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "organization_id",
-									"value": "1",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{url}}{{api}}/user/organizations/select",
-							"host": [
-								"{{url}}{{api}}"
-							],
-							"path": [
-								"user",
-								"organizations",
-								"select"
 							]
 						}
 					},
@@ -1902,18 +1874,18 @@
 									"formdata": [
 										{
 											"key": "name",
-											"value": "La Escuela 22",
+											"value": "La Escuela 22as",
 											"type": "text"
 										}
 									]
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/admin/organization/create",
+									"raw": "{{url}}{{api}}/super-admin/organization/create",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"admin",
+										"super-admin",
 										"organization",
 										"create"
 									]
@@ -1931,14 +1903,14 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/admin/organization/1",
+									"raw": "{{url}}{{api}}/super-admin/organization/2",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"admin",
+										"super-admin",
 										"organization",
-										"1"
+										"2"
 									]
 								}
 							},
@@ -1954,12 +1926,12 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/admin/organization/index",
+									"raw": "{{url}}{{api}}/super-admin/organization/index",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"admin",
+										"super-admin",
 										"organization",
 										"index"
 									]
@@ -1977,12 +1949,12 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/admin/organization/get/2",
+									"raw": "{{url}}{{api}}/super-admin/organization/get/2",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"admin",
+										"super-admin",
 										"organization",
 										"get",
 										"2"
@@ -2001,23 +1973,23 @@
 									"formdata": [
 										{
 											"key": "organization_id",
-											"value": "1",
+											"value": "4",
 											"type": "text"
 										},
 										{
 											"key": "name",
-											"value": "Public ORG",
+											"value": "Nuevo nombre",
 											"type": "text"
 										}
 									]
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/admin/organization/update",
+									"raw": "{{url}}{{api}}/super-admin/organization/update",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"admin",
+										"super-admin",
 										"organization",
 										"update"
 									]
@@ -2052,12 +2024,12 @@
 									]
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/admin/role/store",
+									"raw": "{{url}}{{api}}/super-admin/role/store",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"admin",
+										"super-admin",
 										"role",
 										"store"
 									]
@@ -2075,12 +2047,12 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/admin/role/3",
+									"raw": "{{url}}{{api}}/super-admin/role/3",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"admin",
+										"super-admin",
 										"role",
 										"3"
 									]
@@ -2098,12 +2070,12 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/admin/role/all",
+									"raw": "{{url}}{{api}}/super-admin/role/all",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"admin",
+										"super-admin",
 										"role",
 										"all"
 									]
@@ -2121,12 +2093,12 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/admin/role/1",
+									"raw": "{{url}}{{api}}/super-admin/role/1",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"admin",
+										"super-admin",
 										"role",
 										"1"
 									]
@@ -2150,12 +2122,12 @@
 									]
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/admin/role/update",
+									"raw": "{{url}}{{api}}/super-admin/role/update",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"admin",
+										"super-admin",
 										"role",
 										"update"
 									]
@@ -2196,12 +2168,12 @@
 									]
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/admin/role/giveAbility",
+									"raw": "{{url}}{{api}}/super-admin/role/giveAbility",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"admin",
+										"super-admin",
 										"role",
 										"giveAbility"
 									]
@@ -2230,12 +2202,12 @@
 									]
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/admin/role/removeAbility",
+									"raw": "{{url}}{{api}}/super-admin/role/removeAbility",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"admin",
+										"super-admin",
 										"role",
 										"removeAbility"
 									]
@@ -2270,12 +2242,12 @@
 									]
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/admin/ability/store",
+									"raw": "{{url}}{{api}}/super-admin/ability/store",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"admin",
+										"super-admin",
 										"ability",
 										"store"
 									]
@@ -2293,12 +2265,12 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/admin/ability/1",
+									"raw": "{{url}}{{api}}/super-admin/ability/1",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"admin",
+										"super-admin",
 										"ability",
 										"1"
 									]
@@ -2316,12 +2288,12 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/admin/ability/all",
+									"raw": "{{url}}{{api}}/super-admin/ability/all",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"admin",
+										"super-admin",
 										"ability",
 										"all"
 									]
@@ -2339,12 +2311,12 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/admin/ability/1",
+									"raw": "{{url}}{{api}}/super-admin/ability/1",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"admin",
+										"super-admin",
 										"ability",
 										"1"
 									]
@@ -2368,12 +2340,12 @@
 									]
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/admin/ability/update",
+									"raw": "{{url}}{{api}}/super-admin/ability/update",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"admin",
+										"super-admin",
 										"ability",
 										"update"
 									]

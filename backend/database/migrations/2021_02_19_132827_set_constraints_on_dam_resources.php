@@ -17,6 +17,14 @@ class SetConstraintsOnDamResources extends Migration
         Schema::table('dam_resources', function (Blueprint $table) {
             $table->foreign('collection_id', 'dam_resource_collection_fk')->references('id')->on('collections')->onDelete('cascade');
         });
+
+        Schema::table('abilities', function (Blueprint $table) {
+            $table->string('entity_id')->change();
+        });
+
+        Schema::table('permissions', function (Blueprint $table) {
+            $table->string('entity_id')->change();
+        });
     }
 
     /**

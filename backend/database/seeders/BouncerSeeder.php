@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\Abilities;
+use App\Enums\Roles;
 use Illuminate\Database\Seeder;
 use Silber\Bouncer\BouncerFacade as Bouncer;
 
@@ -15,18 +16,25 @@ class BouncerSeeder extends Seeder
      */
     public function run()
     {
+        Bouncer::allow(Roles::super_admin)->everything();
 
-        Bouncer::allow('admin')->everything();
+        Bouncer::allow(Roles::admin)->to([
+            Abilities::ManageRoles,
+            Abilities::ManageOrganization,
+            Abilities::ManageWorkspace,
+        ]);
 
-        //Workspaces
-        Bouncer::allow('manager')->to(Abilities::canManageRoles);
-        Bouncer::allow('manager')->to(Abilities::canManageOrganization);
-        Bouncer::allow('manager')->to(Abilities::canManageWorkspace);
+        Bouncer::allow(Roles::manager)->to([
+            Abilities::ManageWorkspace,
+        ]);
 
-        Bouncer::allow('editor')->to(Abilities::canViewWorkspace);
-        Bouncer::allow('editor')->to(Abilities::canUpdateWorkspace);
+        Bouncer::allow(Roles::editor)->to([
+            Abilities::ViewWorkspace,
+            Abilities::UpdateWorkspace
+        ]);
 
-        Bouncer::allow('reader')->to(Abilities::canViewWorkspace);
-
+        Bouncer::allow(Roles::reader)->to([
+            Abilities::ViewWorkspace,
+        ]);
     }
 }

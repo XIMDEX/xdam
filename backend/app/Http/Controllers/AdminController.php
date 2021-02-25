@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Organization\SetOrganizationsToUserRequest;
-use App\Http\Requests\SetRoleAbilitiesOnWorkspaceRequest;
+use App\Http\Requests\SetRoleAbilitiesOnEntityRequest;
 use App\Http\Requests\UnsetOrganizationRequest;
 use App\Http\Requests\Workspace\SetWorkspacesToUserRequest;
 use App\Services\Admin\AdminService;
@@ -60,9 +60,9 @@ class AdminController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function roleAbilitiesOnWorkspaceOrOrganization(SetRoleAbilitiesOnWorkspaceRequest $request) {
+    public function SetRoleAbilitiesOnEntity(SetRoleAbilitiesOnEntityRequest $request) {
         $adminResource = $this->adminService
-            ->roleAbilitiesOnWorkspaceOrOrganization($request->user_id, $request->role_id, $request->wo_id, $request->type, $request->on);
+            ->SetRoleAbilitiesOnEntity($request->user_id, $request->role_id, $request->entity_id, $request->type, $request->on);
         return (new JsonResource($adminResource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);

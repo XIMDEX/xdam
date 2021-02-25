@@ -3,6 +3,9 @@
 namespace App\Http\Middleware;
 
 use App\Enums\Abilities;
+use App\Enums\Entities;
+use App\Enums\Roles;
+use App\Models\DamResource;
 use App\Models\Organization;
 use App\Models\Workspace;
 use Closure;
@@ -22,10 +25,27 @@ class CanManageRoles
     {
         $user = Auth::user();
         $entity = null;
-        $user->isAn('admin') ? $next($request) : null;
-        $userAbilities = $user->getAbilities();
-        $request->on == 'org' ? $entity = Organization::find($request->wo_id) : $entity = Workspace::find($request->wo_id);
+        $user->isAn(Roles::super_admin) ? $next($request) : null;
 
-        return $user->can(Abilities::canManageRoles, $entity) ? $next($request) : response()->json(['error_role' => 'Unauthorized.'], 401);
+        switch ($request->on) {
+            case Entities::organization:
+                $entity = Organization::find($request->entity_id);
+                break;
+            case Entities::workspace:
+                $entity = Workspace::find($request->entity_id);
+                break;
+            case Entities::resource:
+                $entity = DamResource::find($request->entity_id);
+                break;
+            default:
+                return response()->json(['error_role_invalid_entity' => 'Unauthorized.'], 401);
+                break;
+        }
+
+        if ($entity instanceof DamResource && $user->ownResource($entity)) {
+            return $next($request);
+        }
+
+        return $user->can(Abilities::ManageRoles, $entity) ? $next($request) : response()->json(['error_role' => 'Unauthorized.'], 401);
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use App\Enums\Abilities;
+use App\Enums\OrganizationType;
+use App\Enums\Roles;
 use App\Models\Organization;
 use Closure;
 use Illuminate\Http\Request;
@@ -21,9 +23,7 @@ class CanManageOrganization
     {
         $org = Organization::find($request->organization_id);
         $user =  Auth::user();
-        $ua = $user->getAbilities()->toArray();
-
-        if ($user->can(Abilities::canManageOrganization, $org) ||  $user->isAn('admin')) {
+        if ($user->can(Abilities::ManageOrganization, $org) ||  $user->isAn(Roles::super_admin) ||  $org->type == OrganizationType::public) {
             return $next($request);
         }
 

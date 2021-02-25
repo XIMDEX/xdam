@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\Roles;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -18,17 +19,17 @@ class UserRoleAssignTest extends TestCase
      */
     public function test_user_role_assign()
     {
-        $admin = $this->getUserWithRole(1);
+        $super_admin = $this->getUserWithRole(1);
+        $admin = User::factory()->create(['name' => 'admin']);
+        $new_admin = User::factory()->create(['name' => 'new_admin']);
         $manager = User::factory()->create(['name' => 'manager']);
-        $new_manager = User::factory()->create(['name' => 'new_manager']);
-        $editor = User::factory()->create(['name' => 'editor']);
 
         /*
-            As $admin, create an organization and set it to $manager
+            As $super_admin, create an organization and set it to $admin
         */
-        $this->actingAs($admin, 'api');
+        $this->actingAs($super_admin, 'api');
 
-        $org = $this->json('POST', '/api/v1/admin/organization/create', [
+        $org = $this->json('POST', '/api/v1/super-admin/organization/create', [
             'name' => 'Organization Test ' . Str::random() ,
         ]);
 
@@ -44,8 +45,8 @@ class UserRoleAssignTest extends TestCase
 
 
         $response = $this->json('POST', '/api/v1/organization/set/user', [
-            'user_id' => $manager->id,
-            'with_role_id' => "2",
+            'user_id' => $admin->id,
+            'with_role_id' => Roles::admin_id,
             'organization_id' => $org->id,
         ]);
 
@@ -58,14 +59,14 @@ class UserRoleAssignTest extends TestCase
             ]);
 
         /*
-            Switch authenticated user from $admin to $manager (with the $org set)
-            Now, $manager will set role 'manager' to a $new_manager in $org
+            Switch authenticated user from $super_admin to $admin (with the $org set)
+            Now, $admin will set role 'admin' to a $new_admin in $org
         */
 
-        $this->actingAs($manager, 'api');
+        $this->actingAs($admin, 'api');
         $response = $this->json('POST', '/api/v1/organization/set/user', [
-            'user_id' => $new_manager->id,
-            'with_role_id' => '2',
+            'user_id' => $new_admin->id,
+            'with_role_id' => Roles::admin_id,
             'organization_id' => $org->id,
         ]);
 
@@ -78,11 +79,11 @@ class UserRoleAssignTest extends TestCase
             ]);
 
         /*
-            $manager set role 'manager' to a $new_manager in all workspaces of $org
+            $admin set role 'admin' to a $new_admin in all workspaces of $org
         */
         $response = $this->json('POST', '/api/v1/organization/workspace/setAll/user', [
-            'user_id' => $new_manager->id,
-            'with_role_id' => '2',
+            'user_id' => $new_admin->id,
+            'with_role_id' => Roles::admin_id,
             'organization_id' => $org->id,
         ]);
 
@@ -97,10 +98,10 @@ class UserRoleAssignTest extends TestCase
             ]);
 
         /*
-            Now as $new_manager create a new workspace in $org.
-            $new_manager is going to have "manager" role in the workspace created.
+            Now as $new_admin create a new workspace in $org.
+            $new_admin is going to have "admin" role in the workspace created.
         */
-        $this->actingAs($new_manager, 'api');
+        $this->actingAs($new_admin, 'api');
         $created_wsp_on_org = $this->json('POST', '/api/v1/organization/workspace/create', [
             'organization_id' => $org->id,
             'name' => 'El - Workspace'
@@ -116,11 +117,11 @@ class UserRoleAssignTest extends TestCase
         $wsp_entity = $created_wsp_on_org->original;
 
         /*
-            As $new_manager, set an $org to $editor
+            As $new_admin, set an $org to $manager
         */
         $created = $this->json('POST', '/api/v1/organization/set/user', [
-            'user_id' => $editor->id,
-            'with_role_id' => "3",
+            'user_id' => $manager->id,
+            'with_role_id' => Roles::manager_id,
             'organization_id' => $org->id,
         ]);
 
@@ -136,16 +137,16 @@ class UserRoleAssignTest extends TestCase
             Bouncer Bug: Bouncer permission is set in DB but when we get user->abilities at this point (in testing context)
             the user haven't abilities for the entity.
             This test can be tested step by step with postman, and will works.
-            Pass test acting as $admin
+            Pass test acting as $super_admin
         */
 
-        $this->actingAs($admin, 'api');
+        $this->actingAs($super_admin, 'api');
         /*
-        As $new_manager, set the $created_wsp_on_org to $editor
+        As $new_admin, set the $created_wsp_on_org to $manager
         */
         $created = $this->json('POST', '/api/v1/workspace/set/user', [
-            'user_id' => $editor->id,
-            'with_role_id' => "3",
+            'user_id' => $manager->id,
+            'with_role_id' => Roles::manager_id,
             'workspace_id' => $wsp_entity->id,
         ]);
 
@@ -159,12 +160,12 @@ class UserRoleAssignTest extends TestCase
             ]);
 
         /*
-            As $new_manager, set role 'editor' to $editor on previous $created_wsp_on_org
+            As $new_admin, set role 'manager' to $manager on previous $created_wsp_on_org
         */
-        $created = $this->json('POST', '/api/v1/role/user/set/abilitiesOnOrganizationOrWorkspace', [
-            'user_id' => $editor->id,
-            'role_id' => "3",
-            'wo_id' => $wsp_entity->id,
+        $created = $this->json('POST', '/api/v1/role/user/set/abilitiesOnEntity', [
+            'user_id' => $manager->id,
+            'role_id' => Roles::manager_id,
+            'entity_id' => $wsp_entity->id,
             'type' => 'set',
             'on' => 'wsp',
         ]);

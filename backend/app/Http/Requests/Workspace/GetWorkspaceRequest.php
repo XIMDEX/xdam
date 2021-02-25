@@ -16,7 +16,7 @@ class GetWorkspaceRequest extends FormRequest
     public function authorize()
     {
         //check if user has the view-workspace ability on the specified entity
-        if ($this->user()->can(Abilities::canViewWorkspace, Workspace::find($this->workspace_id))) {
+        if ($this->user()->can(Abilities::ViewWorkspace, Workspace::find($this->workspace_id))) {
             return true;
         }
         return false;

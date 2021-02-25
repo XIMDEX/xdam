@@ -7,29 +7,29 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
-class SignUpTest extends TestCase
-{
-    use WithFaker;
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function test_signup()
-    {
-        $response = $this->json('POST', '/api/v1/auth/signup', [
-            'name' => 'test user',
-            'email' => 'test_user'.Str::orderedUuid().'@xdam.com',
-            'password'=> '123123',
-            'password_confirmation'=> '123123'
-        ]);
+// class SignUpTest extends TestCase
+// {
+//     use WithFaker;
+//     /**
+//      * A basic feature test example.
+//      *
+//      * @return void
+//      */
+//     public function test_signup()
+//     {
+//         $response = $this->json('POST', '/api/v1/auth/signup', [
+//             'name' => 'test user',
+//             'email' => 'test_user'.Str::orderedUuid().'@xdam.com',
+//             'password'=> '123123',
+//             'password_confirmation'=> '123123'
+//         ]);
 
-        $response
-            ->assertStatus(200)
-            ->assertJson([
-                'status' => 'Success',
-                'message' => 'User Created',
-                'data'=> ['access_token' => true],
-            ]);
-    }
-}
+//         $response
+//             ->assertStatus(200)
+//             ->assertJson([
+//                 'status' => 'Success',
+//                 'message' => 'User Created',
+//                 'data'=> ['access_token' => true],
+//             ]);
+//     }
+// }

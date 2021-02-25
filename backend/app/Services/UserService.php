@@ -11,6 +11,12 @@ use Illuminate\Support\Facades\Auth;
 
 class UserService
 {
+    private $resourceService;
+
+    public function __construct(ResourceService $resourceService)
+    {
+        $this->resourceService = $resourceService;
+    }
 
     public function user()
     {
@@ -45,18 +51,33 @@ class UserService
         $wsp_id = $wsp->id ?? null;
         $user->selected_workspace = $wsp_id;
         $user->save();
-        return [$wsp ? $wsp->organization()->first() : 'organization_null', ['selected workspace' => $wsp_id]];
+        return [$wsp ? $wsp->organization()->first() : 'personal context', ['selected workspace' => $wsp_id]];
 
 
     }
 
-    public function attachResourceToCollection($cid, $rid, $oid) {
+    public function attachResourceToCollection($cid, $rid, $oid): DamResource
+    {
         $res = DamResource::find($rid);
         $res->collection_id = $cid;
         $res->save();
         $org_corporate_wsp = Organization::where('id', $oid)->first();
-        $org_corporate_wsp->type == OrganizationType::public ? $wsp = $org_corporate_wsp->publicWorkspace() : $wsp = $org_corporate_wsp->corporateWorkspace();
-        $res->workspaces()->attach($wsp);
+
+        $org_corporate_wsp->type == OrganizationType::public ?
+            $wsp = $org_corporate_wsp->publicWorkspace() :
+            $wsp = $org_corporate_wsp->corporateWorkspace();
+
+        $this->resourceService->setResourceWorkspace($res, $wsp);
         return $res;
+    }
+
+    public function attachResourceToWorkspace($rid): DamResource
+    {
+        $resource = DamResource::find($rid);
+        $workspace = Workspace::find(Auth::user()->selected_workspace);
+        $this->resourceService->setResourceWorkspace($resource, $workspace);
+        //TODO: attach to some collection
+
+        return $resource;
     }
 }
