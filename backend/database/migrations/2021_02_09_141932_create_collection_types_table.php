@@ -16,7 +16,8 @@ class CreateCollectionTypesTable extends Migration
         Schema::create('collection_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->json('json_schema')->nullable();
+            $table->string('solr_schema')->nullable();
+            $table->string('json_validator')->nullable();
             $table->timestamps();
         });
     }
