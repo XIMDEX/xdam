@@ -3,24 +3,23 @@
 namespace App\Console\Commands;
 
 use App\Services\Solr\SolrConfig;
-use Exception;
 use Illuminate\Console\Command;
 
-class InstallSolr extends Command
+class CleanSolr extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'solr:install';
+    protected $signature = 'solr:clean';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'command that checks the current solr installation and runs a check of cores and schemas';
+    protected $description = 'Command description';
 
     /**
      * Create a new command instance.
@@ -34,16 +33,13 @@ class InstallSolr extends Command
 
     /**
      * Execute the console command.
+     *
      * @param SolrConfig $solrConfig
-     * @return bool
+     * @return int
      */
     public function handle(SolrConfig $solrConfig)
     {
-        try {
-            $this->line($solrConfig->install());
-        } catch (Exception $e) {
-            $this->error($e->getMessage());
-        }
-        return true;
+        $this->line($solrConfig->cleanAllDocuments());
+        return 0;
     }
 }
