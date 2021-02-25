@@ -19,7 +19,7 @@ class WorkspaceController extends Controller
     /**
      * @var WorkspaceService
      */
-    private $workspaceService;
+    private WorkspaceService $workspaceService;
 
     /**
      * WorkspaceController constructor.
