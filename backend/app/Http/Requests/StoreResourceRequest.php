@@ -12,52 +12,6 @@ class StoreResourceRequest extends FormRequest
 {
     use JsonValidatorTrait;
 
-    private $schema = '
-    {
-        "type": "object",
-        "properties": {
-            "description": {
-                "type": "object",
-                "required": ["active", "partials"],
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "format": "string"
-                    },
-                    "external_url": {
-                        "type": "string",
-                        "format": "string"
-                    },
-                    "description": {
-                        "type": "string",
-                        "format": "string"
-                    },
-                    "tags": {
-                        "type": "array",
-                        "format": "string"
-                    },
-                    "categories": {
-                        "type": "array",
-                        "format": "string"
-                    },
-                    "partials": {
-                        "type": "object",
-                        "properties": {
-                            "pages": {
-                                "type": "integer",
-                                "format": "integer"
-                            }
-                        }
-                    },
-                    "active": {
-                        "type": "boolean"
-                    }
-                }
-            }
-        },
-        "required": ["description"]
-    }';
-
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -76,9 +30,8 @@ class StoreResourceRequest extends FormRequest
     public function rules()
     {
         return [
-            'Preview' => 'file',
             'type' => ['required', new EnumKey(ResourceType::class)],
-            //'collection_id' => 'required|exists:collections,id',
+            'collection_id' => 'required|exists:collections,id',
             'data' => 'required'
         ];
     }

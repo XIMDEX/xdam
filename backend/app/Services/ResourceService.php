@@ -9,14 +9,11 @@ use App\Models\Category;
 use App\Models\DamResource;
 use App\Models\DamResourceUse;
 use App\Models\Media;
-use App\Models\Organization;
 use App\Models\Workspace;
 use App\Services\Solr\SolrService;
-use App\Utils\DamUrlUtil;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use stdClass;
 
 class ResourceService
 {
@@ -45,34 +42,6 @@ class ResourceService
         $this->categoryService = $categoryService;
         $this->solr = $solr;
     }
-
-    /**
-     * @param DamResource $resource
-     * @return stdClass
-     */
-    public function prepareResourceToBeIndexed(DamResource $resource): stdClass
-    {
-        $class = new stdClass();
-        $class->id = is_object($resource->id) ? $resource->id->toString() : $resource->id;
-        $class->data = json_encode($resource->data);
-        $class->name = $resource->name ?? '';
-        $class->active = $resource->data->description->active;
-        $class->type = ResourceType::fromValue($resource->type)->key;
-        $class->collection = $this->solr->getCollectionBySubType($class->type);
-        $class->categories = $resource->categories()->pluck('name')->toArray() ?? [""];
-        $previews = $this->mediaService->list($resource, MediaType::Preview()->key, true);
-        foreach ($previews as $preview) {
-            $parent_id = $preview->hasCustomProperty('parent_id') ? $preview->getCustomProperty('parent_id') : "";
-            $class->previews[] = DamUrlUtil::generateDamUrl($preview, $parent_id);
-        }
-        $files = $this->mediaService->list($resource, MediaType::File()->key, true);
-        foreach ($files as $file) {
-            $parent_id = $file->hasCustomProperty('parent_id') ? $file->getCustomProperty('parent_id') : "";
-            $class->files[] = DamUrlUtil::generateDamUrl($file, $parent_id);
-        }
-        return $class;
-    }
-
 
     private function saveAssociateFile($type, $params, $model)
     {
@@ -214,7 +183,7 @@ class ResourceService
             $this->linkTagsFromJson($resource, $params['data']);
         }
         $this->saveAssociatedFiles($resource, $params);
-        $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
+        $this->solr->saveOrUpdateDocument($resource);
         $resource->refresh();
         return $resource;
     }
@@ -251,7 +220,7 @@ class ResourceService
         isset($org) && $wid ? $this->setResourceWorkspace($newResource, $wsp) : null;
         $this->linkCategoriesFromJson($newResource, $params['data']);
         $this->saveAssociatedFiles($newResource, $params);
-        $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($newResource));
+        $this->solr->saveOrUpdateDocument($newResource);
         $newResource->refresh();
         $this->linkTagsFromJson($newResource, $params['data']);
         return $newResource;
@@ -268,7 +237,7 @@ class ResourceService
      */
     public function delete(DamResource $resource)
     {
-        $this->solr->deleteDocumentById($resource->id, $this->solr->getCollectionBySubType($resource->type));
+        $this->solr->deleteDocument($resource);
         $resource->delete();
     }
 
@@ -281,7 +250,7 @@ class ResourceService
     {
         $this->saveAssociateFile(MediaType::Preview()->key, $params, $resource);
         $resource->refresh();
-        $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
+        $this->solr->saveOrUpdateDocument($resource);
         return $resource;
     }
 
@@ -294,7 +263,7 @@ class ResourceService
     {
         $this->saveAssociateFile(MediaType::File()->key, $params, $resource);
         $resource->refresh();
-        $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
+        $this->solr->saveOrUpdateDocument($resource);
         return $resource;
     }
 
@@ -313,7 +282,7 @@ class ResourceService
         } else {
             throw new Exception ("category type and resource type are not equals");
         }
-        $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
+        $this->solr->saveOrUpdateDocument($resource);
         return $resource;
     }
 
@@ -360,7 +329,7 @@ class ResourceService
         if ($category->type == $resource->type) {
             if ($resource->hasCategory($category)) {
                 $resource->categories()->detach($category);
-                $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
+                $this->solr->saveOrUpdateDocument($resource);
             }
         } else {
             throw new Exception ("category type and resource type are not equals");

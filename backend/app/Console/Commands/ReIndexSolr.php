@@ -4,8 +4,8 @@ namespace App\Console\Commands;
 
 use App\Services\ResourceService;
 use App\Services\Solr\SolrService;
-use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 
 class ReIndexSolr extends Command
 {
@@ -14,14 +14,14 @@ class ReIndexSolr extends Command
      *
      * @var string
      */
-    protected $signature = 'reindex:solr';
+    protected $signature = 'solr:reindex';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Index mysql content in Apache Solr';
+    protected $description = 'index the resources in each of the solr instances';
 
     /**
      * Create a new command instance.
@@ -36,19 +36,14 @@ class ReIndexSolr extends Command
 
     public function handle(SolrService $solrService, ResourceService $resourceService)
     {
-        try {
-            $solrService->ping();
-        } catch (Exception $e) {
-            $this->error($e->getMessage());
-        }
-        $solrService->cleanSolr();
+        Artisan::call('solr:clean');
+
         $resources = $resourceService->getAll();
         $count = 0;
-        foreach($resources as $resource)
-        {
-            $solrService->saveOrUpdateDocument($resourceService->prepareResourceToBeIndexed($resource));
+        foreach ($resources as $resource) {
+            $solrService->saveOrUpdateDocument($resource);
             $count++;
         }
-        echo "$count documents indexed";
+        $this->line("$count documents indexed");
     }
 }

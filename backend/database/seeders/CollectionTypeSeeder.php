@@ -15,9 +15,14 @@ class CollectionTypeSeeder extends Seeder
      */
     public function run()
     {
+        $validatorsPath = config('solarium.solr_validators_folder');
+        $schemasPath = config('solarium.solr_schemas_folder');
+
         foreach (EnumsCollectionType::valuesToArray() as $name) {
             CollectionType::create([
                 'name' => $name,
+                'solr_schema' => "$schemasPath/$name" . "_schema.json",
+                'json_validator' => "$validatorsPath/$name" . '_validator.json',
             ]);
         }
     }

@@ -4,212 +4,136 @@
 namespace App\Services\Solr;
 
 
-use App\Enums\CollectionType;
+use App\Models\Collection;
+use App\Models\DamResource;
 use App\Services\Catalogue\FacetManager;
 use Exception;
 use Solarium\Core\Query\Result\ResultInterface;
 use stdClass;
-use TSterker\Solarium\SolariumManager;
 
+/**
+ * Class that is responsible for making crud with Apache Solr and each of its instances
+ * Class SolrService
+ * @package App\Services\Solr
+ */
 class SolrService
 {
-    protected array $collections = [
-        CollectionType::course => "xdam-course",
-        CollectionType::multimedia => "xdam-multimedia"
-    ];
 
-    /**
-     * @var SolariumManager
-     */
-    private SolariumManager $solarium;
-    /**
-     * @var FacetManager
-     */
     private FacetManager $facetManager;
-
-    /**
-     * @var SolrConfigService
-     */
-    private SolrConfigService $solrConfig;
+    private array $clients;
 
     /**
      * SolrService constructor.
-     * @param SolariumManager $solarium
      * @param FacetManager $facetManager
-     * @param SolrConfigService $solrConfig
+     * @param SolrConfig $solrConfig
      */
-    public function __construct(SolariumManager $solarium, FacetManager $facetManager, SolrConfigService $solrConfig)
+    public function __construct(FacetManager $facetManager, SolrConfig $solrConfig)
     {
-        $this->solarium = $solarium;
         $this->facetManager = $facetManager;
-        $this->solrConfig = $solrConfig;
-        $this->solrConfig->config($this->solarium, $this->collections);
-        $this->setDefaultCollection();
+        $this->clients = $solrConfig->getClients();
     }
 
-    public function solrServerIsReady(): bool
+    /**
+     * returns the document that will be finally indexed in solr
+     * @param DamResource $resource
+     * @param $resourceClass
+     * @return array
+     */
+    private function getDocumentFromResource(DamResource $resource, $resourceClass): array
     {
-        foreach ($this->collections as $core) {
-            if (!$this->solrConfig->checkCoreAlreadyExists($core)) {
-                $response = $this->solrConfig->createSolrCore($core);
-                if ($response)
-                {
-                    throw new Exception("Failed to create Solr Cores");
-                }
-            }
-            $diffFields = $this->solrConfig->getSchemaDifferences($core);
-            if (!empty($diffFields)) {
-                $this->solrConfig->createSchemaForCore($core, $diffFields);
-            }
-        }
-        return true;
+        return json_decode((new $resourceClass($resource))->toJson(), true);
     }
 
-    public function getCollectionBySubType(string $subType)
+    /**
+     * given a collection returns the required solr client instance
+     * @param Collection $collection
+     * @return mixed
+     * @throws Exception
+     */
+    private function getClientFromCollection(Collection $collection)
     {
-        if ($subType == CollectionType::course) {
-            return CollectionType::course;
+        $connection = $collection->solr_connection;
+        if ($connection) {
+            if (array_key_exists($connection, $this->clients)) {
+                return $this->clients[$connection];
+            } else {
+                throw new Exception ("there is no client for the collection $collection->id");
+            }
         } else {
-            return CollectionType::multimedia;
+            throw new Exception ("The collection $collection->id does not have a connection_name configured");
         }
     }
 
-    public function isValidCollection(string $collection)
+    /**
+     * given a resource, returns the required solr client instance
+     * @param DamResource $damResource
+     * @return mixed
+     * @throws Exception
+     */
+    private function getClientFromResource(DamResource $damResource)
     {
-        if (array_key_exists($collection, $this->collections)) {
-            return true;
-        }
-        return false;
+        return $this->getClientFromCollection($damResource->collection);
     }
 
-    public function setDefaultCollection()
+    /**
+     * update or save a document in solr
+     * @param DamResource $damResource
+     * @return ResultInterface
+     * @throws Exception
+     */
+    public function saveOrUpdateDocument(DamResource $damResource): ResultInterface
     {
-        $this->setCollection(CollectionType::multimedia);
-    }
-
-    public function setCollection(string $collection)
-    {
-        if ($this->isValidCollection($collection)) {
-           $this->solarium->getEndpoint()->setCollection($this->collections[$collection]);
-        }
-    }
-
-    public function ping(): bool
-    {
-        // create a ping query
-        $ping = $this->solarium->createPing();
-
-        // execute the ping query
-        try {
-            $this->solarium->ping($ping);
-            return true;
-        } catch (Exception $e) {
-            throw $e;
-        }
-    }
-
-    public function getDocumentById(string $id): array
-    {
-        $select = $this->solarium->createRealtimeGet();
-        $select->addId($id);
-        $result = $this->solarium->realtimeGet($select);
-        $document = [];
-
-        foreach ($result->getDocument() as $field => $value) {
-            $document[ucfirst($field)] = $value;
-        }
-
-        return $document;
-    }
-
-    public function saveOrUpdateDocument($data): ResultInterface
-    {
-        $this->setCollection($data->collection);
-        $createCommand = $this->solarium->createUpdate();
+        $client = $this->getClientFromResource($damResource);
+        $createCommand = $client->createUpdate();
         $document = $createCommand->createDocument();
 
-        foreach ($data as $key => $value) {
+        $documentResource = $this->getDocumentFromResource($damResource, $client->getOption('resource'));
+
+        foreach ($documentResource as $key => $value) {
             $document->$key = $value;
         }
 
         $createCommand->addDocument($document);
         $createCommand->addCommit();
-        return $this->solarium->update($createCommand);
+        return $client->update($createCommand);
     }
 
-    public function deleteDocumentById(string $id, string $collection): ResultInterface
+    /**
+     * Delete a document in Solr
+     * @param DamResource $damResource
+     * @return ResultInterface
+     * @throws Exception
+     */
+    public function deleteDocument(DamResource $damResource): ResultInterface
     {
-        $this->setCollection($collection);
-        $deleteQuery = $this->solarium->createUpdate();
-        $deleteQuery->addDeleteQuery('id:' . $id);
+        $client = $this->getClientFromResource($damResource);
+        $deleteQuery = $client->createUpdate();
+        $deleteQuery->addDeleteQuery('id:' . $damResource->id);
         $deleteQuery->addCommit();
-        return $this->solarium->update($deleteQuery);
+        return $client->update($deleteQuery);
     }
 
-    public function cleanSolr()
-    {
-        foreach($this->collections as $collection)
-        {
-            $this->solarium->getEndpoint()->setCollection($collection);
-
-            // get an update query instance
-            $update = $this->solarium->createUpdate();
-
-            // add the delete query and a commit command to the update query
-            $update->addDeleteQuery('*:*');
-            $update->addCommit();
-
-
-            // this executes the query and returns the result
-            $this->solarium->update($update);
-        }
-
-    }
-
-
-    public function queryByFacet($facetsFilter, $collection): stdClass
-    {
-        $this->setCollection($collection);
-        $query = $this->solarium->createSelect();
-
-        $facetSet = $query->getFacetSet();
-
-        /* the facets to be applied to the query  */
-        $this->facetManager->setFacets($facetSet, $facetsFilter);
-        /*  limit the query to facets that the user has marked us */
-        $this->facetManager->setQueryByFacets($query, $facetsFilter);
-
-
-        $allDocuments = $this->solarium->select($query);
-        $facets = $allDocuments->getFacetSet();
-
-        $result = new stdClass();
-
-        if (!empty($facets)) {
-            $result->data = [];
-
-            foreach ($allDocuments as $document) {
-                $result->data[] = $document->getFields();
-            }
-        }
-
-        return $result;
-    }
-
+    /**
+     * Make a faceted query with parameters to Apache Solr
+     * @param array $pageParams
+     * @param array $sortParams
+     * @param $facetsFilter
+     * @param $collection
+     * @return stdClass
+     * @throws Exception
+     */
     public function paginatedQueryByFacet(
         $pageParams = [],
         $sortParams = [],
         $facetsFilter,
         $collection
     ): stdClass {
-        $this->setCollection($collection);
-
+        $client = $this->getClientFromCollection($collection);
         $search = $pageParams['search'];
         $currentPage = $pageParams['currentPage'];
         $limit = $pageParams['limit'];
 
-        $query = $this->solarium->createSelect();
-
+        $query = $client->createSelect();
         $facetSet = $query->getFacetSet();
 
         /* the facets to be applied to the query  */
@@ -223,12 +147,12 @@ class SolrService
         }
 
         // the query is done without the facet filter, so that it returns the complete list of facets and the counter present in the entire index
-        $allDocuments = $this->solarium->select($query);
+        $allDocuments = $client->select($query);
         $faceSetFound = $allDocuments->getFacetSet();
 
         // make a new request, filtering for each facet
         $this->facetManager->setQueryByFacets($query, $facetsFilter);
-        $allDocuments = $this->solarium->select($query);
+        $allDocuments = $client->select($query);
         $documentsFound = $allDocuments->getNumFound();
 
         $totalPages = ceil($documentsFound / $limit);
@@ -237,7 +161,7 @@ class SolrService
         /* Limit query by pagination limits */
         $query->setStart($currentPageFrom)->setRows($limit);
 
-        $allDocuments = $this->solarium->execute($query);
+        $allDocuments = $client->execute($query);
 
         $documentsResponse = [];
 

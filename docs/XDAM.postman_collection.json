@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1f179f4d-e7bf-4936-a7f0-a206e738416e",
+		"_postman_id": "3302de87-f83a-48b1-9d54-89e8a9decb38",
 		"name": "XDAM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -39,12 +39,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -94,12 +94,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -124,12 +124,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -177,12 +177,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -204,9 +204,9 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "File[]",
+									"key": "File",
 									"type": "file",
-									"src": ""
+									"src": "/Users/develop/Desktop/2021-02-23 10-09-21.mkv"
 								},
 								{
 									"key": "type",
@@ -221,7 +221,12 @@
 								{
 									"key": "Preview",
 									"type": "file",
-									"src": ""
+									"src": "/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@7d9ae497-2950-4e8a-b534-2e08275c67ba@eaca770d-ba3c-49fd-a2b5-a82838a1f39d@@@.jpg"
+								},
+								{
+									"key": "collection_id",
+									"value": "1",
+									"type": "text"
 								}
 							]
 						},
@@ -236,12 +241,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -296,12 +301,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -342,12 +347,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -383,12 +388,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -442,12 +447,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -502,12 +507,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -542,12 +547,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -597,12 +602,67 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TEST",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Teacher Training",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "_method",
+									"value": "PUT",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/test",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"test"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -650,12 +710,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -703,12 +763,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -758,12 +818,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -813,12 +873,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -856,12 +916,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -914,12 +974,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -971,12 +1031,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -995,13 +1055,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}{{api}}/catalogue/multimedia/index?limit=100&facets[type][]=audio",
+							"raw": "{{url}}{{api}}/catalogue/1/index?limit=100&facets[type][]=video",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"catalogue",
-								"multimedia",
+								"1",
 								"index"
 							],
 							"query": [
@@ -1031,84 +1091,13 @@
 								},
 								{
 									"key": "facets[type][]",
-									"value": "audio"
+									"value": "video"
 								},
 								{
 									"key": "facets[type][]",
 									"value": "video",
 									"disabled": true
 								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "CHECK SOLR",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{url}}{{api}}/catalogue/checkSolr",
-							"host": [
-								"{{url}}{{api}}"
-							],
-							"path": [
-								"catalogue",
-								"checkSolr"
-							],
-							"query": [
-								{
-									"key": "facets[categories]",
-									"value": "Horses",
-									"disabled": true
-								},
-								{
-									"key": "facets[categories]",
-									"value": "Cats",
-									"disabled": true
-								},
-								{
-									"key": "facets[type]",
-									"value": "video",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GET DOCUMENTS BY TYPE",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{url}}{{api}}/catalogue/multimedia",
-							"host": [
-								"{{url}}{{api}}"
-							],
-							"path": [
-								"catalogue",
-								"multimedia"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "CLEAR CATALOGUE",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{url}}{{api}}/catalogue/clearAll",
-							"host": [
-								"{{url}}{{api}}"
-							],
-							"path": [
-								"catalogue",
-								"clearAll"
 							]
 						}
 					},
@@ -1306,10 +1295,6 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}{{api}}/workspace/index",
 							"host": [
@@ -1328,10 +1313,6 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}{{api}}/workspace/get/6",
 							"host": [
@@ -1697,10 +1678,6 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}{{api}}/user",
 							"host": [
@@ -1718,10 +1695,6 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}{{api}}/user/resource",
 							"host": [
@@ -1740,10 +1713,6 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}{{api}}/user/organizations",
 							"host": [
@@ -1762,10 +1731,6 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}{{api}}/user/workspaces",
 							"host": [
@@ -1784,10 +1749,6 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}{{api}}/user/organizations/1/workspaces",
 							"host": [
@@ -1837,10 +1798,6 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}{{api}}/user/workspaces/1/resources",
 							"host": [
@@ -1921,10 +1878,6 @@
 							"request": {
 								"method": "GET",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}{{api}}/super-admin/organization/index",
 									"host": [
@@ -1944,10 +1897,6 @@
 							"request": {
 								"method": "GET",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}{{api}}/super-admin/organization/get/2",
 									"host": [
@@ -1997,8 +1946,7 @@
 							},
 							"response": []
 						}
-					],
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "ROLES",
@@ -2065,10 +2013,6 @@
 							"request": {
 								"method": "GET",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}{{api}}/super-admin/role/all",
 									"host": [
@@ -2088,10 +2032,6 @@
 							"request": {
 								"method": "GET",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}{{api}}/super-admin/role/1",
 									"host": [
@@ -2215,8 +2155,7 @@
 							},
 							"response": []
 						}
-					],
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "ABILITIES",
@@ -2283,10 +2222,6 @@
 							"request": {
 								"method": "GET",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}{{api}}/super-admin/ability/all",
 									"host": [
@@ -2306,10 +2241,6 @@
 							"request": {
 								"method": "GET",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}{{api}}/super-admin/ability/1",
 									"host": [
@@ -2353,8 +2284,7 @@
 							},
 							"response": []
 						}
-					],
-					"_postman_isSubFolder": true
+					]
 				}
 			]
 		},
@@ -2401,12 +2331,12 @@
 					"query": [
 						{
 							"key": "",
-							"value": null,
+							"value": "",
 							"disabled": true
 						},
 						{
 							"key": "",
-							"value": null,
+							"value": "",
 							"disabled": true
 						}
 					]
@@ -2456,12 +2386,12 @@
 					"query": [
 						{
 							"key": "",
-							"value": null,
+							"value": "",
 							"disabled": true
 						},
 						{
 							"key": "",
-							"value": null,
+							"value": "",
 							"disabled": true
 						}
 					]
@@ -2475,7 +2405,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "",
+				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiOTU4YmJmMDZiMzE0ZTQ1N2ZhNGJlYmUwZWIyMzViNzA0ZTA3MjEwN2ZiYzkyMDcxNjVjZTA0ODg0NjEyMGQzYWVhZWI1M2M4ZDJhMDQ3MzgiLCJpYXQiOiIxNjE0MjU4Mzc4LjE4OTEwNiIsIm5iZiI6IjE2MTQyNTgzNzguMTg5MTI3IiwiZXhwIjoiMTYyOTg5Njc3Ny43NzU4NjMiLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.gbAZ6UGZFpbZM70XNXBM5mz51-tWhq5CoQMW1aifwFV123Ti87KRDNyW9mxCzuO8C5z5u7yHel_xh8wQtfll0XpM6nZub2tIc3HMZxCCymRB9o22p9IDP20wYuAlanYl3cbJLB-m4qR2E2XoUTH-vucFodm0iqRNQOrU2n2FmjfFD4dq8p0vc5XDwY-GAQQebI8KPIjst0TaVfL9HtNu3VMHvUCaWrItaYTm-3PgnxsjeEVtPdW1dK_rhJ8Q0oVbGKhwyWaJTDx9KfAuwb_znnSys4R_mrIm1jT7xwn5EzH47SHrWNK6_7e08HuYTX_7UlA3_-LQaH_WwT53niENRZxdaMWtQKpKfNKSgWPcwhL8rt9nfoDjsJMKhjBSHj0RD4sw4NkqSSm1y_3vSGJMQlisHcj0UUDP_L0vEQPIrz-ThGXpKgw4IotRkYydMc03gcRQkrdetgV9PxtBljPtGf3JwT78AwkfG8FOfWzcnL00sHQQCDq4qwHP89q3JGAdFLb71am0FSgj2oGjzOziI02wexek5lKsiiTE2XothiVZpC1hm0NgPtjiUoEcNapp7YRZDjcMXVkSVTktEu7mzzz2rK9TJvK_Dd6UCpmRRR10etiDbtAA0kJ4IWGmj7gzh3aPnuI4T76U_baPS6oqwFQ9J25JEOhSTnneAJ5O2uA",
 				"type": "string"
 			}
 		]
@@ -2517,7 +2447,7 @@
 		},
 		{
 			"key": "url",
-			"value": "http://localhost/xdam/backend/public/"
+			"value": "http://localhost/xdam/backend/public"
 		},
 		{
 			"key": "url",
