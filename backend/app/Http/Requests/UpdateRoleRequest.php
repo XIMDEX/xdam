@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Workspace;
+namespace App\Http\Requests;
 
-use App\Enums\Abilities;
-use App\Models\Workspace;
 use Illuminate\Foundation\Http\FormRequest;
 
-class GetWorkspaceRequest extends FormRequest
+class UpdateRoleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,10 +13,6 @@ class GetWorkspaceRequest extends FormRequest
      */
     public function authorize()
     {
-        //check if user has the view-workspace ability on the specified entity
-        if ($this->user()->canAny([Abilities::ViewWorkspace, Abilities::ManageWorkspace], Workspace::find($this->workspace_id))) {
-            return true;
-        }
         return false;
     }
 
@@ -30,7 +24,7 @@ class GetWorkspaceRequest extends FormRequest
     public function rules()
     {
         return [
-
+            //
         ];
     }
 }

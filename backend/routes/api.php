@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\Abilities;
 use App\Http\Controllers\AbilityController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CatalogueController;
@@ -35,22 +34,6 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
 
     Route::group(['middleware' => 'auth:api'], function () {
         Route::group(['prefix' => 'super-admin', 'middleware' => 'can:*'], function(){
-            Route::group(['prefix' => 'role'], function(){
-                Route::post('store',            [RoleController::class, 'store'])        ->name('role.store');
-                Route::post('update',           [RoleController::class, 'update'])       ->name('role.update');
-                Route::get('all',               [RoleController::class, 'index'])        ->name('role.index');
-                Route::get('/{id}',             [RoleController::class, 'get'])          ->name('role.get');
-                Route::delete('/{id}',          [RoleController::class, 'delete'])       ->name('role.delete');
-                Route::post('giveAbility',      [RoleController::class, 'giveAbility'])  ->name('role.giveAbility');
-                Route::post('removeAbility',    [RoleController::class, 'removeAbility'])->name('role.removeAbility');
-            });
-            Route::group(['prefix' => 'ability'], function(){
-                Route::post('/store',   [AbilityController::class, 'store']) ->name('ability.store');
-                Route::post('/update',  [AbilityController::class, 'update'])->name('ability.update');
-                Route::get('/all',      [AbilityController::class, 'index']) ->name('ability.index');
-                Route::get('/{id}',     [AbilityController::class, 'get'])   ->name('ability.get');
-                Route::delete('/{id}',  [AbilityController::class, 'delete'])->name('ability.delete');
-            });
             Route::group(['prefix' => 'organization'], function(){
                 Route::post('create',               [OrganizationController::class, 'create'])          ->name('org.create');
                 Route::get('get/{organization_id}', [OrganizationController::class, 'get'])             ->name('org.get')   ;
@@ -61,6 +44,24 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
         });
 
         Route::group(['prefix' => 'organization', 'middleware' => 'manage.organizations'], function(){
+
+            //Roles
+            Route::get('{organization}/role/{role_id}',          [RoleController::class, 'get'])          ->name('role.get');
+            Route::get('{organization}/roles/all',               [RoleController::class, 'index'])        ->name('role.index');
+            Route::post('{organization}/roles/store',            [RoleController::class, 'store'])        ->name('role.store');
+            Route::post('{organization}/roles/update',           [RoleController::class, 'update'])       ->name('role.update');
+            Route::post('{organization}/roles/giveAbility',      [RoleController::class, 'giveAbility'])  ->name('role.giveAbility');
+            Route::post('{organization}/roles/removeAbility',    [RoleController::class, 'removeAbility'])->name('role.removeAbility');
+            Route::delete('{organization}/roles/{id}',           [RoleController::class, 'delete'])       ->name('role.delete');
+
+            //Abilities
+            Route::post('/store',   [AbilityController::class, 'store']) ->name('ability.store');
+            Route::post('/update',  [AbilityController::class, 'update'])->name('ability.update');
+            Route::get('/all',      [AbilityController::class, 'index']) ->name('ability.index');
+            Route::get('/{id}',     [AbilityController::class, 'get'])   ->name('ability.get');
+            Route::delete('/{id}',  [AbilityController::class, 'delete'])->name('ability.delete');
+
+            //User settings
             Route::post('set/user',                         [AdminController::class, 'setOrganizations'])              ->name('adm.usr.set.org');
             Route::post('unset/user',                       [AdminController::class, 'unsetOrganizations'])            ->name('adm.usr.unset.org');
             Route::post('workspace/create',                 [WorkspaceController::class, 'create'])                    ->name('wsp.create');

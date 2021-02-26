@@ -2,37 +2,54 @@
 
 namespace App\Services;
 
-use Illuminate\Database\Eloquent\Collection;
+use App\Enums\Roles;
+use App\Models\Organization;
+use App\Models\Role;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Silber\Bouncer\BouncerFacade as Bouncer;
 use Silber\Bouncer\Database\Ability;
-use Silber\Bouncer\Database\Role;
 
 class RoleService
 {
 
-    public function store($name, $title): Role
+    public function store($organization, $name, $title): Role
     {
-        $role = Bouncer::role()->firstOrCreate([
+        $role = Role::firstOrCreate([
             'name' => $name,
             'title' => $title,
+            'organization_id' => $organization->id
         ]);
         return $role;
     }
 
-    public function index(): Collection
+    public function index(Organization $organization)
     {
-        $roles = Role::all();
-        return $roles;
+        $user = Auth::user();
+        $user_organization_roles = Role::where('organization_id', $organization->id)->get();
+        return $user->isA(Roles::super_admin) ? [Role::all()] : [$user_organization_roles];
     }
 
     /**
      * @param Role $role
      * @throws \Exception
      */
-    public function get($id): Role
+    public function get(Organization $organization, $role_id)
     {
-        $role = Role::find($id);
+        if($role = $organization->roles()->where('id', $role_id)->first()) {
+            return $role;
+        } else {
+            throw new Exception('No role found in the organization');
+        }
+    }
+
+    /**
+     * @param Role $role
+     * @throws \Exception
+     */
+    public function update(Organization $organization, $id, array $data): Role
+    {
+        $role = Role::findOrFail($id)->update($data);
         return $role;
     }
 
@@ -40,18 +57,7 @@ class RoleService
      * @param Role $role
      * @throws \Exception
      */
-    public function update($id): Role
-    {
-        $role = Role::findOrFail($id);
-        //update code
-        return $role;
-    }
-
-    /**
-     * @param Role $role
-     * @throws \Exception
-     */
-    public function delete($id)
+    public function delete(Organization $organization, $id)
     {
         $role = Role::findOrFail($id);
         $role->delete();

@@ -21,12 +21,11 @@ class CanManageOrganization
      */
     public function handle(Request $request, Closure $next)
     {
-        $org = Organization::find($request->organization_id);
+        $org = $request->organization ?? Organization::find($request->organization_id);
         $user =  Auth::user();
-        if ($user->can(Abilities::ManageOrganization, $org) ||  $user->isAn(Roles::super_admin) ||  $org->type == OrganizationType::public) {
+        if ($user->can(Abilities::ManageOrganization, $org) ||  $user->isAn(Roles::super_admin)) {
             return $next($request);
         }
-
         return response()->json(['error_org' => 'Unauthorized.'], 401);
     }
 }

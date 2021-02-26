@@ -66,4 +66,16 @@ class User extends Authenticatable
         return $this->id == $damResource->user_owner_id;
     }
 
+    public function abilitiesOnEntity($entity_id, $entity_type)
+    {
+        $abilities_on_entity = [];
+
+        foreach ($this->getAbilities() as $ability) {
+            if($ability->entity_id == $entity_id && $ability->entity_type == $entity_type) {
+                $abilities_on_entity[] = $ability;
+            }
+        }
+        return $abilities_on_entity;
+    }
+
 }

@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\RoleAbility\DeleteRoleRequest;
 use App\Http\Requests\RoleAbility\RoleAbilityRequest;
 use App\Http\Requests\RoleAbility\RoleRemoveAbilityRequest;
-use App\Http\Requests\RoleAbility\RoleRequest;
+use App\Http\Requests\RoleAbility\RoleStoreRequest;
+use App\Http\Requests\UpdateRoleRequest;
 use App\Http\Resources\RoleResource;
+use App\Models\Organization;
+use App\Models\Role;
 use App\Services\RoleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -31,17 +34,17 @@ class RoleController extends Controller
         $this->roleService = $roleService;
     }
 
-    public function store(RoleRequest $roleRequest): JsonResponse
+    public function store(Organization $organization, RoleStoreRequest $roleRequest): JsonResponse
     {
-        $role = $this->roleService->store($roleRequest->name, $roleRequest->title);
+        $role = $this->roleService->store($organization, $roleRequest->name, $roleRequest->title);
         return (new JsonResource($role))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function index(): JsonResponse
+    public function index(Organization $organization)
     {
-        $roles = $this->roleService->index();
+        $roles = $this->roleService->index($organization);
         return (new JsonResource($roles))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -64,26 +67,25 @@ class RoleController extends Controller
     }
 
 
-    public function get(Request $request): JsonResponse
+    public function get(Organization $organization, $role_id): JsonResponse
     {
-        $role = $this->roleService->get($request->id);
+        $role = $this->roleService->get($organization, $role_id);
         return (new RoleResource($role))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function update(Request $request): JsonResponse
+    public function update(Organization $organization, UpdateRoleRequest $request): JsonResponse
     {
-        $role = $this->roleService->update($request->id);
-        //update logic
+        $role = $this->roleService->update($organization, $request->id, $request->data);
         return (new JsonResource($role))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function delete(DeleteRoleRequest $request): JsonResponse
+    public function delete(Organization $organization, DeleteRoleRequest $request): JsonResponse
     {
-        $role = $this->roleService->delete($request->id);
+        $role = $this->roleService->delete($organization, $request->id);
         return (new JsonResource($role))
             ->response()
             ->setStatusCode(Response::HTTP_OK);

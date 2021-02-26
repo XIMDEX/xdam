@@ -6,6 +6,7 @@ use BenSampo\Enum\Enum;
 
 final class Abilities extends Enum
 {
+    //"FOLDERS" Organizations / Workspaces
     const UpdateWorkspace = "update-workspace";
     const ViewWorkspace = "view-workspace";
     const DeleteWorkspace = "delete-workspace";
@@ -14,8 +15,7 @@ final class Abilities extends Enum
     const ManageOrganization = "manage-organizations";
     const ManageWorkspace = "manage-workspaces";
 
-    //RESOURCES
-
+    //"FILES" Resources
     const CreateNewResource = "create-new-resource"; //(Create)
     const ShowResource = "show-resources"; //(Read)
     const DownloadResource = "download-resource"; //(Read)
@@ -24,4 +24,34 @@ final class Abilities extends Enum
     const EditResourceReport = "edit-resource-report"; //(Update)
     const RemoveResource = "remove-resource"; //(Delete)
 
+    public static function resourceManagerAbilities()
+    {
+        return [
+            self::ShowResource,
+            self::DownloadResource,
+            self::ReadResourceReport,
+            self::EditResource,
+            self::EditResourceReport,
+            self::RemoveResource,
+        ];
+    }
+
+    public static function resourceEditorAbilities()
+    {
+        return [
+            self::ShowResource,
+            self::ReadResourceReport,
+            self::EditResource,
+            self::EditResourceReport,
+
+        ];
+    }
+
+    public static function resourceReaderAbilities()
+    {
+        return [
+            self::ShowResource,
+            self::DownloadResource,
+        ];
+    }
 }

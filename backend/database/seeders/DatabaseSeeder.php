@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             WorkspaceSeeder::class,
             BouncerSeeder::class,
             UserSeeder::class,
+            RolesInOrganizationSeeder::class
         ]);
     }
 }

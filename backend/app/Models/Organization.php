@@ -49,4 +49,14 @@ class Organization extends Model
     {
         return $this->hasMany(Collection::class);
     }
+
+    /**
+     * Get all of the roles for the Organization
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function roles()
+    {
+        return $this->hasMany(Role::class);
+    }
 }
