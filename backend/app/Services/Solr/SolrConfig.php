@@ -138,7 +138,7 @@ class SolrConfig
             $currentSchema = $this->getCurrentSchema($client);
             $diffSchema = $this->getSchemaDifferences($currentSchema, (array)$configSchema);
             if (!empty($diffSchema)) {
-                $result = $this->updateSchema($client, $currentSchema);
+                $result = $this->updateSchema($client, $diffSchema);
                 if (array_key_exists("error", $result)) {
                     throw new Exception($result["error"]);
                 }
