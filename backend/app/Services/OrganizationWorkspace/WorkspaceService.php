@@ -41,7 +41,7 @@ class WorkspaceService
                     'type' => WorkspaceType::generic,
                     'organization_id' => $org->id
                 ]);
-                $this->adminService->setWorkspaces(Auth::user()->id, $wsp->id, Roles::manager);
+                $this->adminService->setWorkspaces(Auth::user()->id, $wsp->id, Roles::manager_id);
                 return $wsp;
             }
         } catch (\Throwable $th) {

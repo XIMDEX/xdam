@@ -14,7 +14,7 @@ class CreateCollectionRequest extends FormRequest
     public function authorize()
     {
         //check if the user belongs to requested organization
-        if ($this->user()->organizations()->where('organization_id', $this->organization_id)->first()) {
+        if ($this->user()->organizations()->where('organization_id', $this->organization_id)->first() || $this->user()->can('*')) {
             return true;
         }
         return false;

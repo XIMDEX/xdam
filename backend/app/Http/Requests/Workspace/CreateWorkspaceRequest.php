@@ -17,7 +17,7 @@ class CreateWorkspaceRequest extends FormRequest
     public function authorize()
     {
         //check if user has the manage-organization ability on the specified organization entity
-        return $this->user()->can(Abilities::canManageOrganization, Organization::find($this->organization_id)) ?? false;
+        return $this->user()->can(Abilities::ManageOrganization, Organization::find($this->organization_id)) ?? false;
     }
 
     /**

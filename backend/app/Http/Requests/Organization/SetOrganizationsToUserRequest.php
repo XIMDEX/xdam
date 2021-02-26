@@ -17,8 +17,8 @@ class SetOrganizationsToUserRequest extends FormRequest
     public function authorize()
     {
 
-        //can't assign the admin role
-        if ($this->with_role_id == Roles::admin) {
+        //can't assign the super-admin role
+        if ($this->with_role_id == Roles::super_admin_id) {
             return false;
         }
 
@@ -27,7 +27,7 @@ class SetOrganizationsToUserRequest extends FormRequest
             return false;
         }
 
-        if ($this->user()->isA('admin')) {
+        if ($this->user()->isA(Roles::super_admin)) {
             return true;
         }
 
@@ -44,7 +44,7 @@ class SetOrganizationsToUserRequest extends FormRequest
         }
 
         //checks if the user has permissions to manage the specified entity.
-        if ($this->user()->can(Abilities::canManageOrganization, Organization::find($id_to_set)) && $id_to_set != null) {
+        if ($this->user()->can(Abilities::ManageOrganization, Organization::find($id_to_set)) && $id_to_set != null) {
             $this->request->set('organization_id', $id_to_set);
             return true;
         } else {

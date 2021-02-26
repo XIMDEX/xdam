@@ -15,7 +15,7 @@ class DeleteRoleRequest extends FormRequest
     public function authorize()
     {
         //only admin can delete role and roles
-        if ($this->user()->isAn('admin') && $this->id > Roles::admin) {
+        if ($this->user()->isAn(Roles::super_admin) && $this->id > Roles::super_admin_id) {
             return true;
         }
         return false;

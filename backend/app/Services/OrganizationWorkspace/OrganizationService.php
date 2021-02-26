@@ -2,6 +2,7 @@
 
 namespace App\Services\OrganizationWorkspace;
 
+use App\Enums\OrganizationType;
 use App\Enums\WorkspaceType;
 use App\Models\Collection;
 use App\Models\CollectionType;
@@ -69,12 +70,17 @@ class OrganizationService
         if ($selected_org) {
             return $selected_org->collections()->get();
         }
-        return ['warning'=>'organization not selected'];
+        return ['warning'=>'organization not exist'];
+    }
+
+    public function indexCollectionTypes()
+    {
+        return CollectionType::all();
     }
 
     public function delete($id)
     {
-        if ($id == 1) {
+        if (Organization::find($id)->type == OrganizationType::public) {
             return ['Public organization cannot be deleted'];
         }
 

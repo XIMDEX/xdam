@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Organization;
+namespace App\Http\Requests;
 
-use App\Enums\Abilities;
-use App\Models\Organization;
 use Illuminate\Foundation\Http\FormRequest;
 
-class GetOrganizationRequest extends FormRequest
+class IndexCollectionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,8 +13,7 @@ class GetOrganizationRequest extends FormRequest
      */
     public function authorize()
     {
-        //request protected by middleware can:*
-
+        //protected by manage.organization middleware
         return true;
     }
 

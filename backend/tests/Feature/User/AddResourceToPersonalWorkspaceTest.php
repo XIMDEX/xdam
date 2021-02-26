@@ -54,7 +54,6 @@ class AddResourceToPersonalWorkspaceTest extends TestCase
             'type' => 'image',
             'name' => 'imagen test',
             'data' => '{"description": {"active": true, "partials": {"pages": 10}}}',
-            'workspace_id' => $user->selected_workspace
         ]);
 
         $resource
@@ -64,9 +63,27 @@ class AddResourceToPersonalWorkspaceTest extends TestCase
             ]);
 
         /*
-            Attach the resource to public organization.
-            Now every user can "see" the resource in the public workspace
+            Create a new resource as personal (wsp null)
+            Attach the resource to public workspace.
+            Now every user can "see" the resource in the public workspace.
         */
+
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar_public.jpg');
+
+        $resource = $this->json('POST', '/api/v1/resource', [
+            'File' => [$file],
+            'type' => 'image',
+            'name' => 'imagen test for public',
+            'data' => '{"description": {"active": true, "partials": {"pages": 10}}}',
+            'workspace_id' => null
+        ]);
+
+        $resource
+            ->assertStatus(200)
+            ->assertJson([
+                'id' => true
+            ]);
 
         $response = $this->json('POST', '/api/v1/user/resource/collection/attach', [
             'collection_id' => Collection::where([

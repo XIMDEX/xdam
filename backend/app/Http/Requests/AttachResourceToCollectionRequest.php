@@ -16,10 +16,20 @@ class AttachResourceToCollectionRequest extends FormRequest
     public function authorize()
     {
         //check if user is attached to the organization of the collection on $this->all()
+        //this means that the user can share resources between organizations
         if($this->organization_id) {
             return true;
         }
         return false;
+    }
+
+    public function all($keys = null)
+    {
+        $data = parent::all($keys);
+        $org_of_collection = Collection::where('id', $data['collection_id'])->first()->organization()->first();
+        $org = Auth::user()->organizations()->where('organizations.id', $org_of_collection->id)->first();
+        $data['organization_id'] = $org->id ?? null;
+        return $data;
     }
 
     /**
@@ -36,12 +46,4 @@ class AttachResourceToCollectionRequest extends FormRequest
         ];
     }
 
-    public function all($keys = null)
-    {
-        $data = parent::all($keys);
-        $org_of_collection = Collection::where('id', $data['collection_id'])->first()->organization()->first();
-        $org = Auth::user()->organizations()->where('organizations.id', $org_of_collection->id)->first();
-        $data['organization_id'] = $org->id ?? null;
-        return $data;
-    }
 }

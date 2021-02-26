@@ -4,7 +4,9 @@ namespace Database\Seeders;
 
 use App\Enums\DefaultOrganizationWorkspace;
 use App\Enums\OrganizationType;
+use App\Enums\WorkspaceType;
 use App\Models\Organization;
+use App\Models\Workspace;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
@@ -30,5 +32,14 @@ class OrganizationSeeder extends Seeder
             'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
             'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
         ]);
+
+        //FACTORY
+        $count = 5;
+        for ($i=0; $i <= $count; $i++) {
+            Organization::factory()
+                ->has(Workspace::factory(['type' => WorkspaceType::corporate])->count(1))
+                ->has(Workspace::factory()->count(3))
+                ->create();
+        }
     }
 }

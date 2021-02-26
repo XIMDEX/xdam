@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\OrganizationType;
+use App\Enums\Roles;
 use App\Enums\WorkspaceType;
 use App\Models\Organization;
 use App\Models\Workspace;
@@ -36,7 +37,7 @@ class WorkspaceCrudTest extends TestCase
         $org_user = $this->json('POST', '/api/v1/organization/set/user', [
             'user_id' => $manager->id,
             'organization_id' => $org->id,
-            'with_role_id' => 2
+            'with_role_id' => Roles::admin_id
         ]);
 
 
@@ -51,7 +52,7 @@ class WorkspaceCrudTest extends TestCase
         $org_user = $this->json('POST', '/api/v1/organization/set/user', [
             'user_id' => $editor->id,
             'organization_id' => $org->id,
-            'with_role_id' => 3
+            'with_role_id' => Roles::manager_id
         ]);
 
 
@@ -80,7 +81,7 @@ class WorkspaceCrudTest extends TestCase
         $org_user = $this->json('POST', '/api/v1/workspace/set/user', [
             'user_id' => $manager->id,
             'workspace_id' => $created_wsp->original->id,
-            'with_role_id' => 2
+            'with_role_id' => Roles::admin_id
         ]);
 
 
@@ -95,7 +96,7 @@ class WorkspaceCrudTest extends TestCase
         $manager_setted_to_wsp = $this->json('POST', '/api/v1/workspace/set/user', [
             'user_id' => $editor->id,
             'workspace_id' => $created_wsp->original->id,
-            'with_role_id' => 3
+            'with_role_id' => Roles::manager_id
         ]);
 
         $manager_setted_to_wsp

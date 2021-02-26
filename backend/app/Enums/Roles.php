@@ -6,8 +6,15 @@ use BenSampo\Enum\Enum;
 
 final class Roles extends Enum
 {
-    const admin = 1;
-    const manager = 2;
-    const editor = 3;
-    const reader = 4;
+    const super_admin = 'super-admin';
+    const admin = 'admin';
+    const manager = 'manager';
+    const editor = 'editor';
+    const reader = 'reader';
+
+    const super_admin_id = 1;
+    const admin_id = 2;
+    const manager_id = 3;
+    const editor_id = 4;
+    const reader_id = 5;
 }

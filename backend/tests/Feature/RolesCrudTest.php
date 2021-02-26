@@ -26,7 +26,7 @@ class RolesCrudTest extends TestCase
         */
 
 
-        $created = $this->json('POST', '/api/v1/admin/role/store', [
+        $created = $this->json('POST', '/api/v1/super-admin/role/store', [
             'name' => 'role-technical-name',
             'title' => 'Role semantic name'
         ]);

@@ -195,8 +195,14 @@ class ResourceService
      */
     public function store($params): DamResource
     {
-        $wid = Auth::user()->selected_workspace;
-        $org = Workspace::find($wid) ? Workspace::find($wid)->organization()->first() : null;
+        /*
+            if $wid == null, the user will store the resource with no workspace attached.
+            It's interpreted as personal with private visualization
+        */
+        if($wid = Auth::user()->selected_workspace) {
+            $wsp = Workspace::find($wid);
+            $org = $wsp ? $wsp->organization()->first() : null;
+        }
 
         $name = array_key_exists('name', $params) ? $params["name"] : "";
         $type = ResourceType::fromKey($params["type"])->value;
@@ -211,9 +217,7 @@ class ResourceService
                 'collection_id' => $params['collection_id'] ?? null
             ]
         );
-
-        $this->setResourceWorkspaceAndCollection($org->id ?? null, $wid, $newResource);
-        $newResource->save();
+        isset($org) && $wid ? $this->setResourceWorkspace($newResource, $wsp) : null;
         $this->linkCategoriesFromJson($newResource, $params['data']);
         $this->saveAssociatedFiles($newResource, $params);
         $this->solr->saveOrUpdateDocument($newResource);
@@ -222,23 +226,9 @@ class ResourceService
         return $newResource;
     }
 
-    public function setResourceWorkspaceAndCollection($org = null, $wid = null, DamResource $newResource): void
+    public function setResourceWorkspace(DamResource $newResource, Workspace $wsp): void
     {
-        if ($org && $wid) {
-            $newResource->workspaces()->attach($wid);
-        }
-        //attach resource to public workspace or organization corporate workspace based on selected organization
-        if ($org && $wid == null) {
-            if ($org->name == DefaultOrganizationWorkspace::public_organization) {
-                $newResource->workspaces()->attach($org->publicWorkspace()->id);
-            } else {
-                $newResource->workspaces()->attach($org->corporateWorkspace()->id);
-            }
-        }
-        //attach resource to personal workspace if no workspace is selected
-        if ($org == null && $wid || $org == null && $wid == null) {
-            $newResource->workspaces()->attach(null);
-        }
+        $newResource->workspaces()->attach($wsp);
     }
 
     /**

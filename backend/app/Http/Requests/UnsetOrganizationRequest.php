@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\Abilities;
+use App\Enums\OrganizationType;
 use App\Models\Organization;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -16,11 +17,11 @@ class UnsetOrganizationRequest extends FormRequest
     public function authorize()
     {
         //can't unset public organization
-        if ($this->organization_id == 1) {
+        if (Organization::find($this->organization_id)->type == OrganizationType::public) {
             return false;
         }
 
-        if ($this->user()->can(Abilities::canManageOrganization, Organization::find($this->organization_id))) {
+        if ($this->user()->can(Abilities::ManageOrganization, Organization::find($this->organization_id))) {
             return true;
         }
         return false;

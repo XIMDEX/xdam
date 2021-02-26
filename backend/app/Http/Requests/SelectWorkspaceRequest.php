@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class SelectWorkspaceRequest extends FormRequest
 {
@@ -14,7 +15,7 @@ class SelectWorkspaceRequest extends FormRequest
     public function authorize()
     {
         //if null, user is working in personal context
-        if($this->workspace_id == null) {
+        if($this->workspace_id == null || Auth::user()->can('*')) {
             return true;
         }
         //check if the user belongs to the requested workspace

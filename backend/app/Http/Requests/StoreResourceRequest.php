@@ -52,5 +52,14 @@ class StoreResourceRequest extends FormRequest
         return $factory;
     }
 
+    public function all($keys = null)
+    {
+        $data = parent::all($keys);
+        if($this->route('collection_id')) {
+            $data['collection_id'] = $this->route('collection_id');
+        }
+        return $data;
+    }
+
 
 }

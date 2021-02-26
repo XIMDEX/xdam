@@ -61,13 +61,9 @@ class User extends Authenticatable
         return DamResource::where('user_owner_id', $this->id)->get();
     }
 
-    public function personalWorkspace()
+    public function ownResource(DamResource $damResource): bool
     {
-        return $this->workspaces()->where('type', WorkspaceType::personal)->first();
+        return $this->id == $damResource->user_owner_id;
     }
 
-    public function personalOrganization()
-    {
-        return $this->organizations()->where('type', OrganizationType::personal)->first();
-    }
 }

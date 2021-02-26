@@ -25,7 +25,7 @@ class OrganizationCrudTest extends TestCase
         /*
             Create...
         */
-        $created = $this->json('POST', '/api/v1/admin/organization/create', [
+        $created = $this->json('POST', '/api/v1/super-admin/organization/create', [
             'name' => $org_name,
         ]);
         $created
@@ -39,7 +39,7 @@ class OrganizationCrudTest extends TestCase
         /UPDATE
         /
         */
-        $updated = $this->json('POST', '/api/v1/admin/organization/update', [
+        $updated = $this->json('POST', '/api/v1/super-admin/organization/update', [
             'organization_id' => $created->original->id,
             'name' => $org_name . ' updated'
         ]);
@@ -59,7 +59,7 @@ class OrganizationCrudTest extends TestCase
         /DELETE
         /
         */
-        $deleted = $this->delete('/api/v1/admin/organization/' . (string)$created->original->id);
+        $deleted = $this->delete('/api/v1/super-admin/organization/' . (string)$created->original->id);
         $deleted
             ->assertStatus(200)
             ->assertJson([

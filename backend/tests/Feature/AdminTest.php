@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\Roles;
 use App\Enums\WorkspaceType;
 use App\Models\Organization;
 use App\Models\User;
@@ -11,33 +12,48 @@ use Tests\TestCase;
 
 class AdminTest extends TestCase
 {
-    use WithFaker;
+    // use WithFaker;
     /**
      * A basic feature test example.
      *
      * @return void
      */
-    public function test_admin_features()
+
+    public $admin;
+    public $anUser;
+    public $org;
+
+    protected function setUp(): void
     {
-        $admin = $this->getUserWithRole(1);
-
-        $this->actingAs($admin, 'api');
-
-        $user = User::factory()->create();
-        $org = Organization::factory()
+        parent::setUp();
+        $this->admin = User::factory()->create();
+        $this->anUser = User::factory()->create();
+        $this->org = Organization::factory()
             ->has(Workspace::factory(['type' => WorkspaceType::corporate])->count(1))
             ->has(Workspace::factory(['name' => 'a generic faker wsp'])->count(1))
             ->create();
+        $this->setOrganization($this->admin, $this->org, Roles::admin_id);
+        $this->actingAs($this->admin, 'api');
+    }
 
+    public function test_setup_with_users_and_organization()
+    {
+        if($this->admin && $this->anUser && $this->org) {
+            $all_created = true;
+        }
+        $this->assertTrue($all_created);
+    }
+
+    public function test_admin_attach_organization_to_an_user_with_role_editor()
+    {
         /*
-        /
-        / ATTACH ORGANIZATIONS TO USER
-        /
+            Attach organization to $user
         */
+
         $response = $this->json('POST', '/api/v1/organization/set/user', [
-            'user_id' => (string)$user->id,
-            'organization_id' => (string)$org->id,
-            'with_role_id' => '4'
+            'user_id' => $this->anUser->id,
+            'organization_id' => $this->org->id,
+            'with_role_id' => Roles::editor_id
         ]);
 
         $response
@@ -47,20 +63,25 @@ class AdminTest extends TestCase
                     'success' => true
                 ],
             ]);
+    }
 
+    /**
+     * @depends test_admin_attach_organization_to_an_user_with_role_editor
+     */
+
+    public function test_attach_an_user_to_a_generic_workspace_of_organization()
+    {
+
+        $this->setOrganization($this->anUser, $this->org, Roles::editor_id, true);
         /*
-        /
-        / ATTACH WORKSPACES TO USER
-        /
+            Attach a workspace to $user
         */
-
-        $generic_wsp = (string)$org->workspaces()->where('name', 'a generic faker wsp')->first()->id;
-
         $response = $this->json('POST', '/api/v1/workspace/set/user', [
-            'user_id' => (string)$user->id,
-            'workspace_id' => (string)$org->corporateWorkspace()->id,
-            'with_role_id' => 2
+            'user_id' => $this->anUser->id,
+            'workspace_id' => $this->org->corporateWorkspace()->id,
+            'with_role_id' => Roles::admin_id
         ]);
+
 
         $response
             ->assertStatus(200)
@@ -70,17 +91,19 @@ class AdminTest extends TestCase
                     'log' => true
                 ],
             ]);
+    }
 
+    public function test_set_role_to_an_user_on_specific_workspace()
+    {
+        $this->setOrganization($this->anUser, $this->org, Roles::editor_id, true);
         /*
-        /
         / SET USER ROLE ON SPECIFIC WORKSPACE. IT REQUIRES THE USER ATACHED TO THE ORGANIZATION OF WORKSPACE
-        /
         */
 
-        $response = $this->json('POST', '/api/v1/role/user/set/abilitiesOnOrganizationOrWorkspace', [
-            'user_id' => (string)$user->id,
-            'role_id' => "4",
-            'wo_id' => $generic_wsp,
+        $response = $this->json('POST', '/api/v1/role/user/set/abilitiesOnEntity', [
+            'user_id' => $this->anUser->id,
+            'role_id' => Roles::editor_id,
+            'entity_id' => $this->org->workspaces()->where('name', 'a generic faker wsp')->first()->id,
             'type' => 'set',
             'on' => 'wsp',
         ]);
@@ -94,17 +117,19 @@ class AdminTest extends TestCase
                     'on_wsp' => true,
                 ],
             ]);
+    }
 
+    public function test_unset_role_to_an_user_on_specific_workspace()
+    {
+        $this->setOrganization($this->anUser, $this->org, Roles::editor_id);
         /*
-        /
-        / UNSET USER ROLE ON SPECIFIC WORKSPACE
-        /
+            UNSET USER ROLE ON SPECIFIC WORKSPACE
         */
 
-        $response = $this->json('POST', '/api/v1/role/user/set/abilitiesOnOrganizationOrWorkspace', [
-            'user_id' => (string)$user->id,
-            'role_id' => "2",
-            'wo_id' => $generic_wsp,
+        $response = $this->json('POST', '/api/v1/role/user/set/abilitiesOnEntity', [
+            'user_id' => $this->anUser->id,
+            'role_id' => Roles::admin_id,
+            'entity_id' => $this->org->workspaces()->where('name', 'a generic faker wsp')->first()->id,
             'type' => 'unset',
             'on' => 'wsp',
         ]);
@@ -118,19 +143,19 @@ class AdminTest extends TestCase
                     'on_wsp' => true,
                 ],
             ]);
+    }
 
+    public function test_unattach_workspace_to_an_user()
+    {
+        $this->setOrganization($this->anUser, $this->org, Roles::editor_id);
         /*
-        /
-        / UNATTACH WORKSPACES TO USER
-        /
+            UNATTACH WORKSPACES TO USER
         */
 
         $response = $this->json('POST', '/api/v1/workspace/unset/user', [
-            'user_id' => (string)$user->id,
-            'workspace_id' => (string)$org->corporateWorkspace()->id,
-            'with_role_id' => 2
+            'user_id' => $this->anUser->id,
+            'workspace_id' => $this->org->corporateWorkspace()->id,
         ]);
-
 
         $response
             ->assertStatus(200)
@@ -140,15 +165,17 @@ class AdminTest extends TestCase
                     'log' => true
                 ],
             ]);
+    }
+
+    public function test_unattach_organization_to_an_user()
+    {
+        $this->setOrganization($this->anUser, $this->org, Roles::editor_id, true);
         /*
-        /
-        / UNATTACH ORGANIZATIONS TO USER
-        /
+            UNATTACH ORGANIZATIONS TO USER
         */
         $response = $this->json('POST', '/api/v1/organization/unset/user', [
-            'user_id' => (string)$user->id,
-            'organization_id' => (string)$org->id,
-
+            'user_id' => $this->anUser->id,
+            'organization_id' => $this->org->id,
         ]);
 
         $response
@@ -158,6 +185,5 @@ class AdminTest extends TestCase
                     'log' => true,
                 ],
             ]);
-
     }
 }

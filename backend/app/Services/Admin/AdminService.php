@@ -3,14 +3,19 @@
 namespace App\Services\Admin;
 
 use App\Enums\DefaultOrganizationWorkspace;
+use App\Enums\Entities;
 use App\Enums\OrganizationType;
 use App\Enums\WorkspaceType;
+use App\Models\DamResource;
 use App\Models\Organization;
 use App\Models\User;
 use App\Models\Workspace;
 use Error;
+use Exception;
 use Silber\Bouncer\BouncerFacade as Bouncer;
 use Silber\Bouncer\Database\Role;
+
+use function PHPUnit\Framework\throwException;
 
 class AdminService
 {
@@ -33,7 +38,7 @@ class AdminService
 
             $user->organizations()->attach($organization_id);
 
-            $this->roleAbilitiesOnWorkspaceOrOrganization($user_id, $role_id, $organization_id, 'set', 'org');
+            $this->SetRoleAbilitiesOnEntity($user_id, $role_id, $organization_id, 'set', Entities::organization);
 
             $this->enableDefaultWorkspace($org, $user, $role_id);
 
@@ -58,7 +63,7 @@ class AdminService
         foreach ($org->workspaces()->get() as $wsp) {
             if (!$user->workspaces()->get()->contains($wsp->id)) {
                 $user->workspaces()->attach($wsp->id);
-                $this->roleAbilitiesOnWorkspaceOrOrganization($user_id, $role_id, $wsp->id, 'set', 'wsp');
+                $this->SetRoleAbilitiesOnEntity($user_id, $role_id, $wsp->id, 'set', Entities::workspace);
                 $log['success']['workspace_id'] = $wsp->id;
             } else {
                 $log['already_exists']['workspace_id'][] = $wsp->id;
@@ -101,7 +106,7 @@ class AdminService
 
         if (!$user->workspaces()->get()->contains($workspace_id)) {
             $user->workspaces()->attach($workspace_id);
-            $this->roleAbilitiesOnWorkspaceOrOrganization($user_id, $with_role_id, $workspace_id, 'set', 'wsp');
+            $this->SetRoleAbilitiesOnEntity($user_id, $with_role_id, $workspace_id, 'set', Entities::workspace);
             $log['success']['workspace_id'] = $workspace_id;
         } else {
             $log['already_exists']['workspace_id'][] = $workspace_id;
@@ -164,24 +169,50 @@ class AdminService
         return $abilities;
     }
 
+    public function setOrganizationHelper(User $user, Organization $org, $role_id, $only_organization = false)
+    {
+        $user->organizations()->attach($org);
+        $this->SetRoleAbilitiesOnEntity($user->id, $role_id, $org->id, 'set', 'org');
+        if(!$only_organization) {
+            foreach ($org->workspaces()->get() as $wsp) {
+                $user->workspaces()->attach($wsp);
+                $this->SetRoleAbilitiesOnEntity($user->id, $role_id, $wsp->id, 'set', 'wsp');
+            }
+        }
+    }
+
     /**
      * @param string $uid (user id)
      * @param string $rid (role id)
-     * @param string $owid (organization or workspace id)
+     * @param string||int $eid (organization, workspace or resource id)
      * @param string $type (type of action: 'set' or 'unset')
-     * @param string $on (what entity 'org' or 'wsp')
+     * @param string $on (what entity 'org', 'wsp' or 'res')
      */
-    public function roleAbilitiesOnWorkspaceOrOrganization(
-        string $uid,
-        string $rid,
-        string $owid,
+    public function SetRoleAbilitiesOnEntity(
+        int $uid,
+        int $rid,
+        $eid,
         string $type,
         string $on
     ) {
         $user = User::find($uid);
         $entity = null;
         $abilities = $this->getRoleAbilities($rid);
-        $on == 'wsp' ? $entity = Workspace::find($owid) : $entity = Organization::find($owid);
+        switch ($on) {
+            case Entities::workspace:
+                $entity = Workspace::find($eid);
+                break;
+            case Entities::organization:
+                $entity = Organization::find($eid);
+                break;
+            case Entities::resource:
+                $entity = DamResource::find($eid);
+                break;
+            default:
+                throw new Exception("invalid entity");
+                break;
+        }
+
         $type == 'set' ? Bouncer::allow($user)->to($abilities, $entity) : Bouncer::disallow($user)->to($abilities, $entity);
         return ['user' => $user, $type.'_abilities' => $abilities, 'on_'.$on => $entity];
     }
