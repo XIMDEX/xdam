@@ -49,9 +49,9 @@ Para manejar la parada o arranque del servicio solr, tenemos disponible:
 Una vez iniciado el servicio tendremos disponible una interfaz web corriendo en el puerto 8983 ( por defecto ).
 Creamos 2 cores necesarios para que funcione XDAM ejecutando en la terminal:
 	
-`sudo su - solr -c "/opt/solr/bin/solr create -c xdam-course -n data_driven_schema_configs"`
+`sudo su - solr -c "/opt/solr/bin/solr create -c course -n data_driven_schema_configs"`
 
-`sudo su - solr -c "/opt/solr/bin/solr create -c xdam-multimedia -n data_driven_schema_configs"`
+`sudo su - solr -c "/opt/solr/bin/solr create -c multimedia -n data_driven_schema_configs"`
 
 #### 	INSTALACIÓN BACKEND:
 
