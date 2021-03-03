@@ -15,6 +15,7 @@ class AddFieldActiveToDamResourcesTable extends Migration
     {
         Schema::table('dam_resources', function (Blueprint $table) {
             $table->boolean('active')->default(true);
+            $table->integer('user_owner_id');
         });
     }
 

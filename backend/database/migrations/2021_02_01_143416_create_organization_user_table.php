@@ -16,7 +16,7 @@ class CreateOrganizationUserTable extends Migration
         Schema::create('organization_user', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('organization_id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedInteger('user_id');
             $table->timestamps();
             //
             $table->foreign('organization_id', 'org_user_id_fk')->references('id')->on('organizations')->onDelete('cascade');
