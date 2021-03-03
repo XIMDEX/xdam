@@ -19,10 +19,10 @@ class WorkspaceService
         $this->adminService = $adminService;
     }
 
-    public function index()
+    public function index($organization)
     {
-        $wsps = Workspace::all();
-        return $wsps;
+        //list workspaces of $request->org
+        return $organization->workspaces()->get();
     }
 
     public function get($id)

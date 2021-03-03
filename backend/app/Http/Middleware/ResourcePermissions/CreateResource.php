@@ -4,14 +4,12 @@ namespace App\Http\Middleware\ResourcePermissions;
 
 use App\Enums\Abilities;
 use App\Models\DamResource;
-use App\Models\Media;
 use App\Models\Workspace;
-use App\Utils\DamUrlUtil;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class DownloadResource
+class CreateResource
 {
     /**
      * Handle an incoming request.
@@ -23,10 +21,12 @@ class DownloadResource
     public function handle(Request $request, Closure $next)
     {
         $user = Auth::user();
+
         $workspace = Workspace::find($user->selected_workspace);
-        if($user->can(Abilities::DOWNLOAD_RESOURCE, $workspace)) {
+
+        if($user->can(Abilities::CREATE_RESOURCE, $workspace) || $user->selected_workspace == null) {
             return $next($request);
         }
-        return response()->json(['download_resource_error' => 'Unauthorized.'], 401);
+        return response()->json(['create_resource_error' => 'Unauthorized.'], 401);
     }
 }

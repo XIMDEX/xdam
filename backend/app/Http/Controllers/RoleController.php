@@ -9,7 +9,7 @@ use App\Http\Requests\RoleAbility\RoleStoreRequest;
 use App\Http\Requests\UpdateRoleRequest;
 use App\Http\Resources\RoleResource;
 use App\Models\Organization;
-use App\Models\Role;
+use Silber\Bouncer\Database\Role;
 use App\Services\RoleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -50,22 +50,13 @@ class RoleController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function giveAbility(RoleAbilityRequest $roleAbilityRequest): JsonResponse
+    public function setAbilityToRole(Organization $organization, RoleAbilityRequest $roleAbilityRequest): JsonResponse
     {
-        $role = $this->roleService->giveAbility($roleAbilityRequest->role_id, $roleAbilityRequest->ability, $roleAbilityRequest->title, $roleAbilityRequest->ability_id);
+        $role = $this->roleService->setAbilityToRole($roleAbilityRequest->role_id, $roleAbilityRequest->ability_ids, $roleAbilityRequest->action);
         return (new JsonResource($role))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
-
-    public function removeAbility(RoleRemoveAbilityRequest $roleAbilityRequest): JsonResponse
-    {
-        $role = $this->roleService->removeAbility($roleAbilityRequest->role_id, $roleAbilityRequest->ability_id);
-        return (new JsonResource($role))
-            ->response()
-            ->setStatusCode(Response::HTTP_OK);
-    }
-
 
     public function get(Organization $organization, $role_id): JsonResponse
     {
@@ -77,8 +68,8 @@ class RoleController extends Controller
 
     public function update(Organization $organization, UpdateRoleRequest $request): JsonResponse
     {
-        $role = $this->roleService->update($organization, $request->id, $request->data);
-        return (new JsonResource($role))
+        $role = $this->roleService->update($request->role_id, $request->name);
+        return (new JsonResource([$role]))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }

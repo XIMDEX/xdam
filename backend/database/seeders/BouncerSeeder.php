@@ -20,28 +20,35 @@ class BouncerSeeder extends Seeder
         Bouncer::allow(Roles::super_admin)->everything();
 
         //Global and predefinded Organization and Workspace roles
-        Bouncer::allow(Roles::admin)->to([
-            Abilities::ManageRoles,
-            Abilities::ManageOrganization,
-            Abilities::ManageWorkspace,
-        ]);
+        Bouncer::allow(Roles::admin)->to(array_merge(
+            [
+                Abilities::MANAGE_ROLES,
+                Abilities::MANAGE_ORGANIZATION,
+                Abilities::MANAGE_WORKSPACE
+            ],
+            Abilities::resourceManagerAbilities())
+        );
 
-        Bouncer::allow(Roles::manager)->to([
-            Abilities::ManageWorkspace,
-        ]);
+        Bouncer::allow(Roles::manager)->to(array_merge(
+            [
+                Abilities::MANAGE_WORKSPACE
+            ],
+            Abilities::resourceManagerAbilities())
+        );
 
-        Bouncer::allow(Roles::editor)->to([
-            Abilities::ViewWorkspace,
-            Abilities::UpdateWorkspace
-        ]);
+        Bouncer::allow(Roles::editor)->to(array_merge(
+            [
+                Abilities::READ_WORKSPACE,
+                Abilities::UPDATE_WORKSPACE
+            ],
+            Abilities::resourceEditorAbilities())
+        );
 
-        Bouncer::allow(Roles::reader)->to([
-            Abilities::ViewWorkspace,
-        ]);
-
-        //Predefined roles for resources
-        Bouncer::allow(ResourceRoles::r_manager)->to(Abilities::resourceManagerAbilities());
-        Bouncer::allow(ResourceRoles::r_editor)->to(Abilities::resourceEditorAbilities());
-        Bouncer::allow(ResourceRoles::r_reader)->to(Abilities::resourceReaderAbilities());
+        Bouncer::allow(Roles::reader)->to(array_merge(
+            [
+                Abilities::READ_WORKSPACE
+            ],
+            Abilities::resourceReaderAbilities())
+        );
     }
 }

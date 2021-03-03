@@ -52,15 +52,7 @@ class SetRoleAbilitiesOnEntityRequest extends FormRequest
                         return false;
                     }
                 break;
-            case Entities::resource:
-                    $res = DamResource::find($this->entity_id);
-                    if(Auth::user()->ownResource($res)) {
-                        return true;
-                    }
-                    if (!Auth::user()->can(Abilities::ManageRoles, $res)) {
-                        return false;
-                    }
-                break;
+
             default:
                 throw new Exception("invalid entity");
                 break;
@@ -84,9 +76,6 @@ class SetRoleAbilitiesOnEntityRequest extends FormRequest
             case Entities::organization:
                 $entity_id_validation = 'required|exists:organizations,id';
                 break;
-            case Entities::resource:
-                $entity_id_validation = 'required|exists:dam_resources,id';
-                break;
             default:
                 throw new Exception("invalid entity");
                 break;
@@ -98,7 +87,7 @@ class SetRoleAbilitiesOnEntityRequest extends FormRequest
             'role_id' => 'required|exists:roles,id',
             'entity_id' => $entity_id_validation,
             'type' => 'required|in:set,unset',
-            'on' => 'required|in:org,wsp,res',
+            'on' => 'required|in:org,wsp',
         ];
     }
 

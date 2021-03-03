@@ -9,7 +9,6 @@ use App\Models\Organization;
 use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
 class SetWorkspacesToUserRequest extends FormRequest
 {
@@ -34,9 +33,10 @@ class SetWorkspacesToUserRequest extends FormRequest
 
         //get the organization of the workspace to set
         $oid_of_wsp = Workspace::find($this->workspace_id)->organization()->first()->id;
+        $org = Organization::find($oid_of_wsp);
 
         //to know if the user who make the request had permissions to set workspaces in the specified organization
-        return $this->user()->can(Abilities::ManageOrganization, Organization::find($oid_of_wsp)) ?? false;
+        return $this->user()->can(Abilities::MANAGE_ORGANIZATION, $org) ?? false;
 
     }
 

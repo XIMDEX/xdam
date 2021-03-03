@@ -25,7 +25,7 @@ class CanManageRoles
     {
         $user = Auth::user();
         $entity = null;
-        $user->isAn(Roles::super_admin) ? $next($request) : null;
+        $user->isA(Roles::super_admin) ? $next($request) : null;
 
         switch ($request->on) {
             case Entities::organization:
@@ -34,18 +34,12 @@ class CanManageRoles
             case Entities::workspace:
                 $entity = Workspace::find($request->entity_id);
                 break;
-            case Entities::resource:
-                $entity = DamResource::find($request->entity_id);
-                break;
+
             default:
                 return response()->json(['error_role_invalid_entity' => 'Unauthorized.'], 401);
                 break;
         }
 
-        if ($entity instanceof DamResource && $user->ownResource($entity)) {
-            return $next($request);
-        }
-
-        return $user->can(Abilities::ManageRoles, $entity) ? $next($request) : response()->json(['error_role' => 'Unauthorized.'], 401);
+        return $user->can(Abilities::MANAGE_ROLES, $entity) ? $next($request) : response()->json(['error_role' => 'Unauthorized.'], 401);
     }
 }

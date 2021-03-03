@@ -18,11 +18,15 @@ class ListWorkspacesRequest extends FormRequest
     public function authorize()
     {
         //check if user has the view-workspaces ability on the organization
-        if(Auth::user()->can('*')) {
+        $user = Auth::user();
+        if($user->can('*')) {
             return true;
         }
-        $org = Workspace::find(Auth::user()->selcted_workspace)->organization()->first();
-        if ($this->user()->canAny([Abilities::ViewWorkspace, Abilities::ManageWorkspace], $org)) {
+
+        $org = Organization::find($this->organization_id);
+        $this->merge(['org' => $org]);
+
+        if ($user->canAny([Abilities::READ_WORKSPACE, Abilities::MANAGE_WORKSPACE], $org)) {
             return true;
         }
         return false;
@@ -36,6 +40,14 @@ class ListWorkspacesRequest extends FormRequest
     public function rules()
     {
         return [
+            'organization_id' => 'required|exists:organizations,id'
         ];
+    }
+
+    public function all($keys = null)
+    {
+        $data = parent::all($keys);
+        $data['organization_id'] = $this->route('organization_id');
+        return $data;
     }
 }

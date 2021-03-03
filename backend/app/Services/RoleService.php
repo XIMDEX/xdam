@@ -4,7 +4,8 @@ namespace App\Services;
 
 use App\Enums\Roles;
 use App\Models\Organization;
-use App\Models\Role;
+use App\Models\Role as MyRole;
+use Silber\Bouncer\Database\Role;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Silber\Bouncer\BouncerFacade as Bouncer;
@@ -15,7 +16,7 @@ class RoleService
 
     public function store($organization, $name, $title): Role
     {
-        $role = Role::firstOrCreate([
+        $role = MyRole::firstOrCreate([
             'name' => $name,
             'title' => $title,
             'organization_id' => $organization->id
@@ -47,9 +48,13 @@ class RoleService
      * @param Role $role
      * @throws \Exception
      */
-    public function update(Organization $organization, $id, array $data): Role
+    public function update($role_id, $name)
     {
-        $role = Role::findOrFail($id)->update($data);
+        $role = Role::findOrFail($role_id)->update(
+            [
+                'name' => $name
+            ]
+        );
         return $role;
     }
 
@@ -64,26 +69,16 @@ class RoleService
         return $role;
     }
 
-    public function giveAbility($role_id, $ability = null, $ability_title = null, $ability_id = null)
+    public function setAbilityToRole($role_id, array $ability_ids, $action)
     {
         $role = Role::find($role_id);
-        if ($ability_id) {
-            $ability = Ability::find($ability_id);
-        } else {
-            $ability = Bouncer::ability()->firstOrCreate([
-                'name' => $ability,
-                'title' => $ability_title,
-            ]);
+        $abilities = Ability::find($ability_ids);
+
+        foreach ($abilities as $ability) {
+            $action == 'set' ? Bouncer::allow($role)->to($ability) : Bouncer::disallow($role)->to($ability);
         }
-        $res = Bouncer::allow($role)->to($ability);
-        return [$res];
+
+        return $abilities ? ['role' => $role, 'abilities' => $abilities] : ['error' => 'abilities not found'];
     }
 
-    public function removeAbility($role_id, $ability_id)
-    {
-        $role = Role::find($role_id);
-        $ability = Ability::find($ability_id);
-        $res = Bouncer::disallow($role)->to($ability);
-        return [$res];
-    }
 }

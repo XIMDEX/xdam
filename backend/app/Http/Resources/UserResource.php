@@ -19,7 +19,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'name' => $this->name,
             'current_workspace' => $this->selected_workspace,
-            // 'organizations' => OrganizationResource::collection($this->organizations()->get()),
+            'organizations' => OrganizationResource::collection($this->organizations()->get()),
         ];
     }
 }

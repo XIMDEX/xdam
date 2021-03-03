@@ -38,6 +38,14 @@ class UserController extends Controller
     public function user()
     {
         $userResource = $this->userService->user();
+        return (new JsonResource($userResource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function userInfo()
+    {
+        $userResource = $this->userService->user();
         return (new UserResource($userResource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);

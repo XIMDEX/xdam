@@ -14,6 +14,7 @@ class RoleAbilityRequest extends FormRequest
     public function authorize()
     {
         return true;
+
     }
 
     /**
@@ -24,11 +25,20 @@ class RoleAbilityRequest extends FormRequest
     public function rules()
     {
         return [
-            'role_id'    => 'required|string',
-            'ability_id' => 'required_without_all:ability,tile',
-            'ability'    => 'required_without_all:ability_id|string|min:3',
-            'title'      => 'required_without_all:ability_id|string|min:3',
-
+            'role_id'    => 'required',
+            'ability_ids' => 'required|array',
+            'action' => 'required|in:set,unset'
         ];
+    }
+
+    public function all($keys = null)
+    {
+        $data = parent::all($keys);
+        if (strpos($this->getRequestUri(), '/unset/ability') !== false) {
+            $data['action'] = 'unset';
+        } else {
+            $data['action'] = 'set';
+        }
+        return $data;
     }
 }

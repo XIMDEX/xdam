@@ -28,9 +28,9 @@ class WorkspaceCrudTest extends TestCase
             ->has(Workspace::factory(['type' => WorkspaceType::generic])->count(1))
             ->create();
 
-        $admin = $this->getUserWithRole(1);
+        $admin = $this->getUserWithRole(Roles::super_admin_id, null);
         $manager = $this->getUserWithRole(2, $org);
-        $editor = $this->getUserWithRole(3);
+        $editor = $this->getUserWithRole(3, $org);
 
         $this->actingAs($admin, 'api');
 
@@ -59,7 +59,7 @@ class WorkspaceCrudTest extends TestCase
         $org_user
             ->assertStatus(200)
             ->assertJson([
-                'data'=> ['success' => true],
+                'data'=> true,
             ]);
 
 

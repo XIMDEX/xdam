@@ -44,7 +44,7 @@ class SetOrganizationsToUserRequest extends FormRequest
         }
 
         //checks if the user has permissions to manage the specified entity.
-        if ($this->user()->can(Abilities::ManageOrganization, Organization::find($id_to_set)) && $id_to_set != null) {
+        if ($this->user()->can(Abilities::MANAGE_ORGANIZATION, Organization::find($id_to_set)) && $id_to_set != null) {
             $this->request->set('organization_id', $id_to_set);
             return true;
         } else {

@@ -17,7 +17,7 @@ class UpdateWorkspaceRequest extends FormRequest
     public function authorize()
     {
         //check if user has the update-workspace ability on the specified entity
-        if ($this->user()->can(Abilities::ManageWorkspace, Workspace::find($this->workspace_id))) {
+        if ($this->user()->canAny([Abilities::MANAGE_WORKSPACE, Abilities::UPDATE_WORKSPACE], Workspace::find($this->workspace_id))) {
             return true;
         }
 

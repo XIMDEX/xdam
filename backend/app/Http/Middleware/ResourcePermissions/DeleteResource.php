@@ -4,6 +4,7 @@ namespace App\Http\Middleware\ResourcePermissions;
 
 use App\Enums\Abilities;
 use App\Models\DamResource;
+use App\Models\Workspace;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,8 +21,8 @@ class DeleteResource
     public function handle(Request $request, Closure $next)
     {
         $user = Auth::user();
-        $resource = DamResource::find($request->resource_id);
-        if($user->canAny(Abilities::RemoveResource, $resource) || $user->ownResource($resource)) {
+        $workspace = Workspace::find($user->selected_workspace);
+        if($user->can(Abilities::REMOVE_RESOURCE, $workspace)) {
             return $next($request);
         }
         return response()->json(['delete_resource_error' => 'Unauthorized.'], 401);

@@ -6,40 +6,25 @@ use App\Enums\Roles;
 use App\Models\User;
 use App\Services\Admin\AdminService;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Silber\Bouncer\BouncerFacade as Bouncer;
-use Silber\Bouncer\Database\Role;
 
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
-    public function setOrganization($user, $org, $role_id, $only_organization = false)
+    public function setOrganization($user, $org, $role_id, $only_organization = true)
     {
         $adminService = new AdminService();
         $adminService->setOrganizationHelper($user, $org, $role_id, $only_organization);
     }
 
-    public function getUserWithRole($rol_id, $entity = null)
+    public function getUserWithRole($rol_id, $entity)
     {
-        $user = User::factory()->create();
-        $rol = Role::find($rol_id);
-        if ($rol->name == Roles::super_admin) {
-            Bouncer::assign($rol)->to($user);
-            return $user;
-        }
-
-        $abilities = [];
-        foreach ($rol->getAbilities() as $ability) {
-            $abilities[] = $ability->name;
-        }
-
-        if ($entity) {
-            $user->organizations()->attach($entity->id);
-            Bouncer::allow($user)->to($abilities, $entity);
+        if($rol_id == Roles::super_admin_id) {
+            $user = User::find(1);
         } else {
-            Bouncer::allow($user)->to($abilities);
+            $user = User::factory()->create();
+            $this->setOrganization($user, $entity, $rol_id, false);
         }
-
         return $user;
     }
 }

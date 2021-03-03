@@ -26,7 +26,7 @@ class RoleStoreRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'title' => 'required|string',
+            'title' => 'string',
             'organization' => 'required'
         ];
     }

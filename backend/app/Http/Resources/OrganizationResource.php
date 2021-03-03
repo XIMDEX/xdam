@@ -21,8 +21,9 @@ class OrganizationResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'workspaces' => WorkspaceResource::collection($this->workspaces()->get()),
-            'abilities' => Auth::user()->abilitiesOnEntity($this->id, Organization::class)
+            //'workspaces' => WorkspaceResource::collection($this->workspaces()->get()),
+            'abilities' => Auth::user()->abilitiesOnEntity($this->id, Organization::class),
+            'collections' => $this->collections()->get(),
         ];
     }
 }

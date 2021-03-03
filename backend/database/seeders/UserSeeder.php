@@ -75,13 +75,13 @@ class UserSeeder extends Seeder
 
 
         //Factory Corporate Organizations ids 3 4 5 6
-        $this->adminService->setOrganizationHelper($admin_of_all, Organization::find(3), Roles::admin_id);
-        $this->adminService->setOrganizationHelper($admin_of_all, Organization::find(4), Roles::admin_id);
-        $this->adminService->setOrganizationHelper($admin_of_all, Organization::find(5), Roles::admin_id);
-        $this->adminService->setOrganizationHelper($admin_of_all, Organization::find(6), Roles::admin_id);
+        $this->adminService->setOrganizationHelper($admin_of_all, Organization::find(3), Roles::admin_id, false);
+        $this->adminService->setOrganizationHelper($admin_of_all, Organization::find(4), Roles::admin_id, false);
+        $this->adminService->setOrganizationHelper($admin_of_all, Organization::find(5), Roles::admin_id, false);
+        $this->adminService->setOrganizationHelper($admin_of_all, Organization::find(6), Roles::admin_id, false);
 
-        $this->adminService->setOrganizationHelper($admin, Organization::find(3), Roles::admin_id);
-        $this->adminService->setOrganizationHelper($admin, Organization::find(4), Roles::admin_id);
+        $this->adminService->setOrganizationHelper($admin, Organization::find(3), Roles::admin_id, false);
+        $this->adminService->setOrganizationHelper($admin, Organization::find(4), Roles::admin_id, false);
 
         $this->adminService->setOrganizationHelper($manager, Organization::find(4), Roles::manager_id, true);
         $this->adminService->setOrganizationHelper($manager, Organization::find(5), Roles::manager_id, true);
@@ -90,6 +90,7 @@ class UserSeeder extends Seeder
         $this->adminService->setOrganizationHelper($editor, Organization::find(6), Roles::editor_id, true);
 
         $this->adminService->setOrganizationHelper($reader, Organization::find(6), Roles::reader_id, true);
+        $this->adminService->setOrganizationHelper($reader, Organization::find(4), Roles::reader_id, true);
 
     }
 }

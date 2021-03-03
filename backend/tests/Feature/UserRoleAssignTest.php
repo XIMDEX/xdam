@@ -19,7 +19,7 @@ class UserRoleAssignTest extends TestCase
      */
     public function test_user_role_assign()
     {
-        $super_admin = $this->getUserWithRole(1);
+        $super_admin = $this->getUserWithRole(Roles::super_admin_id, null);
         $admin = User::factory()->create(['name' => 'admin']);
         $new_admin = User::factory()->create(['name' => 'new_admin']);
         $manager = User::factory()->create(['name' => 'manager']);

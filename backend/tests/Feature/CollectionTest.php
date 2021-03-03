@@ -16,9 +16,9 @@ class CollectionTest extends TestCase
      */
     public function test_get_all_collections_of_one_organization()
     {
-        $admin = $this->getUserWithRole(1);
+        $super_admin = $this->getUserWithRole(1, null);
 
-        $this->actingAs($admin, 'api');
+        $this->actingAs($super_admin, 'api');
 
         $response = $this->json('GET', '/api/v1/organization/1/collection/all');
 
@@ -31,9 +31,9 @@ class CollectionTest extends TestCase
 
     public function test_list_types()
     {
-        $admin = $this->getUserWithRole(1);
+        $super_admin = $this->getUserWithRole(1, null);
 
-        $this->actingAs($admin, 'api');
+        $this->actingAs($super_admin, 'api');
 
         $response = $this->json('GET', '/api/v1/organization/collection/types/all');
 

@@ -23,10 +23,31 @@ class UserService
         return Auth::user();
     }
 
+    public function unique_multidimensional_array($array, $key) {
+        $temp_array = array();
+        $i = 0;
+        $key_array = array();
+
+        foreach($array as $val) {
+            if (!in_array($val[$key], $key_array)) {
+                $key_array[$i] = $val[$key];
+                $temp_array[$i] = $val;
+            }
+            $i++;
+        }
+        return $temp_array;
+    }
+
     public function resources()
     {
-
-        return Auth::user()->resources();
+        $workspaces = Auth::user()->workspaces()->get();
+        $resources = [];
+        foreach ($workspaces as $wsp) {
+            foreach ($wsp->resources()->get() as $res) {
+                $resources[] = $res;
+            }
+        }
+        return $this->unique_multidimensional_array($resources, 'id');
     }
 
     public function getWorkspaces()
@@ -51,7 +72,7 @@ class UserService
         $wsp_id = $wsp->id ?? null;
         $user->selected_workspace = $wsp_id;
         $user->save();
-        return [$wsp ? $wsp->organization()->first() : 'personal context', ['selected workspace' => $wsp_id]];
+        return ['org' => ($wsp ? $wsp->organization()->first() : 'personal context'), 'selected workspace' => $wsp];
 
 
     }
