@@ -49,9 +49,9 @@ Para manejar la parada o arranque del servicio solr, tenemos disponible:
 Una vez iniciado el servicio tendremos disponible una interfaz web corriendo en el puerto 8983 ( por defecto ).
 Creamos 2 cores necesarios para que funcione XDAM ejecutando en la terminal:
 	
-`sudo su - solr -c "/opt/solr/bin/solr create -c xdam-course -n data_driven_schema_configs"`
+`sudo su - solr -c "/opt/solr/bin/solr create -c course -n data_driven_schema_configs"`
 
-`sudo su - solr -c "/opt/solr/bin/solr create -c xdam-multimedia -n data_driven_schema_configs"`
+`sudo su - solr -c "/opt/solr/bin/solr create -c multimedia -n data_driven_schema_configs"`
 
 #### 	INSTALACIÓN BACKEND:
 
@@ -67,15 +67,7 @@ Copiamos el fichero de ejemplo .env.example a .env
 
 Modificamos el fichero .env para añadir los parámetros de conexión a nuestra base de datos Mysql o MariaDB.
 
-También se debe modificar las variables referentes a SOLR dentro de este fichero, para que apunten a nuestro solr local:
-
-`SOLR_TIMEOUT="60"`
-
-`SOLR_HOST="localhost"`
-
-`SOLR_PORT="8983"`
-
-`SOLR_PATH="/"`
+Modificamos el fichero presente en config/solarium.php
 
 Instalamos los optimizadores de imagen que requiere la librería media-library, con la que se gestionan los ficheros.
 
@@ -97,7 +89,7 @@ Una vez hecho esto ya tendremos la base de datos configurada con las tablas y lo
 
 El siguiente paso es configurar los schemas de Solr, para ello ejecutamos directamente:
 
-`php artisan install:solr`
+`php artisan solr:install`
 
 Este comando se encarga de crear/actualizar los schemas necesarios en los 2 cores del solr que dimos de alta en el apartado de instalación de apache solr.
 
