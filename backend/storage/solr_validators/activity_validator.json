@@ -1,0 +1,202 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "text": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "level": {
+      "type": "integer"
+    },
+    "order": {
+      "type": "integer"
+    },
+    "title": {
+      "type": "string"
+    },
+    "matrix": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": [
+            {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          ]
+        },
+        "props": {
+          "type": "object",
+          "properties": {
+            "size": {
+              "type": "object",
+              "properties": {
+                "width": {
+                  "type": "integer"
+                },
+                "heigth": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "width",
+                "heigth"
+              ]
+            },
+            "alphabet": {
+              "type": "string"
+            },
+            "rules": {
+              "type": "object",
+              "properties": {
+                "allow_inverse": {
+                  "type": "boolean"
+                },
+                "allow_vertical": {
+                  "type": "boolean"
+                },
+                "allow_horizontal": {
+                  "type": "boolean"
+                },
+                "allow_diagonal": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "allow_inverse",
+                "allow_vertical",
+                "allow_horizontal",
+                "allow_diagonal"
+              ]
+            }
+          },
+          "required": [
+            "size",
+            "alphabet",
+            "rules"
+          ]
+        }
+      },
+      "required": [
+        "data",
+        "props"
+      ]
+    },
+    "weight": {
+      "type": "integer"
+    },
+    "offline": {
+      "type": "boolean"
+    },
+    "options": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "image": {
+              "type": "string"
+            },
+            "order": {
+              "type": "integer"
+            },
+            "title": {
+              "type": "string"
+            },
+            "feedback": {
+              "type": "string"
+            },
+            "is_right": {
+              "type": "string"
+            },
+            "accepted_values": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "paired_option_id": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "id",
+            "image",
+            "order",
+            "title",
+            "feedback",
+            "is_right",
+            "accepted_values",
+            "paired_option_id"
+          ]
+        }
+      ]
+    },
+    "version": {
+      "type": "integer"
+    },
+    "evaluator": {
+      "type": "string"
+    },
+    "criterion_id": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id",
+    "text",
+    "type",
+    "level",
+    "order",
+    "title",
+    "matrix",
+    "weight",
+    "offline",
+    "options",
+    "version",
+    "evaluator",
+    "criterion_id"
+  ]
+}
