@@ -153,7 +153,8 @@ class ResourceService
      */
     public function exploreCourses(): Collection
     {
-        return Category::where('type', ResourceType::course)->get();
+        $course = ResourceType::course;
+        return Category::where('type', $course)->orWhere('type', "=", strval($course))->get();
     }
 
     /**

@@ -142,7 +142,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
                 Route::post('/{damResource}/update',                    [ResourceController::class, 'update'])     ->name('damResource.update');
             });
 
-            Route::group(['middleware' => 'update.resourcereport'], function() {
+            Route::group([], function() {
                 Route::post('/{damResource}/setTags',                   [ResourceController::class, 'setTags'])    ->name('damResource.setTags');
                 Route::post('/{damResource}/addPreview',                [ResourceController::class, 'addPreview']) ->name('damResource.addPreview');
                 Route::post('/{damResource}/addFile',                   [ResourceController::class, 'addFile'])    ->name('damResource.addFile');

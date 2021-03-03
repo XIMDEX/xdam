@@ -32,6 +32,7 @@ class CoursePreviewResource extends JsonResource
             'image' => $image,
             'title' => $name,
             'introduction' => $introduction,
+            'tags' => $this->tags,
         ];
     }
 }
