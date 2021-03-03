@@ -1,0 +1,289 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "title": {
+      "type": "string"
+    },
+    "creator_id": {
+      "type": "integer"
+    },
+    "activities": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "integer"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "evaluator": {
+              "type": "string"
+            },
+            "matrix": {
+              "type": "null"
+            },
+            "type": {
+              "type": "string"
+            },
+            "order": {
+              "type": "integer"
+            },
+            "title": {
+              "type": "null"
+            },
+            "options": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "has_paired_option": {
+                      "type": "boolean"
+                    },
+                    "paired_option_id": {
+                      "type": "null"
+                    },
+                    "image": {
+                      "type": "null"
+                    },
+                    "order": {
+                      "type": "integer"
+                    },
+                    "title": {
+                      "type": "null"
+                    },
+                    "feedback": {
+                      "type": "string"
+                    },
+                    "accepted_values": {
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "is_right": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "has_paired_option",
+                    "paired_option_id",
+                    "image",
+                    "order",
+                    "title",
+                    "feedback",
+                    "accepted_values",
+                    "is_right"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "has_paired_option": {
+                      "type": "boolean"
+                    },
+                    "paired_option_id": {
+                      "type": "null"
+                    },
+                    "image": {
+                      "type": "null"
+                    },
+                    "order": {
+                      "type": "integer"
+                    },
+                    "title": {
+                      "type": "null"
+                    },
+                    "feedback": {
+                      "type": "string"
+                    },
+                    "accepted_values": {
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "is_right": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "has_paired_option",
+                    "paired_option_id",
+                    "image",
+                    "order",
+                    "title",
+                    "feedback",
+                    "accepted_values",
+                    "is_right"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "has_paired_option": {
+                      "type": "boolean"
+                    },
+                    "paired_option_id": {
+                      "type": "null"
+                    },
+                    "image": {
+                      "type": "null"
+                    },
+                    "order": {
+                      "type": "integer"
+                    },
+                    "title": {
+                      "type": "null"
+                    },
+                    "feedback": {
+                      "type": "string"
+                    },
+                    "accepted_values": {
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "is_right": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "has_paired_option",
+                    "paired_option_id",
+                    "image",
+                    "order",
+                    "title",
+                    "feedback",
+                    "accepted_values",
+                    "is_right"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "has_paired_option": {
+                      "type": "boolean"
+                    },
+                    "paired_option_id": {
+                      "type": "null"
+                    },
+                    "image": {
+                      "type": "null"
+                    },
+                    "order": {
+                      "type": "integer"
+                    },
+                    "title": {
+                      "type": "null"
+                    },
+                    "feedback": {
+                      "type": "string"
+                    },
+                    "accepted_values": {
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "is_right": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "has_paired_option",
+                    "paired_option_id",
+                    "image",
+                    "order",
+                    "title",
+                    "feedback",
+                    "accepted_values",
+                    "is_right"
+                  ]
+                }
+              ]
+            },
+            "criterion_id": {
+              "type": "null"
+            },
+            "weight": {
+              "type": "integer"
+            },
+            "level": {
+              "type": "integer"
+            },
+            "offline": {
+              "type": "boolean"
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "version",
+            "id",
+            "evaluator",
+            "matrix",
+            "type",
+            "order",
+            "title",
+            "options",
+            "criterion_id",
+            "weight",
+            "level",
+            "offline",
+            "text"
+          ]
+        }
+      ]
+    },
+    "offline": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "title",
+    "creator_id",
+    "activities",
+    "offline"
+  ]
+}
