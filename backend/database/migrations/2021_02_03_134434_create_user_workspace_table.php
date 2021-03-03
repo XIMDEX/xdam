@@ -15,7 +15,7 @@ class CreateUserWorkspaceTable extends Migration
     {
         Schema::create('user_workspace', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('user_id');
+            $table->unsignedBigInteger('user_id');
             $table->unsignedInteger('workspace_id');
             $table->timestamps();
             $table->foreign('user_id', 'user_workspace_id_fk')->references('id')->on('users')->onDelete('cascade');

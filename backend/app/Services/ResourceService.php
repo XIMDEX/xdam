@@ -151,7 +151,7 @@ class ResourceService
     /**
      * @return mixed
      */
-    public function exploreCourses(): Category
+    public function exploreCourses(): Collection
     {
         return Category::where('type', ResourceType::course)->get();
     }
