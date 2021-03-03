@@ -2,17 +2,26 @@
 
 return [
     'connections' => [
-        'main' => [
+        'activity' => [
             'endpoint' => [
                 'scheme' => 'http', # or https
                 'host' => env('SOLR_HOST', 'localhost'),
                 'port' => env('SOLR_PORT', '8983'),
                 'path' => env('SOLR_PATH', '/'),
-                'core' => 'main',
+                'core' => 'activity',
             ],
-            'resource' => 'CourseSolrResource'
+            'resource' => 'ActivitySolrResource'
         ],
-
+        'assessment' => [
+            'endpoint' => [
+                'scheme' => 'http', # or https
+                'host' => env('SOLR_HOST', 'localhost'),
+                'port' => env('SOLR_PORT', '8983'),
+                'path' => env('SOLR_PATH', '/'),
+                'core' => 'assessment',
+            ],
+            'resource' => 'AssessmentSolrResource'
+        ],
         'course' => [
             'endpoint' => [
                 'scheme' => 'http', # or https

@@ -22,12 +22,15 @@ class StoreResourceRequest extends FormRequest
     public function authorize()
     {
         //Check if collection_id is attached to the organization of user selected workspace
-        $selected_workspace = Auth::user()->selected_workspace;
+        $organizations = Auth::user()->organizations()->get();
         $collection = Collection::find($this->collection_id);
-        $org = Workspace::find($selected_workspace)->organization()->first();
-        if($collection->organization()->first()->id == $org->id) {
-            return true;
+        foreach($organizations as $org)
+        {
+            if($collection->organization()->first()->id == $org->id) {
+                return true;
+            }
         }
+
         return false;
     }
 

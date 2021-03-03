@@ -30,6 +30,7 @@ class MultimediaSolrResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'data' => json_encode($this->data),
             'active' => $this->active,
             'type' => ResourceType::fromValue($this->type)->key,
             'tags' => $this->tags,

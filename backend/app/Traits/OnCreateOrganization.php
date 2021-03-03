@@ -10,14 +10,14 @@ trait OnCreateOrganization
 {
     protected static function bootOnCreateOrganization() {
         static::created(function ($model) {
+            $solariumConnections = config('solarium.connections', []);
 
             //create collections for organization
-            foreach (CollectionType::all() as $collection_type) {
+            foreach ($solariumConnections as $keyName => $value) {
                 Collection::create([
-                    'name' => $model->name . ' ' . $collection_type->name .' collection',
+                    'name' => $model->name . ' ' . ucfirst($keyName) .' collection',
                     'organization_id' => $model->id,
-                    'type_id' => $collection_type->id,
-                    'solr_connection' => $collection_type->name
+                    'solr_connection' => $keyName
                 ]);
             }
         });
