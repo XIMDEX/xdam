@@ -118,10 +118,8 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
         Route::group(['prefix' => 'resource', 'middleware' => 'read.workspace'], function() {
         // Route::group(['prefix' => 'resource', 'middleware' => 'manage.workspaces'], function() {
 
-            Route::group(['prefix' => 'resource'], function() {
-                Route::get('/listTypes', [ResourceController::class, 'listTypes'])->name('damResource.listTypes');
-                Route::get('/',          [ResourceController::class, 'getAll'])->name('damResource.getAll');
-            });
+            Route::get('/listTypes', [ResourceController::class, 'listTypes'])->name('damResource.listTypes');
+            Route::get('/',          [ResourceController::class, 'getAll'])->name('damResource.getAll');
 
             Route::group(['middleware' => 'create.resource'], function() {
                 Route::post('/',                        [ResourceController::class, 'store'])->name('damResource.store');
