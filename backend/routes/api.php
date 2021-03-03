@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\Abilities;
 use App\Http\Controllers\AbilityController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CatalogueController;
@@ -35,22 +34,6 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
 
     Route::group(['middleware' => 'auth:api'], function () {
         Route::group(['prefix' => 'super-admin', 'middleware' => 'can:*'], function(){
-            Route::group(['prefix' => 'role'], function(){
-                Route::post('store',            [RoleController::class, 'store'])        ->name('role.store');
-                Route::post('update',           [RoleController::class, 'update'])       ->name('role.update');
-                Route::get('all',               [RoleController::class, 'index'])        ->name('role.index');
-                Route::get('/{id}',             [RoleController::class, 'get'])          ->name('role.get');
-                Route::delete('/{id}',          [RoleController::class, 'delete'])       ->name('role.delete');
-                Route::post('giveAbility',      [RoleController::class, 'giveAbility'])  ->name('role.giveAbility');
-                Route::post('removeAbility',    [RoleController::class, 'removeAbility'])->name('role.removeAbility');
-            });
-            Route::group(['prefix' => 'ability'], function(){
-                Route::post('/store',   [AbilityController::class, 'store']) ->name('ability.store');
-                Route::post('/update',  [AbilityController::class, 'update'])->name('ability.update');
-                Route::get('/all',      [AbilityController::class, 'index']) ->name('ability.index');
-                Route::get('/{id}',     [AbilityController::class, 'get'])   ->name('ability.get');
-                Route::delete('/{id}',  [AbilityController::class, 'delete'])->name('ability.delete');
-            });
             Route::group(['prefix' => 'organization'], function(){
                 Route::post('create',               [OrganizationController::class, 'create'])          ->name('org.create');
                 Route::get('get/{organization_id}', [OrganizationController::class, 'get'])             ->name('org.get')   ;
@@ -61,15 +44,36 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
         });
 
         Route::group(['prefix' => 'organization', 'middleware' => 'manage.organizations'], function(){
+
+            //Roles
+            Route::get('{organization}/role/{role_id}',          [RoleController::class, 'get'])             ->name('role.get');
+            Route::get('{organization}/roles/all',               [RoleController::class, 'index'])           ->name('role.index');
+
+            Route::post('{organization}/roles/store',            [RoleController::class, 'store'])           ->name('role.store');
+            Route::post('{organization}/roles/update',           [RoleController::class, 'update'])          ->name('role.update');
+
+            Route::post('{organization}/roles/set/ability',      [RoleController::class, 'setAbilityToRole'])->name('role.giveAbility');
+            Route::post('{organization}/roles/unset/ability',    [RoleController::class, 'setAbilityToRole'])->name('role.removeAbility');
+            Route::delete('{organization}/roles/{id}',           [RoleController::class, 'delete'])          ->name('role.delete');
+
+            //Abilities
+            Route::get('{organization_id}/abilities/all',    [AbilityController::class, 'index']) ->name('ability.index');
+            Route::get('{organization_id}/ability/{id}',     [AbilityController::class, 'get'])   ->name('ability.get');
+            // Route::post('/store',   [AbilityController::class, 'store']) ->name('ability.store');
+            // Route::post('/update',  [AbilityController::class, 'update'])->name('ability.update');
+            // Route::delete('/{id}',  [AbilityController::class, 'delete'])->name('ability.delete');
+
+            //User settings
             Route::post('set/user',                         [AdminController::class, 'setOrganizations'])              ->name('adm.usr.set.org');
             Route::post('unset/user',                       [AdminController::class, 'unsetOrganizations'])            ->name('adm.usr.unset.org');
             Route::post('workspace/create',                 [WorkspaceController::class, 'create'])                    ->name('wsp.create');
             Route::post('workspace/setAll/user',            [AdminController::class, 'setAllWorkspacesOfOrganization'])->name('adm.usr.set.all.wsp');
-            Route::get('{organization_id}/collection/all',  [OrganizationController::class, 'indexCollections'])    ->name('org.collection.list.all');
+            Route::get('{organization_id}/collection/all',  [OrganizationController::class, 'indexCollections'])       ->name('org.collection.list.all');
             Route::group(['prefix' => 'collection'], function(){
                 Route::post('create',   [OrganizationController::class, 'createCollection'])    ->name('org.collection.create');
                 Route::get('types/all', [OrganizationController::class, 'indexCollectionTypes'])->name('org.collectionType.all');
             });
+            Route::get('{organization_id}/workspaces', [WorkspaceController::class, 'index'])->name('wsp.index');
         });
 
         Route::group(['prefix' => 'workspace', 'middleware' => 'manage.workspaces'], function(){
@@ -77,7 +81,6 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::post('unset/user',           [AdminController::class, 'unsetWorkspaces'])->name('adm.usr.unset.wsp');
             Route::get('/get/{workspace_id}',   [WorkspaceController::class, 'get'])        ->name('wsp.get');
             Route::delete('/{workspace_id}',    [WorkspaceController::class, 'delete'])     ->name('wsp.delete');
-            Route::get('index',                 [WorkspaceController::class, 'index'])      ->name('wsp.index');
             Route::post('update',               [WorkspaceController::class, 'update'])     ->name('wsp.update');
         });
 
@@ -86,8 +89,11 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
         });
 
         Route::group(['prefix' => 'user'], function(){
+
             Route::post('logout',   [AuthController::class, 'logout'])->name('user.logout');
             Route::get('/',         [UserController::class, 'user'])->name('user.get');
+            Route::get('/me',       [UserController::class, 'userInfo'])->name('user.get.me');
+
             Route::group(['prefix' => 'resource'], function(){
                 Route::get('/', [UserController::class, 'resources'])->name('user.get.resources');
                 /*
@@ -109,33 +115,47 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             });
         });
 
-        Route::group(['prefix' => 'resource', 'middleware' => 'manage.workspaces'], function() {
+        Route::group(['prefix' => 'resource', 'middleware' => 'read.workspace'], function() {
+        // Route::group(['prefix' => 'resource', 'middleware' => 'manage.workspaces'], function() {
 
-            Route::get('/listTypes',                [ResourceController::class, 'listTypes'])->name('damResource.listTypes');
-            Route::post('/',                        [ResourceController::class, 'store'])->name('damResource.store');
-            Route::post('/{collection_id}/create',  [ResourceController::class, 'store'])->name('collection.damResource.store');
-            Route::get('/',                         [ResourceController::class, 'getAll'])->name('damResource.getAll');
+            Route::group(['prefix' => 'resource'], function() {
+                Route::get('/listTypes', [ResourceController::class, 'listTypes'])->name('damResource.listTypes');
+                Route::get('/',          [ResourceController::class, 'getAll'])->name('damResource.getAll');
+            });
+
+            Route::group(['middleware' => 'create.resource'], function() {
+                Route::post('/',                        [ResourceController::class, 'store'])->name('damResource.store');
+                Route::post('/{collection_id}/create',  [ResourceController::class, 'store'])->name('collection.damResource.store');
+            });
 
             Route::group(['middleware' => 'show.resource'], function() {
                 Route::get('/render/{damUrl}/{size}', [ResourceController::class, 'render'])->name('damResource.renderWithSize');
                 Route::get('/render/{damUrl}',        [ResourceController::class, 'render'])->name('damResource.render');
                 Route::get('/{damResource}',          [ResourceController::class, 'get'])   ->name('damResource.get');
             });
+
             Route::group(['middleware' => 'download.resource'], function() {
                 Route::get('/download/{damResource}/{size}',    [ResourceController::class, 'download'])->name('damResource.download');
                 Route::get('/download/{damResource}',           [ResourceController::class, 'download'])->name('damResource.downloadWithSize');
             });
             Route::group(['middleware' => 'update.resource'], function() {
                 Route::post('/{damResource}/update',                    [ResourceController::class, 'update'])     ->name('damResource.update');
+            });
+
+            Route::group(['middleware' => 'update.resourcereport'], function() {
                 Route::post('/{damResource}/setTags',                   [ResourceController::class, 'setTags'])    ->name('damResource.setTags');
                 Route::post('/{damResource}/addPreview',                [ResourceController::class, 'addPreview']) ->name('damResource.addPreview');
                 Route::post('/{damResource}/addFile',                   [ResourceController::class, 'addFile'])    ->name('damResource.addFile');
                 Route::post('/{damResource}/addCategory/{category}',    [ResourceController::class, 'addCategory'])->name('damResource.addCategory');
                 Route::post('/{damResource}/addUse',                    [ResourceController::class, 'addUse'])     ->name('damResource.addUse');
             });
+
             Route::group(['middleware' => 'delete.resource'], function() {
-                Route::delete('/{damResource}/deleteUse/{damResourceUse}',  [ResourceController::class, 'deleteUse'])            ->name('damResource.deleteUse');
                 Route::delete('/{damResource}',                             [ResourceController::class, 'delete'])               ->name('damResource.delete');
+            });
+
+            Route::group(['middleware' => 'delete.resourcereport'], function() {
+                Route::delete('/{damResource}/deleteUse/{damResourceUse}',  [ResourceController::class, 'deleteUse'])            ->name('damResource.deleteUse');
                 Route::delete('/{damResource}/deleteCategory/{category}',   [ResourceController::class, 'deleteCategory'])       ->name('damResource.deleteCategory');
                 Route::delete('/{damResource}/associatedFile/{media}',      [ResourceController::class, 'deleteAssociatedFile']) ->name('damResource.deleteAssociatedFile');
                 Route::delete('/{damResource}/associatedFiles',             [ResourceController::class, 'deleteAssociatedFiles'])->name('damResource.deleteAssociatedFiles');

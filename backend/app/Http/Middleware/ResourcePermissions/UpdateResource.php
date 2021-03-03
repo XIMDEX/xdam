@@ -25,7 +25,7 @@ class UpdateResource
         } else {
             $resource = DamResource::find($request->resource_id);
         }
-        if($user->can(Abilities::EditResource, $resource) || $user->ownResource($resource)) {
+        if($user->can(Abilities::UPDATE_RESOURCE, $resource) || $user->ownResource($resource)) {
             return $next($request);
         }
         return response()->json(['update_resource_error' => 'Unauthorized.'], 401);

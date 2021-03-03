@@ -1,17 +1,14 @@
 <?php
 
-namespace App\Http\Middleware\ResourcePermissions;
+namespace App\Http\Middleware;
 
 use App\Enums\Abilities;
-use App\Models\DamResource;
-use App\Models\Media;
 use App\Models\Workspace;
-use App\Utils\DamUrlUtil;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class DownloadResource
+class ReadWorkspace
 {
     /**
      * Handle an incoming request.
@@ -24,9 +21,13 @@ class DownloadResource
     {
         $user = Auth::user();
         $workspace = Workspace::find($user->selected_workspace);
-        if($user->can(Abilities::DOWNLOAD_RESOURCE, $workspace)) {
+        if($user->canAny([Abilities::READ_WORKSPACE, Abilities::MANAGE_WORKSPACE], $workspace)) {
             return $next($request);
         }
-        return response()->json(['download_resource_error' => 'Unauthorized.'], 401);
+        return response()->json(['read_workspace_error' => 'Unauthorized.'], 401);
     }
+    /*
+        Route::get('/listTypes', [ResourceController::class, 'listTypes'])->name('damResource.listTypes');
+        Route::get('/',          [ResourceController::class, 'getAll'])->name('damResource.getAll');
+    */
 }

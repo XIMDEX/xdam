@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Requests\RoleAbility;
+namespace App\Http\Requests;
 
-use App\Enums\Abilities;
-use App\Enums\Roles;
 use Illuminate\Foundation\Http\FormRequest;
 
-class DeleteRoleRequest extends FormRequest
+class UpdateRoleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,10 +13,7 @@ class DeleteRoleRequest extends FormRequest
      */
     public function authorize()
     {
-        if ($this->user()->can(Abilities::MANAGE_ROLES, $this->organization) || $this->user()->can('*')) {
-            return true;
-        }
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +24,8 @@ class DeleteRoleRequest extends FormRequest
     public function rules()
     {
         return [
-
+            'role_id' => 'required',
+            'name' => 'required'
         ];
     }
 }

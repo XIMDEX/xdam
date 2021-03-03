@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Workspace;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class WorkspaceResource extends JsonResource
 {
@@ -20,6 +22,7 @@ class WorkspaceResource extends JsonResource
             'name' => $this->name,
             'organization_id' => $this->organization_id,
             'type' => $this->type,
+            'abilities' => Auth::user()->abilitiesOnEntity($this->id, Workspace::class)
         ];
     }
 }

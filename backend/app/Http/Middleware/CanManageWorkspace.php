@@ -24,7 +24,7 @@ class CanManageWorkspace
             $wsp = Workspace::find($request->workspace_id);
             $user = Auth::user();
 
-            if ($user->can(Abilities::ManageWorkspace, $wsp) ||  $user->isAn(Roles::super_admin) || $wsp->type == WorkspaceType::public) {
+            if ($user->can(Abilities::MANAGE_WORKSPACE, $wsp) ||  $user->isAn(Roles::super_admin) || $wsp->type == WorkspaceType::public) {
                 return $next($request);
             }
 

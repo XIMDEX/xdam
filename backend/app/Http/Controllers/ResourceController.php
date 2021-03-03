@@ -10,6 +10,7 @@ use App\Http\Requests\addPreviewToResourceRequest;
 use App\Http\Requests\addUseRequest;
 use App\Http\Requests\deleteUseRequest;
 use App\Http\Requests\DownloadMultipleRequest;
+use App\Http\Requests\GetDamResourceRequest;
 use App\Http\Requests\ResouceCategoriesRequest;
 use App\Http\Requests\SetTagsRequest;
 use App\Http\Requests\StoreResourceRequest;
@@ -78,7 +79,7 @@ class ResourceController extends Controller
      * @param DamResource $damResource
      * @return \Illuminate\Http\JsonResponse|object
      */
-    public function get(DamResource $damResource)
+    public function get(DamResource $damResource, GetDamResourceRequest $getDamResourceRequest)
     {
         $damResource = $this->resourceService->get($damResource);
         return (new ResourceResource($damResource))

@@ -64,6 +64,8 @@ class Kernel extends HttpKernel
         'manage.roles' => \App\Http\Middleware\CanManageRoles::class,
         'manage.workspaces' => \App\Http\Middleware\CanManageWorkspace::class,
 
+        'read.workspace' => \App\Http\Middleware\ReadWorkspace::class,
+        'create.resource' => \App\Http\Middleware\ResourcePermissions\CreateResource::class,
         'show.resource' => \App\Http\Middleware\ResourcePermissions\ShowResource::class,
         'download.resource' => \App\Http\Middleware\ResourcePermissions\DownloadResource::class,
         'update.resource' => \App\Http\Middleware\ResourcePermissions\UpdateResource::class,

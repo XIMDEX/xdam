@@ -1,14 +1,10 @@
 <?php
 
-
 namespace App\Traits;
 
-use App\Enums\Abilities;
 use App\Enums\DefaultOrganizationWorkspace;
-use App\Enums\OrganizationType;
 use App\Enums\Roles;
 use App\Enums\WorkspaceType;
-use App\Models\Collection;
 use App\Models\Organization;
 use App\Models\Workspace;
 use App\Services\Admin\AdminService;
@@ -27,22 +23,7 @@ trait SetDefaultOrganizationAndWorkspace
             $adminService->setOrganizations($model->id, $public_org->id, Roles::reader_id);
             $adminService->setWorkspaces($model->id, $public_wsp->id, Roles::reader_id);
 
-            // $personal_org = Organization::create([
-            //     'name' => 'user #' . $model->id .' '. DefaultOrganizationWorkspace::personal_organization,
-            //     'type' => OrganizationType::personal
-            // ]);
-
-            // $personal_wsp = Workspace::create([
-            //     'name' => 'user #' . $model->id .' '. DefaultOrganizationWorkspace::personal_workspace,
-            //     'type' => WorkspaceType::personal,
-            //     'organization_id' => $personal_org->id
-            // ]);
-            //$personal_org->workspaces()->save($personal_wsp);
-
-            // $adminService->setOrganizations($model->id, $personal_org->id, Roles::manager_id);
-            // $adminService->setWorkspaces($model->id, $personal_wsp->id, Roles::manager_id);
-
-            // $model->selected_workspace = $public_wsp->id;
+            $model->selected_workspace = Workspace::where('type', WorkspaceType::public)->first()->id;
             $model->save();
         });
     }

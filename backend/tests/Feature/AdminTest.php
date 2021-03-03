@@ -32,7 +32,7 @@ class AdminTest extends TestCase
             ->has(Workspace::factory(['type' => WorkspaceType::corporate])->count(1))
             ->has(Workspace::factory(['name' => 'a generic faker wsp'])->count(1))
             ->create();
-        $this->setOrganization($this->admin, $this->org, Roles::admin_id);
+        $this->setOrganization($this->admin, $this->org, Roles::admin_id, false);
         $this->actingAs($this->admin, 'api');
     }
 
@@ -72,7 +72,7 @@ class AdminTest extends TestCase
     public function test_attach_an_user_to_a_generic_workspace_of_organization()
     {
 
-        $this->setOrganization($this->anUser, $this->org, Roles::editor_id, true);
+        $this->setOrganization($this->anUser, $this->org, Roles::editor_id);
         /*
             Attach a workspace to $user
         */
@@ -95,7 +95,7 @@ class AdminTest extends TestCase
 
     public function test_set_role_to_an_user_on_specific_workspace()
     {
-        $this->setOrganization($this->anUser, $this->org, Roles::editor_id, true);
+        $this->setOrganization($this->anUser, $this->org, Roles::editor_id);
         /*
         / SET USER ROLE ON SPECIFIC WORKSPACE. IT REQUIRES THE USER ATACHED TO THE ORGANIZATION OF WORKSPACE
         */
@@ -121,7 +121,7 @@ class AdminTest extends TestCase
 
     public function test_unset_role_to_an_user_on_specific_workspace()
     {
-        $this->setOrganization($this->anUser, $this->org, Roles::editor_id);
+        $this->setOrganization($this->anUser, $this->org, Roles::editor_id, false);
         /*
             UNSET USER ROLE ON SPECIFIC WORKSPACE
         */
@@ -147,7 +147,7 @@ class AdminTest extends TestCase
 
     public function test_unattach_workspace_to_an_user()
     {
-        $this->setOrganization($this->anUser, $this->org, Roles::editor_id);
+        $this->setOrganization($this->anUser, $this->org, Roles::editor_id, false);
         /*
             UNATTACH WORKSPACES TO USER
         */
@@ -169,7 +169,7 @@ class AdminTest extends TestCase
 
     public function test_unattach_organization_to_an_user()
     {
-        $this->setOrganization($this->anUser, $this->org, Roles::editor_id, true);
+        $this->setOrganization($this->anUser, $this->org, Roles::editor_id);
         /*
             UNATTACH ORGANIZATIONS TO USER
         */

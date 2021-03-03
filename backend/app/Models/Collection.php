@@ -9,7 +9,7 @@ class Collection extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['type_id', 'name', 'organization_id'];
+    protected $fillable = ['type_id', 'name', 'organization_id', 'solr_connection'];
     protected $table = "collections";
 
     public function type()

@@ -6,8 +6,11 @@ use App\Http\Requests\AttachResourceToCollectionRequest;
 use App\Http\Requests\AttachResourceToWorkspaceRequest;
 use App\Http\Requests\SelectOrganizationRequest;
 use App\Http\Requests\SelectWorkspaceRequest;
+use App\Http\Resources\OrganizationCollection;
+use App\Http\Resources\OrganizationResource;
 use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\WorkspaceCollection;
 use App\Services\UserService;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Request;
@@ -33,6 +36,14 @@ class UserController extends Controller
      * @return \Illuminate\Http\JsonResponse|object
      */
     public function user()
+    {
+        $userResource = $this->userService->user();
+        return (new JsonResource($userResource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function userInfo()
     {
         $userResource = $this->userService->user();
         return (new UserResource($userResource))
@@ -64,24 +75,24 @@ class UserController extends Controller
 
     public function getOrganizations()
     {
-        $userResource = $this->userService->getOrganizations();
-        return (new JsonResource($userResource))
+        $organizationResource = $this->userService->getOrganizations();
+        return (new OrganizationCollection($organizationResource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
 
     public function getWorkspaces()
     {
-        $userResource = $this->userService->getWorkspaces();
-        return (new JsonResource($userResource))
+        $workspacesResource = $this->userService->getWorkspaces();
+        return (new WorkspaceCollection($workspacesResource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
 
     public function getWorkspacesOfOrganization(Request $request)
     {
-        $userResource = $this->userService->getWorkspacesOfOrganization($request->organization_id);
-        return (new JsonResource($userResource))
+        $workspaces = $this->userService->getWorkspacesOfOrganization($request->organization_id);
+        return (new WorkspaceCollection($workspaces))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }

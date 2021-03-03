@@ -6,22 +6,21 @@ use App\Enums\DefaultOrganizationWorkspace;
 use App\Enums\Entities;
 use App\Enums\OrganizationType;
 use App\Enums\WorkspaceType;
-use App\Models\DamResource;
 use App\Models\Organization;
+// use App\Models\Role;
+use Silber\Bouncer\Database\Role;
 use App\Models\User;
 use App\Models\Workspace;
 use Error;
 use Exception;
 use Silber\Bouncer\BouncerFacade as Bouncer;
-use Silber\Bouncer\Database\Role;
-
-use function PHPUnit\Framework\throwException;
 
 class AdminService
 {
 
     public function setOrganizations(string $user_id, string $organization_id, string $role_id)
     {
+
         $log = [];
 
         $user = User::find($user_id);
@@ -169,11 +168,14 @@ class AdminService
         return $abilities;
     }
 
-    public function setOrganizationHelper(User $user, Organization $org, $role_id, $only_organization = false)
+    public function setOrganizationHelper(User $user, Organization $org, $role_id, $only_organization)
     {
         $user->organizations()->attach($org);
         $this->SetRoleAbilitiesOnEntity($user->id, $role_id, $org->id, 'set', 'org');
-        if(!$only_organization) {
+        if($only_organization) {
+            $user->workspaces()->attach($org->corporateWorkspace());
+            $this->SetRoleAbilitiesOnEntity($user->id, $role_id, $org->corporateWorkspace()->id, 'set', 'wsp');
+        } else {
             foreach ($org->workspaces()->get() as $wsp) {
                 $user->workspaces()->attach($wsp);
                 $this->SetRoleAbilitiesOnEntity($user->id, $role_id, $wsp->id, 'set', 'wsp');
@@ -198,15 +200,13 @@ class AdminService
         $user = User::find($uid);
         $entity = null;
         $abilities = $this->getRoleAbilities($rid);
+
         switch ($on) {
             case Entities::workspace:
                 $entity = Workspace::find($eid);
                 break;
             case Entities::organization:
                 $entity = Organization::find($eid);
-                break;
-            case Entities::resource:
-                $entity = DamResource::find($eid);
                 break;
             default:
                 throw new Exception("invalid entity");

@@ -9,6 +9,7 @@ use App\Http\Requests\Workspace\DeleteWorkspaceRequest;
 use App\Http\Requests\Workspace\UpdateWorkspaceRequest;
 use App\Http\Resources\WorkspaceCollection;
 use App\Http\Resources\WorkspaceResource;
+use App\Models\Organization;
 use App\Services\OrganizationWorkspace\WorkspaceService;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,7 +34,7 @@ class WorkspaceController extends Controller
 
     public function index(ListWorkspacesRequest $request)
     {
-        $wsps = $this->workspaceService->index();
+        $wsps = $this->workspaceService->index($request->org);
         return (new WorkspaceCollection($wsps))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
