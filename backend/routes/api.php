@@ -91,8 +91,8 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
         Route::group(['prefix' => 'user'], function(){
 
             Route::post('logout',   [AuthController::class, 'logout'])->name('user.logout');
-            Route::get('/',         [UserController::class, 'user'])->name('user.get');
             Route::get('/me',       [UserController::class, 'userInfo'])->name('user.get.me');
+            Route::get('/',         [UserController::class, 'user'])->name('user.get');
 
             Route::group(['prefix' => 'resource'], function(){
                 Route::get('/', [UserController::class, 'resources'])->name('user.get.resources');
