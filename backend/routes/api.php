@@ -40,6 +40,8 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
         });
     });
 
+    Route::get('/exploreCourses', [ResourceController::class, 'exploreCourses'])->name('damResource.exploreCourses');
+
     Route::group(['middleware' => 'auth:api'], function () {
         Route::group(['prefix' => 'super-admin', 'middleware' => 'can:*'], function(){
             Route::group(['prefix' => 'organization'], function(){
@@ -171,7 +173,6 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::delete('/{category}', [CategoryController::class, 'delete'])->name('category.delete');
         });
 
-        Route::get('/exploreCourses', [ResourceController::class, 'exploreCourses'])->name('damResource.exploreCourses');
 
         Route::group(['prefix' => 'catalogue'], function() {
             Route::get('/{collection}', [CatalogueController::class, 'index'])->name('catalogue.index');
