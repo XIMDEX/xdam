@@ -21,6 +21,9 @@ class ShowResource
      */
     public function handle(Request $request, Closure $next)
     {
+        // provisionally everyone has access to render resources
+        return $next($request);
+
         $user = Auth::user();
         if(isset($request->damUrl)) {
             //'request with damUrl. Get the damResource::class'

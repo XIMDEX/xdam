@@ -32,6 +32,14 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
         Route::post('signup',   [AuthController::class, 'signup'])->name('auth.signup');
     });
 
+    Route::group(['middleware' => 'show.resource'], function() {
+        Route::group(['prefix' => 'resource'], function(){
+            Route::get('/render/{damUrl}/{size}', [ResourceController::class, 'render'])->name('damResource.renderWithSize');
+            Route::get('/render/{damUrl}',        [ResourceController::class, 'render'])->name('damResource.render');
+            Route::get('/{damResource}',          [ResourceController::class, 'get'])   ->name('damResource.get');
+        });
+    });
+
     Route::group(['middleware' => 'auth:api'], function () {
         Route::group(['prefix' => 'super-admin', 'middleware' => 'can:*'], function(){
             Route::group(['prefix' => 'organization'], function(){
@@ -124,12 +132,6 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::group(['middleware' => 'create.resource'], function() {
                 Route::post('/',                        [ResourceController::class, 'store'])->name('damResource.store');
                 Route::post('/{collection_id}/create',  [ResourceController::class, 'store'])->name('collection.damResource.store');
-            });
-
-            Route::group(['middleware' => 'show.resource'], function() {
-                Route::get('/render/{damUrl}/{size}', [ResourceController::class, 'render'])->name('damResource.renderWithSize');
-                Route::get('/render/{damUrl}',        [ResourceController::class, 'render'])->name('damResource.render');
-                Route::get('/{damResource}',          [ResourceController::class, 'get'])   ->name('damResource.get');
             });
 
             Route::group(['middleware' => 'download.resource'], function() {
