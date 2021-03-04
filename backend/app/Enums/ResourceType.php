@@ -14,4 +14,5 @@ final class ResourceType extends Enum
     const course = 5;
     const assessment = 6;
     const activity = 7;
+    const book = 8;
 }
