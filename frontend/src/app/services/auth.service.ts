@@ -8,8 +8,8 @@ export class AuthService {
     /*authUrl = 'http://localhost:81/xdam-backend/public/index.php/oauth/token';
     apiUrl = 'http://localhost:81/xdam-backend/public/index.php/api/v1';*/
 
-    authUrl = 'http://localhost/xdam-v2/xdam/backend/public/api/v1/auth/login';
-    apiUrl = 'http://localhost:81/xdam-backend/public/index.php/api/v1'
+    authUrl = 'http://localhost/xdam/backend/public/api/v1/auth/login';
+    apiUrl = 'http://localhost/xdam/backend/public/api/v1'
 
     options: any;
     /**

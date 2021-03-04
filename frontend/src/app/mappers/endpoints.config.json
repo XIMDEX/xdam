@@ -1,5 +1,5 @@
 {
-    "baseUrl": "http://localhost/xdam-v2/xdam/backend/public",
+    "baseUrl": "http://localhost/xdam/backend/public",
     "api": "/api/v1",
     "options": {
         "headers": {
