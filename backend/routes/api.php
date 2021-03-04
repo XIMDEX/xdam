@@ -150,9 +150,6 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
                 Route::post('/{damResource}/addFile',                   [ResourceController::class, 'addFile'])    ->name('damResource.addFile');
                 Route::post('/{damResource}/addCategory/{category}',    [ResourceController::class, 'addCategory'])->name('damResource.addCategory');
                 Route::post('/{damResource}/addUse',                    [ResourceController::class, 'addUse'])     ->name('damResource.addUse');
-            });
-
-            Route::group(['middleware' => 'delete.resource'], function() {
                 Route::delete('/{damResource}',                             [ResourceController::class, 'delete'])               ->name('damResource.delete');
             });
 
