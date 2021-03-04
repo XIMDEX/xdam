@@ -9,7 +9,7 @@ import { ActionModel } from '../../../models/src/lib/ActionModel';
 import { FormI } from '../../../models/src/lib/interfaces/FormI.interface';
 import { setQuestion } from '../../models/forms/Question';
 import swal2 from '../../profiles/swal2';
-import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
+import { XdamModeI } from '@xdam/models/interfaces/XdamModeI.interface';
 import { ModalCourseComponent } from '../forms/modal-course/modal-course.component';
 import { ModalMultimediaComponent } from '../forms/modal-multimedia/modal-multimedia.component';
 
@@ -24,7 +24,7 @@ export class ItemFormComponent implements OnChanges {
     @Input() resourceUrl: string;
     @Input() display: boolean;
     @Input() viewMode: boolean;
-    @Input() mode: XdamMode;
+    @Input() mode: XdamModeI;
 
     @Output() close = new EventEmitter<any>();
     @Output() save = new EventEmitter<any>();
@@ -274,7 +274,7 @@ export class ItemFormComponent implements OnChanges {
 
     formSended(e){
         this.xdamModalMultimedia;
-        if(this.mode == 'course'){
+        if(this.mode.currentMode.id == 3){
             this.xdamModalCourse.sendForm(e);
         }else{
             this.xdamModalMultimedia.sendForm(e);

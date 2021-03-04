@@ -45,12 +45,12 @@
             </div>
 
         </div>-->
-        <div [ngSwitch]="mode">
-            <div *ngSwitchCase="'course'">
-                <xdam-modal-course [action]="action" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" #fromCourse></xdam-modal-course>
+        <div [ngSwitch]="mode.currentMode.id">
+            <div *ngSwitchCase="3">
+                <xdam-modal-course [action]="action" [currentMode]="mode.currentMode" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" #fromCourse></xdam-modal-course>
             </div>
-            <div *ngSwitchCase="'multimedia'">
-                <xdam-modal-multimedia [action]="action" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" #fromMultimedia></xdam-modal-multimedia>
+            <div *ngSwitchCase="4">
+                <xdam-modal-multimedia [action]="action" [currentMode]="mode.currentMode" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" #fromMultimedia></xdam-modal-multimedia>
             </div>
         </div>
         

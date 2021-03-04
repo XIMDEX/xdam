@@ -7,6 +7,7 @@ import { ListItemOptionI } from '@xdam/models/interfaces/ListOptions.interface';
 import { FormCourseComponent } from './form-course/form-course.component';
 import { animation } from '@angular/animations';
 import { QuestionComponent, ResultQuestionI } from '../inputsFroms/question/question.component';
+import { XdamModeI, availableModeI } from '@xdam/models/interfaces/XdamModeI.interface';
 
 @Component({
   selector: 'xdam-modal-course',
@@ -37,6 +38,7 @@ export class ModalCourseComponent implements OnInit {
   @Input() settings: ListItemOptionI;
   @Input() resourceUrl: string;
   @Output() dataToSave = new EventEmitter<ActionModel>();
+  @Input() currentMode: availableModeI;
 
   @ViewChild('imgPreview') imgPreview: ElementRef;
   @ViewChild('questionDeletedFile') questionDeletedFile!: QuestionComponent;
@@ -90,9 +92,10 @@ export class ModalCourseComponent implements OnInit {
     if(this.action.method == 'new' && this.filesToUpload.length > 0){
       data['File[]'] = this.filesToUpload;
     }
-    
+    data['data']["partials"] ={}
     data['data'] = JSON.stringify({description: data['data']});
     data['type'] = this.currentType;
+    data['collection_id'] = this.currentMode.id;
 
     if(this.coverToUpload != null && this.coverToUpload.length > 0 ){
       data['Preview'] = this.coverToUpload.item(0);
@@ -110,8 +113,8 @@ export class ModalCourseComponent implements OnInit {
     }else if(this.filesToUpload.length > 0){
       objToSave.filesToUpload = this.filesToUpload;
     }
-
     
+
 
     objToSave.dataToSave = data;
     return objToSave;

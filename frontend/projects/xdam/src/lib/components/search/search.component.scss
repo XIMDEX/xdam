@@ -3,10 +3,13 @@
     @import '../../styles/sizes';
     @import '../../styles/borders';
 
-    display: flex;
+    /*display: flex;
+    */
     flex-grow: 1;
+    
 
     > .search-bar {
+        display: block;
         margin: 0 0 20px 0;
         padding: 25px;
         overflow: hidden;
