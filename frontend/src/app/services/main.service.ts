@@ -4,7 +4,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import SettingsMapper from '../mappers/SettingsMapper';
 import EndPointMapper from '../mappers/EndPointMapper';
-import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
+import { XdamModeI } from '@xdam/models/interfaces/XdamModeI.interface';
+import {Router} from "@angular/router"
 
 /**
  * Service who acts as a global state for the application.
@@ -31,14 +32,17 @@ export class MainService {
     /**
      * @ignore
      */
-    constructor(private http: HttpClient) {
+    constructor(
+        private http: HttpClient,
+        private routerI: Router
+    ) {
         this.router = new EndPointMapper();
         this.configs = new SettingsMapper();
 
         this.httpOptions.headers = new HttpHeaders({
             'Access-Control-Allow-Origin': '*',
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + this.getToken()
+            Authorization: this.getToken()
         });
     }
 
@@ -50,7 +54,13 @@ export class MainService {
      * Gets the token parsed by the mapper.
      */
     getToken() {
-        // return this.router.token;
+        let accesToken = localStorage.getItem('access_token');
+        if(accesToken){
+            return "Bearer " + accesToken;
+        }else{
+            this.routerI.navigate(['/login']);
+        }
+         
     }
 
     /**
@@ -73,18 +83,7 @@ export class MainService {
      * @param params The parameters
      * @returns {Observable} The response of getResources
      */
-    list(xdamMode: XdamMode ,params: HttpParams = null) {
-        /*let recourse = 'course'
-        switch(xdamMode){
-            case XdamMode.Course:
-                recourse = 'course';
-                break
-            case XdamMode.Multimedia:
-                recourse = '';
-                break
-        }*/
-
-
+    list(xdamMode: XdamModeI | string ,params: HttpParams = null) {
         return this.getResources(xdamMode, params);
     }
 
@@ -102,8 +101,8 @@ export class MainService {
         params[key] = param;
         const heads = new HttpHeaders({
             'Access-Control-Allow-Origin': '*',
-            Authorization: 'Bearer ' + this.getToken(),
-            Accept: 'application/json'
+            Accept: 'application/json',
+            Authorization: this.getToken()
         });
         return this.http.get(url, { headers: heads, params: params });
     }
@@ -118,6 +117,8 @@ export class MainService {
         delete params['updates']['default'];
         //delete params['updates']['limit'];
         //params = this.router.getBaseParams();
+        //console.log("1", this.getToken())
+        
         this.httpOptions.params = params;
         return this.http.get(url, this.httpOptions);
     }
@@ -130,6 +131,22 @@ export class MainService {
     getResource(data: ActionModel) {
         const url = this.router.getEndPointUrl('resource', 'get', data.item);
         return this.http.get(url);
+    }
+
+    /**
+     * Gets a single resource from the API.
+     * @param id The identifier of the resource
+     * @returns {Observable} The response as a observable
+     */
+    getMyProfile() {
+        const heads = new HttpHeaders({
+            'Access-Control-Allow-Origin': '*',
+            Accept: 'application/json',
+            Authorization: this.getToken()
+        });
+
+        const url = this.router.getEndPointUrl('user', 'get');
+        return this.http.get(url,  { headers: heads });
     }
 
     /**
@@ -150,9 +167,11 @@ export class MainService {
     saveForm(data: ActionModel) {
         const heads = new HttpHeaders({
             'Access-Control-Allow-Origin': '*',
-            Accept: 'application/json'
+            Accept: 'application/json',
+            Authorization: this.getToken()
         });
 
+        console.log("2", this.getToken())
         const formData = data.toFormData();
         const url = this.router.getEndPointUrl('resource', 'store');
 
@@ -167,8 +186,10 @@ export class MainService {
     updateForm(data: ActionModel) {
         const heads = new HttpHeaders({
             'Access-Control-Allow-Origin': '*',
-            Accept: 'application/json'
+            Accept: 'application/json',
+            Authorization: this.getToken()
         });
+        console.log("3", this.getToken())
         //const method = data.method === 'new' ? 'post' : 'put';
         let formData;
         let url;
@@ -189,10 +210,11 @@ export class MainService {
     deleteFileToResource(fileToDelete: {id: string; idFile: string}) {
         const heads = new HttpHeaders({
             'Access-Control-Allow-Origin': '*',
-            Accept: 'application/json'
+            Accept: 'application/json',
+            Authorization: this.getToken()
         });
 
-        const url = this.router.getEndPointUrl('resource', 'deleteFile', fileToDelete );
+        const url = this.router.getEndPointUrl('access_token', 'deleteFile', fileToDelete );
 
         return this.http.delete(url, { headers: heads });
     }
@@ -204,9 +226,10 @@ export class MainService {
     addFileToResource(data: ActionModel, index) {
         const heads = new HttpHeaders({
             'Access-Control-Allow-Origin': '*',
-            Accept: 'application/json'
+            Accept: 'application/json',
+            Authorization: this.getToken()
         });
-
+        console.log("5", this.getToken())
         let formData = data.filesToUploadToFormData(index);
         const url = this.router.getEndPointUrl('resource', 'addFile', new Item(data.data.dataToSave));
 
@@ -221,8 +244,9 @@ export class MainService {
     downloadResource(item: Item) {
         const heads = new HttpHeaders({
             'Access-Control-Allow-Origin': '*',
-            Authorization: 'Bearer ' + this.getToken()
+            Authorization: this.getToken()
         });
+        console.log("6", this.getToken())
 
          const url = ''; // this.getRoute('get', this.endPoint);
         // url = sprintf(url, item);

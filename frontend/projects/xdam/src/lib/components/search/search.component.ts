@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { faEraser, faSearch, faSync, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
+import { XdamModeI } from '@xdam/models/interfaces/XdamModeI.interface';
 import { hasIn, isEmpty, isNil } from 'ramda';
 
 import { ActionModel } from '../../../models/src/lib/ActionModel';
@@ -33,12 +33,12 @@ export class SearchComponent implements OnInit {
 
     content: string;
     lastContent: string;
-    currentMode: XdamMode = XdamMode.Multimedia;
+    xdamMode: XdamModeI;
 
-    modes = [
+    /*modes = [
         {value: XdamMode.Multimedia, label: "Multimedia" },
         {value: XdamMode.Course, label: "Curso"},
-    ];
+    ];*/
 
     selecMode: any;
 
@@ -97,6 +97,7 @@ export class SearchComponent implements OnInit {
     }
 
     onChangeMode({value}){
-        this.globalService_.setMode(value);
+        let newMode = this.xdamMode.availableModes.filter(mode =>  mode.id == value)[0];
+        this.globalService_.setMode(newMode);
     }
 }

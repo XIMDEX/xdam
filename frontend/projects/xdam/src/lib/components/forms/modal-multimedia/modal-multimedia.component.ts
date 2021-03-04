@@ -7,8 +7,8 @@ import { ListItemOptionI } from '@xdam/models/interfaces/ListOptions.interface';
 
 
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
-import Swal from 'sweetalert2'
 import { QuestionComponent, ResultQuestionI } from '../inputsFroms/question/question.component';
+import { availableModeI } from '@xdam/models/interfaces/XdamModeI.interface';
 
 @Component({
   selector: 'xdam-modal-multimedia',
@@ -39,6 +39,8 @@ export class ModalMultimediaComponent implements OnInit {
   @Input() modal: any;
   @Input() settings: ListItemOptionI;
   @Input() resourceUrl: string;
+  @Input() currentMode: availableModeI;
+  
   @Output() dataToSave = new EventEmitter<ActionModel>();
 
   @ViewChild('imgPreview') imgPreview: ElementRef;
@@ -93,9 +95,13 @@ export class ModalMultimediaComponent implements OnInit {
     if(this.action.method == 'new' && this.filesToUpload.length > 0){
       data['File[]'] = this.filesToUpload;
     }
-    
+
+    if(!data['data']['partials']){
+      data['data']['partials'] = {}
+    }
     data['data'] = JSON.stringify({description: data['data']});
     data['type'] = this.currentType;
+    data['collection_id'] = this.currentMode.id;
 
     if(this.coverToUpload != null && this.coverToUpload.length > 0 ){
       data['Preview'] = this.coverToUpload.item(0);
@@ -106,15 +112,12 @@ export class ModalMultimediaComponent implements OnInit {
     if(this.filesToDelete.length > 0){
       objToSave.filesToDelete = objToSave.filesToDelete.concat(this.filesToDelete);
     }
-
     
     if(this.action.method === 'new'){
       data['File[]'] = this.filesToUpload;
     }else if(this.filesToUpload.length > 0){
       objToSave.filesToUpload = this.filesToUpload;
     }
-
-    
 
     objToSave.dataToSave = data;
     return objToSave;
