@@ -42,7 +42,7 @@ return [
                 'path' => env('SOLR_PATH', '/'),
                 'core' => 'multimedia',
             ],
-            'resource' => 'CourseSolrResource'
+            'resource' => 'MultimediaSolrResource'
         ],
         'book' => [
             'endpoint' => [
