@@ -1,15 +1,14 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {environment} from '../../environments/environment';
+
 @Injectable({
     providedIn: 'root'
 })
-export class AuthService {
-    // Variables
-    /*authUrl = 'http://localhost:81/xdam-backend/public/index.php/oauth/token';
-    apiUrl = 'http://localhost:81/xdam-backend/public/index.php/api/v1';*/
 
-    authUrl = 'http://localhost/xdam/backend/public/api/v1/auth/login';
-    apiUrl = 'http://localhost/xdam/backend/public/api/v1'
+export class AuthService {
+    authUrl = environment.login_url;
+    apiUrl = environment.baseUrl + environment.apiVersion;
 
     options: any;
     /**

@@ -16,9 +16,23 @@ This front-end provides a flexible and easy-to-use user interface for listing, u
 
 This project is open source with AGPL v3 (see 'LICENSE')
 
+## Environments and Api Routing
+There are 3 defined environments, default, production and pre-production.
+Inside the environments folder you can modify the path to which each environment points
+To switch between environments you have to add the flag --configuration.
+if you don't add any flag, the default environment will be used.
+
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. 
+Use the `--configuration preproduction` flag for a pre-production build.
+Use the `--configuration production` flag for a production build.
+
+## Serve
+
+Run `ng serve` to server the project (for debug purposes).
+Use the `--configuration preproduction` flag for a pre-production serve.
+Use the `--configuration production` flag for a production serve.
 
 ## Additional Documentation
 [Technical Documentation for XDAM at Ximdex website](https://www.ximdex.com/en/documentation/xdam/)

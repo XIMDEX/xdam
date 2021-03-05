@@ -1,8 +1,8 @@
-import { isNil } from 'ramda';
+import {isNil} from 'ramda';
 import * as apiConfig from './endpoints.config.json';
-import { sprintf } from 'sprintf-js';
-import { Item } from '@xdam/models/Item';
+import {sprintf} from 'sprintf-js';
 import {HttpParams} from '@angular/common/http';
+import {environment} from "../../environments/environment";
 
 /**
  * Mapper class to get endpoints url's
@@ -15,8 +15,8 @@ export default class EndPointMapper {
     private readonly endpoints = {};
 
     constructor() {
-        this.baseUrl = apiConfig.baseUrl;
-        this.api = apiConfig.api;
+        this.baseUrl = environment.baseUrl;
+        this.api = environment.apiVersion;
         this.baseOptions = apiConfig.options;
         this.endpoints = apiConfig.endpoints;
     }

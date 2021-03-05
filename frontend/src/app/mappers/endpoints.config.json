@@ -1,6 +1,4 @@
 {
-    "baseUrl": "http://localhost/xdam/backend/public",
-    "api": "/api/v1",
     "options": {
         "headers": {
             "Access-Control-Allow-Origin": "*",
