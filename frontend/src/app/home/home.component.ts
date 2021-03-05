@@ -132,7 +132,7 @@ export class HomeComponent implements OnInit {
 
                 let actualMode: availableModeI;
 
-                if(params["id"] && params["id"] != 1 && params["id"] != 2){
+                if(params["id"]){
                     actualMode  = aviablesModes.filter(mode =>  mode.id == params["id"])[0];
                 }else {
                     actualMode  = aviablesModes.filter(mode =>  mode.id === 3)[0];
