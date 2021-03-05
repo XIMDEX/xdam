@@ -5,6 +5,8 @@
         "ng": "ng",
         "start": "ng serve --port 8080",
         "build": "ng build",
+        "build:pre": "ng build --configuration preproduction",
+        "build:pro": "ng build --configuration production",
         "build:lib": "ng build xdam && npm run build:lib:scss",
         "build:lib:scss": "./node_modules/.bin/scss-bundle -c projects/xdam/scss-theme-light.config.json",
         "build:lib:pack": "cd dist/xdam && npm pack",
