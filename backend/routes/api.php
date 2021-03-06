@@ -153,7 +153,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
                 Route::delete('/{damResource}',                             [ResourceController::class, 'delete'])               ->name('damResource.delete');
             });
 
-            Route::group(['middleware' => 'delete.resourcereport'], function() {
+            Route::group([], function() {
                 Route::delete('/{damResource}/deleteUse/{damResourceUse}',  [ResourceController::class, 'deleteUse'])            ->name('damResource.deleteUse');
                 Route::delete('/{damResource}/deleteCategory/{category}',   [ResourceController::class, 'deleteCategory'])       ->name('damResource.deleteCategory');
                 Route::delete('/{damResource}/associatedFile/{media}',      [ResourceController::class, 'deleteAssociatedFile']) ->name('damResource.deleteAssociatedFile');

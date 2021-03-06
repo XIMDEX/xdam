@@ -214,7 +214,7 @@ export class MainService {
             Authorization: this.getToken()
         });
 
-        const url = this.router.getEndPointUrl('access_token', 'deleteFile', fileToDelete );
+        const url = this.router.getEndPointUrl('resource', 'deleteFile', fileToDelete );
 
         return this.http.delete(url, { headers: heads });
     }
