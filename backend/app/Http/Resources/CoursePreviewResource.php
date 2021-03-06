@@ -17,8 +17,8 @@ class CoursePreviewResource extends JsonResource
         $name = "";
         $image = "";
         $introduction = "";
-        $data = @json_decode($this->data);
-        $description = property_exists($data, 'description') ? $data->description : [];
+        $data = is_object($this->data) ? $this->data : @json_decode($this->data);
+        $description = $data ?? property_exists($data, 'description') ? $data->description : [];
 
         if (!empty($description))
         {
