@@ -22,7 +22,7 @@ class RoleService
             'name' => $name,
             'title' => $title,
             'organization_id' => $organization->id,
-            'applicable_to_entity' => $entity == Entities::workspace ? Workspace::class : Organization::class
+            'applicable_to_entity' => $entity == Entities::workspace ? Workspace::class : Organization::class,
         ]);
         return $role;
     }

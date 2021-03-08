@@ -41,7 +41,7 @@ class WorkspaceService
                     'type' => WorkspaceType::generic,
                     'organization_id' => $org->id
                 ]);
-                $this->adminService->setWorkspaces(Auth::user()->id, $wsp->id, Roles::WORKSPACE_MANAGER_ID);
+                $this->adminService->setWorkspaces(Auth::user()->id, $wsp->id, (new Roles)->WORKSPACE_MANAGER_ID());
                 return $wsp;
             }
         } catch (\Throwable $th) {
@@ -52,7 +52,7 @@ class WorkspaceService
     public function delete($id)
     {
         $wsp = Workspace::find($id);
-        if ($wsp != null && $wsp->type != WorkspaceType::public) {
+        if ($wsp != null && !$wsp->isPublic()) {
             $wsp->delete();
             return ['deleted' => $wsp];
         } else {

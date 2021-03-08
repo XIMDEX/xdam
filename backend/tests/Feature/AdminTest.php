@@ -29,7 +29,7 @@ class AdminTest extends TestCase
             ->has(Workspace::factory(['name' => 'a generic faker wsp'])->count(1))
             ->create();
 
-        $this->setOrganization($admin, $org, Roles::ORGANIZATION_ADMIN_ID);
+        $this->setOrganization($admin, $org, (new Roles)->ORGANIZATION_ADMIN_ID());
 
         $this->actingAs($admin, 'api');
 
@@ -52,7 +52,7 @@ class AdminTest extends TestCase
         $response = $this->json('POST', '/api/v1/organization/set/user', [
             'user_id' => $data['anUser']->id,
             'organization_id' => $data['org']->id,
-            'with_role_id' => Roles::ORGANIZATION_USER_ID
+            'with_role_id' => (new Roles)->ORGANIZATION_USER_ID()
         ]);
 
         $response
@@ -77,7 +77,7 @@ class AdminTest extends TestCase
         $response = $this->json('POST', '/api/v1/workspace/set/user', [
             'user_id' => $data['anUser']->id,
             'workspace_id' => $data['org']->firstGenericWorkspace()->id,
-            'with_role_id' => Roles::WORKSPACE_EDITOR_ID
+            'with_role_id' => (new Roles)->WORKSPACE_EDITOR_ID()
         ]);
 
         $response
@@ -100,7 +100,7 @@ class AdminTest extends TestCase
 
         $response = $this->json('POST', '/api/v1/role/user/set/abilitiesOnEntity', [
             'user_id' => $data['anUser']->id,
-            'role_id' => Roles::WORKSPACE_MANAGER_ID,
+            'role_id' => (new Roles)->WORKSPACE_MANAGER_ID(),
             'entity_id' => $data['org']->workspaces()->where('name', 'a generic faker wsp')->first()->id,
             'type' => 'set',
             'on' => Entities::workspace,
@@ -129,7 +129,7 @@ class AdminTest extends TestCase
 
         $response = $this->json('POST', '/api/v1/role/user/set/abilitiesOnEntity', [
             'user_id' => $data['anUser']->id,
-            'role_id' => Roles::WORKSPACE_MANAGER_ID,
+            'role_id' => (new Roles)->WORKSPACE_MANAGER_ID(),
             'entity_id' => $data['org']->workspaces()->where('name', 'a generic faker wsp')->first()->id,
             'type' => 'unset',
             'on' => Entities::workspace,

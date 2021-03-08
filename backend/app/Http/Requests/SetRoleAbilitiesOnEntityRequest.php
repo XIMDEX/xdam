@@ -2,18 +2,14 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\Abilities;
 use App\Enums\Entities;
 use App\Enums\OrganizationType;
 use App\Enums\Roles;
-use App\Enums\WorkspaceType;
-use App\Models\DamResource;
 use App\Models\Organization;
 use App\Models\User;
 use App\Models\Workspace;
 use Exception;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
 class SetRoleAbilitiesOnEntityRequest extends FormRequest
 {
@@ -26,7 +22,7 @@ class SetRoleAbilitiesOnEntityRequest extends FormRequest
     public function authorize()
     {
         //prevent to execute on superadmin
-        $this->role_id == Roles::SUPER_ADMIN_ID ? $this->unauthorize() : null;
+        $this->role_id == (new Roles)->SUPER_ADMIN_ID() ? $this->unauthorize() : null;
 
         //canno't set or unset roles on you
         $this->user()->id == $this->user_id ? $this->unauthorize() : null;
@@ -38,7 +34,7 @@ class SetRoleAbilitiesOnEntityRequest extends FormRequest
             case Entities::workspace:
                     $wsp = Workspace::find($this->entity_id);
                     //canno't set role on public entities
-                    $wsp->type == WorkspaceType::public ? $this->unauthorize() : null;
+                    $wsp->isPublic() ? $this->unauthorize() : null;
                     if (!$usr->organizations()->get()->contains($wsp->organization()->first()->id)) {
                         return false;
                     }

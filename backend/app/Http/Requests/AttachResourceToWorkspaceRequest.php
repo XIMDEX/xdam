@@ -24,7 +24,7 @@ class AttachResourceToWorkspaceRequest extends FormRequest
         $is_user_attached_to_organization = $user->organizations()->get()->contains($wsp->organization()->first()) ? true : false;
 
         //check if user has a Manager or Editor role in the workspace
-        $user_has_permissions = ($user->canAny([Abilities::UPDATE_WORKSPACE, Abilities::MANAGE_WORKSPACE], $wsp) || $wsp->type == WorkspaceType::public) ? true : false;
+        $user_has_permissions = ($user->canAny([Abilities::UPDATE_WORKSPACE, Abilities::MANAGE_WORKSPACE], $wsp) || $wsp->isPublic() ) ? true : false;
 
         $user_can_manage_organization_of_workspace = $user->canAny([Abilities::MANAGE_ORGANIZATION, Abilities::MANAGE_ORGANIZATION_WORKSPACES], $wsp->organization()->first());
         if($is_user_attached_to_organization && $user_has_permissions || $user_can_manage_organization_of_workspace) {

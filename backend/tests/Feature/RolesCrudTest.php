@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\Abilities;
 use App\Enums\Roles;
 use App\Enums\WorkspaceType;
 use App\Models\Organization;
@@ -32,7 +33,7 @@ class RolesCrudTest extends TestCase
             ->create();
 
         $admin_of_org = User::factory()->create();
-        $this->setOrganization($admin_of_org, $org, Roles::ORGANIZATION_ADMIN_ID);
+        $this->setOrganization($admin_of_org, $org, (new Roles)->ORGANIZATION_ADMIN_ID());
         $this->actingAs($admin_of_org, 'api');
 
         /*
@@ -142,7 +143,12 @@ class RolesCrudTest extends TestCase
             Set abilities role
         */
 
-        $manage_organization_ability = $data['abilities'][2]->id;
+        foreach ($data['abilities'] as $ability) {
+            if ($ability->name == Abilities::MANAGE_ORGANIZATION) {
+                $manage_organization_ability = $ability->id;
+                break;
+            }
+        }
 
         $role_with_ability = $this->json('POST', '/api/v1/organization/'.$data['org']->id.'/roles/set/ability', [
             'role_id' => $data['role']->id,

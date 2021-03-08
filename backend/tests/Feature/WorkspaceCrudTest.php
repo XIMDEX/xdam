@@ -28,9 +28,9 @@ class WorkspaceCrudTest extends TestCase
             ->has(Workspace::factory(['type' => WorkspaceType::generic])->count(1))
             ->create();
 
-        $admin = $this->getUserWithRole(Roles::SUPER_ADMIN_ID, null);
-        $manager = $this->getUserWithRole(2, $org);
-        $editor = $this->getUserWithRole(3, $org);
+        $admin = $this->getUserWithRole((new Roles)->SUPER_ADMIN_ID(), null);
+        $manager = $this->getUserWithRole((new Roles)->ORGANIZATION_MANAGER_ID(), $org);
+        $editor = $this->getUserWithRole((new Roles)->ORGANIZATION_USER_ID(), $org);
 
         $data = array('admin' => $admin, 'org' => $org, 'manager' => $manager, 'editor' => $editor);
         $this->assertTrue(isset($data));
@@ -50,7 +50,7 @@ class WorkspaceCrudTest extends TestCase
         $org_user = $this->json('POST', '/api/v1/organization/set/user', [
             'user_id' => $data['manager']->id,
             'organization_id' => $data['org']->id,
-            'with_role_id' => Roles::ORGANIZATION_ADMIN_ID
+            'with_role_id' => (new Roles)->ORGANIZATION_ADMIN_ID()
         ]);
 
         $org_user
@@ -74,7 +74,7 @@ class WorkspaceCrudTest extends TestCase
         $org_user = $this->json('POST', '/api/v1/organization/set/user', [
             'user_id' => $data['editor']->id,
             'organization_id' => $data['org']->id,
-            'with_role_id' => Roles::ORGANIZATION_MANAGER_ID
+            'with_role_id' => (new Roles)->ORGANIZATION_MANAGER_ID()
         ]);
 
 
@@ -125,7 +125,7 @@ class WorkspaceCrudTest extends TestCase
         $org_user = $this->json('POST', '/api/v1/workspace/set/user', [
             'user_id' => $data['manager']->id,
             'workspace_id' => $data['wsp']->id,
-            'with_role_id' => Roles::WORKSPACE_MANAGER_ID
+            'with_role_id' => (new Roles)->WORKSPACE_MANAGER_ID()
         ]);
 
 
@@ -152,7 +152,7 @@ class WorkspaceCrudTest extends TestCase
         $manager_setted_to_wsp = $this->json('POST', '/api/v1/workspace/set/user', [
             'user_id' => $data['editor']->id,
             'workspace_id' => $data['wsp']->id,
-            'with_role_id' => Roles::WORKSPACE_MANAGER_ID
+            'with_role_id' => (new Roles)->WORKSPACE_MANAGER_ID()
         ]);
 
         $manager_setted_to_wsp

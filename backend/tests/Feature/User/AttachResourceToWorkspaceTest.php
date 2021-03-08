@@ -109,9 +109,9 @@ class AttachResourceToWorkspaceTest extends TestCase
             ->has(Workspace::factory(['type' => WorkspaceType::generic])->count(2))
             ->create();
 
-        $this->setOrganization($user, $org, Roles::ORGANIZATION_ADMIN_ID);
+        $this->setOrganization($user, $org, (new Roles)->ORGANIZATION_ADMIN_ID());
 
-        $this->setOrganization($other_user, $org, Roles::ORGANIZATION_USER_ID);
+        $this->setOrganization($other_user, $org, (new Roles)->ORGANIZATION_USER_ID());
 
         /*
         as $user, we select the corporate workspace of the organization
@@ -304,7 +304,7 @@ class AttachResourceToWorkspaceTest extends TestCase
 
         $response = $this->json('POST', '/api/v1/workspace/set/user', [
             'user_id' => $data['other_user']->id,
-            'with_role_id' => Roles::WORKSPACE_READER_ID,
+            'with_role_id' => (new Roles)->WORKSPACE_READER_ID(),
             'workspace_id' => $data['org']->firstGenericWorkspace()->id
         ]);
 

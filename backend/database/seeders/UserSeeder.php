@@ -64,18 +64,18 @@ class UserSeeder extends Seeder
         //Factory Corporate Organizations ids 3 4 5 6
 
 
-        $this->adminService->setOrganizations($admin_of_all->id, 3, Roles::ORGANIZATION_ADMIN_ID);
-        $this->adminService->setOrganizations($admin_of_all->id, 4, Roles::ORGANIZATION_ADMIN_ID);
-        $this->adminService->setOrganizations($admin_of_all->id, 5, Roles::ORGANIZATION_ADMIN_ID);
-        $this->adminService->setOrganizations($admin_of_all->id, 6, Roles::ORGANIZATION_ADMIN_ID);
+        $this->adminService->setOrganizations($admin_of_all->id, 3, (new Roles)->ORGANIZATION_ADMIN_ID());
+        $this->adminService->setOrganizations($admin_of_all->id, 4, (new Roles)->ORGANIZATION_ADMIN_ID());
+        $this->adminService->setOrganizations($admin_of_all->id, 5, (new Roles)->ORGANIZATION_ADMIN_ID());
+        $this->adminService->setOrganizations($admin_of_all->id, 6, (new Roles)->ORGANIZATION_ADMIN_ID());
 
-        $this->adminService->setOrganizations($admin->id, 3, Roles::ORGANIZATION_ADMIN_ID);
-        $this->adminService->setOrganizations($admin->id, 4, Roles::ORGANIZATION_ADMIN_ID);
+        $this->adminService->setOrganizations($admin->id, 3, (new Roles)->ORGANIZATION_ADMIN_ID());
+        $this->adminService->setOrganizations($admin->id, 4, (new Roles)->ORGANIZATION_ADMIN_ID());
 
-        $this->adminService->setOrganizations($manager->id, 4, Roles::ORGANIZATION_MANAGER_ID);
-        $this->adminService->setOrganizations($manager->id, 5, Roles::ORGANIZATION_MANAGER_ID);
+        $this->adminService->setOrganizations($manager->id, 4, (new Roles)->ORGANIZATION_MANAGER_ID());
+        $this->adminService->setOrganizations($manager->id, 5, (new Roles)->ORGANIZATION_MANAGER_ID());
 
-        $this->adminService->setOrganizations($basic_user->id, 5, Roles::ORGANIZATION_USER_ID);
+        $this->adminService->setOrganizations($basic_user->id, 5, (new Roles)->ORGANIZATION_USER_ID());
 
     }
 }

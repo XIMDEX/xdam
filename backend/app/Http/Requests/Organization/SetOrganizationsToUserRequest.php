@@ -18,7 +18,7 @@ class SetOrganizationsToUserRequest extends FormRequest
     {
 
         //can't assign the super-admin role
-        if ($this->with_role_id == Roles::SUPER_ADMIN_ID) {
+        if ($this->with_role_id == (new Roles)->SUPER_ADMIN_ID()) {
             return false;
         }
 

@@ -29,7 +29,7 @@ class CreateResource
             return response()->json(['Error' => 'no workspace selected.'], 401);
         }
 
-        if($user->can(Abilities::CREATE_RESOURCE, $workspace) || $workspace->type == WorkspaceType::public) {
+        if($user->can(Abilities::CREATE_RESOURCE, $workspace) || $workspace->isPublic()) {
             return $next($request);
         }
         return response()->json([Abilities::CREATE_RESOURCE => 'Error: Unauthorized.'], 401);

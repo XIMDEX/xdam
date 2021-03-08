@@ -31,7 +31,7 @@ class AddResourceTest extends TestCase
             ->has(Workspace::factory(['name' => 'a generic faker wsp'])->count(1))
             ->create();
 
-        $admin = $this->getUserWithRole(Roles::ORGANIZATION_ADMIN_ID, $org);
+        $admin = $this->getUserWithRole((new Roles)->ORGANIZATION_ADMIN_ID(), $org);
 
         /*
         As $admin (with role admin in the organization and workspaces)

@@ -3,7 +3,14 @@
 
 namespace App\Traits;
 
+use App\Enums\Abilities;
+use App\Enums\OrganizationType;
+use App\Enums\Roles;
 use App\Models\Collection;
+use App\Models\Organization;
+use App\Models\Role;
+use App\Models\Workspace;
+use Silber\Bouncer\BouncerFacade;
 
 trait OnCreateOrganization
 {
@@ -18,6 +25,30 @@ trait OnCreateOrganization
                     'organization_id' => $model->id,
                     'solr_connection' => $keyName
                 ]);
+            }
+            if($model->type != OrganizationType::public) {
+                //Create default owner & corporate role
+                $corp = Role::create([
+                    'name' => 'corporate-workspace-management',
+                    'organization_id' => $model->id,
+                    'applicable_to_entity' => Workspace::class,
+                ]);
+
+                BouncerFacade::allow($corp)->to(array_merge(
+                    [Abilities::MANAGE_WORKSPACE],
+                    Abilities::resourceManagerAbilities()), Workspace::class
+                );
+
+                $owner = Role::create([
+                    'name' => 'resource-owner',
+                    'organization_id' => $model->id,
+                    'applicable_to_entity' => Workspace::class,
+                ]);
+
+                BouncerFacade::allow($owner)->to(array_merge(
+                    [Abilities::MANAGE_WORKSPACE],
+                    Abilities::resourceManagerAbilities()), Workspace::class
+                );
             }
         });
     }

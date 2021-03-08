@@ -2,23 +2,27 @@
 
 namespace App\Services\Admin;
 
-use App\Enums\Abilities;
 use App\Enums\DefaultOrganizationWorkspace;
 use App\Enums\Entities;
 use App\Enums\OrganizationType;
 use App\Enums\Roles;
 use App\Enums\WorkspaceType;
 use App\Models\Organization;
-// use App\Models\Role;
 use Silber\Bouncer\Database\Role;
 use App\Models\User;
 use App\Models\Workspace;
-use Error;
 use Exception;
 use Silber\Bouncer\BouncerFacade as Bouncer;
 
 class AdminService
 {
+
+    public $rolesService;
+
+    public function __construct(Roles $roles)
+    {
+        $this->rolesService = $roles;
+    }
 
     public function setOrganizations(string $user_id, string $organization_id, string $role_id)
     {
@@ -31,15 +35,15 @@ class AdminService
 
             $this->SetRoleAbilitiesOnEntity($user_id, $role_id, $organization_id, 'set', Entities::organization);
 
-            $this->setDefaultWorkspace($org, $user);
+            if ($role_id == $this->rolesService->ORGANIZATION_ADMIN_ID() || $role_id == $this->rolesService->ORGANIZATION_MANAGER_ID()) {
+                foreach ($org->workspaces()->get() as $wsp) {
+                    $this->setWorkspaces($user_id, $wsp->id, $this->rolesService->WORKSPACE_MANAGER_ID());
+                }
+            } else {
+                $this->setDefaultWorkspace($org, $user);
+            }
 
             $user->organizations()->attach($organization_id);
-
-            if($role_id == Roles::ORGANIZATION_ADMIN_ID || $role_id == Roles::ORGANIZATION_MANAGER_ID) {
-                foreach ($org->workspaces()->get() as $wsp) {
-                    $this->setWorkspaces($user_id, $wsp->id, Roles::WORKSPACE_MANAGER_ID);
-                }
-            }
 
             $log['success'][] = [
                 "user_id" => $user_id,
@@ -65,7 +69,7 @@ class AdminService
                 $this->SetRoleAbilitiesOnEntity($user_id, $role_id, $wsp->id, 'set', Entities::workspace);
                 $log['success']['workspace_id'] = $wsp->id;
             } else {
-                $log['already_exists']['workspace_id'][] = $wsp->id;
+                $log['already_attached']['workspace_id'][] = $wsp->id;
             }
         }
 
@@ -81,20 +85,21 @@ class AdminService
 
         if ($user_organizations->contains($org)) {
             $user->organizations()->detach($org);
-            $this->removeAllAbilities($user, $org);
+            $log['detach_success']['organization_id'] = $organization_id;
+            $log['removed_abilities']['on_org'] = $this->removeAllAbilities($user, $org);
             foreach ($org->workspaces()->get() as $wsp) {
-                if ($wsp->name == DefaultOrganizationWorkspace::public_workspace || $wsp->type == WorkspaceType::public) {
+                if ($wsp->name == DefaultOrganizationWorkspace::public_workspace || $wsp->isPublic()) {
                     continue;
                 }
 
                 if ($user->workspaces()->get()->contains($wsp->id)) {
                     $user->workspaces()->detach($wsp->id);
-                    $log['detach success']['workspaces_ids'][$wsp->id] = $wsp->id;
-                    $log['detach success']['workspaces_ids'][$wsp->id]['abilities'] = $this->removeAllAbilities($user, $wsp);
+                    $log['detach_success']['workspaces_ids'][] = $wsp->id;
+                    $log['removed_abilities']['on_wsp'] = $this->removeAllAbilities($user, $wsp);
 
                 }
             }
-            $log['detach success']['organization_id'] = $organization_id;
+
         } else {
             $log['error'][] = 'organization id ' . $organization_id. ' not exists, or user isn´t attached to it';
         }
@@ -121,15 +126,15 @@ class AdminService
     public function unsetWorkspaces($user_id, string $workspace_id)
     {
         $user = User::find($user_id);
+        $wsp = Workspace::find($workspace_id);
         $log = [];
 
-        if ($user->workspaces()->where('workspaces.id', $workspace_id)->first()->type == WorkspaceType::public ? true : false) {
-            $log['error'][] = 'cannot unset public workspace';
-            return $log;
-        }
-
-        if ($user->workspaces()->get()->contains($workspace_id)) {
-            $user->workspaces()->detach($workspace_id);
+        if ($user->workspaces()->get()->contains($wsp)) {
+            if ($wsp->isPublic()) {
+                throw new Exception('cannot unset public workspace');
+            }
+            $this->removeAllAbilities($user, $wsp);
+            $user->workspaces()->detach($wsp);
             $log['success']['workspace_id'] = $workspace_id;
         } else {
             $log['relation_not_exists']['workspace_id'] = $workspace_id;
@@ -144,9 +149,8 @@ class AdminService
         //if wsp->type == corporate, apply the "corporate" role of the organization. Here get the public role of the organization.
         //For now, only can read workspaces.
         // $wsp->type == WorkspaceType::corporate ? $this->setWorkspaces($user->id, $wsp->id, $role_id) :
-        // $this->setWorkspaces($user->id, $wsp->id, Roles::WORKSPACE_READER_ID);
-        $this->setWorkspaces($user->id, $wsp->id, Roles::WORKSPACE_READER_ID);
-
+        // $this->setWorkspaces($user->id, $wsp->id, $this->rolesService->WORKSPACE_READER_ID());
+        $this->setWorkspaces($user->id, $wsp->id, $this->rolesService->WORKSPACE_READER_ID());
     }
 
     public function getRoleAbilities($rid, $entity)
@@ -172,7 +176,7 @@ class AdminService
      * @param int $rid (role id)
      * @param int $eid (organization or workspace)
      * @param string $type (type of action: 'set' or 'unset')
-     * @param string $on (what entity 'Organization::class' or 'Workspace::class')
+     * @param string $on (what entity 'org' or 'wsp')
      */
     public function SetRoleAbilitiesOnEntity(
         int $uid,
@@ -187,12 +191,13 @@ class AdminService
 
         $abilities = $this->getRoleAbilities($rid, $entity);
 
-        // dd($abilities);
-
         $type == 'set' ? Bouncer::allow($user)->to($abilities, $entity) : Bouncer::disallow($user)->to($abilities, $entity);
         return ['user' => $user, $type.'_abilities' => $abilities, 'on_'.$on => $entity];
     }
 
+    /**
+     * Remove all user abilities of an entity
+     */
     public function removeAllAbilities(User $user, $entity): array
     {
         $log = [];
@@ -200,7 +205,7 @@ class AdminService
         foreach ($user_abilities as $ability) {
             if ($ability->entity_type == get_class($entity)) {
                 Bouncer::disallow($user)->to($ability->name, $entity);
-                $log['removed'][] = $ability;
+                $log['removed_abilities'][] = $ability;
             }
         }
         return $log;

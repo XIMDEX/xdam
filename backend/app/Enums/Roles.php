@@ -2,22 +2,11 @@
 
 namespace App\Enums;
 
+use App\Models\Role;
 use BenSampo\Enum\Enum;
 
-final class Roles extends Enum
+class Roles
 {
-    //const super_admin = 'super-admin';
-    // const admin = 'admin';
-    // const manager = 'manager';
-    // const editor = 'editor';
-    // const reader = 'reader';
-
-    // const super_admin_id = 1;
-    // const admin_id = 2;
-    // const manager_id = 3;
-    // const editor_id = 4;
-    // const reader_id = 5;
-
     const SUPER_ADMIN = 'super-admin';
 
     const ORGANIZATION_ADMIN = 'organization-admin';
@@ -28,13 +17,71 @@ final class Roles extends Enum
     const WORKSPACE_EDITOR = 'workspace-editor';
     const WORKSPACE_READER = 'workspace-reader';
 
-    const SUPER_ADMIN_ID = 1;
+    //Default organization owner & corporate roles
+    const CORPORATE_WORKSPACE_MANAGEMENT = 'corporate-workspace-management';
+    const RESOURCE_OWNER = 'resource-owner';
 
-    const ORGANIZATION_ADMIN_ID = 2;
-    const ORGANIZATION_MANAGER_ID = 3;
-    const ORGANIZATION_USER_ID = 4;
+    public $system_default_roles;
 
-    const WORKSPACE_MANAGER_ID = 5;
-    const WORKSPACE_EDITOR_ID = 6;
-    const WORKSPACE_READER_ID = 7;
+    public function __construct()
+    {
+        $this->system_default_roles = Role::where(['organization_id' => null, 'system_default' => 1])->get();
+    }
+
+    public function getId($role_name) {
+        foreach ($this->system_default_roles as $role) {
+            if($role->name == $role_name) {
+                $id = $role->id;
+                return $id;
+            }
+        }
+    }
+
+    /**
+     * Return ID of the super-admin role in db
+     */
+    public function SUPER_ADMIN_ID()
+    {
+        return $this->getId(self::SUPER_ADMIN);
+    }
+
+    public function ORGANIZATION_ADMIN_ID()
+    {
+        return $this->getId(self::ORGANIZATION_ADMIN);
+    }
+
+    public function ORGANIZATION_MANAGER_ID()
+    {
+        return $this->getId(self::ORGANIZATION_MANAGER);
+    }
+
+    public function ORGANIZATION_USER_ID()
+    {
+        return $this->getId(self::ORGANIZATION_USER);
+    }
+
+    public function WORKSPACE_MANAGER_ID()
+    {
+        return $this->getId(self::WORKSPACE_MANAGER);
+    }
+
+    public function WORKSPACE_EDITOR_ID()
+    {
+        return $this->getId(self::WORKSPACE_EDITOR);
+    }
+
+    public function WORKSPACE_READER_ID()
+    {
+        return $this->getId(self::WORKSPACE_READER);
+    }
+
+    public function CORPORATE_WORKSPACE_MANAGEMENT_ID($oid)
+    {
+        return $this->getId(self::CORPORATE_WORKSPACE_MANAGEMENT);
+    }
+
+    public function RESOURCE_OWNER_ID($oid)
+    {
+        return $this->getId(self::RESOURCE_OWNER);
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\Roles;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Str;
@@ -17,7 +18,7 @@ class OrganizationCrudTest extends TestCase
      */
     public function test_organization_crud_managed_only_by_super_admin()
     {
-        $this->actingAs($this->getUserWithRole(1, null), 'api');
+        $this->actingAs($this->getUserWithRole((new Roles)->SUPER_ADMIN_ID(), null), 'api');
         $org_name = 'Org test ' . Str::orderedUuid();
 
         /*

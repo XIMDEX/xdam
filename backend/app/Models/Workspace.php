@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\WorkspaceType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -40,4 +41,8 @@ class Workspace extends Model
         return $this->organization()->first()->collections()->get();
     }
 
+    public function isPublic(): bool
+    {
+        return $this->type == WorkspaceType::public ? true : false;
+    }
 }

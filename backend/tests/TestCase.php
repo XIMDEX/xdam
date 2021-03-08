@@ -13,17 +13,17 @@ abstract class TestCase extends BaseTestCase
 
     public function setOrganization($user, $org, $role_id)
     {
-        $adminService = new AdminService();
+        $adminService = new AdminService(new Roles);
         $adminService->setOrganizations($user->id, $org->id, $role_id);
     }
 
     public function getUserWithRole($rol_id, $entity)
     {
-        if($rol_id == Roles::SUPER_ADMIN_ID) {
+        if($rol_id == (new Roles)->SUPER_ADMIN_ID()) {
             $user = User::find(1);
         } else {
             $user = User::factory()->create();
-            $this->setOrganization($user, $entity, $rol_id, false);
+            $this->setOrganization($user, $entity, $rol_id);
         }
         return $user;
     }
