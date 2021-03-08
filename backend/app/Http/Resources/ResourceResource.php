@@ -20,7 +20,7 @@ class ResourceResource extends BaseResource
             'id' => $this->id,
             'name' => $this->name,
             'active' => $this->active,
-            'type' => ResourceType::fromValue($this->type)->key,
+            'type' => $this->type,
             'tags' => $this->tags,
             'categories' => CategoryResource::collection($this->categories),
             'data' => is_object($this->data) ? $this->data : json_decode($this->data),
