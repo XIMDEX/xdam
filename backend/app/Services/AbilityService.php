@@ -25,7 +25,7 @@ class AbilityService
 
     public function index(): Collection
     {
-        $abilities = Ability::where(['entity_type' => null, 'entity_id' => null])->get();
+        $abilities = Ability::where('entity_id', null)->get();
         return $abilities;
     }
     /**

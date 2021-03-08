@@ -22,7 +22,7 @@ class MainFlowTest extends TestCase
      */
     public function test_super_admin_creates_organization()
     {
-        $super_admin = $this->getUserWithRole(Roles::super_admin_id, null);
+        $super_admin = $this->getUserWithRole(Roles::SUPER_ADMIN_ID, null);
         $admin = User::factory()->create();
 
         $this->actingAs($super_admin, 'api');
@@ -85,7 +85,7 @@ class MainFlowTest extends TestCase
 
         $response = $this->json('POST', '/api/v1/organization/set/user', [
             'user_id' => $data['manager']->id,
-            'with_role_id' => Roles::manager_id,
+            'with_role_id' => Roles::ORGANIZATION_MANAGER_ID,
             'organization_id' => $data['org']->id,
         ]);
 
@@ -102,13 +102,13 @@ class MainFlowTest extends TestCase
     /**
     * @depends test_super_admin_creates_a_generic_workspace_in_organization
     */
-    public function test_super_admin_set_manager_role_to_other_user_in_a_generic_workspace_of_organization(array $data)
+    public function test_super_admin_set_manager_role_to_other_user_in_a_generic_workspace_of_organization_and_fail_because_as_manager_he_has_all_workspaces_attached(array $data)
     {
         $this->actingAs($data['super_admin'], 'api');
 
         $response = $this->json('POST', '/api/v1/workspace/set/user', [
             'user_id' => $data['manager']->id,
-            'with_role_id' => Roles::manager_id,
+            'with_role_id' => Roles::WORKSPACE_MANAGER_ID,
             'workspace_id' => $data['wsp']->id,
         ]);
 
@@ -118,7 +118,7 @@ class MainFlowTest extends TestCase
             ->assertJson([
                 'data'=> [
                     'user' => true,
-                    'log' => ['success' => true],
+                    'log' => ['already_exists' => true],
                 ],
             ]);
     }
@@ -132,7 +132,7 @@ class MainFlowTest extends TestCase
         //unset organization to user by admin. It should detach related workspaces of organization
         $response = $this->json('POST', '/api/v1/organization/unset/user', [
             'user_id' => $data['manager']->id,
-            'with_role_id' => Roles::manager_id,
+            'with_role_id' => Roles::ORGANIZATION_MANAGER_ID,
             'organization_id' => $data['org']->id,
         ]);
 

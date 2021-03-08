@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\Abilities;
+use App\Models\Workspace;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,9 +21,13 @@ class SelectWorkspaceRequest extends FormRequest
             return true;
         }
         //check if the user belongs to the requested workspace
-        if (count($this->user()->workspaces()->where('workspaces.id', $this->workspace_id)->get()) > 0) {
+        $wsp = Workspace::find($this->workspace_id);
+        $user_can_manage_organization_of_workspace = $this->user()->can(Abilities::MANAGE_ORGANIZATION, $wsp->organization()->first());
+
+        if (count($this->user()->workspaces()->where('workspaces.id', $this->workspace_id)->get()) > 0 || $user_can_manage_organization_of_workspace) {
             return true;
         }
+
 
         return false;
     }

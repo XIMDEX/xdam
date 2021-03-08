@@ -3,7 +3,7 @@
 namespace App\Http\Middleware\ResourcePermissions;
 
 use App\Enums\Abilities;
-use App\Models\DamResource;
+use App\Enums\WorkspaceType;
 use App\Models\Workspace;
 use Closure;
 use Illuminate\Http\Request;
@@ -26,9 +26,9 @@ class CreateResource
         // Provisionally, the user can create any resource, within a collection
         return $next($request);
 
-        if($user->can(Abilities::CREATE_RESOURCE, $workspace) || $user->selected_workspace == null) {
+        if($user->can(Abilities::CREATE_RESOURCE, $workspace) || $workspace->type == WorkspaceType::public) {
             return $next($request);
         }
-        return response()->json(['create_resource_error' => 'Unauthorized.'], 401);
+        return response()->json([Abilities::CREATE_RESOURCE => 'Error: Unauthorized.'], 401);
     }
 }

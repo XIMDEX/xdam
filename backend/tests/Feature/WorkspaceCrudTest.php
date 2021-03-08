@@ -20,7 +20,7 @@ class WorkspaceCrudTest extends TestCase
      *
      * @return void
      */
-    public function test_workspace_crud()
+    public function test_setup_users_and_organizations()
     {
 
         $org = Organization::factory()
@@ -28,18 +28,30 @@ class WorkspaceCrudTest extends TestCase
             ->has(Workspace::factory(['type' => WorkspaceType::generic])->count(1))
             ->create();
 
-        $admin = $this->getUserWithRole(Roles::super_admin_id, null);
+        $admin = $this->getUserWithRole(Roles::SUPER_ADMIN_ID, null);
         $manager = $this->getUserWithRole(2, $org);
         $editor = $this->getUserWithRole(3, $org);
 
-        $this->actingAs($admin, 'api');
+        $data = array('admin' => $admin, 'org' => $org, 'manager' => $manager, 'editor' => $editor);
+        $this->assertTrue(isset($data));
+        return $data;
+    }
 
+
+    /**
+    * @depends test_setup_users_and_organizations
+    */
+    public function test_admin_set_organization_to_manager($data)
+    {
+        $this->actingAs($data['admin'], 'api');
+        /*
+         $admin Set Organization to $manager
+        */
         $org_user = $this->json('POST', '/api/v1/organization/set/user', [
-            'user_id' => $manager->id,
-            'organization_id' => $org->id,
-            'with_role_id' => Roles::admin_id
+            'user_id' => $data['manager']->id,
+            'organization_id' => $data['org']->id,
+            'with_role_id' => Roles::ORGANIZATION_ADMIN_ID
         ]);
-
 
         $org_user
             ->assertStatus(200)
@@ -47,12 +59,22 @@ class WorkspaceCrudTest extends TestCase
                 'data'=> true
             ]);
 
+        return $data;
+    }
 
-        //EDITOR
+    /**
+    * @depends test_admin_set_organization_to_manager
+    */
+    public function test_admin_set_organization_to_editor($data)
+    {
+        $this->actingAs($data['admin'], 'api');
+        /*
+         $admin Set Organization to $editor
+        */
         $org_user = $this->json('POST', '/api/v1/organization/set/user', [
-            'user_id' => $editor->id,
-            'organization_id' => $org->id,
-            'with_role_id' => Roles::manager_id
+            'user_id' => $data['editor']->id,
+            'organization_id' => $data['org']->id,
+            'with_role_id' => Roles::ORGANIZATION_MANAGER_ID
         ]);
 
 
@@ -62,10 +84,21 @@ class WorkspaceCrudTest extends TestCase
                 'data'=> true,
             ]);
 
+        return $data;
+    }
 
+    /**
+    * @depends test_admin_set_organization_to_editor
+    */
+    public function test_admin_create_a_new_workspace_in_the_organization($data)
+    {
+        $this->actingAs($data['admin'], 'api');
+        /*
+         $admin Create a newe Workspace in the Organization
+        */
         $created_wsp = $this->json('POST', '/api/v1/organization/workspace/create', [
-            'organization_id' => $org->id,
-            'name' => $org->name . ' - Workspace'
+            'organization_id' => $data['org']->id,
+            'name' => $data['org']->name . ' - Workspace'
         ]);
 
 
@@ -75,13 +108,24 @@ class WorkspaceCrudTest extends TestCase
                 'data'=> ['name' => true],
             ]);
 
+        $data['wsp'] = $created_wsp->original;
+        return $data;
+    }
 
-        $this->actingAs($admin, 'api');
+    /**
+    * @depends test_admin_create_a_new_workspace_in_the_organization
+    */
+    public function test_admin_set_the_created_workspace_to_manager($data)
+    {
+        $this->actingAs($data['admin'], 'api');
+        /*
+         $admin Set created workspace to $manager
+        */
 
         $org_user = $this->json('POST', '/api/v1/workspace/set/user', [
-            'user_id' => $manager->id,
-            'workspace_id' => $created_wsp->original->id,
-            'with_role_id' => Roles::admin_id
+            'user_id' => $data['manager']->id,
+            'workspace_id' => $data['wsp']->id,
+            'with_role_id' => Roles::WORKSPACE_MANAGER_ID
         ]);
 
 
@@ -91,12 +135,24 @@ class WorkspaceCrudTest extends TestCase
                 'data'=> true
             ]);
 
+        return $data;
+    }
 
+    /**
+    * @depends test_admin_set_the_created_workspace_to_manager
+    */
+    public function test_admin_set_the_created_workspace_to_editor($data)
+    {
+        $this->actingAs($data['admin'], 'api');
+
+        /*
+         $admin Set created workspace to $editor
+        */
 
         $manager_setted_to_wsp = $this->json('POST', '/api/v1/workspace/set/user', [
-            'user_id' => $editor->id,
-            'workspace_id' => $created_wsp->original->id,
-            'with_role_id' => Roles::manager_id
+            'user_id' => $data['editor']->id,
+            'workspace_id' => $data['wsp']->id,
+            'with_role_id' => Roles::WORKSPACE_MANAGER_ID
         ]);
 
         $manager_setted_to_wsp
@@ -108,10 +164,22 @@ class WorkspaceCrudTest extends TestCase
                 ],
             ]);
 
+        return $data;
 
+    }
+
+    /**
+    * @depends test_admin_set_the_created_workspace_to_editor
+    */
+    public function test_manager_update_the_created_worksapce($data)
+    {
+        $this->actingAs($data['manager'], 'api');
+        /*
+            $manager Update created workspace
+        */
         $updated = $this->json('POST', '/api/v1/workspace/update', [
-            'workspace_id' => $created_wsp->original->id,
-            'name' => $org->name . ' - Workspace - updated'
+            'workspace_id' => $data['wsp']->id,
+            'name' => $data['org']->name . ' - Workspace - updated'
         ]);
 
         $updated
@@ -120,12 +188,52 @@ class WorkspaceCrudTest extends TestCase
                 'data' => [
                     'updated' => [
                         'id' => true,
-                        'name' => $org->name . ' - Workspace - updated'
+                        'name' => $data['org']->name . ' - Workspace - updated'
                         ]
                     ],
             ]);
 
-        $deleted = $this->delete('/api/v1/workspace/' . (string)$created_wsp->original->id);
+        return $data;
+    }
+
+    /**
+    * @depends test_admin_set_the_created_workspace_to_editor
+    */
+    public function test_editor_update_the_created_worksapce($data)
+    {
+        $this->actingAs($data['editor'], 'api');
+        /*
+            $manager Update created workspace
+        */
+        $updated = $this->json('POST', '/api/v1/workspace/update', [
+            'workspace_id' => $data['wsp']->id,
+            'name' => $data['org']->name . ' - Workspace - updated'
+        ]);
+
+        $updated
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    'updated' => [
+                        'id' => true,
+                        'name' => $data['org']->name . ' - Workspace - updated'
+                        ]
+                    ],
+            ]);
+
+        return $data;
+    }
+
+    /**
+    * @depends test_manager_update_the_created_worksapce
+    */
+    public function test_manager_delete_the_workspace($data)
+    {
+        $this->actingAs($data['manager'], 'api');
+        /*
+            $manager Delete created workspace
+        */
+        $deleted = $this->delete('/api/v1/workspace/' . (string)$data['wsp']->id);
 
         $deleted
             ->assertStatus(200)
@@ -137,4 +245,5 @@ class WorkspaceCrudTest extends TestCase
                     ],
             ]);
     }
+
 }

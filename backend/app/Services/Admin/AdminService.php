@@ -2,9 +2,11 @@
 
 namespace App\Services\Admin;
 
+use App\Enums\Abilities;
 use App\Enums\DefaultOrganizationWorkspace;
 use App\Enums\Entities;
 use App\Enums\OrganizationType;
+use App\Enums\Roles;
 use App\Enums\WorkspaceType;
 use App\Models\Organization;
 // use App\Models\Role;
@@ -39,7 +41,13 @@ class AdminService
 
             $this->SetRoleAbilitiesOnEntity($user_id, $role_id, $organization_id, 'set', Entities::organization);
 
-            $this->enableDefaultWorkspace($org, $user, $role_id);
+            $this->setDefaultWorkspace($org, $user);
+
+            if($role_id == Roles::ORGANIZATION_ADMIN_ID || $role_id == Roles::ORGANIZATION_MANAGER_ID) {
+                foreach ($org->workspaces()->get() as $wsp) {
+                    $this->setWorkspaces($user_id, $wsp->id, Roles::WORKSPACE_MANAGER_ID);
+                }
+            }
 
             $log['success'][] = [
                 "user_id" => $user_id,
@@ -133,54 +141,34 @@ class AdminService
         return ['user' => $user, 'log' => $log];
     }
 
-    public function enableDefaultWorkspace($org, $user, $role_id)
+    public function setDefaultWorkspace($org, $user)
     {
+        $wsp_type = $org->type == OrganizationType::public ? WorkspaceType::public : WorkspaceType::corporate;
+        $wsp = $org->workspaces()->where('type', $wsp_type)->first();
+        //if wsp->type == corporate, apply the "corporate" role of the organization. Here get the public role of the organization.
+        //For now, only can read workspaces.
+        // $wsp->type == WorkspaceType::corporate ? $this->setWorkspaces($user->id, $wsp->id, $role_id) :
+        // $this->setWorkspaces($user->id, $wsp->id, Roles::WORKSPACE_READER_ID);
+        $this->setWorkspaces($user->id, $wsp->id, Roles::WORKSPACE_READER_ID);
 
-        switch ($org->type) {
-            case OrganizationType::public:
-                $wsp_type = WorkspaceType::public ;
-                break;
-
-            case OrganizationType::personal:
-                $wsp_type = WorkspaceType::personal ;
-                break;
-
-            case OrganizationType::corporate:
-                $wsp_type = WorkspaceType::corporate ;
-                break;
-
-            default:
-                throw new Error('Undefined organizationtype');
-                break;
-        }
-
-        $default_org_wsp_id = $org->workspaces()->where('type', $wsp_type)->first()->id;
-        $this->setWorkspaces($user->id, $default_org_wsp_id, $role_id);
     }
 
-    public function getRoleAbilities($rid)
+    public function getRoleAbilities($rid, $entity)
     {
         $role = Role::find($rid);
+
+        if ($entity instanceof Workspace && !$role->applicable_to_entity == Workspace::class) {
+            throw new Exception('This role is only applicable on entity Organization');
+        }
+        if ($entity instanceof Organization && !$role->applicable_to_entity == Organization::class) {
+            throw new Exception('This role is only applicable on entity Workspace');
+        }
+
         $abilities = [];
         foreach ($role->getAbilities()->toArray() as $ability) {
             $abilities[] = $ability['name'];
         }
         return $abilities;
-    }
-
-    public function setOrganizationHelper(User $user, Organization $org, $role_id, $only_organization)
-    {
-        $user->organizations()->attach($org);
-        $this->SetRoleAbilitiesOnEntity($user->id, $role_id, $org->id, 'set', 'org');
-        if($only_organization) {
-            $user->workspaces()->attach($org->corporateWorkspace());
-            $this->SetRoleAbilitiesOnEntity($user->id, $role_id, $org->corporateWorkspace()->id, 'set', 'wsp');
-        } else {
-            foreach ($org->workspaces()->get() as $wsp) {
-                $user->workspaces()->attach($wsp);
-                $this->SetRoleAbilitiesOnEntity($user->id, $role_id, $wsp->id, 'set', 'wsp');
-            }
-        }
     }
 
     /**
@@ -199,19 +187,10 @@ class AdminService
     ) {
         $user = User::find($uid);
         $entity = null;
-        $abilities = $this->getRoleAbilities($rid);
+        //validate if role->entity is aplyable to entity
+        $entity = $on == Entities::workspace ? Workspace::find($eid) : Organization::find($eid);
 
-        switch ($on) {
-            case Entities::workspace:
-                $entity = Workspace::find($eid);
-                break;
-            case Entities::organization:
-                $entity = Organization::find($eid);
-                break;
-            default:
-                throw new Exception("invalid entity");
-                break;
-        }
+        $abilities = $this->getRoleAbilities($rid, $entity);
 
         $type == 'set' ? Bouncer::allow($user)->to($abilities, $entity) : Bouncer::disallow($user)->to($abilities, $entity);
         return ['user' => $user, $type.'_abilities' => $abilities, 'on_'.$on => $entity];

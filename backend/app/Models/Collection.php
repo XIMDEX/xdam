@@ -12,11 +12,6 @@ class Collection extends Model
     protected $fillable = ['type_id', 'name', 'organization_id', 'solr_connection'];
     protected $table = "collections";
 
-    public function type()
-    {
-        return $this->belongsTo(CollectionType::class);
-    }
-
     public function organization()
     {
         return $this->belongsTo(Organization::class);

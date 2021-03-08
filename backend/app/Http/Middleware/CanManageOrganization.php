@@ -23,7 +23,7 @@ class CanManageOrganization
     {
         $org = $request->organization ?? Organization::find($request->organization_id);
         $user =  Auth::user();
-        if ($user->can(Abilities::MANAGE_ORGANIZATION, $org) ||  $user->isA(Roles::super_admin)) {
+        if ($user->canAny([Abilities::MANAGE_ORGANIZATION, Abilities::CREATE_WORKSPACE, Abilities::MANAGE_ORGANIZATION_WORKSPACES], $org) ||  $user->isA(Roles::SUPER_ADMIN)) {
             return $next($request);
         }
         return response()->json(['error_org' => 'Unauthorized.'], 401);

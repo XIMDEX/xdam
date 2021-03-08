@@ -26,7 +26,7 @@ class SetRoleAbilitiesOnEntityRequest extends FormRequest
     public function authorize()
     {
         //prevent to execute on superadmin
-        $this->role_id == Roles::super_admin_id ? $this->unauthorize() : null;
+        $this->role_id == Roles::SUPER_ADMIN_ID ? $this->unauthorize() : null;
 
         //canno't set or unset roles on you
         $this->user()->id == $this->user_id ? $this->unauthorize() : null;

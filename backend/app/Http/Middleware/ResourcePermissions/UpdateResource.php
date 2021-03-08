@@ -3,7 +3,7 @@
 namespace App\Http\Middleware\ResourcePermissions;
 
 use App\Enums\Abilities;
-use App\Models\DamResource;
+use App\Utils\PermissionCalc;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,15 +19,7 @@ class UpdateResource
      */
     public function handle(Request $request, Closure $next)
     {
-        $user = Auth::user();
-        if($request->damResource) {
-            $resource = $request->damResource;
-        } else {
-            $resource = DamResource::find($request->resource_id);
-        }
-        if($user->can(Abilities::UPDATE_RESOURCE, $resource) || $user->ownResource($resource)) {
-            return $next($request);
-        }
-        return response()->json(['update_resource_error' => 'Unauthorized.'], 401);
+        //return PermissionCalc::check($request, Auth::user(), Abilities::UPDATE_RESOURCE) ? $next($request) : response()->json([Abilities::UPDATE_RESOURCE => 'Error: Unauthorized.'], 401);
+        return $next($request);
     }
 }

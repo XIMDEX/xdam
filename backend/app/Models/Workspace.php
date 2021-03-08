@@ -37,7 +37,7 @@ class Workspace extends Model
 
     public function collections()
     {
-        return $this->belongsToMany(Collection::class);
+        return $this->organization()->first()->collections()->get();
     }
 
 }

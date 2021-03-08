@@ -19,7 +19,7 @@ class UserRoleAssignTest extends TestCase
      */
     public function test_user_role_assign()
     {
-        $super_admin = $this->getUserWithRole(Roles::super_admin_id, null);
+        $super_admin = $this->getUserWithRole(Roles::SUPER_ADMIN_ID, null);
         $admin = User::factory()->create(['name' => 'admin']);
         $new_admin = User::factory()->create(['name' => 'new_admin']);
         $manager = User::factory()->create(['name' => 'manager']);
@@ -46,7 +46,7 @@ class UserRoleAssignTest extends TestCase
 
         $response = $this->json('POST', '/api/v1/organization/set/user', [
             'user_id' => $admin->id,
-            'with_role_id' => Roles::admin_id,
+            'with_role_id' => Roles::ORGANIZATION_ADMIN_ID,
             'organization_id' => $org->id,
         ]);
 
@@ -66,7 +66,7 @@ class UserRoleAssignTest extends TestCase
         $this->actingAs($admin, 'api');
         $response = $this->json('POST', '/api/v1/organization/set/user', [
             'user_id' => $new_admin->id,
-            'with_role_id' => Roles::admin_id,
+            'with_role_id' => Roles::ORGANIZATION_ADMIN_ID,
             'organization_id' => $org->id,
         ]);
 
@@ -83,7 +83,7 @@ class UserRoleAssignTest extends TestCase
         */
         $response = $this->json('POST', '/api/v1/organization/workspace/setAll/user', [
             'user_id' => $new_admin->id,
-            'with_role_id' => Roles::admin_id,
+            'with_role_id' => Roles::ORGANIZATION_ADMIN_ID,
             'organization_id' => $org->id,
         ]);
 
@@ -121,7 +121,7 @@ class UserRoleAssignTest extends TestCase
         */
         $created = $this->json('POST', '/api/v1/organization/set/user', [
             'user_id' => $manager->id,
-            'with_role_id' => Roles::manager_id,
+            'with_role_id' => Roles::ORGANIZATION_MANAGER_ID,
             'organization_id' => $org->id,
         ]);
 
@@ -146,7 +146,7 @@ class UserRoleAssignTest extends TestCase
         */
         $created = $this->json('POST', '/api/v1/workspace/set/user', [
             'user_id' => $manager->id,
-            'with_role_id' => Roles::manager_id,
+            'with_role_id' => Roles::WORKSPACE_MANAGER_ID,
             'workspace_id' => $wsp_entity->id,
         ]);
 
@@ -164,7 +164,7 @@ class UserRoleAssignTest extends TestCase
         */
         $created = $this->json('POST', '/api/v1/role/user/set/abilitiesOnEntity', [
             'user_id' => $manager->id,
-            'role_id' => Roles::manager_id,
+            'role_id' => Roles::WORKSPACE_MANAGER_ID,
             'entity_id' => $wsp_entity->id,
             'type' => 'set',
             'on' => 'wsp',

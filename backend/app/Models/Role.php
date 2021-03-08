@@ -9,7 +9,7 @@ use Silber\Bouncer\Database\Role as BouncerRole;
 class Role extends BouncerRole
 {
     use HasFactory;
-    protected $fillable = ['name', 'title', 'level','organization_id'];
+    protected $fillable = ['name', 'title', 'level','organization_id', 'applicable_to_entity'];
 
     /**
      * Get the organization that ow

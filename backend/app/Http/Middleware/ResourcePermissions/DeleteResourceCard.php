@@ -6,9 +6,8 @@ use App\Enums\Abilities;
 use App\Utils\PermissionCalc;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class DownloadResource
+class DeleteResourceCard
 {
     /**
      * Handle an incoming request.
@@ -19,7 +18,7 @@ class DownloadResource
      */
     public function handle(Request $request, Closure $next)
     {
-        //return PermissionCalc::check($request, Auth::user(), Abilities::DOWNLOAD_RESOURCE) ? $next($request) : response()->json([Abilities::DOWNLOAD_RESOURCE => 'Error: Unauthorized.'], 401);
+        //return PermissionCalc::check($request, Auth::user(), Abilities::REMOVE_RESOURCE_CARD) ? $next($request) : response()->json([Abilities::REMOVE_RESOURCE_CARD => 'Error: Unauthorized.'], 401);
         return $next($request);
     }
 }

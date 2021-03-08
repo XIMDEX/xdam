@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\Abilities;
-use App\Enums\WorkspaceType;
+use App\Enums\Roles;
 use App\Models\Workspace;
 use Closure;
 use Illuminate\Http\Request;
@@ -20,17 +20,17 @@ class CanManageWorkspace
      */
     public function handle(Request $request, Closure $next)
     {
-        if($request->workspace_id) {
-            $wsp = Workspace::find($request->workspace_id);
-            $user = Auth::user();
+        $wsp = Workspace::find($request->workspace_id);
+        $user = Auth::user();
 
-            if ($user->can(Abilities::MANAGE_WORKSPACE, $wsp) ||  $user->isAn(Roles::super_admin) || $wsp->type == WorkspaceType::public) {
-                return $next($request);
-            }
+        $user_can_manage_the_organization_of_wsp = $user->canAny([Abilities::MANAGE_ORGANIZATION, Abilities::MANAGE_ORGANIZATION_WORKSPACES], $wsp->organization()->first());
+        $user_can_manage_the_workspace = $user->canAny([Abilities::MANAGE_WORKSPACE, Abilities::UPDATE_WORKSPACE], $wsp);
 
-            return response()->json(['error_wsp' => 'Unauthorized.'], 401);
-        } else {
+        if ($user_can_manage_the_workspace || $user->isA(Roles::SUPER_ADMIN) || $user_can_manage_the_organization_of_wsp) {
             return $next($request);
         }
+
+        return response()->json(['error_wsp' => 'Unauthorized.'], 401);
+
     }
 }

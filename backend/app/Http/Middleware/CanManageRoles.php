@@ -25,7 +25,7 @@ class CanManageRoles
     {
         $user = Auth::user();
         $entity = null;
-        $user->isA(Roles::super_admin) ? $next($request) : null;
+        $user->isA(Roles::SUPER_ADMIN) ? $next($request) : null;
 
         switch ($request->on) {
             case Entities::organization:
@@ -38,6 +38,10 @@ class CanManageRoles
             default:
                 return response()->json(['error_role_invalid_entity' => 'Unauthorized.'], 401);
                 break;
+        }
+
+        if($entity instanceof Workspace) {
+            $entity = $entity->organization()->first();
         }
 
         return $user->can(Abilities::MANAGE_ROLES, $entity) ? $next($request) : response()->json(['error_role' => 'Unauthorized.'], 401);

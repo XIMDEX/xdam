@@ -20,7 +20,7 @@ class SetWorkspacesToUserRequest extends FormRequest
     public function authorize()
     {
         //cannot set super-admin role
-        if ($this->with_role_id == Roles::super_admin_id) {
+        if ($this->with_role_id == Roles::SUPER_ADMIN_ID) {
             return false;
         }
 

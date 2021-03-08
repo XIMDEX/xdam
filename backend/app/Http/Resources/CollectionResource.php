@@ -16,7 +16,6 @@ class CollectionResource extends BaseResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'type' => $this->type()->first(),
             'resources' => ResourceResource::collection($this->resources()->get())
         ];
     }

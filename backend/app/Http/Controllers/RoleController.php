@@ -36,7 +36,7 @@ class RoleController extends Controller
 
     public function store(Organization $organization, RoleStoreRequest $roleRequest): JsonResponse
     {
-        $role = $this->roleService->store($organization, $roleRequest->name, $roleRequest->title);
+        $role = $this->roleService->store($organization, $roleRequest->name, $roleRequest->title, $roleRequest->entity_type);
         return (new JsonResource($role))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
