@@ -24,7 +24,6 @@ class DamResource extends Model implements HasMedia, TaggableInterface
     protected $table = "dam_resources";
 
     protected $casts = [
-        'type' => ResourceType::class,
         "data" => "object"
     ];
 
