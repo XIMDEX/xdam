@@ -14,7 +14,7 @@ import { XDamSettingsInterface } from '@xdam/models/interfaces/Settings.interfac
 import { JwtHelperService } from '../services/jwt-helper.service';
 import { AuthService } from '../services/auth.service';
 import { ActivatedRoute, Route, Router } from '@angular/router';
-import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
+import { availableModeI, XdamModeI } from '@xdam/models/interfaces/XdamModeI.interface';
 import { concat } from 'rxjs';
 
 
@@ -69,7 +69,8 @@ export class HomeComponent implements OnInit {
     /**
      * 
      */
-    xdamMode: XdamMode
+
+    xdamMode: XdamModeI;
     /**
      * 
      */
@@ -115,15 +116,36 @@ export class HomeComponent implements OnInit {
         this.limit = 'limit';
 
         //We start the application in Course mode
-        this.xdamMode = XdamMode.Course;
-
-        //this.sendSearch(this.search);
-
-        this.activatedRoute.data.subscribe(data => {
-            this.xdamMode=data.mode;
-            this.sendSearch(this.search);
-        })
         
+        this.mainService.getMyProfile().subscribe(userData =>{
+            this.activatedRoute.params.subscribe(params => {
+                let collections = userData["data"].organizations[0].collections;
+
+                let aviablesModes: availableModeI[] = [];
+
+                for(let i = 0; i < collections.length; i++){
+                    aviablesModes.push({
+                        name: collections[i].name,
+                        id:collections[i].id
+                    });
+                }
+
+                let actualMode: availableModeI;
+
+                if(params["id"]){
+                    actualMode  = aviablesModes.filter(mode =>  mode.id == params["id"])[0];
+                }else {
+                    actualMode  = aviablesModes.filter(mode =>  mode.id === 3)[0];
+                }
+
+                this.xdamMode = {
+                    currentMode: actualMode,
+                    availableModes: aviablesModes
+                }
+
+                this.sendSearch(this.search);
+            });            
+        });        
     }
 
     /**
@@ -134,7 +156,7 @@ export class HomeComponent implements OnInit {
         let params = new HttpParams();
         params = params.append(this.page, String(this.search.page));
         if (!isNil(this.search.content)) {
-            params = params.append(this.searchTerm, this.search.content);
+            params = params.append(this.searchTerm, this.search.content === "1" ? "" : this.search.content);
         }
         if (!isNil(this.search.facets)) {
             Object.keys(this.search.facets).forEach(index => {
@@ -142,11 +164,12 @@ export class HomeComponent implements OnInit {
                 params = params.append(`facets[${index}]`, value.join(','));
             });
         }
-        //params = params.append('default', this.default ? '1' : '0');
         params = params.append(this.limit, String(this.search.limit));
 
-        this.mainService.list(this.xdamMode ,params).subscribe(
+        this.mainService.list(this.xdamMode.currentMode.id + "" ,params).subscribe(
             response => {
+                console.log("response", response)
+
                 const pager:any = {
                     total: response['total'],
                     currentPage: response['current_page'],
@@ -299,17 +322,20 @@ export class HomeComponent implements OnInit {
      */
     logout(): void {
         this.loading = true;
-        this.authService.logout(this.accessTokenDetails)
+        localStorage.removeItem('access_token');
+        this.router.navigate(['/login']);
+        /*this.authService.logout(this.accessTokenDetails)
             .subscribe(() => {
                 this.loading = false;
                 localStorage.removeItem('access_token');
                 this.router.navigate(['/login']);
-            });
+            });*/
     }
 
-    changeMode(newMode:XdamMode){
-        if(newMode === this.xdamMode) return;
-        this.router.navigate( ['/'+ newMode])
+    changeMode(newMode:availableModeI){
+        //console.log("home", newMode.id, this.xdamMode.currentMode.id)
+        //if(newMode.id + "" == this.xdamMode.currentMode.id + "") return;
+        this.router.navigate( ['/collection', newMode.id])
     }
 
     concatObservables(fisthObs, secondObs){

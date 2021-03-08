@@ -19,8 +19,10 @@ class ShowResource
      */
     public function handle(Request $request, Closure $next)
     {
-        //return PermissionCalc::check($request, Auth::user(), Abilities::READ_RESOURCE) ? $next($request) : response()->json([Abilities::READ_RESOURCE => 'Error: Unauthorized.'], 401);
+        // provisionally everyone has access to render resources
         return $next($request);
+
+        return PermissionCalc::check($request, Auth::user(), Abilities::READ_RESOURCE) ? $next($request) : response()->json([Abilities::READ_RESOURCE => 'Error: Unauthorized.'], 401);
     }
     /*
         Route::get('/render/{damUrl}/{size}', [ResourceController::class, 'render'])->name('damResource.renderWithSize');

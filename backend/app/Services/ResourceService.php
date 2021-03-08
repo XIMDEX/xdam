@@ -122,21 +122,22 @@ class ResourceService
      * @return null
      * @throws Exception
      */
-    private function linkTagsFromJson($resource, $data): void
+    public function linkTagsFromJson($resource, $data): void
     {
         if ($data && property_exists($data, "description")) {
-            if (property_exists($data->description, "tags")) {
-                $this->setTags($resource, $data->description->tags);
+            if (property_exists($data->description, "skills")) {
+                $this->setTags($resource, $data->description->skills);
             }
         }
     }
 
     /**
+     * @param null $type
      * @return Collection
      */
-    public function getAll(): Collection
+    public function getAll($type = null)
     {
-        return DamResource::all();
+        return $type ? DamResource::where('type', strval($type))->get() : DamResource::all();
     }
 
     /**
@@ -151,9 +152,10 @@ class ResourceService
     /**
      * @return mixed
      */
-    public function exploreCourses(): Category
+    public function exploreCourses(): Collection
     {
-        return Category::where('type', ResourceType::course)->get();
+        $course = ResourceType::course;
+        return Category::where('type', $course)->orWhere('type', "=", strval($course))->get();
     }
 
     /**

@@ -23,7 +23,7 @@ import { SearchComponent } from './search/search.component';
 import { SearchModel } from '../../models/src/lib/SearchModel';
 import { SearchOptionsI } from './../../models/src/lib/interfaces/SearchModel.interface';
 import { XDamSettings } from '../../models/src/lib/XDamSettings';
-import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
+import { XdamModeI, availableModeI } from '@xdam/models/interfaces/XdamModeI.interface';
 import { GlobalService } from '../services/global.service';
 
 /**
@@ -40,7 +40,7 @@ export class DamComponent implements OnInit, OnChanges {
     @Input() settings: XDamSettings;
     @Input() action: ActionModel;
     @Input() reset: boolean;
-    @Input() xdamMode: XdamMode;
+    @Input() xdamMode: XdamModeI;
     
 
     @Output() onSearch = new EventEmitter<any>();
@@ -49,7 +49,7 @@ export class DamComponent implements OnInit, OnChanges {
     @Output() onSave = new EventEmitter<any>();
     @Output() onAction = new EventEmitter<ActionModel>();
     @Output() onLogout = new EventEmitter<boolean>();
-    @Output() onXdamChangeMode = new EventEmitter<XdamMode>();
+    @Output() onXdamChangeMode = new EventEmitter<availableModeI>();
 
 
     @ViewChild('search') searchComponent: SearchComponent;
@@ -85,12 +85,10 @@ export class DamComponent implements OnInit, OnChanges {
             this.preparePager();
         }
 
-        this.globalService_.modeChange.subscribe((newMode: XdamMode)=>{
+        this.globalService_.modeChange.subscribe((newMode: availableModeI)=>{
             this.loading = true
             this.onXdamChangeMode.emit(newMode);
-
         });
-
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -110,7 +108,7 @@ export class DamComponent implements OnInit, OnChanges {
         }
 
         if (hasIn('xdamMode', changes)){
-            this.searchComponent.currentMode = this.xdamMode;
+            this.searchComponent.xdamMode = this.xdamMode;
         }
     }
 

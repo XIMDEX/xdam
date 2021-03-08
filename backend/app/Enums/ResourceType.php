@@ -12,4 +12,7 @@ final class ResourceType extends Enum
     const audio = 3;
     const url = 4;
     const course = 5;
+    const assessment = 6;
+    const activity = 7;
+    const book = 8;
 }

@@ -9,6 +9,7 @@ export class SelectComponent implements OnInit {
 
   @Input() id: string;
   @Input() name: string;
+  @Input() key: string;
   @Input() label: string;
   @Input() options: [];
 

@@ -26,14 +26,24 @@ class CourseSolrResource extends JsonResource
             'dam_url'
         );
         $workspaces = $this->resource->workspaces->pluck('id')->toArray();
+        $data = is_object($this->data) ? json_encode($this->data) : $this->data;
+
+        if (property_exists($data,  "description"))
+        {
+            $internal = property_exists($data->description, 'internal') ? $data->description->internal : false;
+            $active = property_exists($data->description, 'active') ? $data->description->active : false;
+            $aggregated = property_exists($data->description, 'aggregated') ? $data->description->aggregated : false;
+        }
 
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'data' => json_encode($this->data),
-            'active' => $this->active,
+            'data' => $data,
+            'active' => $active ?? $this->active,
+            'aggregated' => $aggregated ?? false,
+            'internal' => $internal ?? false,
             'type' => ResourceType::fromValue($this->type)->key,
-            'tags' => $this->tags,
+            'tags' => $this->tags()->pluck('name')->toArray() ?? [''],
             'categories' => $this->categories()->pluck('name')->toArray() ?? [''],
             'files' => $files,
             'previews' => $previews,

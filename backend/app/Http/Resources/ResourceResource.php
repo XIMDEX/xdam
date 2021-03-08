@@ -23,7 +23,7 @@ class ResourceResource extends BaseResource
             'type' => ResourceType::fromValue($this->type)->key,
             'tags' => $this->tags,
             'categories' => CategoryResource::collection($this->categories),
-            'data' => $this->data ?? [],
+            'data' => is_object($this->data) ? $this->data : json_decode($this->data),
             'files' => MediaResource::collection($this->getMedia(MediaType::File()->key)),
             'previews' => MediaResource::collection($this->getMedia(MediaType::Preview()->key)),
             'uses' => DamResourceUseResource::collection($this->uses),

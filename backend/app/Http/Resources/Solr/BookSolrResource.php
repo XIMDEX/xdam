@@ -7,7 +7,7 @@ use App\Enums\ResourceType;
 use App\Http\Resources\MediaResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AssessmentSolrResource extends JsonResource
+class BookSolrResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

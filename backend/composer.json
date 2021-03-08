@@ -23,6 +23,7 @@
         "ralouphie/mimey": "^2.1",
         "silber/bouncer": "v1.0.0-rc.10",
         "solarium/solarium": "^6.1",
+        "spatie/laravel-backup": "^6.15",
         "spatie/laravel-medialibrary": "^9.4.1"
     },
     "require-dev": {

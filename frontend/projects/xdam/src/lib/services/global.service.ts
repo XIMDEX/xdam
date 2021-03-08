@@ -1,18 +1,18 @@
 import { Injectable, Output, EventEmitter} from '@angular/core';
-import { XdamMode } from '@xdam/models/interfaces/XdamMode.interface';
+import { XdamModeI, availableModeI } from '@xdam/models/interfaces/XdamModeI.interface';
 
 @Injectable({
     providedIn: 'root'
 })
 export class GlobalService {
     
-    @Output() modeChange: EventEmitter<XdamMode> = new EventEmitter();
+    @Output() modeChange: EventEmitter<availableModeI> = new EventEmitter();
     
-    xdamMode: XdamMode;
+    xdamMode: availableModeI;
 
     constructor() { }
 
-    setMode(newXdamMode: XdamMode){
+    setMode(newXdamMode: availableModeI){
         this.xdamMode = newXdamMode;
         this.modeChange.emit(this.xdamMode);
     }

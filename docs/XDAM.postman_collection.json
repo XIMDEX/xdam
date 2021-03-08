@@ -215,7 +215,7 @@
 								},
 								{
 									"key": "data",
-									"value": "{\"description\": {\"active\": true, \"partials\": {\"pages\": 10}}}",
+									"value": "{\"description\":{\"active\":true, \"partials\": {}}}",
 									"type": "text"
 								},
 								{
@@ -231,7 +231,7 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource?",
+							"raw": "{{url}}{{api}}/resource",
 							"host": [
 								"{{url}}{{api}}"
 							],
@@ -1050,19 +1050,18 @@
 			"name": "CATALOGUE",
 			"item": [
 				{
-					"name": "INDEX BY TYPE",
+					"name": "INDEX BY COLLECTION",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}{{api}}/catalogue/1/index?limit=100&facets[type][]=video",
+							"raw": "{{url}}{{api}}/catalogue/4",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"catalogue",
-								"1",
-								"index"
+								"4"
 							],
 							"query": [
 								{
@@ -1077,7 +1076,8 @@
 								},
 								{
 									"key": "limit",
-									"value": "100"
+									"value": "100",
+									"disabled": true
 								},
 								{
 									"key": "facets[categories][]",
@@ -1091,7 +1091,8 @@
 								},
 								{
 									"key": "facets[type][]",
-									"value": "video"
+									"value": "video",
+									"disabled": true
 								},
 								{
 									"key": "facets[type][]",
@@ -1121,7 +1122,7 @@
 							"formdata": [
 								{
 									"key": "email",
-									"value": "superadmin@xdam.com",
+									"value": "admin_of_all@xdam.com",
 									"type": "text"
 								},
 								{
@@ -1232,7 +1233,7 @@
 								},
 								{
 									"key": "workspace_id",
-									"value": "9",
+									"value": "3",
 									"type": "text"
 								},
 								{
@@ -1364,7 +1365,7 @@
 								},
 								{
 									"key": "organization_id",
-									"value": "7",
+									"value": "3",
 									"type": "text"
 								}
 							]
@@ -1447,14 +1448,14 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/organization/collection/create",
+							"raw": "{{url}}{{api}}/organization/create/collection",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"organization",
-								"collection",
-								"create"
+								"create",
+								"collection"
 							]
 						}
 					},
@@ -1489,15 +1490,14 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/organization/1/collection/all",
+							"raw": "{{url}}{{api}}/organization/list/collections",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"organization",
-								"1",
-								"collection",
-								"all"
+								"list",
+								"collections"
 							]
 						}
 					},
@@ -1518,7 +1518,7 @@
 								},
 								{
 									"key": "organization_id",
-									"value": "7",
+									"value": "2",
 									"type": "text"
 								},
 								{
@@ -1569,13 +1569,13 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/organization/workspace/setAll/user",
+							"raw": "{{url}}{{api}}/organization/workspaces/setAll/user",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"organization",
-								"workspace",
+								"workspaces",
 								"setAll",
 								"user"
 							]
@@ -1637,8 +1637,8 @@
 									"type": "text"
 								},
 								{
-									"key": "entity_id",
-									"value": "9",
+									"key": "wo_id",
+									"value": "10",
 									"type": "text"
 								},
 								{
@@ -1654,7 +1654,7 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/role/user/set/abilitiesOnEntity",
+							"raw": "{{url}}{{api}}/role/user/set/abilitiesOnOrganizationOrWorkspace",
 							"host": [
 								"{{url}}{{api}}"
 							],
@@ -1662,7 +1662,7 @@
 								"role",
 								"user",
 								"set",
-								"abilitiesOnEntity"
+								"abilitiesOnOrganizationOrWorkspace"
 							]
 						}
 					},
@@ -1674,17 +1674,18 @@
 			"name": "USER",
 			"item": [
 				{
-					"name": "GET USER",
+					"name": "/ME",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}{{api}}/user",
+							"raw": "{{url}}{{api}}/user/me",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
-								"user"
+								"user",
+								"me"
 							]
 						}
 					},
@@ -1696,13 +1697,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}{{api}}/user/resource",
+							"raw": "{{url}}{{api}}/user/resources",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"user",
-								"resource"
+								"resources"
 							]
 						}
 					},
@@ -1759,6 +1760,35 @@
 								"organizations",
 								"1",
 								"workspaces"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SELECT ORGANIZATION",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "organization_id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/user/organizations/select",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"user",
+								"organizations",
+								"select"
 							]
 						}
 					},
@@ -1831,18 +1861,18 @@
 									"formdata": [
 										{
 											"key": "name",
-											"value": "La Escuela 22as",
+											"value": "La Escuela 22",
 											"type": "text"
 										}
 									]
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/super-admin/organization/create",
+									"raw": "{{url}}{{api}}/admin/organization/create",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"super-admin",
+										"admin",
 										"organization",
 										"create"
 									]
@@ -1860,14 +1890,14 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/super-admin/organization/2",
+									"raw": "{{url}}{{api}}/admin/organization/1",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"super-admin",
+										"admin",
 										"organization",
-										"2"
+										"1"
 									]
 								}
 							},
@@ -1879,12 +1909,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{url}}{{api}}/super-admin/organization/index",
+									"raw": "{{url}}{{api}}/admin/organization/index",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"super-admin",
+										"admin",
 										"organization",
 										"index"
 									]
@@ -1898,12 +1928,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{url}}{{api}}/super-admin/organization/get/2",
+									"raw": "{{url}}{{api}}/admin/organization/get/2",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"super-admin",
+										"admin",
 										"organization",
 										"get",
 										"2"
@@ -1922,23 +1952,23 @@
 									"formdata": [
 										{
 											"key": "organization_id",
-											"value": "4",
+											"value": "1",
 											"type": "text"
 										},
 										{
 											"key": "name",
-											"value": "Nuevo nombre",
+											"value": "Public ORG",
 											"type": "text"
 										}
 									]
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/super-admin/organization/update",
+									"raw": "{{url}}{{api}}/admin/organization/update",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"super-admin",
+										"admin",
 										"organization",
 										"update"
 									]
@@ -1972,12 +2002,12 @@
 									]
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/super-admin/role/store",
+									"raw": "{{url}}{{api}}/admin/role/store",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"super-admin",
+										"admin",
 										"role",
 										"store"
 									]
@@ -1995,12 +2025,12 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/super-admin/role/3",
+									"raw": "{{url}}{{api}}/admin/role/3",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"super-admin",
+										"admin",
 										"role",
 										"3"
 									]
@@ -2014,12 +2044,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{url}}{{api}}/super-admin/role/all",
+									"raw": "{{url}}{{api}}/admin/role/all",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"super-admin",
+										"admin",
 										"role",
 										"all"
 									]
@@ -2033,12 +2063,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{url}}{{api}}/super-admin/role/1",
+									"raw": "{{url}}{{api}}/admin/role/1",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"super-admin",
+										"admin",
 										"role",
 										"1"
 									]
@@ -2062,12 +2092,12 @@
 									]
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/super-admin/role/update",
+									"raw": "{{url}}{{api}}/admin/role/update",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"super-admin",
+										"admin",
 										"role",
 										"update"
 									]
@@ -2108,12 +2138,12 @@
 									]
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/super-admin/role/giveAbility",
+									"raw": "{{url}}{{api}}/admin/role/giveAbility",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"super-admin",
+										"admin",
 										"role",
 										"giveAbility"
 									]
@@ -2142,12 +2172,12 @@
 									]
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/super-admin/role/removeAbility",
+									"raw": "{{url}}{{api}}/admin/role/removeAbility",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"super-admin",
+										"admin",
 										"role",
 										"removeAbility"
 									]
@@ -2181,12 +2211,12 @@
 									]
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/super-admin/ability/store",
+									"raw": "{{url}}{{api}}/admin/ability/store",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"super-admin",
+										"admin",
 										"ability",
 										"store"
 									]
@@ -2204,12 +2234,12 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/super-admin/ability/1",
+									"raw": "{{url}}{{api}}/admin/ability/1",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"super-admin",
+										"admin",
 										"ability",
 										"1"
 									]
@@ -2223,12 +2253,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{url}}{{api}}/super-admin/ability/all",
+									"raw": "{{url}}{{api}}/admin/ability/all",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"super-admin",
+										"admin",
 										"ability",
 										"all"
 									]
@@ -2242,12 +2272,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{url}}{{api}}/super-admin/ability/1",
+									"raw": "{{url}}{{api}}/admin/ability/1",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"super-admin",
+										"admin",
 										"ability",
 										"1"
 									]
@@ -2271,12 +2301,12 @@
 									]
 								},
 								"url": {
-									"raw": "{{url}}{{api}}/super-admin/ability/update",
+									"raw": "{{url}}{{api}}/admin/ability/update",
 									"host": [
 										"{{url}}{{api}}"
 									],
 									"path": [
-										"super-admin",
+										"admin",
 										"ability",
 										"update"
 									]
@@ -2398,6 +2428,15 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": null
+			},
+			"response": []
 		}
 	],
 	"auth": {
@@ -2405,7 +2444,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiOTU4YmJmMDZiMzE0ZTQ1N2ZhNGJlYmUwZWIyMzViNzA0ZTA3MjEwN2ZiYzkyMDcxNjVjZTA0ODg0NjEyMGQzYWVhZWI1M2M4ZDJhMDQ3MzgiLCJpYXQiOiIxNjE0MjU4Mzc4LjE4OTEwNiIsIm5iZiI6IjE2MTQyNTgzNzguMTg5MTI3IiwiZXhwIjoiMTYyOTg5Njc3Ny43NzU4NjMiLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.gbAZ6UGZFpbZM70XNXBM5mz51-tWhq5CoQMW1aifwFV123Ti87KRDNyW9mxCzuO8C5z5u7yHel_xh8wQtfll0XpM6nZub2tIc3HMZxCCymRB9o22p9IDP20wYuAlanYl3cbJLB-m4qR2E2XoUTH-vucFodm0iqRNQOrU2n2FmjfFD4dq8p0vc5XDwY-GAQQebI8KPIjst0TaVfL9HtNu3VMHvUCaWrItaYTm-3PgnxsjeEVtPdW1dK_rhJ8Q0oVbGKhwyWaJTDx9KfAuwb_znnSys4R_mrIm1jT7xwn5EzH47SHrWNK6_7e08HuYTX_7UlA3_-LQaH_WwT53niENRZxdaMWtQKpKfNKSgWPcwhL8rt9nfoDjsJMKhjBSHj0RD4sw4NkqSSm1y_3vSGJMQlisHcj0UUDP_L0vEQPIrz-ThGXpKgw4IotRkYydMc03gcRQkrdetgV9PxtBljPtGf3JwT78AwkfG8FOfWzcnL00sHQQCDq4qwHP89q3JGAdFLb71am0FSgj2oGjzOziI02wexek5lKsiiTE2XothiVZpC1hm0NgPtjiUoEcNapp7YRZDjcMXVkSVTktEu7mzzz2rK9TJvK_Dd6UCpmRRR10etiDbtAA0kJ4IWGmj7gzh3aPnuI4T76U_baPS6oqwFQ9J25JEOhSTnneAJ5O2uA",
+				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiYzk3MzdlOWE5YjFmZjNiOGM2MzlhYTRlOGUyYWY1Y2IwZjM1OGZmZDJlYWZmNDIzZTNjNzc3YWM0ZjJmNGI1MDk1YWE1NmMwNDJkNmRiMzMiLCJpYXQiOiIxNjE0ODQ3NzQ0Ljk3MDQ3MSIsIm5iZiI6IjE2MTQ4NDc3NDQuOTcwNDk1IiwiZXhwIjoiMTYzMDc0NTM0NC41NDg2OTAiLCJzdWIiOiIyIiwic2NvcGVzIjpbXX0.Xh10ucpwiT9E3GGO7lNVVSIA8bCR8aAUeVwMpxsCLq6U6QSSblWQbaVZVu8NVliSKSxpc9N9tBaq-ufld1xr9Cy5NyC5eGsubhInJ8Sdag3zuq80ShjfFRNNfPWwvnSroYM_6lSXQ5JGY82XmwgYEvwsh0NejzwES68h-yIuCepbkQ3t4ufKBVi37EYjTnCJil3YuFAtflHJmN5HgOz3xeZM_gy16WfZAE6f1lfvieTJv3QwMh7qwPWmgyMcoqFpJ7SPU_oCfePfMaLvNr1-nVv4J2m3ENc6R2vlXEUyisq_8446s2s94eiuYz-tSqYk-dEwwVT3E_QJr_EHW_njoXeqmjA3JQmxszYITwqwWr7Me8EpWZUB25rkftVJHkT0AHJrqA1JVFsVIVO5dGtzJG9vU9vcHTOr7GgtShQrfFSDSqSdo1-XIqq6Oupvy_2XW9lDPlKcFfv0Gfjmcq3ulwxCbSoUKLYhz-WmOHgrSQbDlLXGC7BWoFsaomfBBnC0BCRF5GTif0iAVaZTjpS2KEa5AjzI9AMQeRzZDRtxwPDpGhZs4tAqmVsQmjb6y-FO54npsUIF36gMvema-SNlWP2OoVN5RwgVxRX-C3Qq4_uS1Pd-2kd0A5wMcGbRnXhKjLmpCQALkFrj2qC2Bls4xZmVKiKaAYb13MJKWQDvKag",
 				"type": "string"
 			}
 		]

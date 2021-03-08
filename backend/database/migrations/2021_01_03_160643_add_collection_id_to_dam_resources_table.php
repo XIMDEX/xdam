@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddFieldActiveToDamResourcesTable extends Migration
+class AddCollectionIdToDamResourcesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,8 +14,7 @@ class AddFieldActiveToDamResourcesTable extends Migration
     public function up()
     {
         Schema::table('dam_resources', function (Blueprint $table) {
-            $table->boolean('active')->default(true);
-            $table->integer('user_owner_id');
+            $table->unsignedInteger('collection_id')->nullable();
         });
     }
 
