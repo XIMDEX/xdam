@@ -61,6 +61,9 @@
             <div *ngSwitchCase="5">
                 <xdam-modal-multimedia [action]="action" [currentMode]="mode.currentMode" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" #fromMultimedia></xdam-modal-multimedia>
             </div>
+            <div *ngSwitchCase="6">
+                <xdam-modal-multimedia [action]="action" [currentMode]="mode.currentMode" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" #fromMultimedia></xdam-modal-multimedia>
+            </div>
         </div>
         
         <!--<ng-template #newAsset>

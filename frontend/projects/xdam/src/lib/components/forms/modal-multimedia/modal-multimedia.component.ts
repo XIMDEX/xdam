@@ -46,7 +46,7 @@ export class ModalMultimediaComponent implements OnInit {
   @ViewChild('imgPreview') imgPreview: ElementRef;
   @ViewChild('questionDeletedFile') questionDeletedFile!: QuestionComponent;
   //Image
-  defaultImage = window.origin + '/assets/default_item_image.jpg';
+  defaultImage = 'assets/default_item_image.jpg';
   image = null;
   previewDelete = false;
   imageError= false;
@@ -126,7 +126,7 @@ export class ModalMultimediaComponent implements OnInit {
 
   //Form Data
   initImage(){
-    if (this.resourceUrl && !this.imageError && this.action.item.previews){
+    if (this.resourceUrl && !this.imageError && this.action && this.action.item && this.action.item.previews){
       this.image= this.resourceUrl + '/resource/render/' + this.action.item.previews[this.action.item.previews.length-1];
     } else {
       this.imageError = true;
@@ -135,6 +135,7 @@ export class ModalMultimediaComponent implements OnInit {
   }
 
   imgError(){
+    debugger;
     this.imageError = true;
     this.initImage();
   }

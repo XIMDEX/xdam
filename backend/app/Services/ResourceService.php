@@ -137,7 +137,7 @@ class ResourceService
      */
     public function getAll($type = null)
     {
-        return $type ? DamResource::where('type', strval($type))->get() : DamResource::all();
+        return $type ? DamResource::where('type', $type)->get() : DamResource::all();
     }
 
     /**
@@ -315,7 +315,7 @@ class ResourceService
             $this->addCategoryTo($resource, $category);
         } else {
             // If category not exists, create it
-            $category = $this->categoryService->store(["name" => $categoryName, "type" => $resource->type->key]);
+            $category = $this->categoryService->store(["name" => $categoryName, "type" => $resource->type]);
             $this->addCategoryTo($resource, $category);
         }
         return $resource;

@@ -18,7 +18,7 @@ class CategoryResource extends BaseResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'type' => ResourceType::fromValue($this->type)->key,
+            'type' => ResourceType::fromValue($this->type),
         ];
     }
 }
