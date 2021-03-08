@@ -32,7 +32,7 @@ class CourseSolrResource extends JsonResource
         {
             $internal = property_exists($data->description, 'internal') ? $data->description->internal : false;
             $active = property_exists($data->description, 'active') ? $data->description->active : false;
-            $agregated = property_exists($data->description, 'agregated') ? $data->description->agregated : false;
+            $aggregated = property_exists($data->description, 'aggregated') ? $data->description->aggregated : false;
         }
 
         return [
@@ -40,7 +40,7 @@ class CourseSolrResource extends JsonResource
             'name' => $this->name,
             'data' => $data,
             'active' => $active ?? $this->active,
-            'aggregated' => $agregated ?? false,
+            'aggregated' => $aggregated ?? false,
             'internal' => $internal ?? false,
             'type' => ResourceType::fromValue($this->type)->key,
             'tags' => $this->tags()->pluck('name')->toArray() ?? [''],
