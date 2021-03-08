@@ -10,6 +10,28 @@
     "sortMissingLast": true,
     "omitPositions": true
   },
+  "internal": {
+    "name": "internal",
+    "type": "boolean",
+    "omitNorms": true,
+    "omitTermFreqAndPositions": true,
+    "indexed": true,
+    "stored": true,
+    "uninvertible": true,
+    "sortMissingLast": true,
+    "omitPositions": true
+  },
+  "aggregated": {
+    "name": "aggregated",
+    "type": "boolean",
+    "omitNorms": true,
+    "omitTermFreqAndPositions": true,
+    "indexed": true,
+    "stored": true,
+    "uninvertible": true,
+    "sortMissingLast": true,
+    "omitPositions": true
+  },
   "categories": {
     "name": "categories",
     "type": "text_general"
