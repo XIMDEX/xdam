@@ -59,14 +59,16 @@ class UserController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function attachResourceToCollection(AttachResourceToCollectionRequest $request) {
+    public function attachResourceToCollection(AttachResourceToCollectionRequest $request)
+    {
         $userResource = $this->userService->attachResourceToCollection($request->collection_id, $request->resource_id, $request->organization_id);
         return (new JsonResource($userResource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function attachResourceToWorkspace(AttachResourceToWorkspaceRequest $request) {
+    public function attachResourceToWorkspace(AttachResourceToWorkspaceRequest $request)
+    {
         $userResource = $this->userService->attachResourceToWorkspace($request->resource_id);
         return (new JsonResource($userResource))
             ->response()

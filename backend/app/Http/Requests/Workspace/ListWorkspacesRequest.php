@@ -20,14 +20,11 @@ class ListWorkspacesRequest extends FormRequest
     {
         //check if user has the view-workspaces ability on the organization
         $user = Auth::user();
-        if($user->isA(Roles::SUPER_ADMIN)) {
-            return true;
-        }
 
         $org = Organization::find($this->organization_id);
         $this->merge(['org' => $org]);
 
-        if ($user->canAny([Abilities::READ_WORKSPACE, Abilities::MANAGE_ORGANIZATION_WORKSPACES, Abilities::MANAGE_ORGANIZATION], $org)) {
+        if ($user->canAny([Abilities::READ_WORKSPACE, Abilities::MANAGE_ORGANIZATION_WORKSPACES, Abilities::MANAGE_ORGANIZATION], $org) || $user->isA(Roles::SUPER_ADMIN)) {
             return true;
         }
         return false;

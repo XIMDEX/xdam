@@ -3,7 +3,7 @@
 namespace App\Http\Middleware\ResourcePermissions;
 
 use App\Enums\Abilities;
-use App\Utils\PermissionCalc;
+use App\Utils\DamUrlUtil;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +22,10 @@ class ShowResource
         // provisionally everyone has access to render resources
         return $next($request);
 
-        return PermissionCalc::check($request, Auth::user(), Abilities::READ_RESOURCE) ? $next($request) : response()->json([Abilities::READ_RESOURCE => 'Error: Unauthorized.'], 401);
+        $damResource = isset($request->damUrl) ? DamUrlUtil::getResourceFromUrl($request->damUrl) : $request->damResource;
+        return $damResource->userIsAuthorized(Auth::user(), Abilities::READ_RESOURCE) ? $next($request) : response()->json([Abilities::REMOVE_RESOURCE => 'Error: Unauthorized.'], 401);
+
+
     }
     /*
         Route::get('/render/{damUrl}/{size}', [ResourceController::class, 'render'])->name('damResource.renderWithSize');

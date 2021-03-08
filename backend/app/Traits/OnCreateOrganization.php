@@ -4,7 +4,6 @@
 namespace App\Traits;
 
 use App\Models\Collection;
-use App\Models\CollectionType;
 
 trait OnCreateOrganization
 {

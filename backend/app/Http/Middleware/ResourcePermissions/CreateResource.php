@@ -22,9 +22,12 @@ class CreateResource
     {
         $user = Auth::user();
 
-        $workspace = Workspace::find($user->selected_workspace);
         // Provisionally, the user can create any resource, within a collection
         return $next($request);
+
+        if(!$workspace = Workspace::find($user->selected_workspace)) {
+            return response()->json(['Error' => 'no workspace selected.'], 401);
+        }
 
         if($user->can(Abilities::CREATE_RESOURCE, $workspace) || $workspace->type == WorkspaceType::public) {
             return $next($request);

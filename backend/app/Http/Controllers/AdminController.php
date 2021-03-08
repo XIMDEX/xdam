@@ -60,7 +60,8 @@ class AdminController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function SetRoleAbilitiesOnEntity(SetRoleAbilitiesOnEntityRequest $request) {
+    public function SetRoleAbilitiesOnEntity(SetRoleAbilitiesOnEntityRequest $request)
+    {
         $adminResource = $this->adminService
             ->SetRoleAbilitiesOnEntity($request->user_id, $request->role_id, $request->entity_id, $request->type, $request->on);
         return (new JsonResource($adminResource))

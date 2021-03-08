@@ -2,8 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\Abilities;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateResourceCard
 {
@@ -16,7 +18,8 @@ class UpdateResourceCard
      */
     public function handle(Request $request, Closure $next)
     {
-        //return PermissionCalc::check($request, Auth::user(), Abilities::UPDATE_RESOURCE_CARD) ? $next($request) : response()->json([Abilities::UPDATE_RESOURCE_CARD => 'Error: Unauthorized.'], 401);
         return $next($request);
+
+        return $request->damResource->userIsAuthorized(Auth::user(), Abilities::UPDATE_RESOURCE_CARD) ? $next($request) : response()->json([Abilities::UPDATE_RESOURCE_CARD => 'Error: Unauthorized.'], 401);
     }
 }

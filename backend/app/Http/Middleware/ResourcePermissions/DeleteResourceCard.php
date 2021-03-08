@@ -3,9 +3,9 @@
 namespace App\Http\Middleware\ResourcePermissions;
 
 use App\Enums\Abilities;
-use App\Utils\PermissionCalc;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DeleteResourceCard
 {
@@ -18,7 +18,8 @@ class DeleteResourceCard
      */
     public function handle(Request $request, Closure $next)
     {
-        //return PermissionCalc::check($request, Auth::user(), Abilities::REMOVE_RESOURCE_CARD) ? $next($request) : response()->json([Abilities::REMOVE_RESOURCE_CARD => 'Error: Unauthorized.'], 401);
         return $next($request);
+
+        return $request->damResource->userIsAuthorized(Auth::user(), Abilities::REMOVE_RESOURCE_CARD) ? $next($request) : response()->json([Abilities::REMOVE_RESOURCE_CARD => 'Error: Unauthorized.'], 401);
     }
 }

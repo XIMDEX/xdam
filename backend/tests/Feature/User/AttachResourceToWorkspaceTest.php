@@ -253,7 +253,7 @@ class AttachResourceToWorkspaceTest extends TestCase
 
         $role = $this->json('POST', '/api/v1/organization/'.$data['org']->id.'/roles/store', [
             'name' => 'role-show-resources',
-            'entity_type' => 'wsp'
+            'entity_type' => Entities::workspace
         ]);
 
 

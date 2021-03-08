@@ -167,7 +167,7 @@ class UserRoleAssignTest extends TestCase
             'role_id' => Roles::WORKSPACE_MANAGER_ID,
             'entity_id' => $wsp_entity->id,
             'type' => 'set',
-            'on' => 'wsp',
+            'on' => Entities::workspace,
         ]);
 
 

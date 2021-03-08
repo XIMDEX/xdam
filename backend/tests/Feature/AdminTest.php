@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\Entities;
 use App\Enums\Roles;
 use App\Enums\WorkspaceType;
 use App\Models\Organization;
@@ -102,7 +103,7 @@ class AdminTest extends TestCase
             'role_id' => Roles::WORKSPACE_MANAGER_ID,
             'entity_id' => $data['org']->workspaces()->where('name', 'a generic faker wsp')->first()->id,
             'type' => 'set',
-            'on' => 'wsp',
+            'on' => Entities::workspace,
         ]);
 
         $response
@@ -131,7 +132,7 @@ class AdminTest extends TestCase
             'role_id' => Roles::WORKSPACE_MANAGER_ID,
             'entity_id' => $data['org']->workspaces()->where('name', 'a generic faker wsp')->first()->id,
             'type' => 'unset',
-            'on' => 'wsp',
+            'on' => Entities::workspace,
         ]);
 
         $response

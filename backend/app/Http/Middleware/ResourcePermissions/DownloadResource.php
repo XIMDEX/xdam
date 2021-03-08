@@ -19,7 +19,9 @@ class DownloadResource
      */
     public function handle(Request $request, Closure $next)
     {
-        //return PermissionCalc::check($request, Auth::user(), Abilities::DOWNLOAD_RESOURCE) ? $next($request) : response()->json([Abilities::DOWNLOAD_RESOURCE => 'Error: Unauthorized.'], 401);
         return $next($request);
+
+        return $request->damResource->userIsAuthorized(Auth::user(), Abilities::DOWNLOAD_RESOURCE) ? $next($request) : response()->json([Abilities::DOWNLOAD_RESOURCE => 'Error: Unauthorized.'], 401);
+
     }
 }

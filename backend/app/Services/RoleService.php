@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\Entities;
 use App\Enums\Roles;
 use App\Models\Organization;
 use App\Models\Role as MyRole;
@@ -21,7 +22,7 @@ class RoleService
             'name' => $name,
             'title' => $title,
             'organization_id' => $organization->id,
-            'applicable_to_entity' => $entity == 'wsp' ? Workspace::class : Organization::class
+            'applicable_to_entity' => $entity == Entities::workspace ? Workspace::class : Organization::class
         ]);
         return $role;
     }

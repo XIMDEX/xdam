@@ -19,7 +19,8 @@ class UpdateResource
      */
     public function handle(Request $request, Closure $next)
     {
-        //return PermissionCalc::check($request, Auth::user(), Abilities::UPDATE_RESOURCE) ? $next($request) : response()->json([Abilities::UPDATE_RESOURCE => 'Error: Unauthorized.'], 401);
         return $next($request);
+
+        return $request->damResource->userIsAuthorized(Auth::user(), Abilities::UPDATE_RESOURCE) ? $next($request) : response()->json([Abilities::UPDATE_RESOURCE => 'Error: Unauthorized.'], 401);
     }
 }
