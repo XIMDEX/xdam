@@ -122,6 +122,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::group(['prefix' => 'organizations'], function(){
                 Route::get('/',                             [UserController::class, 'getOrganizations'])            ->name('user.org.get');
                 Route::get('/{organization_id}/workspaces', [UserController::class, 'getWorkspacesOfOrganization']) ->name('user.org.wsps.get');
+                Route::get('/{organization_id}/resources',  [WorkspaceController::class, 'getOrganizationResources'])   ->name('user.org.get.resources');
             });
         });
 

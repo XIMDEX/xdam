@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
+use App\Enums\Roles;
 use App\Enums\ThumbnailTypes;
 use App\Traits\UsesUuid;
 use App\Utils\PermissionCalc;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Silber\Bouncer\Database\Role;
 use Solarium\QueryType\ManagedResources\RequestBuilder\Resource;
 use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
@@ -84,8 +86,17 @@ class DamResource extends Model implements HasMedia, TaggableInterface
         //now get all abilities that the user has in each of these workspaces
         $user_abilities_in_resource_workspaces = [];
         foreach ($workspaces_where_resource_is as $wsp) {
+
             foreach ($user->abilitiesOnEntity($wsp->id, Workspace::class) as $abilities) {
                 $user_abilities_in_resource_workspaces[] = $abilities->toArray();
+            }
+
+            if($this->user_owner_id == $user->id) {
+                $org = $wsp->organization()->first();
+                $resource_owner_abilities = Role::where(['organization_id' => $org->id, 'name' => Roles::RESOURCE_OWNER])->first()->abilities;
+                foreach ($resource_owner_abilities as $abilities) {
+                    $user_abilities_in_resource_workspaces[] = $abilities->toArray();
+                }
             }
         }
         return $user_abilities_in_resource_workspaces;

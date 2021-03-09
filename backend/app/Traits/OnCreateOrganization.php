@@ -29,7 +29,7 @@ trait OnCreateOrganization
             if($model->type != OrganizationType::public) {
                 //Create default owner & corporate role
                 $corp = Role::create([
-                    'name' => 'corporate-workspace-management',
+                    'name' => Roles::CORPORATE_WORKSPACE_MANAGEMENT,
                     'organization_id' => $model->id,
                     'applicable_to_entity' => Workspace::class,
                 ]);
@@ -40,7 +40,7 @@ trait OnCreateOrganization
                 );
 
                 $owner = Role::create([
-                    'name' => 'resource-owner',
+                    'name' => Roles::RESOURCE_OWNER,
                     'organization_id' => $model->id,
                     'applicable_to_entity' => Workspace::class,
                 ]);

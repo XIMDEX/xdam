@@ -56,6 +56,10 @@ class RoleService
      */
     public function update($role_id, $name)
     {
+        if($name == Roles::RESOURCE_OWNER || $name == Roles::CORPORATE_WORKSPACE_MANAGEMENT) {
+            throw new Exception('cannot execute this action.');
+        }
+
         $role = Role::findOrFail($role_id)->update(
             [
                 'name' => $name

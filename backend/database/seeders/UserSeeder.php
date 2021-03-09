@@ -36,12 +36,6 @@ class UserSeeder extends Seeder
 
         Bouncer::assign(Roles::SUPER_ADMIN)->to($superadmin);
 
-        $admin_of_all = User::create([
-            'name' => 'Admin of all ',
-            'email' => 'admin_of_all@xdam.com',
-            'password' => Hash::make('123123')
-        ]);
-
         $admin = User::create([
             'name' => 'Admin user',
             'email' => 'admin@xdam.com',
@@ -63,19 +57,11 @@ class UserSeeder extends Seeder
 
         //Factory Corporate Organizations ids 3 4 5 6
 
+        $roles = new Roles;
+        $this->adminService->setOrganizations($admin->id, 3, $roles->ORGANIZATION_ADMIN_ID());
+        // $this->adminService->setOrganizations($manager->id, 3, $roles->ORGANIZATION_MANAGER_ID());
+        // $this->adminService->setOrganizations($admin->id, 3, $roles->ORGANIZATION_USER_ID());
 
-        $this->adminService->setOrganizations($admin_of_all->id, 3, (new Roles)->ORGANIZATION_ADMIN_ID());
-        $this->adminService->setOrganizations($admin_of_all->id, 4, (new Roles)->ORGANIZATION_ADMIN_ID());
-        $this->adminService->setOrganizations($admin_of_all->id, 5, (new Roles)->ORGANIZATION_ADMIN_ID());
-        $this->adminService->setOrganizations($admin_of_all->id, 6, (new Roles)->ORGANIZATION_ADMIN_ID());
-
-        $this->adminService->setOrganizations($admin->id, 3, (new Roles)->ORGANIZATION_ADMIN_ID());
-        $this->adminService->setOrganizations($admin->id, 4, (new Roles)->ORGANIZATION_ADMIN_ID());
-
-        $this->adminService->setOrganizations($manager->id, 4, (new Roles)->ORGANIZATION_MANAGER_ID());
-        $this->adminService->setOrganizations($manager->id, 5, (new Roles)->ORGANIZATION_MANAGER_ID());
-
-        $this->adminService->setOrganizations($basic_user->id, 5, (new Roles)->ORGANIZATION_USER_ID());
 
     }
 }

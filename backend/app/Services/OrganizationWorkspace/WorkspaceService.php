@@ -4,9 +4,11 @@ namespace App\Services\OrganizationWorkspace;
 
 use App\Enums\Roles;
 use App\Enums\WorkspaceType;
+use App\Models\DamResource;
 use App\Models\Organization;
 use App\Models\Workspace;
 use App\Services\Admin\AdminService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class WorkspaceService
@@ -75,5 +77,17 @@ class WorkspaceService
     {
         $wsp = Workspace::find($wid);
         return $wsp->resources()->get();
+    }
+
+    public function getOrganizationResources($oid)
+    {
+        $res = new Collection();
+        $collections = Organization::find($oid)->collections()->get();
+        foreach ($collections as $coll) {
+            foreach ($coll->resources()->get() as $dam) {
+                $res->add($dam);
+            }
+        }
+        return $res;
     }
 }
