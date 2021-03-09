@@ -35,6 +35,7 @@ export class ModalMultimediaComponent implements OnInit {
 
   currentType:string = 'document';
 
+  @Input() showButtons: boolean;
   @Input() action: ActionModel;
   @Input() modal: any;
   @Input() settings: ListItemOptionI;
@@ -50,6 +51,7 @@ export class ModalMultimediaComponent implements OnInit {
   image = null;
   previewDelete = false;
   imageError= false;
+  resourceID = null;
 
   //Files
   filesToDelete = [];
@@ -156,6 +158,7 @@ export class ModalMultimediaComponent implements OnInit {
     const item = this.action.data;
     this.currentType = this.action.item['type'] + "";
     let field: FormControl;
+    this.resourceID = item.id;
     this.dataform.addControl("id", new FormControl(item.id));
     let groupData: FormGroup = new FormGroup({});
     let {data} = this.action.data;

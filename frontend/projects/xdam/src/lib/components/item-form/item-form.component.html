@@ -59,10 +59,10 @@
                 <xdam-modal-multimedia [action]="action" [currentMode]="mode.currentMode" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" #fromMultimedia></xdam-modal-multimedia>
             </div>
             <div *ngSwitchCase="5">
-                <xdam-modal-multimedia [action]="action" [currentMode]="mode.currentMode" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" #fromMultimedia></xdam-modal-multimedia>
+                <xdam-modal-multimedia [showButtons]=true [action]="action" [currentMode]="mode.currentMode" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" #fromMultimedia></xdam-modal-multimedia>
             </div>
             <div *ngSwitchCase="6">
-                <xdam-modal-multimedia [action]="action" [currentMode]="mode.currentMode" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" #fromMultimedia></xdam-modal-multimedia>
+                <xdam-modal-multimedia  [action]="action" [currentMode]="mode.currentMode" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" #fromMultimedia></xdam-modal-multimedia>
             </div>
         </div>
         
