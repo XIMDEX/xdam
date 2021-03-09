@@ -26,7 +26,7 @@ use App\Services\MediaService;
 use App\Services\ResourceService;
 use App\Utils\DamUrlUtil;
 use App\Utils\FileUtil;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Mimey\MimeTypes;
 use Symfony\Component\HttpFoundation\Response;
 
