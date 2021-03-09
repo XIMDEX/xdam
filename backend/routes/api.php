@@ -98,6 +98,8 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::post('user/set/abilitiesOnEntity',    [AdminController::class, 'SetRoleAbilitiesOnEntity']) ->name('adm.usr.set.role');
         });
 
+        Route::get('/user/{userToken}/resource/{damResource}/permissions', [UserController::class, 'resourceInfo'])->name('user.get.resource.info');
+
         Route::group(['prefix' => 'user'], function(){
 
             Route::post('logout',   [AuthController::class, 'logout'])->name('user.logout');
@@ -105,7 +107,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::get('/',         [UserController::class, 'user'])->name('user.get');
 
             Route::group(['prefix' => 'resource'], function(){
-                Route::get('/', [UserController::class, 'resources'])->name('user.get.resources');
+                Route::get('/',                          [UserController::class, 'resources'])->name('user.get.resources');
                 /*
                     if the user is attached to the organization:
                     the next route attach the resource to the corporate workspace of an organization, and to the specified collection

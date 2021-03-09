@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\OrganizationType;
 use App\Enums\WorkspaceType;
 use App\Traits\OnCreateOrganization;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -48,6 +49,11 @@ class Organization extends Model
     public function collections()
     {
         return $this->hasMany(Collection::class);
+    }
+
+    public function isPublic(): bool
+    {
+        return $this->type == OrganizationType::public ? true : false;
     }
 
     /**

@@ -11,6 +11,7 @@ use App\Models\Organization;
 use App\Models\Role;
 use App\Models\Workspace;
 use Silber\Bouncer\BouncerFacade;
+use Silber\Bouncer\Database\Role as DatabaseRole;
 
 trait OnCreateOrganization
 {
@@ -26,9 +27,9 @@ trait OnCreateOrganization
                     'solr_connection' => $keyName
                 ]);
             }
-            if($model->type != OrganizationType::public) {
+            // if($model->type != OrganizationType::public) {
                 //Create default owner & corporate role
-                $corp = Role::create([
+                $corp = DatabaseRole::create([
                     'name' => Roles::CORPORATE_WORKSPACE_MANAGEMENT,
                     'organization_id' => $model->id,
                     'applicable_to_entity' => Workspace::class,
@@ -39,7 +40,7 @@ trait OnCreateOrganization
                     Abilities::resourceManagerAbilities()), Workspace::class
                 );
 
-                $owner = Role::create([
+                $owner = DatabaseRole::create([
                     'name' => Roles::RESOURCE_OWNER,
                     'organization_id' => $model->id,
                     'applicable_to_entity' => Workspace::class,
@@ -49,7 +50,7 @@ trait OnCreateOrganization
                     [Abilities::MANAGE_WORKSPACE],
                     Abilities::resourceManagerAbilities()), Workspace::class
                 );
-            }
+
         });
     }
 }

@@ -47,7 +47,16 @@ class UserService
                 $resources[] = $res;
             }
         }
+
         return $this->unique_multidimensional_array($resources, 'id');
+    }
+
+    public function resourceInfo($userToken, DamResource $dam)
+    {
+        $user = Auth::check();
+        dd($user);
+        $abilities = $dam->getUserAbilities(Auth::user());
+        return $this->unique_multidimensional_array($abilities, 'name');
     }
 
     public function getWorkspaces()

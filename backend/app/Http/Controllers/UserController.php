@@ -11,6 +11,7 @@ use App\Http\Resources\OrganizationResource;
 use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\WorkspaceCollection;
+use App\Models\DamResource;
 use App\Services\UserService;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Request;
@@ -55,6 +56,14 @@ class UserController extends Controller
     {
         $userResource = $this->userService->resources();
         return (new ResourceCollection($userResource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function resourceInfo($userToken, DamResource $damResource)
+    {
+        $resourceInfo = $this->userService->resourceInfo($userToken, $damResource);
+        return (new JsonResource($resourceInfo))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }

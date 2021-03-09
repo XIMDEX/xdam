@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Abilities;
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use App\Enums\Roles;
