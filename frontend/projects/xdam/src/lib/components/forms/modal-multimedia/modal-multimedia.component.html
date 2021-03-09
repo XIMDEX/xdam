@@ -96,4 +96,8 @@
         </div>
     </div>
 </form>
-<xdam-question title="Are you sure you want to delete this file?" (accepted)="acceptedDeleteFiles($event)" #questionDeletedFile></xdam-question>
+<xdam-question [title]="{
+        title: 'Are you sure you want to delete this file?', 
+        description: 'This file will not be deleted until you save the changes'
+    }" 
+    (accepted)="acceptedDeleteFiles($event)" #questionDeletedFile></xdam-question>

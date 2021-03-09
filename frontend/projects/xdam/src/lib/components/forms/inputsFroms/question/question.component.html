@@ -1,9 +1,12 @@
 <div *ngIf="active" class="acept-modal">
     <div class="modal">
-        <div class="title"><h2>{{title}}</h2></div> 
+        <div class="title">
+            <h2>{{title.title}}</h2>
+            <p>{{title.description}}</p>
+        </div> 
+
         <div class="buttons">
-            <button (click)="result(true)">Accept</button>
-            <button (click)="result(false)">Cancel</button>
+            <button (click)="result(true)">Okey</button>
         </div>
     </div>
 </div>

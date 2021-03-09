@@ -18,7 +18,7 @@ export class QuestionComponent {
   active: boolean = false;
 
 
-  get title(): String{
+  get title(): any{
     return this.titleInput
   }
   

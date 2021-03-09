@@ -168,7 +168,6 @@ export class HomeComponent implements OnInit {
 
         this.mainService.list(this.xdamMode.currentMode.id + "" ,params).subscribe(
             response => {
-                console.log("response", response)
 
                 const pager:any = {
                     total: response['total'],
@@ -178,7 +177,7 @@ export class HomeComponent implements OnInit {
                     prevPage: response['prev_page'],
                     perPage: response['per_page']
                 }
-
+                //console.log(response['data'])
                 this.items = {
                     data: response['data'],
                     pager: new Pager(pager, this.pagerSchema),
@@ -267,7 +266,7 @@ export class HomeComponent implements OnInit {
 
                 if(action.data.filesToDelete.length > 0){
                     let filesToDelete: any[] = action.data.filesToDelete
-                    for(let i = 0; i < filesToDelete.length ; i++){
+                    /*for(let i = 0; i < filesToDelete.length ; i++){
                         actionType = this.concatObservables(
                             actionType, 
                             this.mainService.deleteFileToResource(
@@ -277,18 +276,29 @@ export class HomeComponent implements OnInit {
                                 }
                             )
                         )                        
-                    }
+                    }*/
+                    actionType = this.concatObservables(
+                        actionType, 
+                        this.mainService.deleteFileToResource(
+                            {
+                                id: action.data.dataToSave.id,
+                                idsFile: filesToDelete
+                            }
+                        )
+                    )
                 }
 
                 if(action.data.filesToUpload.length > 0){
                     let filesToUpload: any[] = action.data.filesToUpload
                     for(let i = 0; i < filesToUpload.length ; i++){
+                        console.log(filesToUpload)
                         actionType = this.concatObservables(
                             actionType, 
                             this.mainService.addFileToResource(action, i)
-                        )                        
+                        )
                     }
                 }
+                
                 actionType = this.concatObservables(actionType, this.mainService.updateForm(action))
             }else if (action.method === 'new'){
                 //action.data['type'] = this.xdamMode;
@@ -297,24 +307,46 @@ export class HomeComponent implements OnInit {
 
             actionType
                 .subscribe( result => {
-                        const { data } = result as any;
-
-                        action.data = result;
-                        action.status = 'success';
-                    },
-                    ({ error, message, statusText }) => {
-                        action.status = 'fail';
-                        if (hasIn('errors', error)) {
-                            action.errors = error.errors;
+                    action.data = result;
+                    action.status = 'success';
+                    this.action = action;
+                    if(action.method == 'edit'){
+                        let data = this.items.data
+                        for(let i = 0; i < data.length; i ++ ){
+                            if(this.items.data[i].id == result.id){
+                                data[i].data = result.data;
+                                data[i].previews[0] = result.previews[0].dam_url;
+                                this.items = {
+                                    data: data,
+                                    pager: this.items.pager,
+                                    facets: this.items.facets
+                                };
+                            }
                         }
+                    }else if(action.method == 'new' && this.items.pager["per_page"].current > this.items.data.length){
+                        let data = this.items.data
+                        if(result.previews[0]) result.previews[0] = result.previews[0].dam_url;
+                        data.push(result)
+                        this.items = {
+                            data: data,
+                            pager: this.items.pager,
+                            facets: this.items.facets
+                        };
                     }
+                },
+                ({ error, message, statusText }) => {
+                    action.status = 'fail';
+                    if (hasIn('errors', error)) {
+                        action.errors = error.errors;
+                    }
+                }
                 )
-                .add(() => {
+                /*.add(() => {
                     if (action.method !== 'show') {
                         this.getItems();
                     }
                     this.action = action;
-                });
+                });*/
         }
     }
     /**
@@ -340,11 +372,13 @@ export class HomeComponent implements OnInit {
 
     concatObservables(fisthObs, secondObs){
         if (fisthObs){
+            console.log("exist")
             fisthObs = concat(
                 fisthObs,
                 secondObs
             );
         }else{
+            console.log("not-exist")
             fisthObs = secondObs;
         }
         return fisthObs;

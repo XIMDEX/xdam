@@ -170,8 +170,6 @@ export class MainService {
             Accept: 'application/json',
             Authorization: this.getToken()
         });
-
-        console.log("2", this.getToken())
         const formData = data.toFormData();
         const url = this.router.getEndPointUrl('resource', 'store');
 
@@ -189,7 +187,6 @@ export class MainService {
             Accept: 'application/json',
             Authorization: this.getToken()
         });
-        console.log("3", this.getToken())
         //const method = data.method === 'new' ? 'post' : 'put';
         let formData;
         let url;
@@ -207,16 +204,21 @@ export class MainService {
      * 
      * @param item 
      */
-    deleteFileToResource(fileToDelete: {id: string; idFile: string}) {
+    deleteFileToResource(fileToDelete: {id: string; idsFile: any[]}, ) {
         const heads = new HttpHeaders({
             'Access-Control-Allow-Origin': '*',
-            Accept: 'application/json',
+            "Content-Type": 'application/json',
             Authorization: this.getToken()
         });
+        console.log(fileToDelete)
 
-        const url = this.router.getEndPointUrl('resource', 'deleteFile', fileToDelete );
+        const url = this.router.getEndPointUrl('resource', 'deleteFile', fileToDelete);
+        let jsonToSend: string[] = [];
+        for(let i = 0; i < fileToDelete.idsFile.length; i ++ ){
+            jsonToSend.push(fileToDelete.idsFile[i]["id"])
+        }
 
-        return this.http.delete(url, { headers: heads });
+        return this.http.put(url, jsonToSend, { headers: heads });
     }
 
     /**
@@ -224,12 +226,12 @@ export class MainService {
      * @param item 
      */
     addFileToResource(data: ActionModel, index) {
+        
         const heads = new HttpHeaders({
             'Access-Control-Allow-Origin': '*',
             Accept: 'application/json',
             Authorization: this.getToken()
         });
-        console.log("5", this.getToken())
         let formData = data.filesToUploadToFormData(index);
         const url = this.router.getEndPointUrl('resource', 'addFile', new Item(data.data.dataToSave));
 
@@ -246,7 +248,6 @@ export class MainService {
             'Access-Control-Allow-Origin': '*',
             Authorization: this.getToken()
         });
-        console.log("6", this.getToken())
 
          const url = ''; // this.getRoute('get', this.endPoint);
         // url = sprintf(url, item);

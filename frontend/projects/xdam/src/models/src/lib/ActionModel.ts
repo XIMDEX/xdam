@@ -61,7 +61,7 @@ export class ActionModel extends BaseModel implements ActionI {
     }
 
     public filesToUploadToFormData(index) {
-        return this.jsonToFormData(this.data.filesToUpload[index], new FormData(), 'File');
+        return this.jsonToFormData(this.data["filesToUpload"][index], new FormData(), 'File');
     }
 
     private jsonToFormData(obj: any, formData: FormData, prefix: string = '') {

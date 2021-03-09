@@ -61,8 +61,8 @@
                 "method": "DELETE"
             },
             "deleteFile":{
-                "uri": "/resource/%(id)s/associatedFile/%(idFile)s",
-                "method": "DELETE"
+                "uri": "/resource/%(id)s/deleteAssociatedFiles",
+                "method": "PUT"
             },
             "addFile":{
                 "uri": "/resource/%(id)s/addFile",
