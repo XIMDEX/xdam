@@ -42,7 +42,10 @@ class ReIndexSolr extends Command
         $count = 0;
         foreach ($resources as $resource) {
             $solrService->saveOrUpdateDocument($resource);
+            // small delay to not saturate solr listener
+            sleep(.1);
             $count++;
+            $this->line("$count $resource->id");
         }
         $this->line("$count documents indexed");
     }
