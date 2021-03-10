@@ -13,7 +13,10 @@ import { XDamSettingsInterface } from '@xdam/models/interfaces/Settings.interfac
 
 import { JwtHelperService } from '../services/jwt-helper.service';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Route, Router } from '@angular/router';
+import { availableModeI, XdamModeI } from '@xdam/models/interfaces/XdamModeI.interface';
+import { concat } from 'rxjs';
+
 
 @Component({
     selector: 'app-home',
@@ -63,15 +66,23 @@ export class HomeComponent implements OnInit {
     action: ActionModel | null = null;
 
     reset = false;
+    /**
+     * 
+     */
+
+    xdamMode: XdamModeI;
+    /**
+     * 
+     */
 
     private pagerSchema: PagerModelSchema = {
         total: 'total',
-        currentPage: 'current_page',
-        lastPage: 'last_page',
-        nextPage: 'next_page',
-        prevPage: 'prev_page',
+        currentPage: 'currentPage',
+        lastPage: 'lastPage',
+        nextPage: 'nextPage',
+        prevPage: 'prevPage',
         perPage: {
-            value: 'per_page'
+            value: 'perPage'
         }
     };
 
@@ -85,6 +96,7 @@ export class HomeComponent implements OnInit {
         jwtHelper: JwtHelperService,
         private authService: AuthService,
         private router: Router,
+        private activatedRoute: ActivatedRoute,
         private mainService: MainService
     ) {
         this.accessToken = localStorage.getItem('access_token');
@@ -98,12 +110,42 @@ export class HomeComponent implements OnInit {
     ngOnInit() {
         this.settings = this.mainService.getGeneralConfigs();
         this.search = new SearchModel();
-
+        
         this.page = 'page';
         this.searchTerm = 'search';
         this.limit = 'limit';
 
-        this.sendSearch(this.search);
+        //We start the application in Course mode
+        
+        this.mainService.getMyProfile().subscribe(userData =>{
+            this.activatedRoute.params.subscribe(params => {
+                let collections = userData["data"].organizations[0].collections;
+
+                let aviablesModes: availableModeI[] = [];
+
+                for(let i = 0; i < collections.length; i++){
+                    aviablesModes.push({
+                        name: collections[i].name,
+                        id:collections[i].id
+                    });
+                }
+
+                let actualMode: availableModeI;
+
+                if(params["id"]){
+                    actualMode  = aviablesModes.filter(mode =>  mode.id == params["id"])[0];
+                }else {
+                    actualMode  = aviablesModes.filter(mode =>  mode.id === 3)[0];
+                }
+
+                this.xdamMode = {
+                    currentMode: actualMode,
+                    availableModes: aviablesModes
+                }
+
+                this.sendSearch(this.search);
+            });            
+        });        
     }
 
     /**
@@ -114,7 +156,7 @@ export class HomeComponent implements OnInit {
         let params = new HttpParams();
         params = params.append(this.page, String(this.search.page));
         if (!isNil(this.search.content)) {
-            params = params.append(this.searchTerm, this.search.content);
+            params = params.append(this.searchTerm, this.search.content === "1" ? "" : this.search.content);
         }
         if (!isNil(this.search.facets)) {
             Object.keys(this.search.facets).forEach(index => {
@@ -122,19 +164,28 @@ export class HomeComponent implements OnInit {
                 params = params.append(`facets[${index}]`, value.join(','));
             });
         }
-        params = params.append('default', this.default ? '1' : '0');
         params = params.append(this.limit, String(this.search.limit));
 
-        this.mainService.list(params).subscribe(
+        this.mainService.list(this.xdamMode.currentMode.id + "" ,params).subscribe(
             response => {
-                const { data } = response as any;
+                console.log("response", response)
+
+                const pager:any = {
+                    total: response['total'],
+                    currentPage: response['current_page'],
+                    lastPage: response['last_page'],
+                    nextPage:response['next_page'],
+                    prevPage: response['prev_page'],
+                    perPage: response['per_page']
+                }
+
                 this.items = {
-                    data: data['data'],
-                    pager: new Pager(data, this.pagerSchema),
-                    facets: data['facets']
+                    data: response['data'],
+                    pager: new Pager(pager, this.pagerSchema),
+                    facets: response['facets']
                 };
                 if (this.default) {
-                    this.getDefaultFacet(data['facets']);
+                    this.getDefaultFacet(response['facets']);
                 }
             },
             err => console.error(err)
@@ -168,7 +219,7 @@ export class HomeComponent implements OnInit {
 
                 downloadFile.style.display = 'none';
                 downloadFile.href = url;
-                downloadFile.download = item.title;
+                downloadFile.download = item.name;
                 downloadFile.click();
                 downloadFile.remove();
 
@@ -202,25 +253,53 @@ export class HomeComponent implements OnInit {
     damAction(data: ActionModel) {
         const action = new ActionModel(data);
         let actionType = null;
-
+        let deleteFilesSubcribe = null;
         if (action.method === 'select') {
             action.status = 'success';
             setTimeout(() => {
-                alert(`Selectd item ${action.item.title}`);
+                alert(`Selectd item ${action.item.name}`);
                 this.action = action;
             }, 2500);
         } else {
             if (action.method === 'show') {
                 actionType = this.mainService.getResource(action);
-            } else {
+            }else if (action.method === 'edit'){
+
+                if(action.data.filesToDelete.length > 0){
+                    let filesToDelete: any[] = action.data.filesToDelete
+                    for(let i = 0; i < filesToDelete.length ; i++){
+                        actionType = this.concatObservables(
+                            actionType, 
+                            this.mainService.deleteFileToResource(
+                                {
+                                    id: action.data.dataToSave.id,
+                                    idFile: filesToDelete[i].id
+                                }
+                            )
+                        )                        
+                    }
+                }
+
+                if(action.data.filesToUpload.length > 0){
+                    let filesToUpload: any[] = action.data.filesToUpload
+                    for(let i = 0; i < filesToUpload.length ; i++){
+                        actionType = this.concatObservables(
+                            actionType, 
+                            this.mainService.addFileToResource(action, i)
+                        )                        
+                    }
+                }
+                actionType = this.concatObservables(actionType, this.mainService.updateForm(action))
+            }else if (action.method === 'new'){
+                //action.data['type'] = this.xdamMode;
                 actionType = this.mainService.saveForm(action);
             }
 
             actionType
-                .subscribe(
-                    ({ result }) => {
+                .subscribe( result => {
                         const { data } = result as any;
-                        action.data = data;
+
+                        action.data = result;
                         action.status = 'success';
                     },
                     ({ error, message, statusText }) => {
@@ -243,12 +322,31 @@ export class HomeComponent implements OnInit {
      */
     logout(): void {
         this.loading = true;
-        this.authService.logout(this.accessTokenDetails)
+        localStorage.removeItem('access_token');
+        this.router.navigate(['/login']);
+        /*this.authService.logout(this.accessTokenDetails)
             .subscribe(() => {
                 this.loading = false;
                 localStorage.removeItem('access_token');
                 this.router.navigate(['/login']);
-            });
+            });*/
     }
 
+    changeMode(newMode:availableModeI){
+        //console.log("home", newMode.id, this.xdamMode.currentMode.id)
+        //if(newMode.id + "" == this.xdamMode.currentMode.id + "") return;
+        this.router.navigate( ['/collection', newMode.id])
+    }
+
+    concatObservables(fisthObs, secondObs){
+        if (fisthObs){
+            fisthObs = concat(
+                fisthObs,
+                secondObs
+            );
+        }else{
+            fisthObs = secondObs;
+        }
+        return fisthObs;
+    }
 }

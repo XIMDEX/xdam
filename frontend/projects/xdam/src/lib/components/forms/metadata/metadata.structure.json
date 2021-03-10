@@ -1,0 +1,651 @@
+{
+    "name": "LOMES",
+    "tabs": [
+        {
+            "name": "General",
+            "fields": [
+                {
+                    "type": "text",
+                    "label": "Identificador",
+                    "id": "resource_lomes_general_id",
+                    "name": "resource_lomes_general_id",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Catálogo",
+                    "id": "resource_lomes_general_catalogue",
+                    "name": "resource_lomes_general_catalogue",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Entrada",
+                    "id": "resource_lomes_general_entry",
+                    "name": "resource_lomes_general_entry",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Título",
+                    "id": "resource_lomes_general_title",
+                    "name": "resource_lomes_general_title",
+                    "value": ""
+                },
+                {
+                    "type": "select",
+                    "label": "Idioma",
+                    "id": "resource_lomes_general_lang",
+                    "name": "resource_lomes_general_lang",
+                    "options": [
+                        {
+                            "value": "es"
+                        },
+                        {
+                            "value": "gl"
+                        },
+                        {
+                            "value": "ca"
+                        },
+                        {
+                            "value": "eu"
+                        },
+                        {
+                            "value": "va"
+                        }
+                    ]
+                },
+                {
+                    "type": "text",
+                    "label": "Descripción",
+                    "id": "resource_lomes_general_desc",
+                    "name": "resource_lomes_general_desc",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Palabras Clave",
+                    "id": "resource_lomes_general_keywords",
+                    "name": "resource_lomes_general_keywords",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Ámbito",
+                    "id": "resource_lomes_general_scope",
+                    "name": "resource_lomes_general_scope",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Estructura",
+                    "id": "resource_lomes_general_structure",
+                    "name": "resource_lomes_general_structure",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Nivel de agregación",
+                    "id": "resource_lomes_general_aggregation_level",
+                    "name": "resource_lomes_general_aggregation_level",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "Ciclo de vida",
+            "fields": [
+                {
+                    "type": "text",
+                    "label": "Versión",
+                    "id": "resource_lomes_lifecycle_version",
+                    "name": "resource_lomes_lifecycle_version",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Estado",
+                    "id": "resource_lomes_lifecycle_state",
+                    "name": "resource_lomes_lifecycle_state",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Contribución",
+                    "id": "resource_lomes_lifecycle_contribution",
+                    "name": "resource_lomes_lifecycle_contribution",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Tipo",
+                    "id": "resource_lomes_lifecycle_type",
+                    "name": "resource_lomes_lifecycle_type",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Entidad",
+                    "id": "resource_lomes_lifecycle_entity",
+                    "name": "resource_lomes_lifecycle_entity",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Fecha",
+                    "id": "resource_lomes_lifecycle_date",
+                    "name": "resource_lomes_lifecycle_date",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "Metadatos",
+            "fields": [
+                {
+                    "type": "text",
+                    "label": "Identificador",
+                    "id": "resource_lomes_metadata_id",
+                    "name": "resource_lomes_metadata_id",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Catálogo",
+                    "id": "resource_lomes_metadata_catalogue",
+                    "name": "resource_lomes_metadata_catalogue",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Entrada",
+                    "id": "resource_lomes_metadata_entry",
+                    "name": "resource_lomes_metadata_entry",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Contribución",
+                    "id": "resource_lomes_metadata_contribution",
+                    "name": "resource_lomes_metadata_contribution",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Tipo",
+                    "id": "resource_lomes_metadata_type",
+                    "name": "resource_lomes_metadata_type",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Entidad",
+                    "id": "resource_lomes_metadata_entity",
+                    "name": "resource_lomes_metadata_entity",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Fecha",
+                    "id": "resource_lomes_metadata_date",
+                    "name": "resource_lomes_metadata_date",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Esquema de Metadatos",
+                    "id": "resource_lomes_metadata_schema",
+                    "name": "resource_lomes_metadata_schema",
+                    "value": ""
+                },
+                {
+                    "type": "select",
+                    "label": "Idioma",
+                    "id": "resource_lomes_metadata_lang",
+                    "name": "resource_lomes_metadata_lang",
+                    "options": [
+                        {
+                            "value": "es"
+                        },
+                        {
+                            "value": "gl"
+                        },
+                        {
+                            "value": "ca"
+                        },
+                        {
+                            "value": "eu"
+                        },
+                        {
+                            "value": "va"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Técnica",
+            "fields": [
+                {
+                    "type": "text",
+                    "label": "Formato",
+                    "id": "resource_lomes_technique_format",
+                    "name": "resource_lomes_technique_format",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Tamaño",
+                    "id": "resource_lomes_technique_size",
+                    "name": "resource_lomes_technique_size",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Localización",
+                    "id": "resource_lomes_technique_location",
+                    "name": "resource_lomes_technique_location",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Requisitos de Instalación",
+                    "id": "resource_lomes_technique_instalation_requisits",
+                    "name": "resource_lomes_technique_instalation_requisits",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Agregador",
+                    "id": "resource_lomes_technique_aggregator",
+                    "name": "resource_lomes_technique_aggregator",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Tipo",
+                    "id": "resource_lomes_technique_type",
+                    "name": "resource_lomes_technique_type",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Nombre",
+                    "id": "resource_lomes_technique_name",
+                    "name": "resource_lomes_technique_name",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Versión Mínima",
+                    "id": "resource_lomes_technique_min_version",
+                    "name": "resource_lomes_technique_min_version",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Versión Máxima",
+                    "id": "resource_lomes_technique_max_version",
+                    "name": "resource_lomes_technique_max_version",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Pautas de Instalación",
+                    "id": "resource_lomes_technique_installation_guidelines",
+                    "name": "resource_lomes_technique_installation_guidelines",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Otros requisitos de plataforma",
+                    "id": "resource_lomes_technique_another_platform_requeriments",
+                    "name": "resource_lomes_technique_another_platform_requeriments",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Duración",
+                    "id": "resource_lomes_technique_duration",
+                    "name": "resource_lomes_technique_duration",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "Uso Educativo",
+            "fields": [
+                {
+                    "type": "select",
+                    "label": "Tipo de Interactividad",
+                    "id": "resource_lomes_education_use_interactivity_type",
+                    "name": "resource_lomes_education_use_interactivity_type",
+                    "options": [
+                        {
+                            "value": "activo"
+                        },
+                        {
+                            "value": "explosivo"
+                        },
+                        {
+                            "value": "combinado"
+                        }
+                    ]
+                },
+                {
+                    "type": "text",
+                    "label": "Tipo de recurso compartido",
+                    "id": "resource_lomes_education_use_shared_resource_type",
+                    "name": "resource_lomes_education_use_shared_resource_type",
+                    "value": ""
+                },
+                {
+                    "type": "select",
+                    "label": "Nivel de interactividad",
+                    "id": "resource_lomes_education_use_interactivity_level",
+                    "name": "resource_lomes_education_use_interactivity_level",
+                    "options": [
+                        {
+                            "value": "muy bajo"
+                        },
+                        {
+                            "value": "bajo"
+                        },
+                        {
+                            "value": "medio"
+                        },
+                        {
+                            "value": "alto"
+                        },
+                        {
+                            "value": "muy alto"
+                        }
+                    ]
+                },
+                {
+                    "type": "text",
+                    "label": "Densidad Semántica",
+                    "id": "resource_lomes_education_use_semantic_density",
+                    "name": "resource_lomes_education_use_semantic_density",
+                    "value": ""
+                },
+                {
+                    "type": "select",
+                    "label": "Destinatario",
+                    "id": "resource_lomes_education_use_receiver",
+                    "name": "resource_lomes_education_use_receiver",
+                    "options": []
+                },
+                {
+                    "type": "select",
+                    "label": "Contexto",
+                    "id": "resource_lomes_education_use_context",
+                    "name": "resource_lomes_education_use_context",
+                    "options": []
+                },
+                {
+                    "type": "text",
+                    "label": "Rango Típico de Edad",
+                    "id": "resource_lomes_education_use_age_range",
+                    "name": "resource_lomes_education_use_age_range",
+                    "value": ""
+                },
+                {
+                    "type": "select",
+                    "label": "Dificultad",
+                    "id": "resource_lomes_education_use_difficulty",
+                    "name": "resource_lomes_education_use_difficulty",
+                    "options": [
+                        {
+                            "value": "muy difícil"
+                        },
+                        {
+                            "value": "difícil"
+                        },
+                        {
+                            "value": "medio"
+                        },
+                        {
+                            "value": "fácil"
+                        },
+                        {
+                            "value": "muy fácil"
+                        }
+                    ]
+                },
+                {
+                    "type": "text",
+                    "label": "Tiempo Típico de aprendizaje",
+                    "id": "resource_lomes_education_use_learn_time",
+                    "name": "resource_lomes_education_use_learn_time",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Descripción",
+                    "id": "resource_lomes_education_use_description",
+                    "name": "resource_lomes_education_use_description",
+                    "value": ""
+                },
+                {
+                    "type": "select",
+                    "label": "Idioma",
+                    "id": "resource_lomes_education_use_lang",
+                    "name": "resource_lomes_education_use_lang",
+                    "options": [
+                        {
+                            "value": "es"
+                        },
+                        {
+                            "value": "gl"
+                        },
+                        {
+                            "value": "ca"
+                        },
+                        {
+                            "value": "eu"
+                        },
+                        {
+                            "value": "va"
+                        }
+                    ]
+                },
+                {
+                    "type": "select",
+                    "label": "Proceso Cognitivo",
+                    "id": "resource_lomes_education_use_cognitive_process",
+                    "name": "resource_lomes_education_use_cognitive_process",
+                    "options": []
+                }
+            ]
+        },
+        {
+            "name": "Derechos",
+            "fields": [
+                {
+                    "type": "select",
+                    "label": "Coste",
+                    "id": "resource_lomes_rights_cost",
+                    "name": "resource_lomes_rights_cost",
+                    "options": [
+                        {
+                            "value": "sí"
+                        },
+                        {
+                            "value": "no"
+                        }
+                    ]
+                },
+                {
+                    "type": "text",
+                    "label": "Descripción",
+                    "id": "resource_lomes_rights_description1",
+                    "name": "resource_lomes_rights_description1",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Acceso",
+                    "id": "resource_lomes_rights_access",
+                    "name": "resource_lomes_rights_access",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Tipo de acceso",
+                    "id": "resource_lomes_rights_access_type",
+                    "name": "resource_lomes_rights_access_type",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Derechos de Autor y otras Restricciones",
+                    "id": "resource_lomes_rights_rights_author",
+                    "name": "resource_lomes_rights_rights_author",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Descripción",
+                    "id": "resource_lomes_rights_description2",
+                    "name": "resource_lomes_rights_description2",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "Relación",
+            "fields": [
+                {
+                    "type": "text",
+                    "label": "Tipo",
+                    "id": "resource_lomes_relation_type",
+                    "name": "resource_lomes_relation_type",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Recurso",
+                    "id": "resource_lomes_relation_resource",
+                    "name": "resource_lomes_relation_resource",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Identificador",
+                    "id": "resource_lomes_relation_id",
+                    "name": "resource_lomes_relation_id",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Catálogo",
+                    "id": "resource_lomes_relation_catalogue",
+                    "name": "resource_lomes_relation_catalogue",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Entrada",
+                    "id": "resource_lomes_relation_entry",
+                    "name": "resource_lomes_relation_entry",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Descripción",
+                    "id": "resource_lomes_relation_description",
+                    "name": "resource_lomes_relation_description",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "Anotación",
+            "fields": [
+                {
+                    "type": "text",
+                    "label": "Entidad",
+                    "id": "resource_lomes_annotation_entity",
+                    "name": "resource_lomes_annotation_entity",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Fecha",
+                    "id": "resource_lomes_annotation_date",
+                    "name": "resource_lomes_annotation_date",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Descripción",
+                    "id": "resource_lomes_annotation_description",
+                    "name": "resource_lomes_annotation_description",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "Clasificación",
+            "fields": [
+                {
+                    "type": "text",
+                    "label": "Propósito",
+                    "id": "resource_lomes_classification_propose",
+                    "name": "resource_lomes_classification_propose",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Ruta Taxonómica",
+                    "id": "resource_lomes_classification_taxonomic_route",
+                    "name": "resource_lomes_classification_taxonomic_route",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Fuente",
+                    "id": "resource_lomes_classification_source",
+                    "name": "resource_lomes_classification_source",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Taxón",
+                    "id": "resource_lomes_classification_taxon",
+                    "name": "resource_lomes_classification_taxon",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Identificador",
+                    "id": "resource_lomes_classification_id",
+                    "name": "resource_lomes_classification_id",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Entrada",
+                    "id": "resource_lomes_classification_entrance",
+                    "name": "resource_lomes_classification_entrance",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Descripción",
+                    "id": "resource_lomes_classification_description",
+                    "name": "resource_lomes_classification_description",
+                    "value": ""
+                },
+                {
+                    "type": "text",
+                    "label": "Palabras clave",
+                    "id": "resource_lomes_classification_keywords",
+                    "name": "resource_lomes_classification_keywords",
+                    "value": ""
+                }
+            ]
+        }
+    ]
+}

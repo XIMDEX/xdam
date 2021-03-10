@@ -3,10 +3,13 @@
     @import '../../styles/sizes';
     @import '../../styles/borders';
 
-    display: flex;
+    /*display: flex;
+    */
     flex-grow: 1;
+    
 
     > .search-bar {
+        display: block;
         margin: 0 0 20px 0;
         padding: 25px;
         overflow: hidden;
@@ -20,7 +23,7 @@
         > .search-input {
             display: flex;
             flex-direction: row;
-            flex-grow: 2;
+            flex-grow: 1;
             min-width: $search_bar_input_min_width;
             min-height: $search_bar_input_height;
             max-height: $search_bar_input_height;
@@ -30,6 +33,13 @@
             box-sizing: border-box;
             background-color: $input_bg_color;
             overflow: hidden;
+            
+            & .select-group{
+                border: none;
+                border-right: $input_border;
+                border-radius: 0px;
+                outline: none;
+            }
 
             > input[type='text'] {
                 flex-grow: 2;

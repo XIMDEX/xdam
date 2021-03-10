@@ -1,14 +1,11 @@
 import { ActionModel } from '@xdam/models/ActionModel';
 import { Item } from '@xdam/models/Item';
-import { sprintf } from 'sprintf-js';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { hasIn, isNil } from 'ramda';
-import RouterMapper from '../mappers/RouterMapper';
 import SettingsMapper from '../mappers/SettingsMapper';
-
-// const API = environment.API;
-// const resourcesAPI = environment.resourcesAPI;
+import EndPointMapper from '../mappers/EndPointMapper';
+import { XdamModeI } from '@xdam/models/interfaces/XdamModeI.interface';
+import {Router} from "@angular/router"
 
 /**
  * Service who acts as a global state for the application.
@@ -23,9 +20,9 @@ export class MainService {
     private httpOptions = { headers: {}, params: {} };
 
     /**
-     * An instance of the RouterMapper
+     * An instance of the EndPointMapper
      */
-    private router: RouterMapper;
+    private router: EndPointMapper;
 
     /**
      * An instance of the ConfigMapper
@@ -33,20 +30,19 @@ export class MainService {
     private configs: SettingsMapper;
 
     /**
-     * The application endpoint for queries
-     */
-    private endPoint = 'resources';
-
-    /**
      * @ignore
      */
-    constructor(private http: HttpClient) {
-        this.router = new RouterMapper();
+    constructor(
+        private http: HttpClient,
+        private routerI: Router
+    ) {
+        this.router = new EndPointMapper();
         this.configs = new SettingsMapper();
 
         this.httpOptions.headers = new HttpHeaders({
+            'Access-Control-Allow-Origin': '*',
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.getToken()
+            Authorization: this.getToken()
         });
     }
 
@@ -58,27 +54,13 @@ export class MainService {
      * Gets the token parsed by the mapper.
      */
     getToken() {
-        return this.router.token;
-    }
-
-    /**
-     * Gets the queries routes parsed by the mapper.
-     */
-    getRoutes() {
-        return this.router.routes;
-    }
-
-    /**
-     * Create the complete API route used for queries.
-     * @param {string} method The desired method from the settings
-     * @param {string} name The name of the endpoint
-     */
-    getRoute(method: string, name: string) {
-        let route = hasIn(name, this.getRoutes()) ? (<any>this.getRoutes())[name] : null;
-        if (!isNil(route)) {
-            route = hasIn(method, route) ? `${this.router.baseUrl}${route[method]}` : null;
+        let accesToken = localStorage.getItem('access_token');
+        if(accesToken){
+            return "Bearer " + accesToken;
+        }else{
+            this.routerI.navigate(['/login']);
         }
-        return route;
+         
     }
 
     /**
@@ -101,9 +83,10 @@ export class MainService {
      * @param params The parameters
      * @returns {Observable} The response of getResources
      */
-    list(params: HttpParams = null) {
-        return this.getResources(params);
+    list(xdamMode: XdamModeI | string ,params: HttpParams = null) {
+        return this.getResources(xdamMode, params);
     }
+
 
     /**
      * Builds a query and fetchs data from the API.
@@ -118,20 +101,24 @@ export class MainService {
         params[key] = param;
         const heads = new HttpHeaders({
             'Access-Control-Allow-Origin': '*',
-            Authorization: 'Bearer ' + this.getToken(),
-            Accept: 'application/json'
+            Accept: 'application/json',
+            Authorization: this.getToken()
         });
         return this.http.get(url, { headers: heads, params: params });
     }
 
     /**
-     * Fetchs all the resources from the API.
+     * Fetchs all the resources from the API, with default params
      * @param {Object} params The parameters dict for the query
      * @returns {Observable} The response as a observable
      */
-    getResources(params: HttpParams = null) {
-        const url = this.getRoute('list', this.endPoint);
-        params = this.router.getBaseParams(params);
+    getResources(type, params: HttpParams = null) {
+        const url = this.router.getEndPointUrlString('catalogue', 'index', type);
+        delete params['updates']['default'];
+        //delete params['updates']['limit'];
+        //params = this.router.getBaseParams();
+        //console.log("1", this.getToken())
+        
         this.httpOptions.params = params;
         return this.http.get(url, this.httpOptions);
     }
@@ -142,11 +129,24 @@ export class MainService {
      * @returns {Observable} The response as a observable
      */
     getResource(data: ActionModel) {
-        let url = this.getRoute('get', this.endPoint);
-        const item = data.item;
-        url = sprintf(url, item);
+        const url = this.router.getEndPointUrl('resource', 'get', data.item);
+        return this.http.get(url);
+    }
 
-        return this.http.get(url, this.httpOptions);
+    /**
+     * Gets a single resource from the API.
+     * @param id The identifier of the resource
+     * @returns {Observable} The response as a observable
+     */
+    getMyProfile() {
+        const heads = new HttpHeaders({
+            'Access-Control-Allow-Origin': '*',
+            Accept: 'application/json',
+            Authorization: this.getToken()
+        });
+
+        const url = this.router.getEndPointUrl('user', 'get');
+        return this.http.get(url,  { headers: heads });
     }
 
     /**
@@ -154,11 +154,8 @@ export class MainService {
      * @param id The resource ID
      * @returns {Observable} The response as a observable
      */
-    delete(data: Item) {
-        let url = this.getRoute('delete', this.endPoint);
-        const item = data;
-        url = sprintf(url, item);
-
+    delete(item: Item) {
+        const url = this.router.getEndPointUrl('resource', 'delete', item);
         return this.http.delete(url, { headers: this.httpOptions.headers });
     }
 
@@ -170,19 +167,71 @@ export class MainService {
     saveForm(data: ActionModel) {
         const heads = new HttpHeaders({
             'Access-Control-Allow-Origin': '*',
-            Authorization: 'Bearer ' + this.getToken(),
-            Accept: 'application/json'
+            Accept: 'application/json',
+            Authorization: this.getToken()
         });
 
-        const item = data.item;
-        const method = data.method === 'new' ? 'post' : 'put';
+        console.log("2", this.getToken())
         const formData = data.toFormData();
-        let url = this.getRoute(method, this.endPoint);
-        url = sprintf(url, item);
+        const url = this.router.getEndPointUrl('resource', 'store');
 
-        if (method === 'put') {
+        return this.http.post(url, formData, { headers: heads });
+    }
+
+    /**
+     * Receives a FormData object and send the form to the server.
+     * @param {FormData} form The form to be sent
+     * @returns {Observable} The response as a observable
+     */
+    updateForm(data: ActionModel) {
+        const heads = new HttpHeaders({
+            'Access-Control-Allow-Origin': '*',
+            Accept: 'application/json',
+            Authorization: this.getToken()
+        });
+        console.log("3", this.getToken())
+        //const method = data.method === 'new' ? 'post' : 'put';
+        let formData;
+        let url;
+
+        formData = data.toFormData();
+        url = this.router.getEndPointUrl('resource', 'update', new Item(data.data.dataToSave));
+
+        /*if (method === 'put') {
             formData.append('_method', 'PUT');
-        }
+        }*/
+        return this.http.post(url, formData, { headers: heads });
+    }
+
+    /**
+     *
+     * @param item
+     */
+    deleteFileToResource(fileToDelete: {id: string; idFile: string}) {
+        const heads = new HttpHeaders({
+            'Access-Control-Allow-Origin': '*',
+            Accept: 'application/json',
+            Authorization: this.getToken()
+        });
+
+        const url = this.router.getEndPointUrl('resource', 'deleteFile', fileToDelete );
+
+        return this.http.delete(url, { headers: heads });
+    }
+
+    /**
+     *
+     * @param item
+     */
+    addFileToResource(data: ActionModel, index) {
+        const heads = new HttpHeaders({
+            'Access-Control-Allow-Origin': '*',
+            Accept: 'application/json',
+            Authorization: this.getToken()
+        });
+        console.log("5", this.getToken())
+        let formData = data.filesToUploadToFormData(index);
+        const url = this.router.getEndPointUrl('resource', 'addFile', new Item(data.data.dataToSave));
 
         return this.http.post(url, formData, { headers: heads });
     }
@@ -195,11 +244,12 @@ export class MainService {
     downloadResource(item: Item) {
         const heads = new HttpHeaders({
             'Access-Control-Allow-Origin': '*',
-            Authorization: 'Bearer ' + this.getToken()
+            Authorization: this.getToken()
         });
+        console.log("6", this.getToken())
 
-        let url = this.getRoute('get', this.endPoint);
-        url = sprintf(url, item);
+         const url = ''; // this.getRoute('get', this.endPoint);
+        // url = sprintf(url, item);
 
         return this.http.get(url + '/file', { headers: heads, responseType: 'blob' });
     }

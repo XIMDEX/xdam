@@ -2,9 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Services\Catalogue\CatalogueService;
-use App\Services\ResourceService;
-use App\Services\Solr\SolrService;
+use App\Services\Solr\SolrConfig;
+use Exception;
 use Illuminate\Console\Command;
 
 class InstallSolr extends Command
@@ -14,7 +13,7 @@ class InstallSolr extends Command
      *
      * @var string
      */
-    protected $signature = 'install:solr';
+    protected $signature = 'solr:install';
 
     /**
      * The console command description.
@@ -35,15 +34,14 @@ class InstallSolr extends Command
 
     /**
      * Execute the console command.
-     *
-     * @param SolrService $solrService
-     * @return int
+     * @param SolrConfig $solrConfig
+     * @return bool
      */
-    public function handle(SolrService $solrService)
+    public function handle(SolrConfig $solrConfig)
     {
         try {
-            $solrService->solrServerIsReady();
-        } catch (\Exception $e) {
+            $this->line($solrConfig->install());
+        } catch (Exception $e) {
             $this->error($e->getMessage());
         }
         return true;

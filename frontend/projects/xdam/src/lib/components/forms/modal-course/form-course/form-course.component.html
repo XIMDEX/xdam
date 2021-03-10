@@ -1,0 +1,107 @@
+<div class="item-form" [formGroup]="formMetadata">
+
+    <aside class="item-form-general">
+
+        <div class="item-form-group media">
+
+            <div class="fields column">
+
+                <div class="img-box">
+                    <img [src]="image" (error)="imgError()" />
+                </div>
+
+
+                <label class="field-item">
+                    <label for="files">NEW FILE</label>
+                    <input type="file" id="files" class="custom-file-input" (change)="handleFileInput($event.target.files)" #InputFile/>
+                </label>
+                <div class="field-item">
+                    <label for="thumb">THUMBNAIL SMALL</label>
+                    <div class="thumb" id="thumb">
+                        <p>https://estoEsUnaPruebaestoEsUnaPruebaestoEsUnaPruebaestoEsUnaPrueba.com</p>
+                        <button class="xdam-btn-base"><fa-icon [icon]="faDownload"></fa-icon> DOWNLOAD</button>
+                    </div>
+                    
+                </div>
+                <div class="field-item">
+                    <label for="thumb">THUMBNAIL SMALL</label>
+                    <div class="thumb" id="thumb">
+                        <p>https://estoEsUnaPrueba.com</p>
+                        <button class="xdam-btn-base"><fa-icon [icon]="faDownload"></fa-icon> DOWNLOAD</button>
+                    </div>
+                    
+                </div>
+                <div class="field-item">
+                    <label for="thumb">THUMBNAIL SMALL</label>
+                    <div class="thumb" id="thumb">
+                        <p>https://estoEsUnaPrueba.com</p>
+                        <button class="xdam-btn-base"><fa-icon [icon]="faDownload"></fa-icon> DOWNLOAD</button>
+                    </div>
+                    
+                </div>
+                <div class="field-item">
+                    <label for="thumb">THUMBNAIL SMALL</label>
+                    <div class="thumb" id="thumb">
+                        <p>https://estoEsUnaPrueba.com</p>
+                        <button class="xdam-btn-base"><fa-icon [icon]="faDownload"></fa-icon> DOWNLOAD</button>
+                    </div>
+                    
+                </div>
+
+                <!--<div class="field-item">
+                    <label>Activo</label>
+                    <div>
+                        <input type="radio" value="true" formControlName="active" />
+                        <span>Si</span>
+                        <input type="radio" value="false" formControlName="active" />
+                        <span>No</span>
+                    </div>
+                </div>-->
+
+            </div>
+        </div>
+        <div class="item-form-group data" formGroupName="data">
+            <p class="title-data-info">Information</p>
+
+            <div class="fields column">
+                <div class="field-item">
+                    <label for="courseTitle">Active</label>
+                    <xdam-input-switch formControlName="active"></xdam-input-switch>
+                </div>
+                <div class="field-item">
+                    <label for="courseTitle">Course Title</label>
+                    <input type="text" id="courseTitle" formControlName="course_title"/>
+                </div>
+                <div class="field-item">
+                    <label for="externalUrl">External Course Source</label>
+                    <input type="text" id="externalUrl" formControlName="external_url"/>
+                </div>
+                <div class="field-item">
+                    <label for="duration">Duration (Minutes)</label>
+                    <input type="number" id="duration" value="0" formControlName="duration"/>
+                </div>
+                <div class="field-item">
+                    <label for="introduction">Introduction</label>
+                    <textarea id="introduction" formControlName="introduction"></textarea>
+                </div>
+                <div class="field-item">
+                    <label for="description">Description</label>
+                    <textarea id="description" formControlName="description"></textarea>
+                </div>
+                <div class="field-item">
+                    <label for="tags">Tags</label>
+                    <xdam-input-categories id="tags" formControlName="tags"></xdam-input-categories>
+                </div>
+
+                <div class="field-item">
+                    <label for="achievements">Achievements</label>
+                    <xdam-input-list id="achievements" formControlName="achievements"></xdam-input-list>
+                </div>
+
+                
+
+            </div>
+        </div>
+    </aside>
+
+</div>

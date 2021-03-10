@@ -5,9 +5,17 @@
 .form-actions {
     display: flex;
     flex-direction: row;
+    justify-content: flex-end;
+    
+    margin: 10px 0;
 
     > button {
-        margin: 0 2px;
+        margin: 0 0.5px;
+    }
+}
+.send-buttons{
+    button{
+        margin-right: 4px;
     }
 }
 
@@ -15,27 +23,128 @@
     display: flex;
     flex-direction: column;
 
-    > .item-form-general {
+    .item-form-general {
+        border-radius: 4px;
+        margin: 0px 28px;
         flex-grow: 1;
         display: grid;
-        grid-template-columns: 50% auto;
-        border: $item_form_group_border;
+        grid-template-columns: 35% auto;
         grid-gap: $item_form_group_border_weight;
-        background-color: $item_form_group_border_color;
         box-sizing: border-box;
-
+        
         > .item-form-group {
-            box-sizing: border-box;
             background-color: $xdam_modal_bg;
-            padding: 10px;
+            padding: 15px 15px;
 
+            
+            
             &.data {
+                padding: 10px 25px 10px 25px;
+                border: solid 1px $item_form_group_border_color;
                 > .title {
                     color: $actions_color;
                 }
+                .group-title{
+                    width: 100%;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+
+                    &> .title-data-info{
+                        display: inline-block;
+                        font-weight: bold;
+                        color: $actions_font_color_clearly;
+                    }
+
+                }
 
                 > .fields {
-                    margin-top: 10px;
+                    div.thumbnail{
+                        display: flex;
+                        background-color: red;
+                        width: 100%;
+                    }
+                }
+
+            }
+
+            &.media{
+                //border-right: solid 1px $item_form_group_border_color;
+                > .xdam-btn-base{
+                    width: 100%;
+                    margin-bottom: 10px;
+                }
+
+                & .field-item input[type='file']{
+                    display: none;
+                }
+
+                & .btn-files{
+                    margin: 10px 0 ;
+                    text-align: center;
+                    background: $actions_color;
+                    border-radius: $input_border_radius;
+                    padding: 5px 8px;
+                    
+                    display: inline-block;
+                    font-size: $font_size_normal;
+                    cursor: pointer;
+                    color: #fff;
+
+                    &:hover{
+                        background-color: $actions_font_color_clearly;
+                    }
+                }
+
+                & .list-files{
+                    scroll-behavior: smooth;
+                    max-height: 200px;
+                    overflow: scroll;
+                    padding-right: 3px;
+
+                    &::-webkit-scrollbar {
+                        width: 4px;
+                    }
+                
+                    &::-webkit-scrollbar-track {
+                        opacity: 0;
+                    }
+                
+                    &::-webkit-scrollbar-thumb {
+                        background-color: darkgrey;
+                        opacity: 0.5;
+                    }
+                   
+
+                    & .item-file-description{
+                        margin: 5px auto;
+                        border-bottom: solid 1px rgb(199, 199, 199);
+                        padding: 1px 0px 5px 0px;
+
+                        & p { 
+                            display: inline-block;
+                            width: 75%;
+                            font-size: 13px;
+                            margin: 5px 0px;
+                        }
+    
+                        & .dam-buttons-actions{
+                            display: inline-block;
+                            align-items: center;
+                            justify-content: center;
+                            & button{
+                                background-color: transparent;
+                                background-repeat: no-repeat;
+                                border: none;
+                                cursor: pointer;
+                                overflow: hidden;
+                                outline: none;
+                                color: #009e92;
+                                padding: 0;
+                                margin: 0px 2px;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -45,14 +154,10 @@
         }
     }
 
-    > .item-form-tabs {
-        margin-top: 10px;
-    }
-
     .fields {
         display: flex;
-        font-size: $font_size_normal;
-
+        font-size: $font_size_small;
+        font-family: $font_family;
         > .field-item {
             margin-top: 10px;
             display: flex;
@@ -60,14 +165,18 @@
 
             label {
                 text-transform: uppercase;
+                text-align: start;
             }
 
             input[type='text'],
             input[type='file'],
+            input[type='number'],
+            select,
             textarea {
-                margin-top: 5px;
+                margin-top: 7px;
                 flex-grow: 1;
                 min-width: unset !important;
+                max-width: 100%;
             }
         }
 
@@ -93,5 +202,88 @@
         &.column {
             flex-direction: column;
         }
+        .img-box {
+            display: flex;
+            align-items: center;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+
+            > img {
+                width: 100%;
+            }
+            > .img-input{
+                position: absolute;
+                bottom: auto;
+                left: auto;
+                width: 100%;
+                height: 100%;
+                background-color: white;
+                visibility: hidden;
+                opacity: 0%;
+                transition: .3s;
+
+                > input[type='file']{
+                    cursor: pointer;
+                    display: none;
+                    opacity: 0;
+                    &::-webkit-file-upload-button {
+                        display: none;
+                    }
+                }
+                > label{
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+                    height: 100%;
+                    cursor: pointer;
+                    color: black;
+                    font-size: 30px;
+                }
+                > button{
+                    background-color: transparent;
+                    position: absolute;
+                    top: 0px;
+                    right: 0px;
+                    cursor: pointer;
+                    background-color: transparent;
+                    background-repeat: no-repeat;
+                    border: none;
+                    padding: 5px;
+                    &:hover {
+                        opacity: 80%;
+                    }
+                }
+            }
+
+            &:hover > .img-input{
+                visibility: visible;
+                opacity: 60%;
+            }
+        }
     }
+}
+
+.thumb{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: flex-end;
+    button{
+        font-size: $font_size_small;
+        margin-left: 10px;
+    }
+    p{
+        margin-left:15px;
+        width: 55%;
+        text-align: right;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+}
+
+.ng-invalid:not(form)  {
+    border-left: 5px solid #a94442;
 }

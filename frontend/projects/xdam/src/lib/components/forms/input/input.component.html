@@ -1,0 +1,46 @@
+<div [class]="inputClass">
+  <label [for]="label">{{ label }}</label>
+
+  <div [ngSwitch]="type">
+
+    <div *ngSwitchCase="'file'">
+      <input
+          [type]="type"
+          [id]="id"
+          [name]="name"
+          [(ngModel)]="inputValue"
+          (keyup)="saveChanges()"
+      />
+    </div>
+
+    <div *ngSwitchCase="'text'">
+        <input
+            [type]="type"
+            [id]="id"
+            [name]="name"
+            [(ngModel)]="inputValue"
+            (keyup)="saveChanges()"
+        />
+    </div>
+
+    <div *ngSwitchCase="'number'">
+      <input
+          [type]="type"
+          [id]="id"
+          [name]="name"
+          [(ngModel)]="inputValue"
+          (keyup)="saveChanges()"
+      />
+  </div>
+
+    <div *ngSwitchCase="'text-area'">
+      <textarea
+          [id]="id"
+          [name]="name"
+          [(ngModel)]="inputValue"
+          (keyup)="saveChanges()"
+      ></textarea>
+    </div>
+
+  </div>
+</div>

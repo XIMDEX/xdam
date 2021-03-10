@@ -20,7 +20,7 @@ export class ListComponent {
     @Output() download = new EventEmitter<Item>();
     @Output() edit = new EventEmitter<ActionModel>();
     @Output() select = new EventEmitter<ActionModel>();
-
+    
     editItem(item: Item) {
         const action = new ActionModel();
         action.method = 'show';

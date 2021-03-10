@@ -2,16 +2,18 @@
 
 namespace App\Services;
 
+use App\Enums\DefaultOrganizationWorkspace;
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use App\Models\Category;
 use App\Models\DamResource;
 use App\Models\DamResourceUse;
+use App\Models\Media;
+use App\Models\Workspace;
 use App\Services\Solr\SolrService;
-use App\Utils\DamUrlUtil;
 use Exception;
 use Illuminate\Support\Collection;
-use stdClass;
+use Illuminate\Support\Facades\Auth;
 
 class ResourceService
 {
@@ -23,43 +25,53 @@ class ResourceService
      * @var SolrService
      */
     private SolrService $solr;
+    /**
+     * @var CategoryService
+     */
+    private CategoryService $categoryService;
 
     /**
      * ResourceService constructor.
      * @param MediaService $mediaService
      * @param SolrService $solr
+     * @param CategoryService $categoryService
      */
-    public function __construct(MediaService $mediaService, SolrService $solr)
+    public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService)
     {
         $this->mediaService = $mediaService;
+        $this->categoryService = $categoryService;
         $this->solr = $solr;
     }
 
-    /**
-     * @param DamResource $resource
-     * @return stdClass
-     */
-    public function prepareResourceToBeIndexed(DamResource $resource): stdClass
+    private function saveAssociateFile($type, $params, $model)
     {
-        $class = new stdClass();
-        $class->id = is_object($resource->id) ? $resource->id->toString() : $resource->id;
-        $class->data = $resource->data;
-        $class->name = $resource->name ?? '';
-        $class->active = true;
-        $class->type = ResourceType::fromValue($resource->type)->key;
-        $class->collection = $this->solr->getCollectionBySubType($class->type);
-        $class->categories = $resource->categories()->pluck('name')->toArray() ?? [""];
-        $previews = $this->mediaService->list($resource, MediaType::Preview()->key, true);
-        foreach ($previews as $preview) {
-            $parent_id = $preview->hasCustomProperty('parent_id') ? $preview->getCustomProperty('parent_id') : "";
-            $class->previews[] = DamUrlUtil::generateDamUrl($preview, $parent_id);
+        if (array_key_exists($type, $params) && $params[$type]) {
+            if ($type === MediaType::Preview()->key) {
+                // only one associated preview file is allowed
+                $this->mediaService->deleteAllPreviews($model);
+            }
+            // If is a array of files, add a association from each item
+            if (is_array($params[$type])) {
+                foreach ($params[$type] as $file) {
+                    $this->mediaService->addFromRequest(
+                        $model,
+                        null,
+                        $type,
+                        ["parent_id" => $model->id],
+                        $file
+                    );
+                }
+            } else {
+                // If is not a array, associate file directly
+                $this->mediaService->addFromRequest(
+                    $model,
+                    null,
+                    $type,
+                    ["parent_id" => $model->id],
+                    $params[$type]
+                );
+            }
         }
-        $files = $this->mediaService->list($resource, MediaType::File()->key, true);
-        foreach ($files as $file) {
-            $parent_id = $file->hasCustomProperty('parent_id') ? $file->getCustomProperty('parent_id') : "";
-            $class->files[] = DamUrlUtil::generateDamUrl($file, $parent_id);
-        }
-        return $class;
     }
 
     /**
@@ -68,29 +80,10 @@ class ResourceService
      */
     private function saveAssociatedFiles($model, $params): void
     {
-        if (array_key_exists(MediaType::File()->key, $params) && $params[MediaType::File()->key]) {
-            $this->mediaService->addFromRequest(
-                $model,
-                null,
-                MediaType::File()->key,
-                ["parent_id" => $model->id],
-                $params[MediaType::File()->key]
-            );
-        } else {
-            $model->clearMediaCollection(MediaType::File()->key);
-        }
-
-        if (array_key_exists(MediaType::Preview()->key, $params) && $params[MediaType::Preview()->key]) {
-            $this->mediaService->addFromRequest(
-                $model,
-                null,
-                MediaType::Preview()->key,
-                ["parent_id" => $model->id],
-                $params[MediaType::Preview()->key]
-            );
-        } else {
-            $model->clearMediaCollection(MediaType::Preview()->key);
-        }
+        // Save Associated Files
+        $this->saveAssociateFile(MediaType::File()->key, $params, $model);
+        // Save Associated Previews
+        $this->saveAssociateFile(MediaType::Preview()->key, $params, $model);
     }
 
     /**
@@ -100,14 +93,23 @@ class ResourceService
      * @return null
      * @throws Exception
      */
-    private function linkCategoriesFromJson($resource, $data, $type): void
+    private function linkCategoriesFromJson($resource, $data): void
     {
+        // define the possible names to associate a category inside a json
+        $possibleKeyNameInJson = ["category", "categories"];
         if ($data && property_exists($data, "description")) {
-            if (property_exists($data->description, "category")) {
-                $category = Category::where("type", "=", $type)->where("name", $data->description->category)->first();
-                if (null != $category) {
-                    $this->deleteCategoryFrom($resource, $category);
-                    $this->addCategoryTo($resource, $category);
+            foreach ($possibleKeyNameInJson as $possibleKeyName) {
+                // for each one we iterate, if there is a corresponding key,
+                // we associate either a list of categories or a specific category to each resource
+                if (property_exists($data->description, $possibleKeyName)) {
+                    $property = $data->description->$possibleKeyName;
+                    if (is_array($property)) {
+                        foreach ($property as $child) {
+                            $this->setCategories($resource, $child);
+                        }
+                    } else {
+                        $this->setCategories($resource, $property);
+                    }
                 }
             }
         }
@@ -120,21 +122,22 @@ class ResourceService
      * @return null
      * @throws Exception
      */
-    private function linkTagsFromJson($resource, $data): void
+    public function linkTagsFromJson($resource, $data): void
     {
         if ($data && property_exists($data, "description")) {
-            if (property_exists($data->description, "tags")) {
-                $this->setTags($resource, $data->description->tags);
+            if (property_exists($data->description, "skills")) {
+                $this->setTags($resource, $data->description->skills);
             }
         }
     }
 
     /**
+     * @param null $type
      * @return Collection
      */
-    public function getAll(): Collection
+    public function getAll($type = null)
     {
-        return DamResource::all();
+        return $type ? DamResource::where('type', $type)->get() : DamResource::all();
     }
 
     /**
@@ -149,9 +152,10 @@ class ResourceService
     /**
      * @return mixed
      */
-    public function exploreCourses(): Category
+    public function exploreCourses(): Collection
     {
-        return Category::where('type', ResourceType::course)->get();
+        $course = ResourceType::course;
+        return Category::where('type', $course)->orWhere('type', "=", strval($course))->get();
     }
 
     /**
@@ -163,25 +167,25 @@ class ResourceService
     public function update(DamResource $resource, $params): DamResource
     {
         if (array_key_exists("type", $params) && $params["type"]) {
-            $updated = $resource->update(
+            $resource->update(
                 [
                     'type' => ResourceType::fromKey($params["type"])->value,
                 ]
             );
         }
 
-        if (array_key_exists("data", $params) && $params["data"]) {
-            $updated = $resource->update(
+        if (array_key_exists("data", $params) && !empty($params["data"])) {
+            $resource->update(
                 [
                     'data' => $params['data'],
+                    'active' => $params['data']->description->active
                 ]
             );
-            $dataJson = json_decode($params["data"]);
-            $this->linkCategoriesFromJson($resource, $dataJson, $resource->type);
-            $this->linkTagsFromJson($resource, $dataJson);
+            $this->linkCategoriesFromJson($resource, $params['data']);
+            $this->linkTagsFromJson($resource, $params['data']);
         }
         $this->saveAssociatedFiles($resource, $params);
-        $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
+        $this->solr->saveOrUpdateDocument($resource);
         $resource->refresh();
         return $resource;
     }
@@ -193,25 +197,40 @@ class ResourceService
      */
     public function store($params): DamResource
     {
-        $name = array_key_exists('name', $params) ? $params["name"] : "";
-        if (empty($name) && array_key_exists(MediaType::File()->key, $params)) {
-            $name = $params[MediaType::File()->key]->getClientOriginalName();
+        /*
+            if $wid == null, the user will store the resource with no workspace attached.
+            It's interpreted as personal with private visualization
+        */
+        if($wid = Auth::user()->selected_workspace) {
+            $wsp = Workspace::find($wid);
+            $org = $wsp ? $wsp->organization()->first() : null;
         }
+
+        $name = array_key_exists('name', $params) ? $params["name"] : "";
         $type = ResourceType::fromKey($params["type"])->value;
+
         $newResource = DamResource::create(
             [
                 'data' => $params['data'],
                 'name' => $name,
                 'type' => $type,
+                'active' => $params['data']->description->active,
+                'user_owner_id' => Auth::user()->id,
+                'collection_id' => $params['collection_id'] ?? null
             ]
         );
-        $jsonData = json_decode($params["data"]);
-        $this->linkCategoriesFromJson($newResource, $jsonData, $type);
+        isset($org) && $wid ? $this->setResourceWorkspace($newResource, $wsp) : null;
+        $this->linkCategoriesFromJson($newResource, $params['data']);
         $this->saveAssociatedFiles($newResource, $params);
-        $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($newResource));
+        $this->solr->saveOrUpdateDocument($newResource);
         $newResource->refresh();
-        $this->linkTagsFromJson($newResource, $jsonData);
+        $this->linkTagsFromJson($newResource, $params['data']);
         return $newResource;
+    }
+
+    public function setResourceWorkspace(DamResource $newResource, Workspace $wsp): void
+    {
+        $newResource->workspaces()->attach($wsp);
     }
 
     /**
@@ -220,40 +239,33 @@ class ResourceService
      */
     public function delete(DamResource $resource)
     {
-        $this->solr->deleteDocumentById($resource->id);
+        $this->solr->deleteDocument($resource);
         $resource->delete();
     }
 
     /**
      * @param DamResource $resource
-     * @param $requestKey
+     * @param array $params
      * @return DamResource
      */
-    public function addPreview(DamResource $resource, $requestKey): DamResource
+    public function addPreview(DamResource $resource, array $params): DamResource
     {
-        $this->mediaService->addFromRequest(
-            $resource,
-            $requestKey,
-            MediaType::Preview()->key,
-            ["parent_id" => $resource->id]
-        );
-        $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
+        $this->saveAssociateFile(MediaType::Preview()->key, $params, $resource);
+        $resource->refresh();
+        $this->solr->saveOrUpdateDocument($resource);
         return $resource;
     }
 
     /**
      * @param DamResource $resource
-     * @param $requestKey
+     * @param array $params
      * @return DamResource
      */
-    public function addFile(DamResource $resource, $requestKey): DamResource
+    public function addFile(DamResource $resource, array $params): DamResource
     {
-        $this->mediaService->addFromRequest(
-            $resource,
-            $requestKey,
-            MediaType::File()->key,
-            ["parent_id" => $resource->id]
-        );
+        $this->saveAssociateFile(MediaType::File()->key, $params, $resource);
+        $resource->refresh();
+        $this->solr->saveOrUpdateDocument($resource);
         return $resource;
     }
 
@@ -272,7 +284,7 @@ class ResourceService
         } else {
             throw new Exception ("category type and resource type are not equals");
         }
-        $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
+        $this->solr->saveOrUpdateDocument($resource);
         return $resource;
     }
 
@@ -288,6 +300,27 @@ class ResourceService
     }
 
     /**
+     * Associated a category to a resource, always deletes the previous association
+     * @param DamResource $resource
+     * @param string $categoryName
+     * @return DamResource
+     * @throws Exception
+     */
+    public function setCategories(DamResource $resource, string $categoryName): DamResource
+    {
+        $category = Category::where("type", "=", $resource->type)->where("name", $categoryName)->first();
+        if (null != $category) {
+            $this->deleteCategoryFrom($resource, $category);
+            $this->addCategoryTo($resource, $category);
+        } else {
+            // If category not exists, create it
+            $category = $this->categoryService->store(["name" => $categoryName, "type" => $resource->type]);
+            $this->addCategoryTo($resource, $category);
+        }
+        return $resource;
+    }
+
+    /**
      * @param DamResource $resource
      * @param Category $category
      * @return DamResource
@@ -298,7 +331,7 @@ class ResourceService
         if ($category->type == $resource->type) {
             if ($resource->hasCategory($category)) {
                 $resource->categories()->detach($category);
-                $this->solr->saveOrUpdateDocument($this->prepareResourceToBeIndexed($resource));
+                $this->solr->saveOrUpdateDocument($resource);
             }
         } else {
             throw new Exception ("category type and resource type are not equals");
@@ -327,5 +360,32 @@ class ResourceService
     {
         $resource->uses()->findOrFail($damResourceUse->id)->delete();
         return $resource;
+    }
+
+    /**
+     * @param DamResource $resource
+     * @param array $ids
+     * @return void
+     * @throws Exception
+     */
+    public function deleteAssociatedFiles(DamResource $resource, array $ids): DamResource
+    {
+        foreach ($ids as $id) {
+            $media = Media::findOrFail($id);
+            $media->delete();
+        }
+        return $resource->refresh();
+    }
+
+    /**
+     * @param DamResource $resource
+     * @param Media $media
+     * @return DamResource
+     * @throws Exception
+     */
+    public function deleteAssociatedFile(DamResource $resource, Media $media): DamResource
+    {
+        $media->delete();
+        return $resource->refresh();
     }
 }

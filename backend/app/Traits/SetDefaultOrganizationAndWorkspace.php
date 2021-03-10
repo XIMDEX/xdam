@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Traits;
+
+use App\Enums\DefaultOrganizationWorkspace;
+use App\Enums\Roles;
+use App\Enums\WorkspaceType;
+use App\Models\Organization;
+use App\Models\Workspace;
+use App\Services\Admin\AdminService;
+
+trait SetDefaultOrganizationAndWorkspace
+{
+    protected static function bootSetDefaultOrganizationAndWorkspace() {
+        static::created(function ($model) {
+            if($model->id == 1) {
+                return true;
+            }
+
+            $adminService = new AdminService();
+            $public_org = Organization::where('name', DefaultOrganizationWorkspace::public_organization)->first();
+            $public_wsp = Workspace::where('name', DefaultOrganizationWorkspace::public_workspace)->first();
+            $adminService->setOrganizations($model->id, $public_org->id, Roles::reader_id);
+            $adminService->setWorkspaces($model->id, $public_wsp->id, Roles::reader_id);
+
+            $model->selected_workspace = Workspace::where('type', WorkspaceType::public)->first()->id;
+            $model->save();
+        });
+    }
+}

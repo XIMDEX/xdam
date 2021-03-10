@@ -1,93 +1,74 @@
-<swal
-    #swalModal
-    identifier="swalModal"
-    [customClass]="swalCustomClass"
-    [showCancelButton]="false"
-    [showConfirmButton]="false"
-    [title]="true"
-    (close)="closeForm()"
->
+<swal #swalModal identifier="swalModal" [customClass]="swalCustomClass" [showCancelButton]="false" 
+    [showConfirmButton]="false" [showCloseButton]="false" [title]="true" (close)="closeForm()" >
     <ng-container *swalPartial="swalTargets.title">
-        <div class="form-actions">
-            <button (click)="cancelForm()" class="xdam-btn-base red">
-                <fa-icon [icon]="faTimes"></fa-icon> Cancel
+        <div class="form-actions send-buttons">
+            <button type="submit" class="xdam-btn-base" [disabled]="false" (click)="formSended($event)">
+                <fa-icon [icon]="faSave"></fa-icon>
+                Save & Update
             </button>
-            <button (click)="saveForm()" class="xdam-btn-base"><fa-icon [icon]="faSave"></fa-icon> Save</button>
+            <button (click)="modal.close()" class="xdam-btn-base ">
+                <fa-icon [icon]="faTimes"></fa-icon>
+                Cancel
+            </button>
         </div>
+        
+        
     </ng-container>
 
     <ng-container *swalPartial="swalTargets.content">
-        <form class="item-form" #assetForm="ngForm">
-            <aside class="item-form-general">
-                <div class="item-form-group resource">
-                    <div class="fields column">
-                        <xdam-question
-                            *ngFor="let field of formFields"
-                            [question]="field"
-                            (onChange)="updatedValue(field.key, $event)"
-                        ></xdam-question>
-                    </div>
+
+        <!--<div *ngIf="false; else newAsset">
+            <div [ngSwitch]="action.item.type">
+
+                <div *ngSwitchCase="'course'">
+                    <xdam-modal-course [action]="action" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" [settings]="settings" >
+                    </xdam-modal-course>
                 </div>
-                <div class="item-form-group data">
-                    <label class="title">Information</label>
-                    <div class="fields row" *ngIf="isEdition">
-                        <div class="field-item">
-                            <label>File Format</label>
-                            <div class="dam-edit-line">format</div>
-                        </div>
-                        <div class="field-item">
-                            <label>Resource Type</label>
-                            <div class="dam-edit-line">type</div>
-                        </div>
-                        <div class="field-item">
-                            <label>Width</label>
-                            <div class="dam-edit-line">width</div>
-                        </div>
-                        <div class="field-item">
-                            <label>Height</label>
-                            <div class="dam-edit-line">heigth</div>
-                        </div>
-                        <div class="field-item">
-                            <label>File name</label>
-                            <div class="dam-edit-line">filename</div>
-                        </div>
-                    </div>
-                    <div class="fields column">
-                        <xdam-question
-                            *ngFor="let field of infoFormFields"
-                            [question]="field"
-                            (onChange)="updatedValue(field.key, $event)"
-                        ></xdam-question>
-                    </div>
+
+                <div *ngSwitchCase="'image'">
+                    <xdam-modal-image [modal]="modal" ></xdam-modal-image>
                 </div>
-            </aside>
-            <aside class="item-form-tabs" *ngIf="tabsForms.length > 0">
-                <ngx-tabset>
-                    <ngx-tab *ngFor="let form of tabsForms; let formIndex = index" [tabTitle]="form.title" [bypassDOM]="true">
-                        <ng-template>
-                            <ngx-tabset>
-                                <ngx-tab
-                                    *ngFor="let subForm of form.tabs"
-                                    [tabTitle]="subForm.title"
-                                    [bypassDOM]="true"
-                                >
-                                    <ng-template>
-                                        <div class="fields table">
-                                            <xdam-question
-                                                *ngFor="let field of subForm.fields; let tabIndex = index"
-                                                [question]="field"
-                                                (onChange)="
-                                                    updatedTabsFormValue(formIndex, tabIndex, field.key, $event)
-                                                "
-                                            ></xdam-question>
-                                        </div>
-                                    </ng-template>
-                                </ngx-tab>
-                            </ngx-tabset>
-                        </ng-template>
-                    </ngx-tab>
-                </ngx-tabset>
-            </aside>
-        </form>
+
+            </div>
+        </div>-->
+        <!--<div [ngSwitch]="action.item.type">
+
+            <div *ngSwitchCase="'course'">
+                <xdam-modal-course [action]="action" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" ></xdam-modal-course>
+            </div>
+
+            <div *ngSwitchCase="'video'">
+                <xdam-modal-image [action]="action" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" ></xdam-modal-image>
+            </div>
+            <div *ngSwitchDefault>
+                <xdam-modal-image [action]="action" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" ></xdam-modal-image>
+            </div>
+
+        </div>-->
+        <div [ngSwitch]="mode.currentMode.id">
+            <div *ngSwitchCase="1">
+                <xdam-modal-multimedia [action]="action" [currentMode]="mode.currentMode" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" #fromMultimedia></xdam-modal-multimedia>
+            </div>
+            <div *ngSwitchCase="2">
+                <xdam-modal-multimedia [action]="action" [currentMode]="mode.currentMode" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" #fromMultimedia></xdam-modal-multimedia>
+            </div>
+            <div *ngSwitchCase="3">
+                <xdam-modal-course [action]="action" [currentMode]="mode.currentMode" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" #fromCourse></xdam-modal-course>
+            </div>
+            <div *ngSwitchCase="4">
+                <xdam-modal-multimedia [action]="action" [currentMode]="mode.currentMode" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" #fromMultimedia></xdam-modal-multimedia>
+            </div>
+            <div *ngSwitchCase="5">
+                <xdam-modal-multimedia [action]="action" [currentMode]="mode.currentMode" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" #fromMultimedia></xdam-modal-multimedia>
+            </div>
+            <div *ngSwitchCase="6">
+                <xdam-modal-multimedia [action]="action" [currentMode]="mode.currentMode" [modal]="modal" [resourceUrl]="resourceUrl" (dataToSave)="sendForm($event)" #fromMultimedia></xdam-modal-multimedia>
+            </div>
+        </div>
+        
+        <!--<ng-template #newAsset>
+            
+        </ng-template>-->
+
     </ng-container>
 </swal>

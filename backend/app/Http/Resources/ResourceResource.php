@@ -19,13 +19,16 @@ class ResourceResource extends BaseResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'type' => ResourceType::fromValue($this->type)->key,
+            'active' => $this->active,
+            'type' => $this->type,
             'tags' => $this->tags,
             'categories' => CategoryResource::collection($this->categories),
-            'data' => @json_decode($this->data) ?? [],
+            'data' => is_object($this->data) ? $this->data : json_decode($this->data),
             'files' => MediaResource::collection($this->getMedia(MediaType::File()->key)),
             'previews' => MediaResource::collection($this->getMedia(MediaType::Preview()->key)),
             'uses' => DamResourceUseResource::collection($this->uses),
+            'collection' => $this->resource->collection()->get(),
+            'workspace' => $this->resource->workspaces()->get(),
         ];
     }
 }

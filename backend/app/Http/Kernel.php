@@ -59,6 +59,18 @@ class Kernel extends HttpKernel
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
+
+        'manage.organizations' => \App\Http\Middleware\CanManageOrganization::class,
+        'manage.roles' => \App\Http\Middleware\CanManageRoles::class,
+        'manage.workspaces' => \App\Http\Middleware\CanManageWorkspace::class,
+
+        'read.workspace' => \App\Http\Middleware\ReadWorkspace::class,
+        'create.resource' => \App\Http\Middleware\ResourcePermissions\CreateResource::class,
+        'show.resource' => \App\Http\Middleware\ResourcePermissions\ShowResource::class,
+        'download.resource' => \App\Http\Middleware\ResourcePermissions\DownloadResource::class,
+        'update.resource' => \App\Http\Middleware\ResourcePermissions\UpdateResource::class,
+        'delete.resource' => \App\Http\Middleware\ResourcePermissions\DeleteResource::class,
+
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,

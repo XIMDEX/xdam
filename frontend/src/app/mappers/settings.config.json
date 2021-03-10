@@ -1,0 +1,17 @@
+{
+    "settings": {
+        "list": {
+            "model": {
+                "active": "active",
+                "data": "data",
+                "files": "files",
+                "id": "id",
+                "name": "name",
+                "score": "score",
+                "type": "type",
+                "version": "version",
+                "previews": "previews"
+            }
+        }
+    }
+}

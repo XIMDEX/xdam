@@ -17,7 +17,7 @@ class CreateDamResourcesTable extends Migration
         Schema::create('dam_resources', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string("external_id")->nullable();
-            $table->string("name")->nullable();
+            $table->string('name')->nullable();
             $table->enum('type', ResourceType::getValues())
                 ->default(ResourceType::document);
             $table->json("data")->nullable();

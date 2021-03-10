@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {environment} from '../../environments/environment';
+
 @Injectable({
     providedIn: 'root'
 })
+
 export class AuthService {
-    // Variables
-    authUrl = 'http://localhost:81/xdam-backend/public/index.php/oauth/token';
-    apiUrl = 'http://localhost:81/xdam-backend/public/index.php/api/v1';
+    authUrl = environment.login_url;
+    apiUrl = environment.baseUrl + environment.apiVersion;
+
     options: any;
     /**
      * Constructor
@@ -29,12 +32,8 @@ export class AuthService {
      */
     login(e: string, p: string) {
         return this.http.post(this.authUrl, {
-            grant_type: 'password',
-            client_id: '2',
-            client_secret: 'DfXXNkCJkeIkl2KYqRXfnJbAjMPaFf9Wl08WEUPU',
-            username: e,
+            email: e,
             password: p,
-            scope: ''
         }, this.options);
     }
     /**
@@ -42,6 +41,7 @@ export class AuthService {
      */
     logout(accesTokenDetails: any) {
         this.options.headers.Authorization = 'Bearer ' + localStorage.getItem('access_token');
+        localStorage.removeItem("access_token")
         const params = new HttpParams().set('user', accesTokenDetails.id);
         return this.http.get(this.apiUrl + '/token/revoke', {headers: this.options.headers, params});
     }

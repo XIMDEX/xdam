@@ -25,8 +25,8 @@ class MediaService
      */
     public function __construct()
     {
-        $this->defaultPreviewCollection = MediaType::Preview()->value;
-        $this->defaultFileCollection = MediaType::File()->value;
+        $this->defaultPreviewCollection = MediaType::Preview()->key;
+        $this->defaultFileCollection = MediaType::File()->key;
     }
 
     /**
@@ -98,12 +98,22 @@ class MediaService
 
     /**
      * @param Model $model
+     * @param $collection
      * @return bool
      */
-    public function deleteAllMedia(Model $model): boolean
+    public function deleteAllPreviews(Model $model)
     {
-        $model->clearMediaCollection($this->defaultFileCollection);
-        return true;
+        return $model->clearMediaCollection($this->defaultPreviewCollection);
+    }
+
+    /**
+     * @param Model $model
+     * @param $collection
+     * @return bool
+     */
+    public function deleteAllFiles(Model $model)
+    {
+        return $model->clearMediaCollection($this->defaultFileCollection);
     }
 
     /**

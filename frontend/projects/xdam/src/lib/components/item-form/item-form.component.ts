@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
 import { SwalComponent, SwalPartialTargets } from '@sweetalert2/ngx-sweetalert2';
 import { equals, hasIn, is, isNil } from 'ramda';
 import { faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
@@ -9,6 +9,9 @@ import { ActionModel } from '../../../models/src/lib/ActionModel';
 import { FormI } from '../../../models/src/lib/interfaces/FormI.interface';
 import { setQuestion } from '../../models/forms/Question';
 import swal2 from '../../profiles/swal2';
+import { XdamModeI } from '@xdam/models/interfaces/XdamModeI.interface';
+import { ModalCourseComponent } from '../forms/modal-course/modal-course.component';
+import { ModalMultimediaComponent } from '../forms/modal-multimedia/modal-multimedia.component';
 
 @Component({
     selector: 'xdam-item-form',
@@ -18,14 +21,19 @@ import swal2 from '../../profiles/swal2';
 export class ItemFormComponent implements OnChanges {
     @Input() action: ActionModel | null;
     @Input() settings: FormI;
+    @Input() resourceUrl: string;
     @Input() display: boolean;
+    @Input() viewMode: boolean;
+    @Input() mode: XdamModeI;
 
     @Output() close = new EventEmitter<any>();
     @Output() save = new EventEmitter<any>();
 
     @ViewChild('swalModal') swalModal: SwalComponent;
+    @ViewChild('fromCourse') xdamModalCourse!: ModalCourseComponent;
+    @ViewChild('fromMultimedia') xdamModalMultimedia!: ModalMultimediaComponent;
 
-    private modal;
+    modal;
 
     faTimes = faTimes;
     faSave = faSave;
@@ -40,9 +48,13 @@ export class ItemFormComponent implements OnChanges {
     formFieldsValues: any = {};
     infoFormFields = itemInfo;
     method: ActionMethods;
+    title = 'Nuevo Recurso';
 
     constructor(public readonly swalTargets: SwalPartialTargets) {
         this.swalCustomClass = { ...swal2.customClass, ...this.swalCustomClass };
+        window.onbeforeunload = function(e) {
+            return "¿Estás seguro que deseas salir de la actual página?"
+          };
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -59,32 +71,10 @@ export class ItemFormComponent implements OnChanges {
         if (hasIn('action', changes) && !changes.action.isFirstChange() && !isNil(this.swalModal)) {
             if (!isNil(changes.action.currentValue)) {
                 this.method = this.action.method;
-
                 if (this.action.method === 'show') {
                     this.action.status = 'pending';
                     this.method = 'edit';
-                    const mainForm = this.action.data;
-                    const tabsForm = hasIn('tabsform', mainForm) && !isNil(mainForm.tabsform) ? mainForm.tabsform : [];
-
-                    if (hasIn('tabsform', mainForm)) {
-                        delete mainForm.tabsform;
-                    }
-
-                    this.setFormValues(mainForm, this.formFields);
-                    this.setFormValues(mainForm, this.infoFormFields);
-                    this.setTabsFormValues(tabsForm);
-                }
-
-                if (!isNil(this.action.errors)) {
-                    const mainForm = this.action.errors;
-                    const tabsForm = hasIn('tabsform', mainForm) && !isNil(mainForm.tabsform) ? mainForm.tabsform : [];
-
-                    if (hasIn('tabsform', mainForm)) {
-                        delete mainForm.tabsform;
-                    }
-
-                    this.setFormErrors(mainForm, this.formFields);
-                    this.setFormErrors(mainForm, this.infoFormFields);
+                    this.title = 'Editar ' + this.action.item.name;
                 }
             }
         }
@@ -107,14 +97,6 @@ export class ItemFormComponent implements OnChanges {
         return this.action.method === 'edit';
     }
 
-    validForm(): boolean {
-        return false;
-    }
-
-    cancelForm() {
-        this.modal.close();
-    }
-
     closeForm() {
         this.formFieldsValues = {};
         this.clearFormValues(this.formFields);
@@ -124,11 +106,21 @@ export class ItemFormComponent implements OnChanges {
         this.close.emit();
     }
 
-    saveForm() {
+    saveForm(data) {
         const action = new ActionModel({ ...this.action });
-        action.data = this.formFieldsValues;
+        action.data = JSON.stringify(data);
         action.method = this.method;
         this.save.emit(action);
+        this.closeForm();
+    }
+
+    sendForm(action: ActionModel) {
+        this.save.emit(action);
+        this.modal.close();
+    }
+
+    receiveData(resource: any) {
+        this.saveForm(resource);
     }
 
     clearFormValues(form: any[]) {
@@ -180,29 +172,6 @@ export class ItemFormComponent implements OnChanges {
         }
     }
 
-    setTabsFormValues(form: any) {
-        for (const section of this.tabsForms) {
-            if (hasIn(section.name, form)) {
-                const formTab = form[section.name];
-                for (const tab of section.tabs) {
-                    if (hasIn(tab.key, formTab)) {
-                        let fieldKey = `${section.name}.${tab.key}`;
-                        for (const key of Object.keys(formTab[tab.key])) {
-                            const _fieldKey = `${fieldKey}.${key}`;
-                            const value = formTab[tab.key][key];
-                            tab.fields.forEach(element => {
-                                if (element.realName === _fieldKey) {
-                                    element.value = value;
-                                    this.updatedValue(element.key, value);
-                                }
-                            });
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     setFormErrors(data: any, form: any[]) {
         for (const field of form) {
             let key = null;
@@ -218,16 +187,6 @@ export class ItemFormComponent implements OnChanges {
                 field.errors = data[key];
             }
         }
-    }
-
-    updatedTabsFormValue(form: string, tab: string, key: string, value: any) {
-        this.updatedValue(key, value);
-
-        this.tabsForms[form].tabs[tab].fields.forEach(field => {
-            if (field.key === key) {
-                field.value = value;
-            }
-        });
     }
 
     updatedValue(key: string, value: any) {
@@ -311,5 +270,14 @@ export class ItemFormComponent implements OnChanges {
         }
 
         return obj;
+    }
+
+    formSended(e){
+        this.xdamModalMultimedia;
+        if(this.mode.currentMode.id == 3){
+            this.xdamModalCourse.sendForm(e);
+        }else{
+            this.xdamModalMultimedia.sendForm(e);
+        }
     }
 }

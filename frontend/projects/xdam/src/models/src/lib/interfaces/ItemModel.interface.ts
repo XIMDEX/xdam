@@ -2,13 +2,15 @@ import { FacetModel } from '../FacetModel';
 import { PagerModel } from './PagerModel.interface';
 
 export interface ItemModel {
+    active: string;
+    data: string;
+    files: string;
     id: string;
-    title: string;
-    hash: string;
-    size?: string;
+    name: string;
+    score: string;
     type: string;
-    image: string;
-    context: string;
+    version: string;
+    previews?: string;
 }
 
 export interface XDamData {

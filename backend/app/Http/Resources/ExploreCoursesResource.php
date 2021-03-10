@@ -15,6 +15,7 @@ class ExploreCoursesResource extends JsonResource
      */
     public function toArray($request)
     {
+
         return [
             "categoryId" => $this->id,
             "categorytitle" => $this->name,

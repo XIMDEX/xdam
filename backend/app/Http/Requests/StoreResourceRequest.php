@@ -2,13 +2,18 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\MediaType;
 use App\Enums\ResourceType;
+use App\Models\Collection;
+use App\Models\Workspace;
+use App\Traits\JsonValidatorTrait;
 use BenSampo\Enum\Rules\EnumKey;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StoreResourceRequest extends FormRequest
 {
+    use JsonValidatorTrait;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -16,7 +21,17 @@ class StoreResourceRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        //Check if collection_id is attached to the organization of user selected workspace
+        $organizations = Auth::user()->organizations()->get();
+        $collection = Collection::find($this->collection_id);
+        foreach($organizations as $org)
+        {
+            if($collection->organization()->first()->id == $org->id) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -27,22 +42,36 @@ class StoreResourceRequest extends FormRequest
     public function rules()
     {
         return [
-            'data' => 'string',
-            MediaType::File()->key => 'file',
-            MediaType::Preview()->key => 'file',
-            'type' => ['required', new EnumKey(ResourceType::class)]
+            'type' => ['required', new EnumKey(ResourceType::class)],
+            'collection_id' => 'required|exists:collections,id',
+            'data' => 'required'
         ];
     }
 
-    public function validationData()
+    public function prepareForValidation()
     {
-        $requiredParameters = [
-            'data' => $this->data ?? "{}",
-            'type' => $this->type
-        ];
-
-        $this->merge($requiredParameters);
-
-        return array_merge($this->all(), $requiredParameters);
+        $all = $this->all();
+        $castedData = [];
+        if (array_key_exists("data", $all)) {
+            $castedData = json_decode($all["data"]);
+        }
+        return $this->merge(["data" => $castedData])->all();
     }
+
+    public function withValidator($factory)
+    {
+        $this->throwErrorWithValidator($factory,  "data");
+        return $factory;
+    }
+
+    public function all($keys = null)
+    {
+        $data = parent::all($keys);
+        if($this->route('collection_id')) {
+            $data['collection_id'] = $this->route('collection_id');
+        }
+        return $data;
+    }
+
+
 }

@@ -2,10 +2,20 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ListItemActionsI, ListItemOptionI } from './../../../../models/src/lib/interfaces/ListOptions.interface';
 import { faDownload, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
+
 import { Item } from '../../../../models/src/lib/Item';
 import { SweetAlertOptions } from 'sweetalert2';
 import { hasIn } from 'ramda';
 import { sprintf } from 'sprintf-js';
+
+const CAN_BE_DOWNLOADED:string[] = ["video"];
+const titles = {
+    document: 'name',
+    video: 'name',
+    audio: 'name',
+    url: 'name',
+    course: 'name'
+}
 
 @Component({
     selector: 'xdam-item',
@@ -16,6 +26,10 @@ export class ItemComponent {
     faDownload = faDownload;
     faEdit = faEdit;
     faTrash = faTrash;
+    defaultImage = window.origin + '/assets/default_item_image.jpg';
+
+    imagePreview = null;
+    imageError = false;
 
     @Input() item: Item;
     @Input() settings: ListItemOptionI;
@@ -32,19 +46,38 @@ export class ItemComponent {
     }
 
     get title(): string {
-        return sprintf(this.settings.title, this.item.title);
+        if(this.type.toLocaleLowerCase() === 'course'){
+            return sprintf(this.settings.title, this.item.data['description']['name']);
+        }else{
+            return sprintf(this.settings.title, this.item.data['description']['name']);
+        }
     }
 
-    set img(url: string) {
-        this.item.image = url;
+    set preview(url: string) {
+        this.imagePreview  = this.defaultImage;
     }
 
-    get img(): string {
-        return this.item.image;
+    get preview(): string {
+        if (!this.imageError && this.item.previews){
+            this.imagePreview = this.item.previews[this.item.previews.length-1];
+            return this.settings.urlResource + '/resource/render/'+  this.imagePreview;
+        }else{
+            return this.defaultImage;
+        }
     }
 
     get actions(): ListItemActionsI | null {
         return this.settings.actions;
+    }
+
+    get canBeDownloaded():boolean{
+        for(let i = 0 ; i < this.item.type.length; i++){
+            let type = this.item.type[i].toLowerCase();
+            if(CAN_BE_DOWNLOADED.includes(type)){
+                return true;
+            }
+        }
+        return false;
     }
 
     get deleteModal(): SweetAlertOptions {
@@ -60,21 +93,14 @@ export class ItemComponent {
             focusConfirm: false
         };
     }
-
+    
     imgError() {
-        let image = null;
-        if (hasIn(this.item.type.toLowerCase(), this.settings.placeholder)) {
-            image = this.settings.placeholder[this.item.type.toLowerCase()];
-        } else if (hasIn('default', this.settings.placeholder)) {
-            image = this.settings.placeholder['default'];
-        }
-
-        this.img = image;
+        this.imageError = true;
+        //this.preview = this.defaultImage;
     }
 
     editItem(evt: Event) {
         evt.stopPropagation();
-
         this.edit.emit(this.item);
     }
 

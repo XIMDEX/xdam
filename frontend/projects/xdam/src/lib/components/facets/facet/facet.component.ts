@@ -17,6 +17,9 @@ export class FacetComponent implements OnInit, OnChanges {
 
     @Output() onChange = new EventEmitter<any>();
 
+    JSON = JSON;
+    console = console;
+
     public isOpen: boolean = false;
     public filter = "";
     private selectedValues = [];
@@ -75,6 +78,7 @@ export class FacetComponent implements OnInit, OnChanges {
             const index = this.selectedValues.indexOf(value);
 
             if (index === -1) {
+                this.selectedValues = [];
                 this.selectedValues.push(value);
             } else {
                 this.selectedValues.splice(index, 1);

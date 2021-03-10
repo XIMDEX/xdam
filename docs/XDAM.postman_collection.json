@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1f179f4d-e7bf-4936-a7f0-a206e738416e",
+		"_postman_id": "3302de87-f83a-48b1-9d54-89e8a9decb38",
 		"name": "XDAM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -39,12 +39,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -94,12 +94,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -124,12 +124,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -177,12 +177,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -206,7 +206,7 @@
 								{
 									"key": "File",
 									"type": "file",
-									"src": "/Users/develop/Desktop/Captura de pantalla 2021-01-22 a las 17.06.49.png"
+									"src": "/Users/develop/Desktop/2021-02-23 10-09-21.mkv"
 								},
 								{
 									"key": "type",
@@ -215,14 +215,18 @@
 								},
 								{
 									"key": "data",
-									"value": "{\"texto\":\"ejemplo\"}",
+									"value": "{\"description\":{\"active\":true, \"partials\": {}}}",
 									"type": "text"
 								},
 								{
 									"key": "Preview",
 									"type": "file",
-									"src": [],
-									"disabled": true
+									"src": "/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@7d9ae497-2950-4e8a-b534-2e08275c67ba@eaca770d-ba3c-49fd-a2b5-a82838a1f39d@@@.jpg"
+								},
+								{
+									"key": "collection_id",
+									"value": "1",
+									"type": "text"
 								}
 							]
 						},
@@ -237,12 +241,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -261,8 +265,10 @@
 								{
 									"key": "File",
 									"type": "file",
-									"src": "/Users/develop/Desktop/Captura de pantalla 2020-12-01 a las 13.14.18.png",
-									"disabled": true
+									"src": [
+										"/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@27d604f2-198e-426e-b013-b9f5c3b55f6a@91790a1b-b120-4b5c-8652-d45e4bb1ece8@@@.png",
+										"/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@31e05aec-f7a3-4cb9-9df7-b28db0d275d4@2c676e2a-8e1d-4429-bded-95c8e4740540@@@.jpg"
+									]
 								},
 								{
 									"key": "type",
@@ -272,36 +278,35 @@
 								},
 								{
 									"key": "data",
-									"value": "\"id\": \"a76045ca-bae6-4d08-be2e-360dc622f507\",\n        \"description\": {\n          \"type\": \"Payment\",\n          \"price\": \"10000\",\n          \"skills\": [\n            \"classroom management\",\n            \"teaching\",\n            \"group work\"\n          ],\n          \"category\": \"classroom_management\",\n          \"duration\": \"120\",\n          \"visibility\": \"Public\",\n          \"description\": \"In this project-centered course, you will create a meaningful procedures plan that will help you to save time in your classroom and improve the efficacy of your teaching. You’ll identify the time-wasting moments and minimise the time spent in procedures (such as moving students around the classroom) that tend the consume valuable teaching time. You’ll explore first how your behaviour influences your students’, looking at how you control emotional responses and interact with students. Then, you’ll learn techniques and develop your capability to achieve consistency in managing behaviour, recognise positive behaviour and build trust in your classroom.\",\n          \"achievements\": [\n            \"Learn how to manage groups\",\n            \"Learn how to transition between activities\",\n            \"Manage noisy groups\"\n          ],\n          \"course_title\": \"Course One \",\n          \"external_url\": \"\",\n          \"media_upload\": \"@@@dam:@image@f19d1eec-ed50-4de5-8f88-5c0c24010d3a@2e447905-069c-4ff8-92b9-c72484509d38@@@\",\n          \"preparations\": []",
+									"value": "{\"description\": {\"categories\" : [1,2]}}",
 									"type": "text"
 								},
 								{
 									"key": "Preview",
 									"type": "file",
-									"src": [],
-									"disabled": true
+									"src": "/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@72ca76b8-0ae2-4c9a-8895-15bac935ef0d@86a53539-b321-42e7-8b6a-7bfcc319059f@@@.jpg"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/e76295aa-08cb-40e7-a1ed-9c1d60937477/update",
+							"raw": "{{url}}{{api}}/resource/2700193d-1450-48c0-98af-15264462405e/update",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
-								"e76295aa-08cb-40e7-a1ed-9c1d60937477",
+								"2700193d-1450-48c0-98af-15264462405e",
 								"update"
 							],
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -342,12 +347,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -366,47 +371,29 @@
 								{
 									"key": "Preview",
 									"type": "file",
-									"src": "/Users/develop/Desktop/Captura de pantalla 2020-12-01 a las 13.14.18.png"
-								},
-								{
-									"key": "type",
-									"value": "course",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "data",
-									"value": "{\"test\":123}",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "category_id",
-									"value": "",
-									"type": "text",
-									"disabled": true
+									"src": "/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@2f26f29d-61ff-4dd1-b32b-4a1130f22ad8@54bbb320-4df9-436b-aec1-1fec9e2e2536@@@.png"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/4581d7e6-6dc3-4cc0-a4f1-99d38d31ef48/addPreview",
+							"raw": "{{url}}{{api}}/resource/13102607-e9ae-4cf4-9922-6efed656d31f/addPreview",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
-								"4581d7e6-6dc3-4cc0-a4f1-99d38d31ef48",
+								"13102607-e9ae-4cf4-9922-6efed656d31f",
 								"addPreview"
 							],
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -460,12 +447,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -520,12 +507,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -560,12 +547,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -615,12 +602,67 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TEST",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Teacher Training",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "_method",
+									"value": "PUT",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/test",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"test"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -668,12 +710,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -721,12 +763,67 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE ASSOCIATED FILE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Teacher Training",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "_method",
+									"value": "PUT",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource/2fa01536-6da3-45e3-8d4d-c36146ad0195/associatedFile/f792ac03-5b81-4784-a374-bc8b22d1c184",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"2fa01536-6da3-45e3-8d4d-c36146ad0195",
+								"associatedFile",
+								"f792ac03-5b81-4784-a374-bc8b22d1c184"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -776,12 +873,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -819,12 +916,12 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -864,24 +961,82 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/render/@@@dam:@video@f58f128f-3b64-4cb9-95a8-c8f582d25471@eb8b8ac1-2376-4d5e-a333-0595e949bc71@@@",
+							"raw": "{{url}}{{api}}/resource/render/@@@dam:@image@3bcdeb31-313e-4376-aa2c-308fe2332d6a@a0e65c2e-f7e1-4f97-85e4-9d4aefe89e1f@@@/64x64",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
 								"render",
-								"@@@dam:@video@f58f128f-3b64-4cb9-95a8-c8f582d25471@eb8b8ac1-2376-4d5e-a333-0595e949bc71@@@"
+								"@@@dam:@image@3bcdeb31-313e-4376-aa2c-308fe2332d6a@a0e65c2e-f7e1-4f97-85e4-9d4aefe89e1f@@@",
+								"64x64"
 							],
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "",
-									"value": null,
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DOWNLOAD",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Teacher Training",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "course",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "_method",
+									"value": "PUT",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource/download/@@@dam:@video@ab03fb1b-68cd-4a2e-938b-bab0424d9ff6@2cb1fa9d-53b1-4f98-a2bb-eb57b19d7322@@@",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"download",
+								"@@@dam:@video@ab03fb1b-68cd-4a2e-938b-bab0424d9ff6@2cb1fa9d-53b1-4f98-a2bb-eb57b19d7322@@@"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -895,19 +1050,18 @@
 			"name": "CATALOGUE",
 			"item": [
 				{
-					"name": "INDEX BY TYPE",
+					"name": "INDEX BY COLLECTION",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}{{api}}/catalogue/course/index",
+							"raw": "{{url}}{{api}}/catalogue/4",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"catalogue",
-								"course",
-								"index"
+								"4"
 							],
 							"query": [
 								{
@@ -926,52 +1080,22 @@
 									"disabled": true
 								},
 								{
-									"key": "facets[categories]",
+									"key": "facets[categories][]",
 									"value": "Horses",
 									"disabled": true
 								},
 								{
-									"key": "facets[categories]",
+									"key": "facets[categories][]",
 									"value": "Cats",
 									"disabled": true
 								},
 								{
-									"key": "facets[type]",
-									"value": "gatos",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "CHECK SOLR",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{url}}{{api}}/catalogue/checkSolr",
-							"host": [
-								"{{url}}{{api}}"
-							],
-							"path": [
-								"catalogue",
-								"checkSolr"
-							],
-							"query": [
-								{
-									"key": "facets[categories]",
-									"value": "Horses",
+									"key": "facets[type][]",
+									"value": "video",
 									"disabled": true
 								},
 								{
-									"key": "facets[categories]",
-									"value": "Cats",
-									"disabled": true
-								},
-								{
-									"key": "facets[type]",
+									"key": "facets[type][]",
 									"value": "video",
 									"disabled": true
 								}
@@ -979,42 +1103,1218 @@
 						}
 					},
 					"response": []
+				}
+			]
+		},
+		{
+			"name": "AUTH",
+			"item": [
+				{
+					"name": "LOGIN",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "admin_of_all@xdam.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/auth/login",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
 				},
 				{
-					"name": "GET DOCUMENTS BY TYPE",
+					"name": "SIGN UP",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "name test",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "pepega@test.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123123",
+									"type": "text"
+								},
+								{
+									"key": "password_confirmation",
+									"value": "123123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/auth/signup",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LOGOUT",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/user/logout",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"user",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "WORKSPACES",
+			"item": [
+				{
+					"name": "SET WORKSPACE TO USER",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "user_id",
+									"value": "4",
+									"type": "text"
+								},
+								{
+									"key": "workspace_id",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "with_role_id",
+									"value": "3",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/workspace/set/user",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"workspace",
+								"set",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UNSET WORKSPACE TO USER",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workspace_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/workspace/unset/user",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"workspace",
+								"unset",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LIST ALL",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}{{api}}/catalogue/multimedia",
+							"raw": "{{url}}{{api}}/workspace/index",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
-								"catalogue",
-								"multimedia"
+								"workspace",
+								"index"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "CLEAR CATALOGUE",
+					"name": "GET ONE",
 					"request": {
-						"method": "DELETE",
+						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}{{api}}/catalogue/clearAll",
+							"raw": "{{url}}{{api}}/workspace/get/6",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
-								"catalogue",
-								"clearAll"
+								"workspace",
+								"get",
+								"6"
 							]
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/workspace/5",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"workspace",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Segundo D",
+									"type": "text"
+								},
+								{
+									"key": "organization_id",
+									"value": "3",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/organization/workspace/create",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"organization",
+								"workspace",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workspace_id",
+									"value": "5",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "Public WSP",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/workspace/update",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"workspace",
+								"update"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ORGANIZATIONS",
+			"item": [
+				{
+					"name": "CREATE COLLECTION",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "organization_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "collection of books",
+									"type": "text"
+								},
+								{
+									"key": "type_id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/organization/create/collection",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"organization",
+								"create",
+								"collection"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET COLLECTIONS OF ORG",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "organization_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "collection of books",
+									"type": "text"
+								},
+								{
+									"key": "type_id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/organization/list/collections",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"organization",
+								"list",
+								"collections"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SET ORGANIZATION TO USER",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "user_id",
+									"value": "4",
+									"type": "text"
+								},
+								{
+									"key": "organization_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "with_role_id",
+									"value": "3",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/organization/set/user/",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"organization",
+								"set",
+								"user",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SET ALL WORKSPACES OF ORGANIZATION TO USER",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "user_id",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "organization_id",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "with_role_id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/organization/workspaces/setAll/user",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"organization",
+								"workspaces",
+								"setAll",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UNSET ORGANIZATION TO USER",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "user_id",
+									"value": "4",
+									"type": "text"
+								},
+								{
+									"key": "organization_id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/organization/unset/user/",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"organization",
+								"unset",
+								"user",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SET OR UNSET ROLE TO USER IN ORG WPS",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "user_id",
+									"value": "4",
+									"type": "text"
+								},
+								{
+									"key": "role_id",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "wo_id",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "set",
+									"type": "text"
+								},
+								{
+									"key": "on",
+									"value": "wsp",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/role/user/set/abilitiesOnOrganizationOrWorkspace",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"role",
+								"user",
+								"set",
+								"abilitiesOnOrganizationOrWorkspace"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "USER",
+			"item": [
+				{
+					"name": "/ME",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}{{api}}/user/me",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"user",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RESOURCES",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}{{api}}/user/resources",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"user",
+								"resources"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET ORGANIZATIONS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}{{api}}/user/organizations",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"user",
+								"organizations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET WORKSPACES",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}{{api}}/user/workspaces",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"user",
+								"workspaces"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET WORKSPACES OF ORG",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}{{api}}/user/organizations/1/workspaces",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"user",
+								"organizations",
+								"1",
+								"workspaces"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SELECT ORGANIZATION",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "organization_id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/user/organizations/select",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"user",
+								"organizations",
+								"select"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SELECT WORKSPACE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workspace_id",
+									"value": "5",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/user/workspaces/select",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"user",
+								"workspaces",
+								"select"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET RESOURCES OF WORKSPACE",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}{{api}}/user/workspaces/1/resources",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"user",
+								"workspaces",
+								"1",
+								"resources"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ADMIN",
+			"item": [
+				{
+					"name": "ORG",
+					"item": [
+						{
+							"name": "CREATE ORG",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "La Escuela 22",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}{{api}}/admin/organization/create",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"organization",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}{{api}}/admin/organization/1",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"organization",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ORG INDEX",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}{{api}}/admin/organization/index",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"organization",
+										"index"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}{{api}}/admin/organization/get/2",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"organization",
+										"get",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UPDATE",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "organization_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "name",
+											"value": "Public ORG",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}{{api}}/admin/organization/update",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"organization",
+										"update"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "ROLES",
+					"item": [
+						{
+							"name": "CREATE",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "admin",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "Admin",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}{{api}}/admin/role/store",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"role",
+										"store"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}{{api}}/admin/role/3",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"role",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "INDEX",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}{{api}}/admin/role/all",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"role",
+										"all"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}{{api}}/admin/role/1",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"role",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UPDATE",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "id",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}{{api}}/admin/role/update",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"role",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GIVE ABILITY",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "role_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "ability_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "asda",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "ability",
+											"value": "",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}{{api}}/admin/role/giveAbility",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"role",
+										"giveAbility"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "REMOVE ABILITY",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "role_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "ability_id",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}{{api}}/admin/role/removeAbility",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"role",
+										"removeAbility"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "ABILITIES",
+					"item": [
+						{
+							"name": "CREATE",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "edit",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "Edit",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}{{api}}/admin/ability/store",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"ability",
+										"store"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}{{api}}/admin/ability/1",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"ability",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "INDEX",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}{{api}}/admin/ability/all",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"ability",
+										"all"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}{{api}}/admin/ability/1",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"ability",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UPDATE",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "id",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}{{api}}/admin/ability/update",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"admin",
+										"ability",
+										"update"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		},
@@ -1061,12 +2361,12 @@
 					"query": [
 						{
 							"key": "",
-							"value": null,
+							"value": "",
 							"disabled": true
 						},
 						{
 							"key": "",
-							"value": null,
+							"value": "",
 							"disabled": true
 						}
 					]
@@ -1116,20 +2416,39 @@
 					"query": [
 						{
 							"key": "",
-							"value": null,
+							"value": "",
 							"disabled": true
 						},
 						{
 							"key": "",
-							"value": null,
+							"value": "",
 							"disabled": true
 						}
 					]
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": null
+			},
+			"response": []
 		}
 	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiYzk3MzdlOWE5YjFmZjNiOGM2MzlhYTRlOGUyYWY1Y2IwZjM1OGZmZDJlYWZmNDIzZTNjNzc3YWM0ZjJmNGI1MDk1YWE1NmMwNDJkNmRiMzMiLCJpYXQiOiIxNjE0ODQ3NzQ0Ljk3MDQ3MSIsIm5iZiI6IjE2MTQ4NDc3NDQuOTcwNDk1IiwiZXhwIjoiMTYzMDc0NTM0NC41NDg2OTAiLCJzdWIiOiIyIiwic2NvcGVzIjpbXX0.Xh10ucpwiT9E3GGO7lNVVSIA8bCR8aAUeVwMpxsCLq6U6QSSblWQbaVZVu8NVliSKSxpc9N9tBaq-ufld1xr9Cy5NyC5eGsubhInJ8Sdag3zuq80ShjfFRNNfPWwvnSroYM_6lSXQ5JGY82XmwgYEvwsh0NejzwES68h-yIuCepbkQ3t4ufKBVi37EYjTnCJil3YuFAtflHJmN5HgOz3xeZM_gy16WfZAE6f1lfvieTJv3QwMh7qwPWmgyMcoqFpJ7SPU_oCfePfMaLvNr1-nVv4J2m3ENc6R2vlXEUyisq_8446s2s94eiuYz-tSqYk-dEwwVT3E_QJr_EHW_njoXeqmjA3JQmxszYITwqwWr7Me8EpWZUB25rkftVJHkT0AHJrqA1JVFsVIVO5dGtzJG9vU9vcHTOr7GgtShQrfFSDSqSdo1-XIqq6Oupvy_2XW9lDPlKcFfv0Gfjmcq3ulwxCbSoUKLYhz-WmOHgrSQbDlLXGC7BWoFsaomfBBnC0BCRF5GTif0iAVaZTjpS2KEa5AjzI9AMQeRzZDRtxwPDpGhZs4tAqmVsQmjb6y-FO54npsUIF36gMvema-SNlWP2OoVN5RwgVxRX-C3Qq4_uS1Pd-2kd0A5wMcGbRnXhKjLmpCQALkFrj2qC2Bls4xZmVKiKaAYb13MJKWQDvKag",
+				"type": "string"
+			}
+		]
+	},
 	"event": [
 		{
 			"listen": "prerequest",
@@ -1167,7 +2486,7 @@
 		},
 		{
 			"key": "url",
-			"value": "http://localhost/xdam/backend/public/"
+			"value": "http://localhost/xdam/backend/public"
 		},
 		{
 			"key": "url",

@@ -9,6 +9,15 @@ export class SearchModel extends BaseModel implements SearchModelI {
     private _limit = 20;
     private _page = 1;
     private _reload = true;
+    private _collectionId = "1";
+
+    set collectionId(content: string | null) {
+        this._content = content;
+    }
+
+    get collectionId(): string | null {
+        return this._content;
+    }
 
     set content(content: string | null) {
         this._content = content;

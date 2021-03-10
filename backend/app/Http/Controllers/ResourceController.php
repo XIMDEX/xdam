@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
+use App\Enums\ThumbnailTypes;
 use App\Http\Requests\addFileToResourceRequest;
 use App\Http\Requests\addPreviewToResourceRequest;
 use App\Http\Requests\addUseRequest;
 use App\Http\Requests\deleteUseRequest;
 use App\Http\Requests\DownloadMultipleRequest;
+use App\Http\Requests\GetDamResourceRequest;
 use App\Http\Requests\ResouceCategoriesRequest;
 use App\Http\Requests\SetTagsRequest;
 use App\Http\Requests\StoreResourceRequest;
@@ -24,6 +26,8 @@ use App\Services\MediaService;
 use App\Services\ResourceService;
 use App\Utils\DamUrlUtil;
 use App\Utils\FileUtil;
+use Illuminate\Http\Request;
+use Mimey\MimeTypes;
 use Symfony\Component\HttpFoundation\Response;
 
 class ResourceController extends Controller
@@ -45,12 +49,27 @@ class ResourceController extends Controller
         $this->mediaService = $mediaService;
     }
 
+    private function getThumbnailBySize($size, $media)
+    {
+        if (null !== $size) {
+            $supportedThumbnails = ThumbnailTypes::getValues();
+            preg_match_all('!\d+!', $size, $matches);
+            $thumbSize = implode("x", $matches[0]);
+            foreach ($supportedThumbnails as $supportedThumbnail) {
+                if (strpos($supportedThumbnail, $thumbSize) !== false) {
+                    return $media->getPath($supportedThumbnail);
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * @return \Illuminate\Http\JsonResponse|object
      */
     public function getAll()
     {
-        $resources =  $this->resourceService->getAll();
+        $resources = $this->resourceService->getAll();
         return (new ResourceCollection($resources))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -60,9 +79,9 @@ class ResourceController extends Controller
      * @param DamResource $damResource
      * @return \Illuminate\Http\JsonResponse|object
      */
-    public function get(DamResource $damResource)
+    public function get(DamResource $damResource, GetDamResourceRequest $getDamResourceRequest)
     {
-        $damResource =  $this->resourceService->get($damResource);
+        $damResource = $this->resourceService->get($damResource);
         return (new ResourceResource($damResource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -121,7 +140,7 @@ class ResourceController extends Controller
      */
     public function addPreview(DamResource $damResource, addPreviewToResourceRequest $request)
     {
-        $resource = $this->resourceService->addPreview($damResource, MediaType::Preview()->key);
+        $resource = $this->resourceService->addPreview($damResource, $request->all());
         return (new ResourceResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -134,7 +153,7 @@ class ResourceController extends Controller
      */
     public function addFile(DamResource $damResource, addFileToResourceRequest $request)
     {
-        $resource = $this->resourceService->addFile($damResource, MediaType::File()->key);
+        $resource = $this->resourceService->addFile($damResource, $request->all());
         return (new ResourceResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -185,23 +204,37 @@ class ResourceController extends Controller
 
     /**
      * @param $damUrl
+     * @param null $size
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @throws \Exception
      */
-    public function render($damUrl)
+    public function render($damUrl, $size = null)
     {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
+        $media = Media::findOrFail($mediaId);
+        $thumb = $this->getThumbnailBySize($size, $media);
+        if ($thumb) {
+            return response()->file($thumb);
+        }
         return response()->file($this->mediaService->preview(Media::findOrFail($mediaId)));
     }
 
     /**
      * @param $damUrl
+     * @param null $size
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function download($damUrl)
+    public function download($damUrl, $size = null)
     {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         $media = Media::findOrFail($mediaId);
-        return response()->download($media->getPath(), $media->file_name);
+        $mimes = new MimeTypes;
+        $fileName = $damUrl . "." . $mimes->getExtension($media->mime_type); // json
+        $thumb = $this->getThumbnailBySize($size, $media);
+        if ($thumb) {
+            return response()->download($thumb, $fileName);
+        }
+        return response()->download($media->getPath(), $fileName);
     }
 
     /**
@@ -238,4 +271,38 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    /**
+     * Method to delete a concrete media id associated with a damResource
+     * @param DamResource $damResource
+     * @param Media $media
+     * @return \Illuminate\Http\JsonResponse|object
+     * @throws \Exception
+     */
+    public function deleteAssociatedFile(DamResource $damResource, Media $media)
+    {
+        $resource = $this->resourceService->deleteAssociatedFile($damResource, $media);
+        return (new ResourceResource($resource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    /**
+     * Method to delete a array of media ids associated with a damResource
+     * @param DamResource $damResource
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|object
+     * @throws \Exception
+     */
+    public function deleteAssociatedFiles(damResource $damResource, Request $request)
+    {
+        $idsToDelete = $request->all();
+        if (!empty($idsToDelete)) {
+            $resource = $this->resourceService->deleteAssociatedFiles($damResource, array_values($idsToDelete));
+            return (new ResourceResource($resource))
+                ->response()
+                ->setStatusCode(Response::HTTP_OK);
+        } else {
+            return response(['error' => 'need to send a array of media ids']);
+        }
+    }
 }

@@ -63,6 +63,7 @@ export class FacetsComponent implements OnChanges {
     }
 
     public setFacets(facet: any) {
+        if(!facet.emit) return;
         if (!isNil(facet.data)) {
             const keys = Object.keys(facet.data);
             keys.forEach(key => {
@@ -70,7 +71,7 @@ export class FacetsComponent implements OnChanges {
                 this.toggleFacet(key, value, facet.isOpen);
             });
         }
-
+        
         const params = new SearchModel();
         params.facets = this.facets;
         params.reload = facet.emit;
@@ -94,4 +95,13 @@ export class FacetsComponent implements OnChanges {
             this.openFacets.splice(i, 1);
         }
     }
+    
+    public onSelectorChange(element: any){
+        const params = new SearchModel();
+        params.facets = this.facets;
+        this.facets['resourceType'] = element.value;
+        params.reload = true;
+        this.cdr.detectChanges();
+        this.onChange.emit(params.only('facets', 'page', 'reload'));
+    }   
 }
