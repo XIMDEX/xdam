@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace App\Http\Middleware\ResourcePermissions;
 
 use App\Enums\Abilities;
 use Closure;

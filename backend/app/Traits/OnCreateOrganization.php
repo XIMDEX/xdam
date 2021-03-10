@@ -4,14 +4,11 @@
 namespace App\Traits;
 
 use App\Enums\Abilities;
-use App\Enums\OrganizationType;
 use App\Enums\Roles;
 use App\Models\Collection;
-use App\Models\Organization;
-use App\Models\Role;
 use App\Models\Workspace;
-use Silber\Bouncer\BouncerFacade;
-use Silber\Bouncer\Database\Role as DatabaseRole;
+use Silber\Bouncer\BouncerFacade as Bouncer;
+use Silber\Bouncer\Database\Role as BouncerRoles;
 
 trait OnCreateOrganization
 {
@@ -27,29 +24,29 @@ trait OnCreateOrganization
                     'solr_connection' => $keyName
                 ]);
             }
-            // if($model->type != OrganizationType::public) {
-                //Create default owner & corporate role
-                $corp = DatabaseRole::create([
-                    'name' => Roles::CORPORATE_WORKSPACE_MANAGEMENT,
-                    'organization_id' => $model->id,
-                    'applicable_to_entity' => Workspace::class,
-                ]);
 
-                BouncerFacade::allow($corp)->to(array_merge(
-                    [Abilities::MANAGE_WORKSPACE],
-                    Abilities::resourceManagerAbilities()), Workspace::class
-                );
+            //Create default owner & corporate role
+            $corp = BouncerRoles::create([
+                'name' => Roles::CORPORATE_WORKSPACE_MANAGEMENT,
+                'organization_id' => $model->id,
+                'applicable_to_entity' => Workspace::class,
+            ]);
 
-                $owner = DatabaseRole::create([
-                    'name' => Roles::RESOURCE_OWNER,
-                    'organization_id' => $model->id,
-                    'applicable_to_entity' => Workspace::class,
-                ]);
+            Bouncer::allow($corp)->to(array_merge(
+                [Abilities::MANAGE_WORKSPACE],
+                Abilities::resourceManagerAbilities()), Workspace::class
+            );
 
-                BouncerFacade::allow($owner)->to(array_merge(
-                    [Abilities::MANAGE_WORKSPACE],
-                    Abilities::resourceManagerAbilities()), Workspace::class
-                );
+            $owner = BouncerRoles::create([
+                'name' => Roles::RESOURCE_OWNER,
+                'organization_id' => $model->id,
+                'applicable_to_entity' => Workspace::class,
+            ]);
+
+            Bouncer::allow($owner)->to(array_merge(
+                [Abilities::MANAGE_WORKSPACE],
+                Abilities::resourceManagerAbilities()), Workspace::class
+            );
 
         });
     }

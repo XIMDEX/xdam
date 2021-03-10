@@ -8,7 +8,7 @@ use App\Enums\ResourceType;
 use App\Enums\Roles;
 use App\Enums\ThumbnailTypes;
 use App\Traits\UsesUuid;
-use App\Utils\PermissionCalc;
+use App\Utils\Utils;
 use Cartalyst\Tags\TaggableInterface;
 use Cartalyst\Tags\TaggableTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -58,7 +58,6 @@ class DamResource extends Model implements HasMedia, TaggableInterface
         return $this->belongsTo(User::class);
     }
 
-
     public function hasCategory(Category $category)
     {
         return $this->categories()->where('category_id', $category->id)->exists();
@@ -92,6 +91,7 @@ class DamResource extends Model implements HasMedia, TaggableInterface
                 $user_abilities_in_resource_workspaces[] = $abilities->toArray();
             }
 
+            //set organization owner role if user is the owner
             if($this->user_owner_id == $user->id) {
                 $org = $wsp->organization()->first();
                 $resource_owner_abilities = Role::where(['organization_id' => $org->id, 'name' => Roles::RESOURCE_OWNER])->first()->abilities;
@@ -100,7 +100,13 @@ class DamResource extends Model implements HasMedia, TaggableInterface
                 }
             }
         }
-        return $user_abilities_in_resource_workspaces;
+        $abilities_final = [];
+
+        foreach (Utils::unique_multidimensional_array($user_abilities_in_resource_workspaces, 'name') as $ability) {
+            $abilities_final[] = $ability['name'];
+        }
+
+        return $abilities_final;
     }
 
     /**
@@ -110,13 +116,11 @@ class DamResource extends Model implements HasMedia, TaggableInterface
      */
     public function userIsAuthorized(User $user, string $ability_to_check): bool
     {
-
         foreach ($this->getUserAbilities($user) as $user_ability) {
-            if($user_ability['name'] == $ability_to_check) {
+            if($user_ability == $ability_to_check) {
                 return true;
             }
         }
-
         return false;
     }
 }

@@ -60,9 +60,9 @@ class UserController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function resourceInfo($userToken, DamResource $damResource)
+    public function resourceInfo(DamResource $damResource)
     {
-        $resourceInfo = $this->userService->resourceInfo($userToken, $damResource);
+        $resourceInfo = $this->userService->resourceInfo($damResource);
         return (new JsonResource($resourceInfo))
             ->response()
             ->setStatusCode(Response::HTTP_OK);

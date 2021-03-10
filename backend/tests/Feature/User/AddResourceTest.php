@@ -15,7 +15,7 @@ use Tests\TestCase;
 
 class AddResourceTest extends TestCase
 {
-    use WithFaker;
+    // use WithFaker;
     /**
      * A basic feature test example.
      *
@@ -81,7 +81,7 @@ class AddResourceTest extends TestCase
             'data' => '{"description": {"active": true, "partials": {"pages": 10}}}',
             'collection_id' => $collection_id,
         ]);
-
+        dd($response);
         $response
             ->assertStatus(200)
             ->assertJson([
