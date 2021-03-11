@@ -27,9 +27,15 @@ class ActivitySolrResource extends JsonResource
         );
         $workspaces = $this->resource->workspaces->pluck('id')->toArray();
 
+        $data = is_object($this->data) ? json_encode($this->data) : $this->data;
+
+        if (property_exists($data, 'description')) {
+            $name = property_exists($data->description, 'title') ? $data->description->title : '';
+        }
+
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'name' => $name ?? "",
             'data' => is_object($this->data) ? json_encode($this->data) : $this->data,
             'active' => $this->active,
             'type' => ResourceType::fromValue($this->type)->key,
