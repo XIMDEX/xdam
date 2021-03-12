@@ -21,6 +21,12 @@ https://spatie.be/docs/laravel-backup/v7/introduction
 
 Dentro de config/backup.php podemos cambiar la configuración del sistema.
 
+Para añadir más rutas donde se copiará esta copia de seguridad o bien para cambiar la ruta de generación debemos:
+
+1) Dar de alta un nuevo filesystem en config/filesystem.php
+2) Modificar el fichero config/backup.php y añadir el nuevo disco en el array disks dentro de 'destination' o bien sustituir el contenido y dejar solo el nuevo disco.
+3) php artisan config:clear y php artisan backup:run, con esta configuración el fichero de backup se guardaría tanto en el disco local como en el nuevo configurado.
+
 ## BACKEND:
 
 #### 	DESCRIPCIÓN:
