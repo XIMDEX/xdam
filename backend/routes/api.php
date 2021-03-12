@@ -12,7 +12,6 @@ use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkspaceController;
-use App\Models\Workspace;
 
 /*
 |--------------------------------------------------------------------------
@@ -152,6 +151,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
                 Route::get('/download/{damResource}/{size}',    [ResourceController::class, 'download'])->name('damResource.download');
                 Route::get('/download/{damResource}',           [ResourceController::class, 'download'])->name('damResource.downloadWithSize');
             });
+
             Route::group(['middleware' => 'update.resource'], function() {
                 Route::post('/{damResource}/update', [ResourceController::class, 'update'])->name('damResource.update');
             });

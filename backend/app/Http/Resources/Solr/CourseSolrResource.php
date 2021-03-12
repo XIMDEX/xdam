@@ -28,11 +28,12 @@ class CourseSolrResource extends JsonResource
         $workspaces = $this->resource->workspaces->pluck('id')->toArray();
         $data = is_object($this->data) ? json_encode($this->data) : $this->data;
 
-        if (property_exists($data,  "description"))
+        if (property_exists($data,  "description") && property_exists($data->description, 'course_source'))
         {
-            $internal = property_exists($data->description, 'internal') ? $data->description->internal : false;
-            $active = property_exists($data->description, 'active') ? $data->description->active : false;
-            $aggregated = property_exists($data->description, 'aggregated') ? $data->description->aggregated : false;
+            $active = $data->description->active == true;
+            $internal = $data->description->course_source == 'internal';
+            $aggregated = $data->description->course_source == 'aggregated';
+            $external = $data->description->course_source == 'external';
         }
 
         return [
@@ -42,6 +43,7 @@ class CourseSolrResource extends JsonResource
             'active' => $active ?? $this->active,
             'aggregated' => $aggregated ?? false,
             'internal' => $internal ?? false,
+            'external' => $external ?? false,
             'type' => ResourceType::fromValue($this->type)->key,
             'tags' => $this->tags()->pluck('name')->toArray() ?? [''],
             'categories' => $this->categories()->pluck('name')->toArray() ?? [''],
