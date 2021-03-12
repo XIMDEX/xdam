@@ -31,6 +31,7 @@ class CatalogueController extends Controller
      */
     public function index(GetCatalogueRequest $request, Collection $collection)
     {
+
         $pageParams = [];
         $pageParams['currentPage'] = $request->get('page', 1);
         $pageParams['limit'] = $request->get('limit', 1);
@@ -42,6 +43,7 @@ class CatalogueController extends Controller
         $sortParams['order'] = $request->get('order');
 
         $facetsFilter = $request->get('facets', []);
+        $facetsFilter['collection'] = [(string)$collection->id];
 
         $response = $this->catalogueService->indexByCollection(
             $pageParams,

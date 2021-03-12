@@ -12,6 +12,7 @@ use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkspaceController;
+use App\Models\Workspace;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,10 +33,21 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
         Route::post('signup',   [AuthController::class, 'signup'])->name('auth.signup');
     });
 
+
+    Route::group(['middleware' => 'show.resource'], function() {
+        Route::group(['prefix' => 'resource'], function(){
+            Route::get('/render/{damUrl}/{size}', [ResourceController::class, 'render'])->name('damResource.renderWithSize');
+            Route::get('/render/{damUrl}',        [ResourceController::class, 'render'])->name('damResource.render');
+            Route::get('/{damResource}',          [ResourceController::class, 'get'])   ->name('damResource.get');
+        });
+    });
+
     Route::get('/exploreCourses', [ResourceController::class, 'exploreCourses'])->name('damResource.exploreCourses');
     //Route::get('/user/{token}/resource/{damResource}/permissions', [UserController::class, 'resourceInfo'])->name('user.get.resource.info');
 
     Route::group(['middleware' => 'auth:api'], function () {
+
+        Route::get('workspaceOfCollection/{collection}', [WorkspaceController::class, 'workspaceOfCollection'])   ->name('collection.org.wsp.get');
 
         Route::group(['prefix' => 'super-admin', 'middleware' => 'can:*'], function(){
             Route::group(['prefix' => 'organization'], function(){
