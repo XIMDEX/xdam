@@ -140,9 +140,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
                 Route::get('/download/{damResource}/{size}',    [ResourceController::class, 'download'])->name('damResource.download');
                 Route::get('/download/{damResource}',           [ResourceController::class, 'download'])->name('damResource.downloadWithSize');
             });
-            Route::group(['middleware' => 'update.resource'], function() {
-                Route::post('/{damResource}/update',                    [ResourceController::class, 'update'])     ->name('damResource.update');
-            });
+            Route::post('/{damResource}/update',                    [ResourceController::class, 'update'])     ->name('damResource.update');
 
             Route::group([], function() {
                 Route::post('/{damResource}/setTags',                   [ResourceController::class, 'setTags'])    ->name('damResource.setTags');
@@ -157,7 +155,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
                 Route::delete('/{damResource}/deleteUse/{damResourceUse}',  [ResourceController::class, 'deleteUse'])            ->name('damResource.deleteUse');
                 Route::delete('/{damResource}/deleteCategory/{category}',   [ResourceController::class, 'deleteCategory'])       ->name('damResource.deleteCategory');
                 Route::delete('/{damResource}/associatedFile/{media}',      [ResourceController::class, 'deleteAssociatedFile']) ->name('damResource.deleteAssociatedFile');
-                Route::delete('/{damResource}/associatedFiles',             [ResourceController::class, 'deleteAssociatedFiles'])->name('damResource.deleteAssociatedFiles');
+                Route::put('/{damResource}/deleteAssociatedFiles',          [ResourceController::class, 'deleteAssociatedFiles'])->name('damResource.deleteAssociatedFiles');
             });
         });
 
