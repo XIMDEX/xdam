@@ -3,7 +3,7 @@
 
 namespace App\Services\Solr;
 
-
+use App\Enums\ResourceType;
 use App\Models\Collection;
 use App\Models\DamResource;
 use App\Services\Catalogue\FacetManager;

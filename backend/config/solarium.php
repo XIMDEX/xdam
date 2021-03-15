@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\ResourceType;
+
 return [
     'connections' => [
         'activity' => [
@@ -10,7 +12,8 @@ return [
                 'path' => env('SOLR_PATH', '/'),
                 'core' => 'activity',
             ],
-            'resource' => 'ActivitySolrResource'
+            'resource' => 'ActivitySolrResource',
+            'accepts_types' => [ResourceType::activity]
         ],
         'assessment' => [
             'endpoint' => [
@@ -20,7 +23,8 @@ return [
                 'path' => env('SOLR_PATH', '/'),
                 'core' => 'assessment',
             ],
-            'resource' => 'AssessmentSolrResource'
+            'resource' => 'AssessmentSolrResource',
+            'accepts_types' => [ResourceType::assessment]
         ],
 
         'course' => [
@@ -31,7 +35,8 @@ return [
                 'path' => env('SOLR_PATH', '/'),
                 'core' => 'course',
             ],
-            'resource' => 'CourseSolrResource'
+            'resource' => 'CourseSolrResource',
+            'accepts_types' => [ResourceType::course]
         ],
 
         'multimedia' => [
@@ -42,7 +47,8 @@ return [
                 'path' => env('SOLR_PATH', '/'),
                 'core' => 'multimedia',
             ],
-            'resource' => 'MultimediaSolrResource'
+            'resource' => 'MultimediaSolrResource',
+            'accepts_types' => [ResourceType::multimedia]
         ],
         'book' => [
             'endpoint' => [
@@ -52,7 +58,8 @@ return [
                 'path' => env('SOLR_PATH', '/'),
                 'core' => 'book',
             ],
-            'resource' => 'BookSolrResource'
+            'resource' => 'BookSolrResource',
+            'accepts_types' => [ResourceType::book]
         ]
     ],
     'solr_validators_folder' => env('SOLR_VALIDATORS_FOLDER', ''),

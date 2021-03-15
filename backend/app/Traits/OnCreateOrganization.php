@@ -21,7 +21,8 @@ trait OnCreateOrganization
                 Collection::create([
                     'name' => $model->name . ' ' . ucfirst($keyName) .' collection',
                     'organization_id' => $model->id,
-                    'solr_connection' => $keyName
+                    'solr_connection' => $keyName,
+                    'accept' => $value['accepts_types'][0]
                 ]);
             }
 

@@ -26,20 +26,19 @@ class OrganizationSeeder extends Seeder
             'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
         ]);
 
-        Organization::create([
-            'name' => "Escuela N-5",
-            'type' => OrganizationType::corporate,
-            'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
-            'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
-        ]);
-
         //FACTORY
-        $count = 5;
-        for ($i=0; $i <= $count; $i++) {
-            Organization::factory()
-                ->has(Workspace::factory(['type' => WorkspaceType::corporate])->count(1))
-                ->has(Workspace::factory()->count(3))
-                ->create();
-        }
+
+        Organization::factory(['name' => 'MHE'])
+            ->has(Workspace::factory(['type' => WorkspaceType::corporate])->count(1))
+            ->create();
+
+        Organization::factory(['name' => 'SEK'])
+            ->has(Workspace::factory(['type' => WorkspaceType::corporate])->count(1))
+            ->create();
+
+        Organization::factory(['name' => 'Other Orgainzation'])
+            ->has(Workspace::factory(['type' => WorkspaceType::corporate])->count(1))
+            ->create();
+
     }
 }

@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Enums\ResourceType;
 use App\Models\Collection;
-use App\Models\Workspace;
 use App\Traits\JsonValidatorTrait;
 use BenSampo\Enum\Rules\EnumKey;
 use Exception;
@@ -27,6 +26,10 @@ class StoreResourceRequest extends FormRequest
         $wsp = $user->workspaces()->where('workspaces.id', $user->selected_workspace)->first();
         $org = $wsp->organization()->first();
         $collection = Collection::find($this->collection_id);
+
+        if($this->type != $collection->accept) {
+            throw new Exception("The resource type isn't accepted for the collection");
+        }
 
         if($collection->organization()->first()->id == $org->id) {
             return true;

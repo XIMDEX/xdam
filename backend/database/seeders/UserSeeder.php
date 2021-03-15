@@ -59,8 +59,8 @@ class UserSeeder extends Seeder
 
         $roles = new Roles;
         $this->adminService->setOrganizations($admin->id, 3, $roles->ORGANIZATION_ADMIN_ID());
-        // $this->adminService->setOrganizations($manager->id, 3, $roles->ORGANIZATION_MANAGER_ID());
-        // $this->adminService->setOrganizations($admin->id, 3, $roles->ORGANIZATION_USER_ID());
+        $this->adminService->setOrganizations($manager->id, 3, $roles->ORGANIZATION_MANAGER_ID());
+        $this->adminService->setOrganizations($basic_user->id, 3, $roles->ORGANIZATION_USER_ID());
 
 
     }
