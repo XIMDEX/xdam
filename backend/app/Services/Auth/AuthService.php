@@ -11,10 +11,10 @@ class AuthService
 {
     use AuthTrait;
 
-    public function login($credentials)
+    public function login($credentials): array
     {
         if (!Auth::attempt($credentials)) {
-            return $this->error('Invalid credentials', 401);
+            return $this->error('Invalid credentials', 422);
         }
         return $this->token($this->getPersonalAccessToken());
     }

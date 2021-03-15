@@ -81,7 +81,7 @@ class AddResourceTest extends TestCase
             'data' => '{"description": {"active": true, "partials": {"pages": 10}}}',
             'collection_id' => $collection_id,
         ]);
-        dd($response);
+        //dd($response);
         $response
             ->assertStatus(200)
             ->assertJson([
