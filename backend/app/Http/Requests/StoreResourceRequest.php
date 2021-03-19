@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\ResourceType;
+use App\Enums\Roles;
 use App\Models\Collection;
 use App\Traits\JsonValidatorTrait;
 use BenSampo\Enum\Rules\EnumKey;
@@ -23,13 +24,23 @@ class StoreResourceRequest extends FormRequest
     {
         //Check if collection_id is attached to the organization of user selected workspace
         $user = Auth::user();
-        $wsp = $user->workspaces()->where('workspaces.id', $user->selected_workspace)->first();
-        $org = $wsp->organization()->first();
-        $collection = Collection::find($this->collection_id);
 
-        if($this->type != $collection->accept) {
+        $collection = Collection::find($this->collection_id);
+        $respurceBaseType = $this->type;
+
+        if($this->type == ResourceType::image || $this->type == ResourceType::audio || $this->type == ResourceType::video) {
+            $respurceBaseType = 'multimedia';
+        }
+
+        if($respurceBaseType != $collection->accept) {
             throw new Exception("The resource type isn't accepted for the collection");
         }
+
+        if ($user->isA(Roles::SUPER_ADMIN)) {
+            return true;
+        }
+        $wsp = $user->workspaces()->where('workspaces.id', $user->selected_workspace)->first();
+        $org = $wsp->organization()->first();
 
         if($collection->organization()->first()->id == $org->id) {
             return true;
