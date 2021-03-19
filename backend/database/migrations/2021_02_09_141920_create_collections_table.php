@@ -18,7 +18,6 @@ class CreateCollectionsTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->unsignedInteger('organization_id');
-            $table->string('accept')->nullable();
             $table->string('solr_connection')->nullable();
             $table->timestamps();
             $table->foreign('organization_id', 'organization_collection_fk')->references('id')->on('organizations')->onDelete('cascade');

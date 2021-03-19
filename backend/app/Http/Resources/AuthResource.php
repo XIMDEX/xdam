@@ -14,6 +14,7 @@ class AuthResource extends BaseResource
     public function toArray($request)
     {
         return [
+            'status' => $this['code'] == 200 ? 'Success' : 'Error',
             'error' => $this['code'] != 200 ? ['data' => [$this['error']]] : null,
             'code' => $this['code'],
             'data' => $this['code'] == 200 ? $this['data'] : null
