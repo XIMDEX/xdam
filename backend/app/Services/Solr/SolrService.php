@@ -70,7 +70,7 @@ class SolrService
      * @return mixed
      * @throws Exception
      */
-    private function getClientFromResource(DamResource $damResource)
+    public function getClientFromResource(DamResource $damResource)
     {
         return $this->getClientFromCollection($damResource->collection);
     }

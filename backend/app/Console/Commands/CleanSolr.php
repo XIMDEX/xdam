@@ -12,7 +12,7 @@ class CleanSolr extends Command
      *
      * @var string
      */
-    protected $signature = 'solr:clean';
+    protected $signature = 'solr:clean {--exclude=*} {--fromReindex=false}';
 
     /**
      * The console command description.
@@ -39,7 +39,9 @@ class CleanSolr extends Command
      */
     public function handle(SolrConfig $solrConfig)
     {
-        $this->line($solrConfig->cleanAllDocuments());
+        $fromReindex = $this->option('fromReindex');
+        $excludedCores = $this->option('exclude');
+        $this->line($solrConfig->cleanDocuments($excludedCores, $fromReindex == 'true' ? 'reindex' : 'clean'));
         return 0;
     }
 }

@@ -152,10 +152,23 @@ class SolrConfig
      * It is in charge of going through each client and deleting all the documents
      * @return string
      */
-    public function cleanAllDocuments(): string
+    public function cleanDocuments(array $excludedCores, $action): string
     {
         $counter = 0;
         foreach ($this->clients as $client) {
+            //exclude cores
+            $clientCoreName = $client->getEndpoint()->getOptions()['core'];
+
+            if (!array_key_exists($clientCoreName, config('solarium.connections', []))) {
+                echo 'Client detected not valid for xdam' . PHP_EOL;
+                continue;
+            }
+
+            if (in_array($clientCoreName, $excludedCores)) {
+                echo $clientCoreName . ' core excluded from '. $action . PHP_EOL;
+                continue;
+            }
+
             // get an update query instance
             $update = $client->createUpdate();
             // add the delete query and a commit command to the update query
@@ -167,5 +180,4 @@ class SolrConfig
         }
         return "$counter instances has been cleared";
     }
-
 }
