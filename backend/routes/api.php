@@ -136,11 +136,11 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::get('/listTypes', [ResourceController::class, 'listTypes'])->name('damResource.listTypes');
             Route::get('/',          [ResourceController::class, 'getAll'])->name('damResource.getAll');
 
-            Route::group(['middleware' => 'show.resource'], function() {
-                Route::get('/render/{damUrl}/{size}', [ResourceController::class, 'render'])->name('damResource.renderWithSize');
-                Route::get('/render/{damUrl}',        [ResourceController::class, 'render'])->name('damResource.render');
-                Route::get('/{damResource}',          [ResourceController::class, 'get'])   ->name('damResource.get');
-            });
+            // Route::group(['middleware' => 'show.resource'], function() {
+            //     Route::get('/render/{damUrl}/{size}', [ResourceController::class, 'render'])->name('damResource.renderWithSize');
+            //     Route::get('/render/{damUrl}',        [ResourceController::class, 'render'])->name('damResource.render');
+            //     Route::get('/{damResource}',          [ResourceController::class, 'get'])   ->name('damResource.get');
+            // });
 
             Route::group(['middleware' => 'create.resource'], function() {
                 Route::post('/',                        [ResourceController::class, 'store'])->name('damResource.store');
