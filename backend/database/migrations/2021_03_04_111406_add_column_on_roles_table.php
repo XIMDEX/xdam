@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class DropTableCollectionTypes extends Migration
+class AddColumnOnRolesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,9 @@ class DropTableCollectionTypes extends Migration
      */
     public function up()
     {
-        Schema::dropIfExists("collection_types");
+        Schema::table('roles', function (Blueprint $table) {
+            $table->string('applicable_to_entity')->nullable();
+        });
     }
 
     /**
@@ -23,6 +25,8 @@ class DropTableCollectionTypes extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('roles', function (Blueprint $table) {
+            $table->dropColumn('applicable_to_entity');
+        });
     }
 }

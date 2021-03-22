@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\Abilities;
 use App\Enums\Roles;
 use App\Enums\WorkspaceType;
 use App\Models\Organization;
@@ -32,7 +33,7 @@ class RolesCrudTest extends TestCase
             ->create();
 
         $admin_of_org = User::factory()->create();
-        $this->setOrganization($admin_of_org, $org, Roles::admin_id, false);
+        $this->setOrganization($admin_of_org, $org, (new Roles)->ORGANIZATION_ADMIN_ID());
         $this->actingAs($admin_of_org, 'api');
 
         /*
@@ -40,8 +41,9 @@ class RolesCrudTest extends TestCase
         */
 
         $role = $this->json('POST', '/api/v1/organization/'.$org->id.'/roles/store', [
-            'name' => 'role-technical-name',
-            'title' => 'Role semantic name'
+            'name' => 'role-for-org',
+            'title' => 'Role for organization',
+            'entity_type' => 'org'
         ]);
 
         $role
@@ -87,7 +89,7 @@ class RolesCrudTest extends TestCase
         $this->actingAs($data['user'], 'api');
 
         /*
-            Set abilities role
+            List abilities role
         */
 
         $abilities = $this->json('GET', '/api/v1/organization/'.$data['org']->id.'/abilities/all');
@@ -105,14 +107,14 @@ class RolesCrudTest extends TestCase
     /**
     * @depends test_list_available_abilities_to_set_on_role
     */
-    public function test_set_abilities_to_role_of_organization(array $data)
+    public function test_set_ability_of_scope_workspace_to_role_of_scope_organization_and_fail(array $data)
     {
         $this->actingAs($data['user'], 'api');
 
         /*
             Set abilities role
         */
-        $show_resources_ability = $data['abilities'][4]->id;
+        $show_resources_ability = $data['abilities'][6]->id;
 
         $role_with_ability = $this->json('POST', '/api/v1/organization/'.$data['org']->id.'/roles/set/ability', [
             'role_id' => $data['role']->id,
@@ -122,9 +124,43 @@ class RolesCrudTest extends TestCase
         ]);
 
         $role_with_ability
+            ->assertStatus(400)
+            ->assertJson([
+                'error'=>true,
+            ]);
+
+        return $data;
+    }
+
+        /**
+    * @depends test_list_available_abilities_to_set_on_role
+    */
+    public function test_set_ability_of_scope_organization_to_role_of_scope_organization_and_works(array $data)
+    {
+        $this->actingAs($data['user'], 'api');
+
+        /*
+            Set abilities role
+        */
+
+        foreach ($data['abilities'] as $ability) {
+            if ($ability->name == Abilities::MANAGE_ORGANIZATION) {
+                $manage_organization_ability = $ability->id;
+                break;
+            }
+        }
+
+        $role_with_ability = $this->json('POST', '/api/v1/organization/'.$data['org']->id.'/roles/set/ability', [
+            'role_id' => $data['role']->id,
+            'ability_ids' => [
+                $manage_organization_ability,
+            ]
+        ]);
+
+        $role_with_ability
             ->assertStatus(200)
             ->assertJson([
-                'data'=> [],
+                'data' => [],
             ]);
 
         return $data;

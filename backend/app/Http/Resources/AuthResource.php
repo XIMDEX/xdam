@@ -2,9 +2,7 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
-
-class AuthResource extends JsonResource
+class AuthResource extends BaseResource
 {
 
     /**
@@ -15,6 +13,11 @@ class AuthResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'status' => $this['code'] == 200 ? 'Success' : 'Error',
+            'error' => $this['code'] != 200 ? ['data' => [$this['error']]] : null,
+            'code' => $this['code'],
+            'data' => $this['code'] == 200 ? $this['data'] : null
+        ];
     }
 }

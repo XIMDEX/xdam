@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class DropColumnTypeIdOnCollectionTable extends Migration
+class AddAcceptsResourceTypeOnCollection extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,13 @@ class DropColumnTypeIdOnCollectionTable extends Migration
      */
     public function up()
     {
+        if (Schema::hasColumn('collections', 'type_id')) {
+            Schema::table('collections', function (Blueprint $table) {
+                $table->dropColumn('type_id');
+            });
+        }
         Schema::table('collections', function (Blueprint $table) {
-            $table->dropColumn('type_id');
+            $table->string('accept')->nullable();
         });
     }
 
@@ -25,6 +30,8 @@ class DropColumnTypeIdOnCollectionTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('collections', function (Blueprint $table) {
+            $table->dropColumn('accept');
+        });
     }
 }

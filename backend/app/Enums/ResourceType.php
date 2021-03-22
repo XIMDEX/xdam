@@ -23,6 +23,7 @@ final class ResourceType extends Enum
     const image = "image";
     const audio = "audio";
     const url = "url";
+    const multimedia = "multimedia";
     const course = "course";
     const assessment = "assessment";
     const activity = "activity";

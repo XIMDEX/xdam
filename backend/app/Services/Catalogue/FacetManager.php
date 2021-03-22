@@ -7,11 +7,15 @@ namespace App\Services\Catalogue;
 class FacetManager
 {
 
+    //Convert to dynamic list based on input schema. This is what is going to display in front facets
     private $facetList = [
         "categories" => "categories",
         "active" => "active",
         "type" => "type"
     ];
+
+    //Define black-list fields (organization_id)
+
 
     /**
      * Limit query by facets and facets filters

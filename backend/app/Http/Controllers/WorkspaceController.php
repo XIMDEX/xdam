@@ -2,16 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GetOrganizationResourcesRequest;
 use App\Http\Requests\Workspace\GetWorkspaceRequest;
 use App\Http\Requests\Workspace\ListWorkspacesRequest;
 use App\Http\Requests\Workspace\CreateWorkspaceRequest;
 use App\Http\Requests\Workspace\DeleteWorkspaceRequest;
 use App\Http\Requests\Workspace\UpdateWorkspaceRequest;
+use App\Http\Resources\ResourceCollection;
+use App\Http\Resources\ResourceResource;
 use App\Http\Resources\WorkspaceCollection;
 use App\Http\Resources\WorkspaceResource;
+use App\Models\Collection;
 use App\Models\Organization;
+use App\Models\User;
 use App\Services\OrganizationWorkspace\WorkspaceService;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection as JsonResourceCollection;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class WorkspaceController extends Controller
@@ -78,5 +85,22 @@ class WorkspaceController extends Controller
         return (new JsonResource($wsp))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function getOrganizationResources(GetOrganizationResourcesRequest $request)
+    {
+        $res = $this->workspaceService->getOrganizationResources($request->organization_id);
+        return (new ResourceCollection($res))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function workspaceOfCollection(Collection $collection)
+    {
+        $org = $collection->organization()->first();
+        if(Auth::user()->organizations()->get()->contains($org)) {
+            return Auth::user()->workspaces()->where('organization_id', $org->id)->get();
+        }
+        return ['error'];
     }
 }

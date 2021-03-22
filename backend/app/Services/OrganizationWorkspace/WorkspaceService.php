@@ -4,9 +4,11 @@ namespace App\Services\OrganizationWorkspace;
 
 use App\Enums\Roles;
 use App\Enums\WorkspaceType;
+use App\Models\DamResource;
 use App\Models\Organization;
 use App\Models\Workspace;
 use App\Services\Admin\AdminService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class WorkspaceService
@@ -41,7 +43,7 @@ class WorkspaceService
                     'type' => WorkspaceType::generic,
                     'organization_id' => $org->id
                 ]);
-                $this->adminService->setWorkspaces(Auth::user()->id, $wsp->id, Roles::manager_id);
+                $this->adminService->setWorkspaces(Auth::user()->id, $wsp->id, (new Roles)->WORKSPACE_MANAGER_ID());
                 return $wsp;
             }
         } catch (\Throwable $th) {
@@ -52,7 +54,7 @@ class WorkspaceService
     public function delete($id)
     {
         $wsp = Workspace::find($id);
-        if ($wsp != null && $wsp->type != WorkspaceType::public) {
+        if ($wsp != null && !$wsp->isPublic()) {
             $wsp->delete();
             return ['deleted' => $wsp];
         } else {
@@ -75,5 +77,17 @@ class WorkspaceService
     {
         $wsp = Workspace::find($wid);
         return $wsp->resources()->get();
+    }
+
+    public function getOrganizationResources($oid)
+    {
+        $res = new Collection();
+        $collections = Organization::find($oid)->collections()->get();
+        foreach ($collections as $coll) {
+            foreach ($coll->resources()->get() as $dam) {
+                $res->add($dam);
+            }
+        }
+        return $res;
     }
 }

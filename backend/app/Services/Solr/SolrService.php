@@ -3,7 +3,7 @@
 
 namespace App\Services\Solr;
 
-
+use App\Enums\ResourceType;
 use App\Models\Collection;
 use App\Models\DamResource;
 use App\Services\Catalogue\FacetManager;
@@ -149,7 +149,6 @@ class SolrService
         // the query is done without the facet filter, so that it returns the complete list of facets and the counter present in the entire index
         $allDocuments = $client->select($query);
         $faceSetFound = $allDocuments->getFacetSet();
-
         // make a new request, filtering for each facet
         $this->facetManager->setQueryByFacets($query, $facetsFilter);
         $allDocuments = $client->select($query);

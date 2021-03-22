@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 
 use App\Enums\MediaType;
-use App\Enums\ResourceType;
 
 class ResourceResource extends BaseResource
 {
@@ -29,6 +28,7 @@ class ResourceResource extends BaseResource
             'uses' => DamResourceUseResource::collection($this->uses),
             'collection' => $this->resource->collection()->get(),
             'workspace' => $this->resource->workspaces()->get(),
+            //'abilities' => $this->getUserAbilities(Auth::user())
         ];
     }
 }

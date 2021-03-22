@@ -3,10 +3,11 @@
 namespace App\Http\Requests;
 
 use App\Enums\ResourceType;
+use App\Enums\Roles;
 use App\Models\Collection;
-use App\Models\Workspace;
 use App\Traits\JsonValidatorTrait;
 use BenSampo\Enum\Rules\EnumKey;
+use Exception;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,14 +23,36 @@ class StoreResourceRequest extends FormRequest
     public function authorize()
     {
         //Check if collection_id is attached to the organization of user selected workspace
-        $organizations = Auth::user()->organizations()->get();
+        $user = Auth::user();
+
         $collection = Collection::find($this->collection_id);
-        foreach($organizations as $org)
-        {
-            if($collection->organization()->first()->id == $org->id) {
-                return true;
-            }
+        $respurceBaseType = $this->type;
+
+        if($this->type == ResourceType::image || $this->type == ResourceType::audio || $this->type == ResourceType::video) {
+            $respurceBaseType = 'multimedia';
         }
+
+        if($respurceBaseType != $collection->accept) {
+            throw new Exception("The resource type isn't accepted for the collection");
+        }
+
+        if ($user->isA(Roles::SUPER_ADMIN)) {
+            return true;
+        }
+        $wsp = $user->workspaces()->where('workspaces.id', $user->selected_workspace)->first();
+        $org = $wsp->organization()->first();
+
+        if($collection->organization()->first()->id == $org->id) {
+            return true;
+        } else {
+            $collections_available = $org->collections()->get();
+            $colls = [];
+            foreach ($collections_available as $coll) {
+                $colls[] = $coll->id;
+            }
+            throw new Exception('Invalid collection_id. Available for selected workspace: '. implode(', ', $colls));
+        }
+
 
         return false;
     }

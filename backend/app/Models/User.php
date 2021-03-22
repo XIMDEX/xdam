@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Abilities;
 use App\Enums\OrganizationType;
 use App\Enums\WorkspaceType;
 use App\Traits\SetDefaultOrganizationAndWorkspace;
@@ -76,6 +77,11 @@ class User extends Authenticatable
             }
         }
         return $abilities_on_entity;
+    }
+
+    public function isAdminOf(Organization $organization)
+    {
+        return $this->can(Abilities::MANAGE_ORGANIZATION, $organization);
     }
 
 }

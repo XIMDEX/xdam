@@ -6,7 +6,7 @@ use Carbon\Carbon;
 
 trait AuthTrait{
 
-	protected function token($personalAccessToken, $message = null, $code = 200)
+	protected function token($personalAccessToken, $message = null, $code = 200): array
 	{
 		$tokenData = [
 			'access_token' => $personalAccessToken->accessToken,
@@ -17,23 +17,20 @@ trait AuthTrait{
 		return $this->success($tokenData, $message, $code);
 	}
 
-    protected function success($data, $message = null, $code = 200)
+    protected function success($data, $message = null, $code = 200): array
 	{
 		return [
-			'status'=> 'Success',
+            'code' => $code,
 			'message' => $message,
 			'data' => $data,
-            'status_code' => $code
         ];
 	}
 
-	protected function error($message = null, $code)
+	protected function error($message = null, $code): array
 	{
-		return [
-			'status'=>'Error',
-			'message' => $message,
-			'data' => null,
-            'status_code' => $code
+        return [
+            'code' => $code,
+			'error' => $message,
         ];
 	}
 

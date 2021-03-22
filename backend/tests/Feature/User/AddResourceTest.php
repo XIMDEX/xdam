@@ -15,7 +15,7 @@ use Tests\TestCase;
 
 class AddResourceTest extends TestCase
 {
-    use WithFaker;
+    // use WithFaker;
     /**
      * A basic feature test example.
      *
@@ -31,7 +31,7 @@ class AddResourceTest extends TestCase
             ->has(Workspace::factory(['name' => 'a generic faker wsp'])->count(1))
             ->create();
 
-        $admin = $this->getUserWithRole(Roles::admin_id, $org);
+        $admin = $this->getUserWithRole((new Roles)->ORGANIZATION_ADMIN_ID(), $org);
 
         /*
         As $admin (with role admin in the organization and workspaces)
@@ -74,13 +74,14 @@ class AddResourceTest extends TestCase
         Storage::fake('avatars');
         $file = UploadedFile::fake()->image('avatar.jpg');
 
+        $collection_id = $data['org']->collections()->where('solr_connection', 'multimedia')->first()->id;
         $response = $this->json('POST', '/api/v1/resource', [
             'File' => [$file],
             'type' => 'image',
             'data' => '{"description": {"active": true, "partials": {"pages": 10}}}',
-            'collection_id' => $data['org']->collections()->where('type_id', 2)->first()->id,
+            'collection_id' => $collection_id,
         ]);
-
+        //dd($response);
         $response
             ->assertStatus(200)
             ->assertJson([
@@ -94,7 +95,7 @@ class AddResourceTest extends TestCase
         Storage::fake('avatars');
         $file = UploadedFile::fake()->image('avatar.jpg');
 
-        $response = $this->json('POST', '/api/v1/resource/'.$data['org']->collections()->where('type_id', 2)->first()->id.'/create', [
+        $response = $this->json('POST', '/api/v1/resource/'.$collection_id.'/create', [
             'File' => [$file],
             'type' => 'image',
             'data' => '{"description": {"active": true, "partials": {"pages": 10}}}',

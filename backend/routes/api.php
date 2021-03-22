@@ -32,6 +32,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
         Route::post('signup',   [AuthController::class, 'signup'])->name('auth.signup');
     });
 
+
     Route::group(['middleware' => 'show.resource'], function() {
         Route::group(['prefix' => 'resource'], function(){
             Route::get('/render/{damUrl}/{size}', [ResourceController::class, 'render'])->name('damResource.renderWithSize');
@@ -41,8 +42,12 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
     });
 
     Route::get('/exploreCourses', [ResourceController::class, 'exploreCourses'])->name('damResource.exploreCourses');
+    //Route::get('/user/{token}/resource/{damResource}/permissions', [UserController::class, 'resourceInfo'])->name('user.get.resource.info');
 
     Route::group(['middleware' => 'auth:api'], function () {
+
+        Route::get('workspaceOfCollection/{collection}', [WorkspaceController::class, 'workspaceOfCollection'])   ->name('collection.org.wsp.get');
+
         Route::group(['prefix' => 'super-admin', 'middleware' => 'can:*'], function(){
             Route::group(['prefix' => 'organization'], function(){
                 Route::post('create',               [OrganizationController::class, 'create'])          ->name('org.create');
@@ -90,8 +95,8 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::post('set/user',             [AdminController::class, 'setWorkspaces'])  ->name('adm.usr.set.wsp');
             Route::post('unset/user',           [AdminController::class, 'unsetWorkspaces'])->name('adm.usr.unset.wsp');
             Route::get('/get/{workspace_id}',   [WorkspaceController::class, 'get'])        ->name('wsp.get');
-            Route::delete('/{workspace_id}',    [WorkspaceController::class, 'delete'])     ->name('wsp.delete');
             Route::post('update',               [WorkspaceController::class, 'update'])     ->name('wsp.update');
+            Route::delete('/{workspace_id}',    [WorkspaceController::class, 'delete'])     ->name('wsp.delete');
         });
 
         Route::group(['prefix' => 'role', 'middleware' => 'manage.roles'], function() {
@@ -105,7 +110,8 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::get('/',         [UserController::class, 'user'])->name('user.get');
 
             Route::group(['prefix' => 'resource'], function(){
-                Route::get('/', [UserController::class, 'resources'])->name('user.get.resources');
+                Route::get('/',                          [UserController::class, 'resources'])->name('user.get.resources');
+                Route::get('/{damResource}/permissions', [UserController::class, 'resourceInfo'])->name('user.get.resource.info');
                 /*
                     if the user is attached to the organization:
                     the next route attach the resource to the corporate workspace of an organization, and to the specified collection
@@ -122,14 +128,19 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::group(['prefix' => 'organizations'], function(){
                 Route::get('/',                             [UserController::class, 'getOrganizations'])            ->name('user.org.get');
                 Route::get('/{organization_id}/workspaces', [UserController::class, 'getWorkspacesOfOrganization']) ->name('user.org.wsps.get');
+                Route::get('/{organization_id}/resources',  [WorkspaceController::class, 'getOrganizationResources'])   ->name('user.org.get.resources');
             });
         });
 
         Route::group(['prefix' => 'resource', 'middleware' => 'read.workspace'], function() {
-        // Route::group(['prefix' => 'resource', 'middleware' => 'manage.workspaces'], function() {
-
             Route::get('/listTypes', [ResourceController::class, 'listTypes'])->name('damResource.listTypes');
             Route::get('/',          [ResourceController::class, 'getAll'])->name('damResource.getAll');
+
+            Route::group(['middleware' => 'show.resource'], function() {
+                Route::get('/render/{damUrl}/{size}', [ResourceController::class, 'render'])->name('damResource.renderWithSize');
+                Route::get('/render/{damUrl}',        [ResourceController::class, 'render'])->name('damResource.render');
+                Route::get('/{damResource}',          [ResourceController::class, 'get'])   ->name('damResource.get');
+            });
 
             Route::group(['middleware' => 'create.resource'], function() {
                 Route::post('/',                        [ResourceController::class, 'store'])->name('damResource.store');
@@ -140,18 +151,21 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
                 Route::get('/download/{damResource}/{size}',    [ResourceController::class, 'download'])->name('damResource.download');
                 Route::get('/download/{damResource}',           [ResourceController::class, 'download'])->name('damResource.downloadWithSize');
             });
-            Route::post('/{damResource}/update',                    [ResourceController::class, 'update'])     ->name('damResource.update');
 
-            Route::group([], function() {
+            Route::group(['middleware' => 'update.resource'], function() {
+                Route::post('/{damResource}/update', [ResourceController::class, 'update'])->name('damResource.update');
+            });
+
+            Route::group(['middleware' => 'update.resource.card'], function() {
                 Route::post('/{damResource}/setTags',                   [ResourceController::class, 'setTags'])    ->name('damResource.setTags');
                 Route::post('/{damResource}/addPreview',                [ResourceController::class, 'addPreview']) ->name('damResource.addPreview');
                 Route::post('/{damResource}/addFile',                   [ResourceController::class, 'addFile'])    ->name('damResource.addFile');
                 Route::post('/{damResource}/addCategory/{category}',    [ResourceController::class, 'addCategory'])->name('damResource.addCategory');
                 Route::post('/{damResource}/addUse',                    [ResourceController::class, 'addUse'])     ->name('damResource.addUse');
-                Route::delete('/{damResource}',                             [ResourceController::class, 'delete'])               ->name('damResource.delete');
+                Route::delete('/{damResource}',                         [ResourceController::class, 'delete'])     ->name('damResource.delete');
             });
 
-            Route::group([], function() {
+            Route::group(['middleware' => 'delete.resource.card'], function() {
                 Route::delete('/{damResource}/deleteUse/{damResourceUse}',  [ResourceController::class, 'deleteUse'])            ->name('damResource.deleteUse');
                 Route::delete('/{damResource}/deleteCategory/{category}',   [ResourceController::class, 'deleteCategory'])       ->name('damResource.deleteCategory');
                 Route::delete('/{damResource}/associatedFile/{media}',      [ResourceController::class, 'deleteAssociatedFile']) ->name('damResource.deleteAssociatedFile');
@@ -167,7 +181,6 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::post('/', [CategoryController::class, 'store'])->name('category.store');
             Route::delete('/{category}', [CategoryController::class, 'delete'])->name('category.delete');
         });
-
 
         Route::group(['prefix' => 'catalogue'], function() {
             Route::get('/{collection}', [CatalogueController::class, 'index'])->name('catalogue.index');

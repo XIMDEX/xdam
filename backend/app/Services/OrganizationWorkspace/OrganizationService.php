@@ -66,16 +66,16 @@ class OrganizationService
 
     public function indexCollections($oid)
     {
-        $selected_org = Organization::find($oid);
-        if ($selected_org) {
-            return $selected_org->collections()->get();
+        $org = Organization::find($oid);
+        if ($org) {
+            return $org->collections()->get();
         }
         return ['warning'=>'organization not exist'];
     }
 
     public function indexCollectionTypes()
     {
-        return CollectionType::all();
+        return Collection::select('solr_connection')->distinct()->get();
     }
 
     public function delete($id)

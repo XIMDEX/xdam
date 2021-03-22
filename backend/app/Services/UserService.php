@@ -3,11 +3,14 @@
 namespace App\Services;
 
 use App\Enums\OrganizationType;
-use App\Enums\WorkspaceType;
 use App\Models\DamResource;
 use App\Models\Organization;
 use App\Models\Workspace;
+use App\Utils\Utils;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Passport\Token;
+use Lcobucci\JWT\Decoder;
+use Lcobucci\JWT\Token\Parser;
 
 class UserService
 {
@@ -23,21 +26,6 @@ class UserService
         return Auth::user();
     }
 
-    public function unique_multidimensional_array($array, $key) {
-        $temp_array = array();
-        $i = 0;
-        $key_array = array();
-
-        foreach($array as $val) {
-            if (!in_array($val[$key], $key_array)) {
-                $key_array[$i] = $val[$key];
-                $temp_array[$i] = $val;
-            }
-            $i++;
-        }
-        return $temp_array;
-    }
-
     public function resources()
     {
         $workspaces = Auth::user()->workspaces()->get();
@@ -47,7 +35,14 @@ class UserService
                 $resources[] = $res;
             }
         }
-        return $this->unique_multidimensional_array($resources, 'id');
+
+        return Utils::unique_multidimensional_array($resources, 'id');
+
+    }
+
+    public function resourceInfo(DamResource $dam)
+    {
+        return $dam->getUserAbilities(Auth::user());
     }
 
     public function getWorkspaces()

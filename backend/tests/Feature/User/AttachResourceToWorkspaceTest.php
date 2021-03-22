@@ -27,7 +27,76 @@ class AttachResourceToWorkspaceTest extends TestCase
      *
      * @return void
      */
-    public function test_user_a_upload_a_resource_on_a_corporate_wsp_in_multimedia_default_collection()
+
+    public function test_a_basic_user_upload_resource_in_public_workspace()
+    {
+        $basic_user = User::where('email', 'basic_user@xdam.com')->first();
+
+        $org = $basic_user->organizations()->where('type', 'public')->first();
+        $this->actingAs($basic_user, 'api');
+
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
+
+        /*
+            User must select workspace corporate
+        */
+        $basic_user->selected_workspace = $org->publicWorkspace()->id;
+        $basic_user->save();
+        $collection_id = $org->collections()->where('solr_connection', 'multimedia')->first()->id;
+
+        $resource = $this->json('POST', '/api/v1/resource', [
+            'File' => [$file],
+            'type' => 'image',
+            'name' => 'imagen test',
+            'data' => '{"description": {"active": true, "partials": {"pages": 10}}}',
+            'collection_id' => $collection_id
+        ]);
+
+
+        $resource
+            ->assertStatus(200)
+            ->assertJson([
+                'id' => true
+            ]);
+    }
+
+    public function test_a_basic_user_upload_resource_in_corporate_workspace()
+    {
+        $basic_user = User::where('email', 'basic_user@xdam.com')->first();
+
+        $org = $basic_user->organizations()->where('type', 'corporate')->first();
+
+        $this->actingAs($basic_user, 'api');
+
+        Storage::fake('avatars');
+
+        $file = UploadedFile::fake()->image('avatar.jpg');
+
+        /*
+            User must select workspace corporate
+        */
+        $basic_user->selected_workspace = $org->corporateWorkspace()->id;
+        $basic_user->save();
+
+        $collection_id = $org->collections()->where('solr_connection', 'multimedia')->first()->id;
+
+        $resource = $this->json('POST', '/api/v1/resource', [
+            'File' => [$file],
+            'type' => 'image',
+            'name' => 'imagen test',
+            'data' => '{"description": {"active": true, "partials": {"pages": 10}}}',
+            'collection_id' => $collection_id
+        ]);
+
+        $resource
+            ->assertStatus(200)
+            ->assertJson([
+                'id' => true
+            ]);
+    }
+
+    public function test_organization_admin_upload_a_resource_on_a_corporate_wsp_in_multimedia_default_collection()
     {
         /*
             Create user and organization.
@@ -40,9 +109,9 @@ class AttachResourceToWorkspaceTest extends TestCase
             ->has(Workspace::factory(['type' => WorkspaceType::generic])->count(2))
             ->create();
 
-        $this->setOrganization($user, $org, Roles::admin_id, false);
+        $this->setOrganization($user, $org, (new Roles)->ORGANIZATION_ADMIN_ID());
 
-        $this->setOrganization($other_user, $org, Roles::reader_id);
+        $this->setOrganization($other_user, $org, (new Roles)->ORGANIZATION_USER_ID());
 
         /*
         as $user, we select the corporate workspace of the organization
@@ -64,13 +133,14 @@ class AttachResourceToWorkspaceTest extends TestCase
 
         Storage::fake('avatars');
         $file = UploadedFile::fake()->image('avatar.jpg');
+        $collection_id = $org->collections()->where('solr_connection', 'multimedia')->first()->id;
 
         $resource = $this->json('POST', '/api/v1/resource', [
             'File' => [$file],
             'type' => 'image',
             'name' => 'imagen test',
             'data' => '{"description": {"active": true, "partials": {"pages": 10}}}',
-            'collection_id' => $org->collections()->get()[0]->id //a default multimedia collection
+            'collection_id' => $collection_id //a default multimedia collection
         ]);
 
         $resource
@@ -91,9 +161,9 @@ class AttachResourceToWorkspaceTest extends TestCase
 
 
     /**
-    * @depends test_user_a_upload_a_resource_on_a_corporate_wsp_in_multimedia_default_collection
+    * @depends test_organization_admin_upload_a_resource_on_a_corporate_wsp_in_multimedia_default_collection
     */
-    public function test_user_a_attach_the_resource_to_a_generic_workspace_of_organization(array $data)
+    public function test_organization_admin_attach_the_resource_to_a_generic_workspace_of_organization(array $data)
     {
         $this->actingAs($data['user'], 'api');
         /*
@@ -125,9 +195,9 @@ class AttachResourceToWorkspaceTest extends TestCase
     }
 
     /**
-    * @depends test_user_a_upload_a_resource_on_a_corporate_wsp_in_multimedia_default_collection
+    * @depends test_organization_admin_upload_a_resource_on_a_corporate_wsp_in_multimedia_default_collection
     */
-    public function test_user_b_of_the_same_organization_can_view_the_resource_beacuse_it_is_in_corporate_workspace(array $data)
+    public function test_other_basic_user_of_the_same_organization_can_view_the_resource_beacuse_it_is_in_corporate_workspace(array $data)
     {
         $this->actingAs($data['other_user'], 'api');
 
@@ -149,9 +219,9 @@ class AttachResourceToWorkspaceTest extends TestCase
 
 
     /**
-    * @depends test_user_a_upload_a_resource_on_a_corporate_wsp_in_multimedia_default_collection
+    * @depends test_organization_admin_upload_a_resource_on_a_corporate_wsp_in_multimedia_default_collection
     */
-    public function test_user_b_of_the_same_organization_wants_to_view_the_resource_without_permission_in_the_generic_workspace_and_fails(array $data)
+    public function test_other_basic_user_of_the_same_organization_wants_to_view_the_resource_without_permission_in_the_generic_workspace_and_fails(array $data)
     {
         $this->actingAs($data['other_user'], 'api');
 
@@ -166,15 +236,15 @@ class AttachResourceToWorkspaceTest extends TestCase
         $response
             ->assertStatus(401)
             ->assertJson([
-                "read_workspace_error" => "Unauthorized."
+                Abilities::READ_WORKSPACE => "Error: Unauthorized."
             ]);
 
     }
 
     /**
-    * @depends test_user_a_upload_a_resource_on_a_corporate_wsp_in_multimedia_default_collection
+    * @depends test_organization_admin_upload_a_resource_on_a_corporate_wsp_in_multimedia_default_collection
     */
-    public function test_user_a_create_a_role_with_permissions_to_view_resources_in_the_generic_workspace(array $data)
+    public function test_organization_admin_create_a_role_with_permissions_to_view_resources_in_the_generic_workspace(array $data)
     {
         $this->actingAs($data['user'], 'api');
         /*
@@ -183,6 +253,7 @@ class AttachResourceToWorkspaceTest extends TestCase
 
         $role = $this->json('POST', '/api/v1/organization/'.$data['org']->id.'/roles/store', [
             'name' => 'role-show-resources',
+            'entity_type' => Entities::workspace
         ]);
 
 
@@ -200,8 +271,8 @@ class AttachResourceToWorkspaceTest extends TestCase
         $role_with_ability = $this->json('POST', '/api/v1/organization/'.$data['org']->id.'/roles/set/ability', [
             'role_id' => $role->original->id,
             'ability_ids' => [
-                Ability::where(['name' => Abilities::READ_RESOURCE, 'entity_type' => null ])->first()->id,
-                Ability::where(['name' => Abilities::DOWNLOAD_RESOURCE, 'entity_type' => null ])->first()->id
+                Ability::where(['name' => Abilities::READ_RESOURCE, 'entity_id' => null ])->first()->id,
+                Ability::where(['name' => Abilities::DOWNLOAD_RESOURCE, 'entity_id' => null ])->first()->id
             ]
         ]);
         $role_with_ability
@@ -221,9 +292,9 @@ class AttachResourceToWorkspaceTest extends TestCase
     }
 
     /**
-    * @depends test_user_a_create_a_role_with_permissions_to_view_resources_in_the_generic_workspace
+    * @depends test_organization_admin_create_a_role_with_permissions_to_view_resources_in_the_generic_workspace
     */
-    public function test_user_a_attach_user_b_to_generic_workspace_and_set_created_role(array $data)
+    public function test_organization_admin_attach_other_basic_user_to_generic_workspace_and_set_created_role(array $data)
     {
         $this->actingAs($data['user'], 'api');
 
@@ -233,7 +304,7 @@ class AttachResourceToWorkspaceTest extends TestCase
 
         $response = $this->json('POST', '/api/v1/workspace/set/user', [
             'user_id' => $data['other_user']->id,
-            'with_role_id' => Roles::reader_id,
+            'with_role_id' => (new Roles)->WORKSPACE_READER_ID(),
             'workspace_id' => $data['org']->firstGenericWorkspace()->id
         ]);
 
@@ -275,9 +346,9 @@ class AttachResourceToWorkspaceTest extends TestCase
     }
 
     /**
-    * @depends test_user_a_attach_user_b_to_generic_workspace_and_set_created_role
+    * @depends test_organization_admin_attach_other_basic_user_to_generic_workspace_and_set_created_role
     */
-    public function test_userB_now_view_workspace_the_resource_and_download_it(array $data_updated)
+    public function test_other_basic_user_now_view_workspace_the_resource_and_download_it(array $data_updated)
     {
         /*
             $other_user must select the generic workspace, where now has permissions to see the workspace &

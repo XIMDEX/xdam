@@ -198,12 +198,13 @@ class ResourceService
     public function store($params): DamResource
     {
         /*
-            if $wid == null, the user will store the resource with no workspace attached.
-            It's interpreted as personal with private visualization
+            $wid cannot be null
         */
         if($wid = Auth::user()->selected_workspace) {
             $wsp = Workspace::find($wid);
-            $org = $wsp ? $wsp->organization()->first() : null;
+            $org = $wsp->organization()->first();
+        } else {
+            throw new Exception('No workspace selected.');
         }
 
         $name = array_key_exists('name', $params) ? $params["name"] : "";

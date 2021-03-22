@@ -16,12 +16,8 @@ class DeleteWorkspaceRequest extends FormRequest
      */
     public function authorize()
     {
-        //check if user has the delete-workspace ability on the specified entity
-        if ($this->user()->canAny([Abilities::MANAGE_WORKSPACE, Abilities::DELETE_WORKSPACE], Workspace::find($this->workspace_id))) {
-            return true;
-        }
-
-        return false;
+        //Authorized by CanManageWorkspace
+        return true;
     }
 
     /**

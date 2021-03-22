@@ -34,7 +34,7 @@ class AuthController extends Controller
         $authResource = $this->authService->login($loginRequest->input());
         return (new AuthResource($authResource))
             ->response()
-            ->setStatusCode(Response::HTTP_OK);
+            ->setStatusCode($authResource['code']);
     }
 
     /**
