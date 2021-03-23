@@ -78,6 +78,20 @@ class DamResource extends Model implements HasMedia, TaggableInterface
         return $this->belongsToMany(Workspace::class);
     }
 
+    // public function organizations()
+    // {
+    //     $orgs = [];
+    //     foreach ($this->workspaces()->get() as $wsp) {
+    //         $orgs[] = $wsp->organization()->first()->id;
+    //     }
+    //     return $orgs;
+    // }
+
+    public function organization()
+    {
+        return $this->collection()->first()->organization()->first();
+    }
+
     public function getUserAbilities(User $user): array
     {
         //get all workspaces where the resource is attached

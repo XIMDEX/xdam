@@ -38,7 +38,8 @@ class ActivitySolrResource extends JsonResource
             'files' => $files,
             'previews' => $previews,
             'collection' => $this->collection->id,
-            'workspace' => $workspaces,
+            'workspaces' => $workspaces,
+            'organization' => $this->organization()->id
         ];
     }
 }
