@@ -29,10 +29,10 @@ class FacetManager
                 // The filter value can be single or an array
                 if (is_array($filterValue)) {
                     foreach ($filterValue as $value) {
-                        $query->createFilterQuery($value)->setQuery($filterName . ":" . $value);
+                        $query->createFilterQuery($filterName)->setQuery($filterName . ":" . $value);
                     }
                 } else {
-                    $query->createFilterQuery($filterValue)->setQuery($filterName . ":" . $filterValue);
+                    $query->createFilterQuery($filterName)->setQuery($filterName . ":" . $filterValue);
                 }
             }
         }
