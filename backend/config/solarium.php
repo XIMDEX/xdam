@@ -46,6 +46,7 @@ return [
                 'port' => env('SOLR_PORT', '8983'),
                 'path' => env('SOLR_PATH', '/'),
                 'core' => 'multimedia',
+                'timeout' => 120,
             ],
             'resource' => 'MultimediaSolrResource',
             'accepts_types' => [ResourceType::multimedia]
