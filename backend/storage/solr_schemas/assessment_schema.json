@@ -86,5 +86,13 @@
     "sortMissingLast": true,
     "docValues": true,
     "omitPositions": true
+  },
+  "organization": {
+    "name": "organization",
+    "type": "strings"
+  },
+  "workspaces": {
+    "name": "workspaces",
+    "type": "text_general"
   }
 }

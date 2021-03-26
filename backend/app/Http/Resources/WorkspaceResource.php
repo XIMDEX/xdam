@@ -20,6 +20,7 @@ class WorkspaceResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'wsp_resource_count' => count($this->resources()->get()),
             'organization_id' => $this->organization_id,
             'type' => $this->type,
             'abilities' => Auth::user()->abilitiesOnEntity($this->id, Workspace::class)

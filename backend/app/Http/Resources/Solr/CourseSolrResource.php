@@ -49,7 +49,6 @@ class CourseSolrResource extends JsonResource
             'categories' => $this->categories()->pluck('name')->toArray() ?? [''],
             'files' => $files,
             'previews' => $previews,
-            'collection' => $this->collection->id,
             'workspaces' => $workspaces,
             'organization' => $this->organization()->id
         ];
