@@ -3,8 +3,10 @@
 namespace App\Http\Requests;
 
 use App\Enums\ResourceType;
+use App\Enums\Roles;
 use BenSampo\Enum\Rules\EnumKey;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class GetCatalogueRequest extends FormRequest
 {
@@ -15,7 +17,10 @@ class GetCatalogueRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        if (Auth::user()->canGetCatalogue() || Auth::user()->isA(Roles::SUPER_ADMIN)) {
+            return true;
+        }
+        return false;
     }
 
     /**

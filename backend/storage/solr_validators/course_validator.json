@@ -5,6 +5,13 @@
       "type": "object",
       "required": ["active", "partials"],
       "properties": {
+        "course_source": {
+            "const": {
+                "a": "aggregated",
+                "b": "internal",
+                "c": "external"
+            }
+        },
         "name": {
           "type": "string",
           "format": "string"

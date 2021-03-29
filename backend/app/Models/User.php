@@ -52,6 +52,18 @@ class User extends Authenticatable
         return $this->belongsToMany(Organization::class);
     }
 
+    public function canGetCatalogue(): bool
+    {
+        return true;
+        // $org = $collection->organization()->first();
+        // foreach ($this->organizations()->get() as $user_org) {
+        //     if($org->id == $user_org->id) {
+        //         return true;
+        //     }
+        // }
+        // return false;
+    }
+
     public function workspaces()
     {
         return $this->belongsToMany(Workspace::class);

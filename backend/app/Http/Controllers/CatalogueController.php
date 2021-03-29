@@ -43,7 +43,7 @@ class CatalogueController extends Controller
         $sortParams['order'] = $request->get('order');
 
         $facetsFilter = $request->get('facets', []);
-        $facetsFilter['collection'] = [(string)$collection->id];
+        $facetsFilter['organization'] = $collection->organization_id;
 
         $response = $this->catalogueService->indexByCollection(
             $pageParams,

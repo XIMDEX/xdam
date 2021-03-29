@@ -3,7 +3,6 @@
 
 namespace App\Services\Solr;
 
-use App\Enums\ResourceType;
 use App\Models\Collection;
 use App\Models\DamResource;
 use App\Services\Catalogue\FacetManager;
@@ -129,6 +128,7 @@ class SolrService
         $collection
     ): stdClass {
         $client = $this->getClientFromCollection($collection);
+        $core = $collection->accept;
         $search = $pageParams['search'];
         $currentPage = $pageParams['currentPage'];
         $limit = $pageParams['limit'];
@@ -137,7 +137,7 @@ class SolrService
         $facetSet = $query->getFacetSet();
 
         /* the facets to be applied to the query  */
-        $this->facetManager->setFacets($facetSet, []);
+        $this->facetManager->setFacets($facetSet, [], $core);
         /*  limit the query to facets that the user has marked us */
         $this->facetManager->setQueryByFacets($query, []);
 
@@ -174,7 +174,7 @@ class SolrService
         $response = new \stdClass();
 
         // the facets returned here are a complete unfiltered list, only the one that has been selected is marked as selected
-        $response->facets = $this->facetManager->getFacets($faceSetFound, $facetsFilter);
+        $response->facets = $this->facetManager->getFacets($faceSetFound, $facetsFilter, $core);
         $response->current_page = $currentPage;
         $response->data = $documentsResponse;
         $response->per_page = $limit;
