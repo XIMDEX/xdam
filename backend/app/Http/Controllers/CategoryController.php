@@ -9,6 +9,7 @@ use App\Http\Resources\CategoryResource;
 use App\Http\Resources\ResourceCollection;
 use App\Models\Category;
 use App\Services\CategoryService;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class CategoryController extends Controller
@@ -54,9 +55,9 @@ class CategoryController extends Controller
      * @param Category $category
      * @return \Illuminate\Http\JsonResponse|object
      */
-    public function getResources(Category $category)
+    public function getResources(Request $request, Category $category)
     {
-        $resources =  $this->categoryService->getResources($category);
+        $resources =  $this->categoryService->getResources($category, $request->active);
         return (new ResourceCollection($resources))
             ->response()
             ->setStatusCode(Response::HTTP_OK);

@@ -38,9 +38,10 @@ class CategoryService
      * @param Category $category
      * @return mixed
      */
-    public function getResources(Category $category)
+    public function getResources(Category $category, $active)
     {
-        return $category->resources;
+        $active = $active == null ? 1 : $active;
+        return $category->resources()->where('active', $active)->get();
     }
 
     /**
