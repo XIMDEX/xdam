@@ -22,17 +22,28 @@ class CoursePreviewResource extends JsonResource
 
         if (!empty($description))
         {
+            $active = property_exists($description, 'active') ? $description->active : null;
             $name = property_exists($description, 'course_title') ? $description->course_title : '';
             $image = property_exists($description, 'media_upload') ? $description->media_upload : '';
             $introduction = property_exists($description, 'introduction') ? $description->introduction : '';
+            $course_source = property_exists($description, 'course_source') ? $description->course_source : '';
+            $type = property_exists($description, 'type') ? $description->type : '';
+            $external_source = property_exists($description, 'external_source') ? $description->external_source : '';
         }
-
-        return [
-            'coursecode' => $this->id,
-            'image' => $image,
-            'title' => $name,
-            'introduction' => $introduction,
-            'tags' => $this->tags,
-        ];
+        if($active) {
+            return [
+                'coursecode' => $this->id,
+                'image' => $image,
+                'title' => $name,
+                'introduction' => $introduction,
+                'tags' => $this->tags,
+                'course_source' => $course_source,
+                'type' => $type,
+                'external_source' => $external_source,
+                'active' => $active,
+            ];
+        } else {
+            return false;
+        }
     }
 }
