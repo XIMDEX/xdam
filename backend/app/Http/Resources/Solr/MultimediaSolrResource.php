@@ -33,14 +33,17 @@ class MultimediaSolrResource extends JsonResource
             $previews[] = $files[0];
         }
 
+        $tags = $this->tags()->pluck('name')->toArray();
+        $categories = $this->categories()->pluck('name')->toArray();
+
         return [
             'id' => $this->id,
             'name' => $this->name,
             'data' => is_object($this->data) ? json_encode($this->data) : $this->data,
             'active' => $this->active,
             'type' => ResourceType::fromValue($this->type)->key,
-            'tags' => $this->tags()->pluck('name')->toArray() ?? [''],
-            'categories' => $this->categories()->pluck('name')->toArray() ?? [''],
+            'tags' => count($tags) > 0 ? $tags : ['untagged'],
+            'categories' => count($categories) > 0 ? $tags : ['uncategorized'],
             'files' => $files,
             'previews' => $previews,
             'workspaces' => $workspaces,

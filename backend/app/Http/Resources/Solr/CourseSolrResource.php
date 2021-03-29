@@ -36,6 +36,9 @@ class CourseSolrResource extends JsonResource
             $external = (strpos($data->description->course_source, "external") !== false);
         }
 
+        $tags = $this->tags()->pluck('name')->toArray();
+        $categories = $this->categories()->pluck('name')->toArray();
+
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -45,8 +48,8 @@ class CourseSolrResource extends JsonResource
             'internal' => $internal ?? false,
             'external' => $external ?? false,
             'type' => ResourceType::course,
-            'tags' => $this->tags()->pluck('name')->toArray() ?? [''],
-            'categories' => $this->categories()->pluck('name')->toArray() ?? [''],
+            'tags' => count($tags) > 0 ? $tags : ['untagged'],
+            'categories' => count($categories) > 0 ? $tags : ['uncategorized'],
             'files' => $files,
             'previews' => $previews,
             'workspaces' => $workspaces,
