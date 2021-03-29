@@ -43,7 +43,7 @@ class MultimediaSolrResource extends JsonResource
             'active' => $this->active,
             'type' => ResourceType::fromValue($this->type)->key,
             'tags' => count($tags) > 0 ? $tags : ['untagged'],
-            'categories' => count($categories) > 0 ? $tags : ['uncategorized'],
+            'categories' => count($categories) > 0 ? $categories : ['uncategorized'],
             'files' => $files,
             'previews' => $previews,
             'workspaces' => $workspaces,
