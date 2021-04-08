@@ -1,8 +1,9 @@
-###> Other files ###
+**/.DS_Store
+**/__MACOSX
 /.idea
-###< Other files ###
 vendor/*
 bootstrap/cache/*
 storage/*.key
+storage/logs
 .env
 .phpunit.result.cache

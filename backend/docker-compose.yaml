@@ -1,0 +1,51 @@
+version: "3.7"
+
+volumes:
+  database-data:
+  solr-data:
+
+services:
+  database:
+    image: mariadb:10
+    volumes:
+    - database-data:/var/lib/mysql
+    - ./docker/mariadb/initdb.d/:/docker-entrypoint-initdb.d
+    ports:
+    - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+
+  httpd:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+      args:
+        UID: ${UID}
+    ports:
+      - 8000:80
+    volumes:
+      - ./public:/var/www/html
+    depends_on:
+      - php-fpm
+
+  php-fpm:
+    build:
+      context: .
+      dockerfile: docker/php-fpm/Dockerfile
+      args:
+        UID: ${UID}
+    volumes:
+      - ./:/usr/src/xdam
+      - ${HOME}/.composer:/.composer
+    depends_on:
+      - database
+
+  solr:
+    image: solr:8
+    ports:
+      - 8983:8983
+    volumes:
+      - solr-data:/var/solr
