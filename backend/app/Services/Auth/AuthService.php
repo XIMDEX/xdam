@@ -21,13 +21,13 @@ class AuthService
 
     public function signup($credentials)
     {
-        User::create([
+        $user = User::create([
             'name' => $credentials['name'],
             'email' => $credentials['email'],
             'password' => Hash::make($credentials['password'])
         ]);
         Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']]);
-        return $this->token($this->getPersonalAccessToken(), 'User Created', 201);
+        return $this->token($this->getPersonalAccessToken(), 'User Created', 200, $user->id);
     }
 
     public function logout()

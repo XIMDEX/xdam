@@ -14,7 +14,7 @@ trait SetDefaultOrganizationAndWorkspace
     protected static function bootSetDefaultOrganizationAndWorkspace() {
         static::created(function ($model) {
 
-            $adminService = new AdminService(new Roles);
+            $adminService = new AdminService(new Roles());
             $public_org = Organization::where('name', DefaultOrganizationWorkspace::public_organization)->first();
             $public_wsp = Workspace::where('name', DefaultOrganizationWorkspace::public_workspace)->first();
 
