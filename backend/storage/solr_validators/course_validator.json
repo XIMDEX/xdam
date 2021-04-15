@@ -3,7 +3,7 @@
   "properties": {
     "description": {
       "type": "object",
-      "required": ["active", "partials"],
+      "required": ["active", "partials", "course_source"],
       "properties": {
         "course_source": {
             "enum": ["aggregated", "internal", "external"]

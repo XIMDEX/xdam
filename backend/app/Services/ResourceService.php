@@ -101,14 +101,15 @@ class ResourceService
             foreach ($possibleKeyNameInJson as $possibleKeyName) {
                 // for each one we iterate, if there is a corresponding key,
                 // we associate either a list of categories or a specific category to each resource
+
                 if (property_exists($data->description, $possibleKeyName)) {
                     $property = $data->description->$possibleKeyName;
                     if (is_array($property)) {
                         foreach ($property as $child) {
-                            $this->setCategories($resource, $child);
+                            $this->setCategories($resource, $child, $data);
                         }
                     } else {
-                        $this->setCategories($resource, $property);
+                        $this->setCategories($resource, $property, $data);
                     }
                 }
             }
@@ -289,6 +290,20 @@ class ResourceService
         return $resource;
     }
 
+    public function setOnlyOneCategoryTo(DamResource $resource, Category $category): DamResource
+    {
+        if ($category->type == $resource->type) {
+            foreach($resource->categories()->get() as $cat) {
+                $resource->categories()->detach($cat);
+            }
+            $resource->categories()->attach($category);
+        } else {
+            throw new Exception ("category type and resource type are not equals");
+        }
+        $this->solr->saveOrUpdateDocument($resource);
+        return $resource;
+    }
+
     /**
      * @param DamResource $resource
      * @param array $tags
@@ -307,16 +322,18 @@ class ResourceService
      * @return DamResource
      * @throws Exception
      */
-    public function setCategories(DamResource $resource, string $categoryName): DamResource
+    public function setCategories(DamResource $resource, string $categoryName, $data = null): DamResource
     {
         $category = Category::where("type", "=", $resource->type)->where("name", $categoryName)->first();
+
+        $is_external_course = ($resource->type == 'course' && isset($data->description) && $data->description->course_source == 'external');
         if (null != $category) {
             $this->deleteCategoryFrom($resource, $category);
-            $this->addCategoryTo($resource, $category);
+            $is_external_course ? $this->setOnlyOneCategoryTo($resource, $category) : $this->addCategoryTo($resource, $category);
         } else {
             // If category not exists, create it
             $category = $this->categoryService->store(["name" => $categoryName, "type" => $resource->type]);
-            $this->addCategoryTo($resource, $category);
+            $is_external_course ? $this->setOnlyOneCategoryTo($resource, $category) : $this->addCategoryTo($resource, $category);
         }
         return $resource;
     }
