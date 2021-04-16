@@ -41,7 +41,7 @@ class CourseSolrResource extends JsonResource
 
         $index = array_search('External_courses_and_Resources', $categories);
         if($index !== FALSE){
-            unset($array[$index]);
+            unset($categories[$index]);
         }
         return [
             'id' => $this->id,
