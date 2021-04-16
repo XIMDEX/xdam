@@ -39,10 +39,6 @@ class CourseSolrResource extends JsonResource
         $tags = $this->tags()->pluck('name')->toArray();
         $categories = $this->categories()->pluck('name')->toArray();
 
-        $index = array_search('External_courses_and_Resources', $categories);
-        if($index !== FALSE){
-            unset($categories[$index]);
-        }
         return [
             'id' => $this->id,
             'name' => $this->name,
