@@ -182,7 +182,8 @@ class ResourceController extends Controller
      */
     public function addCategory(DamResource $damResource, Category $category)
     {
-        $resource = $this->resourceService->addCategoryTo($damResource, $category);
+        $is_course = ($damResource->type === 'course');
+        $resource = $is_course ? $this->resourceService->setOnlyOneCategoryTo($damResource, $category) :$this->resourceService->addCategoryTo($damResource, $category);
         return (new ResourceResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);

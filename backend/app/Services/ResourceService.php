@@ -326,14 +326,14 @@ class ResourceService
     {
         $category = Category::where("type", "=", $resource->type)->where("name", $categoryName)->first();
 
-        $is_external_course = ($resource->type == 'course' && isset($data->description) && $data->description->course_source == 'external');
+        $is_course = ($resource->type == 'course');
         if (null != $category) {
             $this->deleteCategoryFrom($resource, $category);
-            $is_external_course ? $this->setOnlyOneCategoryTo($resource, $category) : $this->addCategoryTo($resource, $category);
+            $is_course ? $this->setOnlyOneCategoryTo($resource, $category) : $this->addCategoryTo($resource, $category);
         } else {
             // If category not exists, create it
             $category = $this->categoryService->store(["name" => $categoryName, "type" => $resource->type]);
-            $is_external_course ? $this->setOnlyOneCategoryTo($resource, $category) : $this->addCategoryTo($resource, $category);
+            $is_course ? $this->setOnlyOneCategoryTo($resource, $category) : $this->addCategoryTo($resource, $category);
         }
         return $resource;
     }
