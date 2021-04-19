@@ -9,14 +9,14 @@ class FacetManager
 
     //Convert to dynamic list based on input schema. This is what is going to display in front facets
     private $facetList = [];
+    private $radioValues = ['active', 'internal', 'aggregated', 'categories'];
     private $facetLists = [
         "course" => [
             "categories" => "categories",
             "active" => "active",
-            "type" => "type",
             "tags" => "tags",
             "internal" => "internal",
-            "aggregated" => "aggregated"
+            "aggregated" => "aggregated",
         ],
         "multimedia" => [
             "categories" => "categories",
@@ -59,10 +59,11 @@ class FacetManager
                     foreach ($filterValue as $key => $id) {
                         $q .= $key == 0 ? $filterName . ':' . $id : ' OR ' . $filterName . ':' . $id;
                     }
-                    // $q .= ' AND organization:'.$organizationId;
+                    //$q .= ' AND organization:'. $oid;
                     $query->createFilterQuery($filterName)->setQuery($q);
                 } else {
                     $q = $filterName . ':' . $filterValue;
+                    //$q .= ' AND organization:'. $oid;
                     $query->createFilterQuery($filterName)->setQuery($q);
                 }
             }
@@ -118,37 +119,42 @@ class FacetManager
         $facetsArray = [];
         // go through each of the facets list
         foreach ($this->facetList as $facetLabel => $facetKey) {
-            $facetItem = new \stdClass();
-            $facetItem->key = $facetKey;
-            $facetItem->label = $facetLabel;
+            $facetItem = null;
             $facet = $facetSet->getFacet($facetKey);
 
             if ($facet) {
                 $property = new \stdClass();
                 // iterates through each faceted collection
                 foreach ($facet as $valueFaceSet => $count) {
-                    $isSelected = false;
-
-                    // if it exists in the parameter filter, mark it as selected
-                    if (array_key_exists($facetKey, $facetsFilter)) {
-                        if (is_array($facetsFilter[$facetKey])) {
-                            foreach ($facetsFilter[$facetKey] as $filterValue) {
-                                if ($filterValue === $valueFaceSet) {
+                    // if ($count > 0) {
+                        $facetItem = new \stdClass();
+                        $facetItem->key = $facetKey;
+                        $facetItem->label = $facetLabel;
+                        $isSelected = false;
+                        // if it exists in the parameter filter, mark it as selected
+                        if (array_key_exists($facetKey, $facetsFilter)) {
+                            if (is_array($facetsFilter[$facetKey])) {
+                                foreach ($facetsFilter[$facetKey] as $filterValue) {
+                                    if ($filterValue === $valueFaceSet) {
+                                        $isSelected = true;
+                                    }
+                                }
+                            } else {
+                                if ($facetsFilter[$facetKey] === $valueFaceSet)
+                                {
                                     $isSelected = true;
                                 }
                             }
-                        } else {
-                            if ($facetsFilter[$facetKey] === $valueFaceSet)
-                            {
-                                $isSelected = true;
-                            }
                         }
-                    }
-                    // return the occurrence count and if it is selected or nots
-                    $property->$valueFaceSet = ["count" => $count, "selected" => $isSelected];
-                    $facetItem->values = $property;
+                        // return the occurrence count and if it is selected or nots
+                        $property->$valueFaceSet = ["count" => $count, "selected" => $isSelected, "radio" => in_array($facetKey, $this->radioValues)];
+                        //$property->$valueFaceSet = ["count" => $count, "selected" => $isSelected];
+                        $facetItem->values = $property;
+                    // }
                 }
-                $facetsArray[] = $facetItem;
+                if ($facetItem != null) {
+                    $facetsArray[] = $facetItem;
+                }
             }
         }
         return $facetsArray;

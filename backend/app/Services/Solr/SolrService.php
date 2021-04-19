@@ -147,13 +147,14 @@ class SolrService
         }
 
         // the query is done without the facet filter, so that it returns the complete list of facets and the counter present in the entire index
-        $allDocuments = $client->select($query);
-        $faceSetFound = $allDocuments->getFacetSet();
+        // $allDocuments = $client->select($query);
+        // $faceSetFound = $allDocuments->getFacetSet();
+
         // make a new request, filtering for each facet
         $this->facetManager->setQueryByFacets($query, $facetsFilter);
         $allDocuments = $client->select($query);
         $documentsFound = $allDocuments->getNumFound();
-
+        $faceSetFound = $allDocuments->getFacetSet();
         $totalPages = ceil($documentsFound / $limit);
         $currentPageFrom = ($currentPage - 1) * $limit;
 
@@ -174,7 +175,11 @@ class SolrService
         $response = new \stdClass();
 
         // the facets returned here are a complete unfiltered list, only the one that has been selected is marked as selected
-        $response->facets = $this->facetManager->getFacets($faceSetFound, $facetsFilter, $core);
+        $facets = $this->stdToArray($this->facetManager->getFacets($faceSetFound, $facetsFilter, $core));
+        foreach ($facets as $key => $facet) {
+            ksort($facets[$key]['values']);
+        }
+        $response->facets = $facets;
         $response->current_page = $currentPage;
         $response->data = $documentsResponse;
         $response->per_page = $limit;
@@ -183,6 +188,11 @@ class SolrService
         $response->prev_page = (($currentPage - 1) > 1) ? $currentPage - 1 : 1;
         $response->total = $documentsFound;
         return $response;
+    }
+
+    public static function stdToArray($std): array
+    {
+        return json_decode(json_encode($std), true);
     }
 
 }
