@@ -3,7 +3,7 @@
   "properties": {
     "description": {
       "type": "object",
-      "required": ["active", "partials"],
+      "required": ["active", "partials", "name"],
       "properties": {
         "name": {
           "type": "string",

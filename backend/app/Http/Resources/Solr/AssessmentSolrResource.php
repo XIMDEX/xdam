@@ -29,7 +29,7 @@ class AssessmentSolrResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'name' => $this->name ?? $this->data->description->name,
             'data' => is_object($this->data) ? json_encode($this->data) : $this->data,
             'active' => $this->active,
             'type' => ResourceType::assessment,

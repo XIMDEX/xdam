@@ -26,6 +26,7 @@ use App\Services\MediaService;
 use App\Services\ResourceService;
 use App\Utils\DamUrlUtil;
 use App\Utils\FileUtil;
+use DirectoryIterator;
 use Illuminate\Http\Request;
 use Mimey\MimeTypes;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,6 +48,22 @@ class ResourceController extends Controller
     {
         $this->resourceService = $resourceService;
         $this->mediaService = $mediaService;
+    }
+
+    public function resourcesSchema ()
+    {
+        $path = storage_path('solr_validators');
+        $dir = new DirectoryIterator($path);
+        $schemas = [];
+        foreach ($dir as $fileinfo) {
+            if (!$fileinfo->isDot()) {
+                $fileName = $fileinfo->getFilename();
+                $json_file = file_get_contents($path .'/'. $fileName);
+                $key = str_replace('.json', '', $fileName);
+                $schemas[$key] = json_decode($json_file);
+            }
+        }
+        return response()->json($schemas);
     }
 
     private function getThumbnailBySize($size, $media)

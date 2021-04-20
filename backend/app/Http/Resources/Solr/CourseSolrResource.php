@@ -41,7 +41,7 @@ class CourseSolrResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'name' => $this->name ?? $data->description->name,
             'data' => is_object($this->data) ? json_encode($this->data) : $this->data,
             'active' => $active ?? $this->active,
             'aggregated' => $aggregated ?? false,

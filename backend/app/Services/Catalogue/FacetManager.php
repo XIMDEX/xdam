@@ -21,23 +21,23 @@ class FacetManager
         "multimedia" => [
             "categories" => "categories",
             "active" => "active",
-            "type" => "type",
+            //"type" => "type",
             "tags" => "tags",
         ],
         "activity" => [
             "categories" => "categories",
             "active" => "active",
-            "type" => "type",
+            //"type" => "type",
         ],
         "assessment" => [
             "categories" => "categories",
             "active" => "active",
-            "type" => "type",
+            //"type" => "type",
         ],
         "book" => [
             "categories" => "categories",
             "active" => "active",
-            "type" => "type",
+            //"type" => "type",
         ]
     ];
 

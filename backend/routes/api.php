@@ -46,6 +46,8 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
 
     Route::group(['middleware' => 'auth:api'], function () {
 
+        Route::get('resourcesSchema', [ResourceController::class, 'resourcesSchema'])->name('resources.schemas');
+
         Route::get('workspaceOfCollection/{collection}', [WorkspaceController::class, 'workspaceOfCollection'])   ->name('collection.org.wsp.get');
 
         Route::group(['prefix' => 'super-admin', 'middleware' => 'can:*'], function(){

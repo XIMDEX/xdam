@@ -3,9 +3,10 @@
   "properties": {
     "description": {
       "type": "object",
-      "required": ["active", "partials", "course_source"],
+      "required": ["active", "partials", "course_source", "name"],
       "properties": {
         "course_source": {
+            "type": "string",
             "enum": ["aggregated", "internal", "external"]
         },
         "name": {
