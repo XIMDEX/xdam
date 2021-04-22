@@ -241,8 +241,14 @@ class ResourceService
      */
     public function delete(DamResource $resource)
     {
-        $this->solr->deleteDocument($resource);
-        $resource->delete();
+        try {
+            $this->solr->deleteDocument($resource);
+            $resource->delete();
+            return true;
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+
     }
 
     /**

@@ -2,34 +2,48 @@
   "type": "object",
   "properties": {
     "description": {
+      "title": "Course",
       "type": "object",
       "required": ["active", "partials", "course_source", "name"],
       "properties": {
         "course_source": {
-            "type": "string",
-            "enum": ["aggregated", "internal", "external"]
+          "title": "Course source",
+          "type": "string",
+          "enum": ["aggregated", "internal", "external"]
         },
         "name": {
+          "title": "Name",
           "type": "string",
           "format": "string"
         },
         "external_url": {
+          "title": "external url",
           "type": "string",
           "format": "string"
         },
         "description": {
+          "title": "Describe",
           "type": "string",
           "format": "string"
         },
         "tags": {
+          "title": "tags",
           "type": "array",
-          "format": "string"
+          "format": "string",
+          "items": {
+              "type":"string"
+          }
         },
         "categories": {
+          "title": "categories",
           "type": "array",
-          "format": "string"
+          "format": "string",
+          "items": {
+            "type":"string"
+          }
         },
         "partials": {
+          "title": "partials",
           "type": "object",
           "properties": {
             "pages": {
@@ -39,10 +53,15 @@
           }
         },
         "active": {
+          "title": "active",
           "type": "boolean"
         }
       }
+    },
+    "id": {
+        "title": "course identification (uuid)",
+        "type": "string"
     }
   },
-  "required": ["description"]
+  "required": ["description", "id"]
 }
