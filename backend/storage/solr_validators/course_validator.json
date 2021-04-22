@@ -57,11 +57,7 @@
           "type": "boolean"
         }
       }
-    },
-    "id": {
-        "title": "course identification (uuid)",
-        "type": "string"
     }
   },
-  "required": ["description", "id"]
+  "required": ["description"]
 }
