@@ -18,12 +18,20 @@
           "format": "string"
         },
         "tags": {
-          "type": "array",
-          "format": "string"
+            "title": "tags",
+            "type": "array",
+            "format": "string",
+            "items": {
+                "type":"string"
+            }
         },
-        "categories": {
-          "type": "array",
-          "format": "string"
+          "categories": {
+            "title": "categories",
+            "type": "array",
+            "format": "string",
+            "items": {
+              "type":"string"
+            }
         },
         "partials": {
           "type": "object",
