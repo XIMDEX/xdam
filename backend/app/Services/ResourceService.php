@@ -14,6 +14,7 @@ use App\Services\Solr\SolrService;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class ResourceService
 {
@@ -211,16 +212,23 @@ class ResourceService
         $name = array_key_exists('name', $params) ? $params["name"] : "";
         $type = ResourceType::fromKey($params["type"])->value;
 
-        $newResource = DamResource::create(
-            [
-                'data' => $params['data'],
-                'name' => $name,
-                'type' => $type,
-                'active' => $params['data']->description->active,
-                'user_owner_id' => Auth::user()->id,
-                'collection_id' => $params['collection_id'] ?? null
-            ]
-        );
+        $resource_data = [
+            'data' => $params['data'],
+            'name' => $params['data']->description->name ?? $name,
+            'type' => $type,
+            'active' => $params['data']->description->active,
+            'user_owner_id' => Auth::user()->id,
+            'collection_id' => $params['collection_id'] ?? null
+        ];
+
+        if ($type == ResourceType::course) {
+            $resource_data['id'] = $params['kakuma_id'];
+        } else {
+            $resource_data['id'] = Str::orderedUuid();
+        }
+
+        $newResource = DamResource::create($resource_data);
+
         isset($org) && $wid ? $this->setResourceWorkspace($newResource, $wsp) : null;
         $this->linkCategoriesFromJson($newResource, $params['data']);
         $this->saveAssociatedFiles($newResource, $params);

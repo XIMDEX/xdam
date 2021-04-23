@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\Abilities;
 use App\Enums\MediaType;
-use App\Enums\ResourceType;
 use App\Enums\Roles;
 use App\Enums\ThumbnailTypes;
 use App\Traits\UsesUuid;
@@ -17,21 +15,22 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Silber\Bouncer\Database\Role;
-use Solarium\QueryType\ManagedResources\RequestBuilder\Resource;
-use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 class DamResource extends Model implements HasMedia, TaggableInterface
 {
-    use HasFactory, UsesUuid, TaggableTrait, InteractsWithMedia;
+    use HasFactory, TaggableTrait, InteractsWithMedia;
 
-    protected $fillable = ['type', 'data', 'name', 'active', 'user_owner_id', 'collection_id'];
+    protected $fillable = ['id', 'type', 'data', 'name', 'active', 'user_owner_id', 'collection_id'];
 
     protected $table = "dam_resources";
 
+    public $incrementing = false;
+
     protected $casts = [
-        "data" => "object"
+        "data" => "object",
+        "id" => "string"
     ];
 
     public function registerMediaConversions(\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void

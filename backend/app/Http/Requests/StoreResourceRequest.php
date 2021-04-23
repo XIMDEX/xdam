@@ -64,11 +64,20 @@ class StoreResourceRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'type' => ['required', new EnumKey(ResourceType::class)],
-            'collection_id' => 'required|exists:collections,id',
-            'data' => 'required'
-        ];
+        if ($this->type == ResourceType::course) {
+            return [
+                'type' => ['required', new EnumKey(ResourceType::class)],
+                'collection_id' => 'required|exists:collections,id',
+                'data' => 'required',
+                'kakuma_id' => 'required'
+            ];
+        } else {
+            return [
+                'type' => ['required', new EnumKey(ResourceType::class)],
+                'collection_id' => 'required|exists:collections,id',
+                'data' => 'required'
+            ];
+        }
     }
 
     public function prepareForValidation()
