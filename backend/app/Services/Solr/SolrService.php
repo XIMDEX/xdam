@@ -143,7 +143,8 @@ class SolrService
 
         /* if we have a search param, restrict the query */
         if (!empty($search)) {
-            $query->setQuery('data:*' . $search . "* OR name:*$search*");
+            $parsed_for_solr_query = str_replace(" ", "\ ", $search);
+            $query->setQuery('name:*' . $parsed_for_solr_query . '* OR data:*'. $parsed_for_solr_query.'*');
         }
 
         // the query is done without the facet filter, so that it returns the complete list of facets and the counter present in the entire index
