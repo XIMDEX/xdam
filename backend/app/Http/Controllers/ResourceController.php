@@ -27,6 +27,7 @@ use App\Services\ResourceService;
 use App\Utils\DamUrlUtil;
 use App\Utils\FileUtil;
 use DirectoryIterator;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Mimey\MimeTypes;
 use Symfony\Component\HttpFoundation\Response;
@@ -147,7 +148,7 @@ class ResourceController extends Controller
     public function delete(DamResource $damResource)
     {
         $res = $this->resourceService->delete($damResource);
-        return response(['deleted' => $res], Response::HTTP_NO_CONTENT);
+        return response(['deleted' => $res], Response::HTTP_OK);
     }
 
     /**
