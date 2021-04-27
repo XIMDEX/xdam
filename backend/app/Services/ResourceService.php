@@ -130,7 +130,9 @@ class ResourceService
             if (property_exists($data->description, "skills")) {
                 $this->setTags($resource, $data->description->skills);
             }
-            $this->setTags($resource, $data->description->tags);
+            if (property_exists($data->description, "tags")) {
+                $this->setTags($resource, $data->description->tags);
+            }
         }
     }
 
