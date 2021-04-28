@@ -127,6 +127,20 @@ class SolrService
         $facetsFilter,
         $collection
     ): stdClass {
+        //we need to replace all strings with spaces to  "\ " otherwise, Solr don't recognize it.
+        foreach ($facetsFilter as $key => $value) {
+            if(is_string($value)) {
+                $facetsFilter[$key] = str_replace(" ", "\ ", $value);
+            }
+            if(is_array($value)) {
+                foreach ($value as $k => $v) {
+                    if(is_string($v)) {
+                        $facetsFilter[$key][$k] = str_replace(" ", "\ ", $v);
+                    }
+                }
+            }
+        }
+
         $client = $this->getClientFromCollection($collection);
         $core = $collection->accept;
         $search = $pageParams['search'];
