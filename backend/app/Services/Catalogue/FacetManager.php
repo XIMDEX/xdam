@@ -22,7 +22,7 @@ class FacetManager
         "multimedia" => [
             "categories" => "categories",
             "active" => "active",
-            //"type" => "type",
+            "type" => "type",
             "tags" => "tags",
             "workspaces" => "workspaces"
         ],

@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use App\Enums\ThumbnailTypes;
 use App\Http\Requests\addFileToResourceRequest;
 use App\Http\Requests\addPreviewToResourceRequest;
 use App\Http\Requests\addUseRequest;
-use App\Http\Requests\deleteUseRequest;
-use App\Http\Requests\DownloadMultipleRequest;
 use App\Http\Requests\GetDamResourceRequest;
 use App\Http\Requests\ResouceCategoriesRequest;
 use App\Http\Requests\SetTagsRequest;
@@ -25,9 +22,8 @@ use App\Models\Media;
 use App\Services\MediaService;
 use App\Services\ResourceService;
 use App\Utils\DamUrlUtil;
-use App\Utils\FileUtil;
 use DirectoryIterator;
-use Illuminate\Http\JsonResponse;
+use Error;
 use Illuminate\Http\Request;
 use Mimey\MimeTypes;
 use Symfony\Component\HttpFoundation\Response;
@@ -229,13 +225,27 @@ class ResourceController extends Controller
      */
     public function render($damUrl, $size = null)
     {
-        $mediaId = DamUrlUtil::decodeUrl($damUrl);
-        $media = Media::findOrFail($mediaId);
-        $thumb = $this->getThumbnailBySize($size, $media);
-        if ($thumb) {
-            return response()->file($thumb);
+        $sizes = ['small', 'medium'];
+
+        if($size && !in_array($size, $sizes)) {
+            throw new Error('last url paramater must be equals to "small" or "medium"');
         }
-        return response()->file($this->mediaService->preview(Media::findOrFail($mediaId)));
+
+        switch ($size) {
+            case 'small':
+                $size = 25;
+                break;
+            case 'medim':
+                $size = 50;
+                break;
+            default:
+                $size = 90;
+                break;
+        }
+
+        $mediaId = DamUrlUtil::decodeUrl($damUrl);
+        $compressed = $this->mediaService->preview(Media::findOrFail($mediaId));
+        return $compressed->response('jpeg', $size);
     }
 
     /**

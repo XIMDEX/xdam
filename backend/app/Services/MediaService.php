@@ -5,9 +5,15 @@ namespace App\Services;
 use App\Enums\MediaType;
 use App\Http\Requests\DeleteFileRequest;
 use App\Models\Media;
+use FFMpeg\Coordinate\TimeCode;
+use FFMpeg\FFMpeg;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Iman\Streamer\VideoStreamer;
+use Intervention\Image\Facades\Image;
 use stdClass;
+use Spatie\ImageOptimizer\OptimizerChainFactory;
 
 class MediaService
 {
@@ -58,17 +64,35 @@ class MediaService
      * @return mixed
      * @throws \Exception
      */
-    public function preview(Media $media)
+    public function preview(Media $media, $size = null)
     {
         $mimeType = $media->mime_type;
         $mediaPath = $media->getPath();
         $fileType = explode('/', $mimeType)[0];
+        $file_directory = str_replace($media->file_name, '', $mediaPath);
+        $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.png';
 
         if ($fileType === 'video') {
-            //if it is a video, render it with a streaming
-            VideoStreamer::streamFile($mediaPath);
+            $thumb_exists = File::exists($thumbnail);
+            if(!$thumb_exists) {
+                $sec = 10;
+                $ffmpeg = FFMpeg::create([
+                    'ffmpeg.binaries'  => config("FFMPEG_BIN_PATH"),
+                    'ffprobe.binaries' => config("FFPROBE_BIN_PATH")
+                ]);
+                $video = $ffmpeg->open($mediaPath);
+                $frame = $video->frame(TimeCode::fromSeconds($sec));
+                $frame->save($thumbnail);
+            } else {
+                return Image::make($thumbnail);
+            }
+            //USE THIS PACKAGE TO RENDER THE VIDEO
+            //VideoStreamer::streamFile($mediaPath);
         } else {
-            return $mediaPath;
+            return Image::make($mediaPath);
+
+
+            //return $mediaPath;
         }
     }
 

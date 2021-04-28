@@ -63,7 +63,7 @@ class CourseSolrResource extends JsonResource
             'aggregated' => $aggregated ?? false,
             'internal' => $internal ?? false,
             'external' => $external ?? false,
-            'type' => ResourceType::course,
+            // 'type' => ResourceType::course,
             'tags' => count($tags) > 0 ? $tags : ['untagged'],
             'categories' => count($categories) > 0 ? $categories : ['uncategorized'],
             'files' => $files,

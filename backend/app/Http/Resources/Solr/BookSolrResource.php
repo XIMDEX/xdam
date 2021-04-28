@@ -34,7 +34,7 @@ class BookSolrResource extends JsonResource
             'name' => $this->data->description->name,
             'data' => is_object($this->data) ? json_encode($this->data) : $this->data,
             'active' => $this->active,
-            'type' => ResourceType::book,
+            // 'type' => ResourceType::book,
             'tags' => $this->tags()->pluck('name')->toArray() ?? [''],
             'categories' => $this->categories()->pluck('name')->toArray() ?? [''],
             'files' => $files,
