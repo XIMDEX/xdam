@@ -79,7 +79,7 @@ class ResourceService
      * @param $model
      * @param $params
      */
-    private function saveAssociatedFiles($model, $params): void
+    private function saveAssociatedFiles(DamResource $model, $params): void
     {
         // Save Associated Files
         $this->saveAssociateFile(MediaType::File()->key, $params, $model);

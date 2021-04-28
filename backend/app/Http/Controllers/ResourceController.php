@@ -225,10 +225,10 @@ class ResourceController extends Controller
      */
     public function render($damUrl, $size = null)
     {
-        $sizes = ['small', 'medium'];
+        $sizes = ['small', 'medium', 'raw'];
 
         if($size && !in_array($size, $sizes)) {
-            throw new Error('last url paramater must be equals to "small" or "medium"');
+            throw new Error('last url paramater must be equals to "small", "medium" or "raw"');
         }
 
         switch ($size) {
@@ -238,14 +238,17 @@ class ResourceController extends Controller
             case 'medim':
                 $size = 50;
                 break;
+            case 'raw':
+                $size = 'raw';
+                break;
             default:
                 $size = 90;
                 break;
         }
 
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
-        $compressed = $this->mediaService->preview(Media::findOrFail($mediaId));
-        return $compressed->response('jpeg', $size);
+        $compressed = $this->mediaService->preview(Media::findOrFail($mediaId), $size);
+        return $compressed->response('jpeg', $size === 'raw' ? 100 : $size);
     }
 
     /**

@@ -73,6 +73,11 @@ class MediaService
         $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.png';
 
         if ($fileType === 'video') {
+
+            if($size === 'raw') {
+                return VideoStreamer::streamFile($mediaPath);
+            }
+
             $thumb_exists = File::exists($thumbnail);
             if(!$thumb_exists) {
                 $sec = 10;
@@ -87,7 +92,7 @@ class MediaService
                 return Image::make($thumbnail);
             }
             //USE THIS PACKAGE TO RENDER THE VIDEO
-            //VideoStreamer::streamFile($mediaPath);
+
         } else {
             return Image::make($mediaPath);
 
