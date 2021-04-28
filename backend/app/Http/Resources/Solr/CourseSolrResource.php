@@ -43,19 +43,22 @@ class CourseSolrResource extends JsonResource
 
         $finalData = '';
 
-        if (is_object($this->data)) {
-            $this->data->description->id = $this->id;
-            $finalData = $this->data;
+        if (is_object($data)) {
+            $data->description->id = $this->id;
+            $data->id = $this->id;
+            $finalData = $data;
         } else {
-            $d = json_decode($this->data);
-            $d->data->description->id = $this->id;
+            $d = json_decode($data);
+            $d->description->id = $this->id;
+            $d->id = $this->id;
             $finalData = $d;
         }
 
+        $finalData = is_object($finalData) ? json_encode($finalData) : $finalData;
         return [
             'id' => $this->id,
             'name' => $data->description->name ?? $this->name,
-            'data' => is_object($finalData) ? json_encode($finalData) : $finalData,
+            'data' => $finalData,
             'active' => $active ?? $this->active,
             'aggregated' => $aggregated ?? false,
             'internal' => $internal ?? false,

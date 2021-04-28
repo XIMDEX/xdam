@@ -5,6 +5,7 @@ namespace App\Http\Resources\Solr;
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use App\Http\Resources\MediaResource;
+use App\Utils\Utils as AppUtils;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class BookSolrResource extends JsonResource
@@ -26,7 +27,7 @@ class BookSolrResource extends JsonResource
             'dam_url'
         );
 
-        $workspaces = Utils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
+        $workspaces = AppUtils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
 
         return [
             'id' => $this->id,
