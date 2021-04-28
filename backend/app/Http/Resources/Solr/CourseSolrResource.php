@@ -5,6 +5,8 @@ namespace App\Http\Resources\Solr;
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use App\Http\Resources\MediaResource;
+use App\Models\Workspace;
+use App\Utils\Utils;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CourseSolrResource extends JsonResource
@@ -25,7 +27,7 @@ class CourseSolrResource extends JsonResource
             json_decode(MediaResource::collection($this->getMedia(MediaType::Preview()->key))->toJson(), true),
             'dam_url'
         );
-        $workspaces = $this->resource->workspaces->pluck('id')->toArray();
+        $workspaces = Utils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
         $data = $this->data;
 
         if (property_exists($data,  "description") && property_exists($data->description, 'course_source'))
@@ -39,10 +41,21 @@ class CourseSolrResource extends JsonResource
         $tags = $this->tags()->pluck('name')->toArray();
         $categories = $this->categories()->pluck('name')->toArray();
 
+        $finalData = '';
+
+        if (is_object($this->data)) {
+            $this->data->description->id = $this->id;
+            $finalData = $this->data;
+        } else {
+            $d = json_decode($this->data);
+            $d->data->description->id = $this->id;
+            $finalData = $d;
+        }
+
         return [
             'id' => $this->id,
             'name' => $data->description->name ?? $this->name,
-            'data' => is_object($this->data) ? json_encode($this->data) : $this->data,
+            'data' => is_object($finalData) ? json_encode($finalData) : $finalData,
             'active' => $active ?? $this->active,
             'aggregated' => $aggregated ?? false,
             'internal' => $internal ?? false,

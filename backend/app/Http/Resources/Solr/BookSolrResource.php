@@ -25,7 +25,8 @@ class BookSolrResource extends JsonResource
             json_decode(MediaResource::collection($this->getMedia(MediaType::Preview()->key))->toJson(), true),
             'dam_url'
         );
-        $workspaces = $this->resource->workspaces->pluck('id')->toArray();
+
+        $workspaces = Utils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
 
         return [
             'id' => $this->id,

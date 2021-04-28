@@ -17,27 +17,32 @@ class FacetManager
             "tags" => "tags",
             "internal" => "internal",
             "aggregated" => "aggregated",
+            "workspaces" => "workspaces"
         ],
         "multimedia" => [
             "categories" => "categories",
             "active" => "active",
             //"type" => "type",
             "tags" => "tags",
+            "workspaces" => "workspaces"
         ],
         "activity" => [
             "categories" => "categories",
             "active" => "active",
             //"type" => "type",
+            "workspaces" => "workspaces"
         ],
         "assessment" => [
             "categories" => "categories",
             "active" => "active",
             //"type" => "type",
+            "workspaces" => "workspaces"
         ],
         "book" => [
             "categories" => "categories",
             "active" => "active",
             //"type" => "type",
+            "workspaces" => "workspaces"
         ]
     ];
 

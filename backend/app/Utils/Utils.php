@@ -2,6 +2,8 @@
 
 namespace App\Utils;
 
+use App\Models\Workspace;
+
 class Utils
 {
 
@@ -19,5 +21,16 @@ class Utils
             $i++;
         }
         return $temp_array;
+    }
+
+    public static function workspacesToName(array $ids): array
+    {
+        $array_of_names = [];
+
+        foreach (Workspace::find($ids) as $wsp) {
+            $array_of_names[] = $wsp->name;
+        }
+
+        return $array_of_names;
     }
 }
