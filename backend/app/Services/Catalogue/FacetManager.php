@@ -29,19 +29,16 @@ class FacetManager
         "activity" => [
             "categories" => "categories",
             "active" => "active",
-            //"type" => "type",
             "workspaces" => "workspaces"
         ],
         "assessment" => [
             "categories" => "categories",
             "active" => "active",
-            //"type" => "type",
             "workspaces" => "workspaces"
         ],
         "book" => [
             "categories" => "categories",
             "active" => "active",
-            //"type" => "type",
             "workspaces" => "workspaces"
         ]
     ];

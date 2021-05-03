@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Silber\Bouncer\Database\Role;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -76,6 +77,12 @@ class DamResource extends Model implements HasMedia, TaggableInterface
     {
         return $this->belongsToMany(Workspace::class);
     }
+
+    public function lomes(): HasOne
+    {
+        return $this->hasOne(Lomes::class);
+    }
+
 
     // public function organizations()
     // {

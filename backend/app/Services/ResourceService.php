@@ -8,6 +8,7 @@ use App\Enums\ResourceType;
 use App\Models\Category;
 use App\Models\DamResource;
 use App\Models\DamResourceUse;
+use App\Models\Lomes;
 use App\Models\Media;
 use App\Models\Workspace;
 use App\Services\Solr\SolrService;
@@ -239,6 +240,85 @@ class ResourceService
         $newResource->refresh();
         $this->linkTagsFromJson($newResource, $params['data']);
         return $newResource;
+    }
+
+    public function lomesSchema ($asArray = false)
+    {
+        $json_file = file_get_contents(storage_path('/lomes') .'/lomesSchema.json');
+        $schema = json_decode($json_file, $asArray);
+        return $schema;
+    }
+
+    public function searchForAssociativeKey($key, $tabKey, $array ) {
+        foreach ($array as $k => $val) {
+            if ($val[$key] === $tabKey) {
+                return $array[$k];
+            }
+        }
+        return null;
+     }
+
+    public function setLomesData($damResource, $params)
+    {
+        $dam_lomes = $damResource->lomes()->firstOrCreate();
+        $updateArray = [];
+        $formData = $params->all();
+        $tabKey = $formData['_tab_key'];
+        $lomesSchema = $this->lomesSchema(true);
+        //$tabSchema = array_search($tabKey, $lomesSchema['tabs']);
+        $tabSchema = $this->searchForAssociativeKey('key', $tabKey, $lomesSchema['tabs']);
+        foreach ($tabSchema['properties'] as $label => $props) {
+            foreach ($formData as $f_key => $f_value) {
+                if($f_key === $label && $f_value !== null) {
+                    $updateArray[$props['data_field']] = $f_value;
+                }
+            }
+        }
+        echo '';
+        $dam_lomes->update($updateArray);
+        $dam_lomes->save();
+    }
+
+    public function getLomesData($damResource)
+    {
+        $schema = $this->lomesSchema(true);
+        $lomes = $damResource->lomes()->first();
+        if(!$lomes) {
+            return [];
+        }
+        $lomes = $lomes->toArray();
+        $response = [];
+
+        foreach ($schema['tabs'] as $tab_key => $tab_values) {
+            $response[$tab_values['key']] = [
+                'title' => $tab_values['title'],
+                'key' => $tab_values['key'],
+                // 'db_field' => $tab_values['data_field'],
+                'formData' => []
+            ];
+            foreach ($tab_values['properties'] as $prop_label => $prop_values) {
+
+                $response[$tab_values['key']]['formData'][$prop_label] = $prop_values['data_field'];
+            }
+
+        }
+        foreach ($lomes as $db_field => $value) {
+            foreach ($response as $key => $arr_v) {
+                foreach ($arr_v['formData'] as $label => $res_db_field) {
+                    if ($db_field == $res_db_field) {
+                        $response[$key]['formData'][$label] = $value;
+                    }
+                }
+            }
+        }
+
+        return $response;
+
+
+
+
+
+
     }
 
     public function setResourceWorkspace(DamResource $newResource, Workspace $wsp): void

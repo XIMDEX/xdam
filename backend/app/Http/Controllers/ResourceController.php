@@ -24,7 +24,9 @@ use App\Services\ResourceService;
 use App\Utils\DamUrlUtil;
 use DirectoryIterator;
 use Error;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Mimey\MimeTypes;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -61,6 +63,11 @@ class ResourceController extends Controller
             }
         }
         return response()->json($schemas);
+    }
+
+    public function lomesSchema ()
+    {
+        return response()->json($this->resourceService->lomesSchema());
     }
 
     private function getThumbnailBySize($size, $media)
@@ -133,6 +140,19 @@ class ResourceController extends Controller
     {
         $resource = $this->resourceService->store($request->all());
         return (new ResourceResource($resource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function setLomesData(DamResource $damResource,  Request $request) {
+        $resource = $this->resourceService->setLomesData($damResource, $request);
+        return (new JsonResource($resource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+    public function getLomesData(DamResource $damResource) {
+        $resource = $this->resourceService->getLomesData($damResource);
+        return (new JsonResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
