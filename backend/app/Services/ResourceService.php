@@ -107,8 +107,15 @@ class ResourceService
                 if (property_exists($data->description, $possibleKeyName)) {
                     $property = $data->description->$possibleKeyName;
                     if (is_array($property)) {
-                        foreach ($property as $child) {
-                            $this->setCategories($resource, $child, $data);
+                        if(count($property) > 0) {
+                            foreach ($property as $child) {
+                                $this->setCategories($resource, $child, $data);
+                            }
+                        } else {
+                            foreach ($resource->categories()->get() as $k => $cat) {
+                                $resource->categories()->detach($cat);
+                                $resource->save();
+                            }
                         }
                     } else {
                         $this->setCategories($resource, $property, $data);

@@ -37,7 +37,7 @@ class ExploreCoursesResource extends JsonResource
             if (!empty($description))
             {
                 $active = property_exists($description, 'active') ? $description->active : null;
-                $name = property_exists($description, 'name') ? $description->name : '';
+                $name = property_exists($description, 'name') ? $description->name : (property_exists($description, 'course_title') ? $description->course_title : '');
                 $image = property_exists($description, 'media_upload') ? $description->media_upload : '';
                 $introduction = property_exists($description, 'introduction') ? $description->introduction : '';
                 $course_source = property_exists($description, 'course_source') ? $description->course_source : '';
