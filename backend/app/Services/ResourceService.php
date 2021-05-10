@@ -242,6 +242,7 @@ class ResourceService
 
         isset($org) && $wid ? $this->setResourceWorkspace($newResource, $wsp) : null;
         $this->linkCategoriesFromJson($newResource, $params['data']);
+        $this->linkTagsFromJson($newResource, $params['data']);
         $this->saveAssociatedFiles($newResource, $params);
         $this->solr->saveOrUpdateDocument($newResource);
         $newResource->refresh();
