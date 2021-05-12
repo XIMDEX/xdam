@@ -87,6 +87,10 @@
     "docValues": true,
     "omitPositions": true
   },
+  "tags": {
+    "name": "tags",
+    "type": "text_general"
+  },
   "organization": {
     "name": "organization",
     "type": "strings"

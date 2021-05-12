@@ -39,6 +39,7 @@ class FacetManager
         "book" => [
             "categories" => "categories",
             "active" => "active",
+            "tags" => "tags",
             "workspaces" => "workspaces"
         ]
     ];

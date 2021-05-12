@@ -44,7 +44,7 @@ class SolrConfig
     private function getSolariumClients(): array
     {
         $adapter = new Curl();
-        $adapter->setTimeout(env('SOLR_TIMEOUT'));
+        $adapter->setTimeout(0);
         $eventDispatcher = new EventDispatcher();
         $clients = [];
         foreach ($this->solrFullConfig as $config) {

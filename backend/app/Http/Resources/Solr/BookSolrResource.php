@@ -28,6 +28,7 @@ class BookSolrResource extends JsonResource
         );
 
         $workspaces = AppUtils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
+        $tags = $this->tags()->pluck('name')->toArray();
 
         return [
             'id' => $this->id,
@@ -35,8 +36,8 @@ class BookSolrResource extends JsonResource
             'data' => is_object($this->data) ? json_encode($this->data) : $this->data,
             'active' => $this->active,
             'type' => ResourceType::book,
-            'tags' => $this->tags()->pluck('name')->toArray() ?? [''],
-            'categories' => $this->categories()->pluck('name')->toArray() ?? [''],
+            'tags' =>  count($tags) > 0 ? $tags : ['untagged'],
+            'categories' => $this->categories()->pluck('name')->toArray() ?? ['uncategorized'],
             'files' => $files,
             'previews' => $previews,
             'collection' => $this->collection->id,
