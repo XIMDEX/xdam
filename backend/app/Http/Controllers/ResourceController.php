@@ -267,8 +267,17 @@ class ResourceController extends Controller
         }
 
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
-        $compressed = $this->mediaService->preview(Media::findOrFail($mediaId), $size);
-        return $compressed->response('jpeg', $size === 'raw' ? 100 : $size);
+        $media = Media::findOrFail($mediaId);
+
+        $mimeType = $media->mime_type;
+        $fileType = explode('/', $mimeType)[0];
+
+        if($fileType == 'video' || $fileType == 'image') {
+            $compressed = $this->mediaService->preview($media, $size);
+            return $compressed->response('jpeg', $size === 'raw' ? 100 : $size);
+        }
+
+        return response()->file($this->mediaService->preview($media));
     }
 
     /**

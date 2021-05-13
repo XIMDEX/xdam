@@ -80,25 +80,31 @@ class MediaService
 
             $thumb_exists = File::exists($thumbnail);
             if(!$thumb_exists) {
-                $sec = 10;
-                $ffmpeg = FFMpeg::create([
-                    'ffmpeg.binaries'  => config("FFMPEG_BIN_PATH"),
-                    'ffprobe.binaries' => config("FFPROBE_BIN_PATH")
-                ]);
-                $video = $ffmpeg->open($mediaPath);
-                $frame = $video->frame(TimeCode::fromSeconds($sec));
-                $frame->save($thumbnail);
+                $this->saveVideoSnapshot($thumbnail, $mediaPath);
             } else {
                 return Image::make($thumbnail);
             }
             //USE THIS PACKAGE TO RENDER THE VIDEO
 
-        } else {
+
+
+        } else if($fileType === 'image') {
             return Image::make($mediaPath);
-
-
-            //return $mediaPath;
+        } else {
+            return $mediaPath;
         }
+    }
+
+    public function saveVideoSnapshot($thumbPath, $videoSourcePath)
+    {
+        $sec = 10;
+        $ffmpeg = FFMpeg::create([
+            'ffmpeg.binaries'  => config("FFMPEG_BIN_PATH"),
+            'ffprobe.binaries' => config("FFPROBE_BIN_PATH")
+        ]);
+        $video = $ffmpeg->open($videoSourcePath);
+        $frame = $video->frame(TimeCode::fromSeconds($sec));
+        $frame->save($thumbPath);
     }
 
     /**
@@ -122,6 +128,16 @@ class MediaService
         }
         $model->save();
         $mediaList = $this->list($model, $collection);
+
+        $media = Media::findOrFail($mediaList[0]->id);
+        $mimeType = $media->mime_type;
+        $mediaPath = $media->getPath();
+        $fileType = explode('/', $mimeType)[0];
+        if($fileType == 'video') {
+            $file_directory = str_replace($media->file_name, '', $mediaPath);
+            $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.png';
+            $this->saveVideoSnapshot($thumbnail, $mediaPath);
+        }
         return !empty($mediaList) ? end($mediaList) : [];
     }
 

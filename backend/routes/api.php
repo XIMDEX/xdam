@@ -153,8 +153,8 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             });
 
             Route::group(['middleware' => 'download.resource'], function() {
-                Route::get('/download/{damResource}/{size}',    [ResourceController::class, 'download'])->name('damResource.downloadWithSize');
-                Route::get('/download/{damResource}',           [ResourceController::class, 'download'])->name('damResource.download');
+                Route::get('/download/{damUrl}/{size}',    [ResourceController::class, 'download'])->name('damResource.downloadWithSize');
+                Route::get('/download/{damUrl}',           [ResourceController::class, 'download'])->name('damResource.download');
             });
 
             Route::group(['middleware' => 'update.resource'], function() {
