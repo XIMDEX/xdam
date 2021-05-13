@@ -23,6 +23,7 @@ class FacetManager
             "categories" => "categories",
             "active" => "active",
             "type" => "type",
+            "types" => "types",
             "tags" => "tags",
             "workspaces" => "workspaces"
         ],

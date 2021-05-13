@@ -5,6 +5,8 @@ namespace App\Http\Resources\Solr;
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use App\Http\Resources\MediaResource;
+use App\Models\Media;
+use App\Utils\DamUrlUtil;
 use App\Utils\Utils;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -36,6 +38,18 @@ class MultimediaSolrResource extends JsonResource
 
         $tags = $this->tags()->pluck('name')->toArray();
         $categories = $this->categories()->pluck('name')->toArray();
+        $types = [];
+
+        foreach ($files as $key => $dam_url) {
+            $mediaId = DamUrlUtil::decodeUrl($dam_url);
+            $media = Media::findOrFail($mediaId);
+            $mimeType = $media->mime_type;
+            $fileType = explode('/', $mimeType)[0];
+            if (!in_array($fileType, $types))
+            {
+                $types[] = $fileType;
+            }
+        }
 
         return [
             'id' => $this->id,
@@ -43,6 +57,7 @@ class MultimediaSolrResource extends JsonResource
             'data' => is_object($this->data) ? json_encode($this->data) : $this->data,
             'active' => $this->active,
             'type' => ResourceType::fromValue($this->type)->key,
+            'types' => $types,
             'tags' => count($tags) > 0 ? $tags : ['untagged'],
             'categories' => count($categories) > 0 ? $categories : ['uncategorized'],
             'files' => $files,
