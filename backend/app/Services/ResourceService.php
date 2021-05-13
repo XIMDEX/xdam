@@ -497,6 +497,7 @@ class ResourceService
             $media = Media::findOrFail($id);
             $media->delete();
         }
+        $this->solr->saveOrUpdateDocument($resource);
         return $resource->refresh();
     }
 
@@ -509,6 +510,7 @@ class ResourceService
     public function deleteAssociatedFile(DamResource $resource, Media $media): DamResource
     {
         $media->delete();
+        $this->solr->saveOrUpdateDocument($resource);
         return $resource->refresh();
     }
 }
