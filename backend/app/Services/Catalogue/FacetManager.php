@@ -9,7 +9,7 @@ class FacetManager
 
     //Convert to dynamic list based on input schema. This is what is going to display in front facets
     private $facetList = [];
-    private $radioValues = ['active', 'internal', 'aggregated', 'categories'];
+    private $radioValues = [];
     private $facetLists = [
         "course" => [
             "categories" => "categories",
