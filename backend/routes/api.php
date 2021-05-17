@@ -8,6 +8,7 @@ use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -35,9 +36,10 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
 
     Route::group(['middleware' => 'show.resource'], function() {
         Route::group(['prefix' => 'resource'], function(){
-            Route::get('/render/{damUrl}/{size}', [ResourceController::class, 'render'])->name('damResource.renderWithSize');
-            Route::get('/render/{damUrl}',        [ResourceController::class, 'render'])->name('damResource.render');
-            Route::get('/{damResource}',          [ResourceController::class, 'get'])   ->name('damResource.get');
+            Route::get('/render/{damUrl}/{size}',   [ResourceController::class, 'render'])->name('damResource.renderWithSize');
+            Route::get('/render/{damUrl}',          [ResourceController::class, 'render'])->name('damResource.render');
+            Route::get('/{damResource}',            [ResourceController::class, 'get'])   ->name('damResource.get');
+            Route::get('/lastCreated/{collection}', [CollectionController::class, 'getLastResourceCreated'])->name('collection.get.lastCreated');
         });
     });
 
@@ -144,6 +146,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             //     Route::get('/render/{damUrl}',        [ResourceController::class, 'render'])->name('damResource.render');
             //     Route::get('/{damResource}',          [ResourceController::class, 'get'])   ->name('damResource.get');
             // });
+
             Route::get('/{damResource}/lomes', [ResourceController::class, 'getLomesData'])->name('resources.getLomesData');
             Route::group(['middleware' => 'create.resource'], function() {
                 Route::post('/',                        [ResourceController::class, 'store'])->name('damResource.store');
