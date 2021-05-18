@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 
 class CollectionService
 {
-    public function getLastResourceCreated(ModelsCollection $collection): DamResource
+    public function getLastResource(ModelsCollection $collection, $time): DamResource
     {
-        $lastCreated = $collection->resources()->latest()->first();
-        return $lastCreated;
+        $last = $collection->resources()->orderBy($time.'_at', 'desc')->first();
+        return $last;
     }
 }

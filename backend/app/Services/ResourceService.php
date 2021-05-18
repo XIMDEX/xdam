@@ -513,4 +513,17 @@ class ResourceService
         $this->solr->saveOrUpdateDocument($resource);
         return $resource->refresh();
     }
+
+    public function updateAsLast($toBeCloned, $created) {
+        $collection = $toBeCloned->collection()->first();
+        $theClon = $collection->resources()->orderBy($created ? 'created_at' : 'updated_at', 'desc')->first();
+        $toBeCloned->data = $theClon->data;
+        $toBeCloned->save();
+        $this->solr->saveOrUpdateDocument($toBeCloned);
+        return $toBeCloned;
+    }
+
+    public function updateAsOther($toBeCloned, $theClon) {
+
+    }
 }

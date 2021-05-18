@@ -40,6 +40,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::get('/render/{damUrl}',          [ResourceController::class, 'render'])->name('damResource.render');
             Route::get('/{damResource}',            [ResourceController::class, 'get'])   ->name('damResource.get');
             Route::get('/lastCreated/{collection}', [CollectionController::class, 'getLastResourceCreated'])->name('collection.get.lastCreated');
+            Route::get('/lastUpdated/{collection}', [CollectionController::class, 'getLastResourceUpdated'])->name('collection.get.lastUpdated');
         });
     });
 
@@ -161,7 +162,10 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             });
 
             Route::group(['middleware' => 'update.resource'], function() {
-                Route::post('/{damResource}/update', [ResourceController::class, 'update'])->name('damResource.update');
+                Route::post('/{damResource}/update',                        [ResourceController::class, 'update'])->name('damResource.update');
+                Route::post('/{damResource}/updateAsLastCreated',           [ResourceController::class, 'updateAsLastCreated'])->name('resource.updateAsLastCreated');
+                Route::post('/{damResource}/updateAsLastUpdated',           [ResourceController::class, 'updateAsLastUpdated'])->name('resource.updateAsLastUpdated');
+                Route::post('/{damResource}/updateAsOther/{otherResource}', [ResourceController::class, 'updateAsOther'])->name('resource.updateAsOther');
             });
 
             Route::group(['middleware' => 'update.resource.card'], function() {

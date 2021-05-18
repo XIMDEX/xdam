@@ -366,4 +366,28 @@ class ResourceController extends Controller
             return response(['error' => 'need to send a array of media ids']);
         }
     }
+
+    public function updateAsLastCreated(DamResource $damResource)
+    {
+        $resource = $this->resourceService->updateAsLast($damResource, true);
+        return (new ResourceResource($resource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function updateAsLastUpdated(DamResource $damResource)
+    {
+        $resource = $this->resourceService->updateAsLast($damResource, false);
+        return (new ResourceResource($resource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function updateAsOther(DamResource $damResource, DamResource $otherResource)
+    {
+        $resource = $this->resourceService->updateAsOther($damResource, $otherResource);
+        return (new ResourceResource($resource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
 }

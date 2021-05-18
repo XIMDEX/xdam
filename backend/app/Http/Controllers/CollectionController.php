@@ -19,7 +19,15 @@ class CollectionController extends Controller
 
     public function getLastResourceCreated(Collection $collection)
     {
-        $damResource = $this->collectionService->getLastResourceCreated($collection);
+        $damResource = $this->collectionService->getLastResource($collection, 'created');
+        return (new ResourceResource($damResource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function getLastResourceUpdated(Collection $collection)
+    {
+        $damResource = $this->collectionService->getLastResource($collection, 'updated');
         return (new ResourceResource($damResource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
