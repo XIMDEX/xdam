@@ -22,9 +22,7 @@ use App\Models\Media;
 use App\Services\MediaService;
 use App\Services\ResourceService;
 use App\Utils\DamUrlUtil;
-use DirectoryIterator;
 use Error;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Mimey\MimeTypes;
@@ -51,17 +49,7 @@ class ResourceController extends Controller
 
     public function resourcesSchema ()
     {
-        $path = storage_path('solr_validators');
-        $dir = new DirectoryIterator($path);
-        $schemas = [];
-        foreach ($dir as $fileinfo) {
-            if (!$fileinfo->isDot()) {
-                $fileName = $fileinfo->getFilename();
-                $json_file = file_get_contents($path .'/'. $fileName);
-                $key = str_replace('.json', '', $fileName);
-                $schemas[$key] = json_decode($json_file);
-            }
-        }
+        $schemas = $this->resourceService->resourcesSchema();
         return response()->json($schemas);
     }
 
@@ -144,12 +132,21 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    public function storeBatch(Request $request)
+    {
+        $resources = $this->resourceService->storeBatch($request->all());
+        return (new ResourceCollection($resources))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
     public function setLomesData(DamResource $damResource,  Request $request) {
         $resource = $this->resourceService->setLomesData($damResource, $request);
         return (new JsonResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
+
     public function getLomesData(DamResource $damResource) {
         $resource = $this->resourceService->getLomesData($damResource);
         return (new JsonResource($resource))

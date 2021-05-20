@@ -33,7 +33,6 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
         Route::post('signup',   [AuthController::class, 'signup'])->name('auth.signup');
     });
 
-
     Route::group(['middleware' => 'show.resource'], function() {
         Route::group(['prefix' => 'resource'], function(){
             Route::get('/render/{damUrl}/{size}',   [ResourceController::class, 'render'])->name('damResource.renderWithSize');
@@ -48,6 +47,11 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
     //Route::get('/user/{token}/resource/{damResource}/permissions', [UserController::class, 'resourceInfo'])->name('user.get.resource.info');
 
     Route::group(['middleware' => 'auth:api'], function () {
+
+
+        Route::get('/ini_pms', function() {
+            return ini_get('post_max_size');
+        })->name('ini.postMaxSize');
 
         Route::get('resourcesSchema', [ResourceController::class, 'resourcesSchema'])->name('resources.schemas');
         Route::get('lomesSchema', [ResourceController::class, 'lomesSchema'])->name('resources.lomes.schemas');
@@ -151,8 +155,9 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::get('/{damResource}/lomes', [ResourceController::class, 'getLomesData'])->name('resources.getLomesData');
             Route::group(['middleware' => 'create.resource'], function() {
                 Route::post('/',                        [ResourceController::class, 'store'])->name('damResource.store');
+                Route::post('/createBatch',             [ResourceController::class, 'storeBatch'])->name('damResource.store.batch');
                 Route::post('/{collection_id}/create',  [ResourceController::class, 'store'])->name('collection.damResource.store');
-                Route::post('/{damResource}/lomes',          [ResourceController::class, 'setLomesData'])->name('resources.setLomesData');
+                Route::post('/{damResource}/lomes',     [ResourceController::class, 'setLomesData'])->name('resources.setLomesData');
 
             });
 

@@ -26,13 +26,13 @@ class StoreResourceRequest extends FormRequest
         $user = Auth::user();
 
         $collection = Collection::find($this->collection_id);
-        $respurceBaseType = $this->type;
+        $resourceBaseType = $this->type;
 
         if($this->type == ResourceType::image || $this->type == ResourceType::audio || $this->type == ResourceType::video) {
-            $respurceBaseType = 'multimedia';
+            $resourceBaseType = 'multimedia';
         }
 
-        if($respurceBaseType != $collection->accept) {
+        if($resourceBaseType != $collection->accept) {
             throw new Exception("The resource type isn't accepted for the collection");
         }
 

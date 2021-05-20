@@ -2,16 +2,18 @@
 
 namespace App\Services;
 
-use App\Enums\DefaultOrganizationWorkspace;
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use App\Models\Category;
+use App\Models\Collection as ModelsCollection;
 use App\Models\DamResource;
 use App\Models\DamResourceUse;
-use App\Models\Lomes;
 use App\Models\Media;
 use App\Models\Workspace;
+use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Services\Solr\SolrService;
+use App\Utils\Utils;
+use DirectoryIterator;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -33,16 +35,22 @@ class ResourceService
     private CategoryService $categoryService;
 
     /**
+     * @var WorkspaceService
+     */
+    private WorkspaceService $workspaceService;
+
+    /**
      * ResourceService constructor.
      * @param MediaService $mediaService
      * @param SolrService $solr
      * @param CategoryService $categoryService
      */
-    public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService)
+    public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService)
     {
         $this->mediaService = $mediaService;
         $this->categoryService = $categoryService;
         $this->solr = $solr;
+        $this->workspaceService = $workspaceService;
     }
 
     private function saveAssociateFile($type, $params, $model)
@@ -208,20 +216,38 @@ class ResourceService
      * @return DamResource
      * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
      */
-    public function store($params): DamResource
+    public function store(
+        $params,
+        $toWorkspaceId = null,
+        $fromBatchType = null
+    ): DamResource
+
     {
         /*
             $wid cannot be null
         */
-        if($wid = Auth::user()->selected_workspace) {
-            $wsp = Workspace::find($wid);
-            $org = $wsp->organization()->first();
+        $wsp = null;
+
+        if($toWorkspaceId) {
+            $wsp = Workspace::find($toWorkspaceId);
         } else {
-            throw new Exception('No workspace selected.');
+            $wsp = Workspace::find(Auth::user()->selected_workspace);
+        }
+
+        if($wsp === null) {
+            throw new Exception("Undefined workspace");
+        }
+
+        if(!$wsp->organization()->first()) {
+            throw new Exception("The workspace doesn't belong to an organization");
         }
 
         $name = array_key_exists('name', $params) ? $params["name"] : "";
-        $type = ResourceType::fromKey($params["type"])->value;
+        $type = $fromBatchType ?? ResourceType::fromKey($params["type"])->value;
+
+        if(is_array($params['data'])) {
+            $params['data'] = Utils::arrayToObject($params['data']);
+        }
 
         $resource_data = [
             'data' => $params['data'],
@@ -240,7 +266,7 @@ class ResourceService
 
         $newResource = DamResource::create($resource_data);
 
-        isset($org) && $wid ? $this->setResourceWorkspace($newResource, $wsp) : null;
+        $this->setResourceWorkspace($newResource, $wsp);
         $this->linkCategoriesFromJson($newResource, $params['data']);
         $this->linkTagsFromJson($newResource, $params['data']);
         $this->saveAssociatedFiles($newResource, $params);
@@ -250,6 +276,72 @@ class ResourceService
         return $newResource;
     }
 
+
+    public function resourcesSchema ()
+    {
+        $path = storage_path('solr_validators');
+        $dir = new DirectoryIterator($path);
+        $schemas = [];
+        foreach ($dir as $fileinfo) {
+            if (!$fileinfo->isDot()) {
+                $fileName = $fileinfo->getFilename();
+                $json_file = file_get_contents($path .'/'. $fileName);
+                $key = str_replace('.json', '', $fileName);
+                $schemas[$key] = json_decode($json_file);
+            }
+        }
+
+        $path = storage_path('collection_mime_types');
+        $dir = new DirectoryIterator($path);
+        foreach ($dir as $fileinfo) {
+            if (!$fileinfo->isDot()) {
+                $fileName = $fileinfo->getFilename();
+                $json_file = file_get_contents($path .'/'. $fileName);
+                $key = str_replace('.json', '', $fileName);
+                $schemas['collection_types'][$key] = json_decode($json_file);
+            }
+        }
+
+        return $schemas;
+    }
+
+    public function storeBatch ($data)
+    {
+        $collection = ModelsCollection::find($data['collection']);
+        $organization = $collection->organization()->first();
+
+        if($data['create_wsp'] === '1') {
+            $wsp = $this->workspaceService->create($organization->id, $data['workspace'])->id;
+        } else {
+            $wsp = $data['workspace'];
+        }
+
+        $createdResources = [];
+
+        //$supported_mime_types = $this->resourcesSchema();
+
+        //$supported_mime_types[$collection->accept]
+
+        foreach ($data['files'] as $file) {
+            $name = $file->getClientOriginalName();
+            $type = explode('/', $file->getMimeType())[0];
+            $params = [
+                'data' => [
+                    'description' => [
+                        'name' => $name,
+                        'active' => false,
+                    ]
+                ],
+                'collection_id' => $collection->id,
+                'File' => [$file],
+            ];
+            $resource = $this->store($params, $wsp, $collection->accept === ResourceType::multimedia ? $type : $collection->accept);
+            $createdResources[] = $resource;
+        }
+
+        return $createdResources;
+    }
+
     public function lomesSchema ($asArray = false)
     {
         $json_file = file_get_contents(storage_path('/lomes') .'/lomesSchema.json');
@@ -257,14 +349,16 @@ class ResourceService
         return $schema;
     }
 
-    public function searchForAssociativeKey($key, $tabKey, $array ) {
+    public function searchForAssociativeKey($key, $tabKey, $array )
+    {
+        //move to Utils
         foreach ($array as $k => $val) {
             if ($val[$key] === $tabKey) {
                 return $array[$k];
             }
         }
         return null;
-     }
+    }
 
     public function setLomesData($damResource, $params)
     {
@@ -273,7 +367,6 @@ class ResourceService
         $formData = $params->all();
         $tabKey = $formData['_tab_key'];
         $lomesSchema = $this->lomesSchema(true);
-        //$tabSchema = array_search($tabKey, $lomesSchema['tabs']);
         $tabSchema = $this->searchForAssociativeKey('key', $tabKey, $lomesSchema['tabs']);
         foreach ($tabSchema['properties'] as $label => $props) {
             foreach ($formData as $f_key => $f_value) {
@@ -282,7 +375,6 @@ class ResourceService
                 }
             }
         }
-        echo '';
         $dam_lomes->update($updateArray);
         $dam_lomes->save();
     }
@@ -319,14 +411,7 @@ class ResourceService
                 }
             }
         }
-
         return $response;
-
-
-
-
-
-
     }
 
     public function setResourceWorkspace(DamResource $newResource, Workspace $wsp): void

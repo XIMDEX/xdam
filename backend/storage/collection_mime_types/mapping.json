@@ -1,0 +1,22 @@
+{
+    "multimedia": {
+        "mainTypes": ["*"],
+        "subTypes": ["*"]
+    },
+    "course": {
+        "mainTypes": ["*"],
+        "subTypes": ["*"]
+    },
+    "book": {
+        "mainTypes": ["*"],
+        "subTypes": ["*"]
+    },
+    "activity": {
+        "mainTypes": ["*"],
+        "subTypes": ["*"]
+    },
+    "assessment": {
+        "mainTypes": ["*"],
+        "subTypes": ["*"]
+    }
+}

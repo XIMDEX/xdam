@@ -40,7 +40,7 @@ class MultimediaSolrResource extends JsonResource
         $categories = $this->categories()->pluck('name')->toArray();
         $types = [];
 
-        foreach ($files as $key => $dam_url) {
+        foreach ($files as $dam_url) {
             $mediaId = DamUrlUtil::decodeUrl($dam_url);
             $media = Media::findOrFail($mediaId);
             $mimeType = $media->mime_type;
@@ -56,7 +56,7 @@ class MultimediaSolrResource extends JsonResource
             'name' => $this->data->description->name,
             'data' => is_object($this->data) ? json_encode($this->data) : $this->data,
             'active' => $this->active,
-            'type' => ResourceType::fromValue($this->type)->key,
+            'type' => (is_array($files) && count($files) === 0 ? 'image' : $this->type),
             'types' => $types,
             'tags' => count($tags) > 0 ? $tags : ['untagged'],
             'categories' => count($categories) > 0 ? $categories : ['uncategorized'],

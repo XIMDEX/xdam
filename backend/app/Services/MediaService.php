@@ -1,19 +1,16 @@
 <?php
 
 namespace App\Services;
-
 use App\Enums\MediaType;
-use App\Http\Requests\DeleteFileRequest;
 use App\Models\Media;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Iman\Streamer\VideoStreamer;
 use Intervention\Image\Facades\Image;
 use stdClass;
-use Spatie\ImageOptimizer\OptimizerChainFactory;
+
 
 class MediaService
 {
