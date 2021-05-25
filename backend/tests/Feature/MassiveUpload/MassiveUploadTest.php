@@ -33,30 +33,12 @@ class MassiveUploadTest extends TestCase
             $files[] = UploadedFile::fake()->image('avatar'.$i.'.jpg');
         }
 
-        //$collection_id = $data['org']->collections()->where('solr_connection', 'multimedia')->first()->id;
-
         $response = $this->json('POST', '/api/v1/resource/createBatch', [
             'collection' => Collection::where('accept', ResourceType::multimedia)->first()->id,
             'workspace' => 'batch_new',
             'files' => $files,
             'create_wsp' => '1'
         ]);
-
-        $a = 0;
     }
-
-    // public function test_throw_error_if_mime_type_is_not_suported()
-    // {
-    //     $response = $this->get('/');
-
-    //     $response->assertStatus(200);
-    // }
-
-    // public function test_the_batch_created_a_new_workspace()
-    // {
-    //     $response = $this->get('/');
-
-    //     $response->assertStatus(200);
-    // }
 
 }

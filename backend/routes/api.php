@@ -50,7 +50,11 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
 
 
         Route::get('/ini_pms', function() {
-            return ini_get('post_max_size');
+            return [
+                'pms' => ini_get('post_max_size'),
+                'mfu' => ini_get('max_file_uploads')
+            ];
+
         })->name('ini.postMaxSize');
 
         Route::get('resourcesSchema', [ResourceController::class, 'resourcesSchema'])->name('resources.schemas');
