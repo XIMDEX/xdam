@@ -50,7 +50,7 @@
   },
   "data": {
     "name": "data",
-    "type": "text_general",
+    "type": "string",
     "omitNorms": true,
     "omitTermFreqAndPositions": true,
     "indexed": true,
@@ -74,12 +74,13 @@
   },
   "name": {
     "name": "name",
-    "type": "text_general",
+    "type": "string",
     "omitNorms": true,
     "omitTermFreqAndPositions": true,
     "indexed": true,
     "stored": true,
     "uninvertible": true,
+    "docValues": true,
     "sortMissingLast": true,
     "omitPositions": true
   },
