@@ -28,7 +28,7 @@
   },
   "data": {
     "name": "data",
-    "type": "string",
+    "type": "text_general",
     "omitNorms": true,
     "omitTermFreqAndPositions": true,
     "indexed": true,
@@ -52,14 +52,13 @@
   },
   "name": {
     "name": "name",
-    "type": "string",
+    "type": "text_general",
     "omitNorms": true,
     "omitTermFreqAndPositions": true,
     "indexed": true,
     "stored": true,
     "uninvertible": true,
     "sortMissingLast": true,
-    "docValues": true,
     "omitPositions": true
   },
   "previews": {

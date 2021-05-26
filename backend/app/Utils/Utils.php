@@ -44,4 +44,10 @@ class Utils
 
         return $object;
     }
+
+    public static function objectToArray($object)
+    {
+        $full_array = json_decode(json_encode($object), true);
+        return $full_array;
+    }
 }

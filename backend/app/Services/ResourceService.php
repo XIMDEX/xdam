@@ -291,14 +291,14 @@ class ResourceService
             }
         }
 
-        $path = storage_path('collection_mime_types');
+        $path = storage_path('collection_config');
         $dir = new DirectoryIterator($path);
         foreach ($dir as $fileinfo) {
             if (!$fileinfo->isDot()) {
                 $fileName = $fileinfo->getFilename();
                 $json_file = file_get_contents($path .'/'. $fileName);
                 $key = str_replace('.json', '', $fileName);
-                $schemas['collection_types'][$key] = json_decode($json_file);
+                $schemas['collection_config'][$key] = json_decode($json_file);
             }
         }
 
