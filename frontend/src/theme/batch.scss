@@ -1,0 +1,45 @@
+
+.batch-form {
+    width: 100%;
+    // border: 1px solid $gray3;
+    // border-radius: 3px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+.bda-highlight {
+    border: 1px solid red;
+}
+
+.batch-drop-area {
+    width: calc(100% - 24px);
+    margin-left: 12px;
+    height: calc(100% - 250px);
+
+    .file-drop {
+        width: 100%;
+        min-height: 100%;
+        background-color: rgb(243, 243, 243);
+        display: flex;
+        .file-drop-target {
+            flex-grow: 1;
+            padding: 50px;
+        }
+    }
+    .label-drop {
+        top: 45%;
+        position: relative;
+        text-align: center;
+    }
+    .file-item {
+        margin: 10px 0;
+        display: flex;
+        > * {
+            flex-grow: 1;
+            line-height: 30px;
+            button {
+                float: right;
+            }
+        }
+    }
+}

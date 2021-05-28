@@ -1,0 +1,76 @@
+.sidebarAndResourcesConainer {
+    display: flex;
+    width: 100%;
+}
+
+.sidebarAndResourcesConainerFW {
+    display: flex;
+    width: 100%;
+}
+
+.sideBar {
+    background-color: $gray2;
+    width: 350px;
+    min-width: 350px;
+    min-height: calc(100vh  - #{$headerHeight});
+    transform: translateX(0px);
+}
+
+.sideBarHidden {
+    display: none;
+}
+
+.RCFullWidth {
+    width: 100%;
+    position: relative;
+    left: 0;
+} 
+
+.RCWithSidear {
+    width: calc(100% - 350px);
+    position: relative;
+    right: 0;
+}
+
+.closedFacetsBG {
+    position: absolute;
+    top: $headerHeight;
+    width: 48px;
+}
+
+
+@keyframes DnoneToBlock {
+    0% {
+        left: -25px;
+    }
+    100% {
+        left: -5px;
+    }
+}
+
+
+.toggleFacetsClose {
+    position: relative;
+    left: 0px;
+    i.icon {
+        position: relative;
+        left: -7px;
+    }
+}
+
+.toggleFacetsOpen {
+    animation: 0.5s ease-in-out DnoneToBlock;
+    animation-fill-mode: forwards;
+    z-index: 2;
+    position: absolute;
+    top: 95px;
+    
+    i.icon {
+        position: relative;
+        left: -7px;
+    }
+}
+
+.facets_title {
+    margin-left: 28px;
+}

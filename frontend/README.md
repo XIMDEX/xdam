@@ -1,49 +1,44 @@
-# XDAM front-end
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
 
-Front end application made with Angular 7 for Ximdex Digital Asset Management service (XDAM).
+## Available Scripts
 
-## Description
+In the project directory, you can run:
 
-This front-end provides a flexible and easy-to-use user interface for listing, uploading, editing and managing assets across your indexed resources from remote repositories (via Ximdex's XDAM backend).
+### `npm start`
 
-## Features
+Runs the app in the development mode.<br />
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-* Responsiveness: Optimized to be used with most devices and screen sizes.
-* Modularity: Due to its modular nature it can be integrated in any project with minimum effort.
-* Lightness: With almost no external dependencies its load time aims to be minimal.
+The page will reload if you make edits.<br />
+You will also see any lint errors in the console.
 
-## Availability
+### `npm test`
 
-This project is open source with AGPL v3 (see 'LICENSE')
+Launches the test runner in the interactive watch mode.<br />
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-## Environments and Api Routing
-There are 3 defined environments, default, production and pre-production.
-Inside the environments folder you can modify the path to which each environment points
-To switch between environments you have to add the flag --configuration.
-if you don't add any flag, the default environment will be used.
+### `npm run build`
 
-## Build
+Builds the app for production to the `build` folder.<br />
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. 
-Use the `--configuration preproduction` flag for a pre-production build.
-Use the `--configuration production` flag for a production build.
+The build is minified and the filenames include the hashes.<br />
+Your app is ready to be deployed!
 
-## Serve
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-Run `ng serve` to server the project (for debug purposes).
-Use the `--configuration preproduction` flag for a pre-production serve.
-Use the `--configuration production` flag for a production serve.
+### `npm run eject`
 
-## Additional Documentation
-[Technical Documentation for XDAM at Ximdex website](https://www.ximdex.com/en/documentation/xdam/)
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-## Changes Dec 2020
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-* We delete the JSON dependency for store resource metadata fields (Lomes tab), stored in index.html.
-* Now we have a form for every resource type in xdam system. **ItemComponent** have a **ModalCourseComponent** and this modal is composed by two components, **FormCourseComponent** and **MetadataComponent**,
-every form have specific data of the resource.
-* Added a Mapper class named EndPointMapper. This class load a JSON `endpoints.config.json`, that contains all endpoints of api, when you convoke it method ```getEndPointUrl(model: string, action: string, item: Item = null)```, it return a URL endpoint. It load default params to show init items on home page.
-* When new asset is wanted to create, **ItemComponent** load a specified form **ModalNewComponent** set by URL or JSON.
-* Modified ItemModel to adjust on actual model.
-* Move SettingsMapper structure on isolated JSON `settings.config.json`. XDAM init with this structure.
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+
+## Learn More
+
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+
+To learn React, check out the [React documentation](https://reactjs.org/).

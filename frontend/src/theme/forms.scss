@@ -1,0 +1,212 @@
+.forms-textField {
+    transition: all 0.15s ease-in-out !important;
+    label {
+        font-size: 16px;
+        text-transform: capitalize;
+        font-weight: bold;
+    }
+}
+
+.forms-arrayContainer {
+    display: block;
+}
+
+.forms-btn-addArrayItem {
+    margin-left: 10px !important;
+    transform: scale(0.9);
+    position: absolute;
+    right: 35px;
+    
+}
+
+.forms-arrayLabel {
+    display: inline-block;
+    font-size: 16px;
+    text-transform: capitalize;
+    font-weight: bold;
+    margin-bottom: 16px;
+    margin-top: 5px;
+}
+
+.forms-main-btns {
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+    height: 36px !important;
+    button, .dropdown {
+        margin: 2px !important;
+        flex-grow: 0;
+        width: unset;
+        float: right;
+    }
+}
+
+.edit-create-dialog-content {
+    overflow-y: hidden !important;
+    #form-content {
+        .active.tab {
+            overflow-y: scroll !important;
+            height: 79vh;
+        }
+    }
+}
+
+.hidden-message {
+    display: none;
+}
+
+.zoom-message {
+    display: block;
+}
+
+.form-messages {
+    padding: 15px;
+    transition: all 1s ease-in-out !important;
+}
+
+
+
+#sfu {
+    h5 {
+        text-transform: capitalize;
+        font-size: 20px;
+    }
+}
+
+@keyframes hover {
+    0% {
+        box-shadow: 1px 1px 1px 1px $warning;
+        border-radius: 6px;
+        border: transparent;
+    }
+    100% {
+        
+    }
+}
+
+@keyframes hoverarr {
+    0% {
+        box-shadow: 1px 1px 1px 1px $warning;
+        border-radius: 6px;
+        padding: 10px;
+        margin: 0 20px;
+        border: transparent;
+    }
+    100% {
+        
+    }
+}
+
+.fill-alert {
+    .grouped.equal.width.fields {
+        > .forms-arrayField {
+            margin: 0 30px;
+            &:active {
+                animation-fill-mode: forwards;
+                animation-play-state: running;
+            }
+            animation-name: hoverarr;
+            animation-duration: 15ms;
+            animation-fill-mode: backwards;
+            animation-play-state: paused;
+        }
+
+        > .forms-textField {
+            section {
+                padding: 8px;
+            }
+            &textarea:active,
+            &textarea:focus,
+            &:active {
+                animation-fill-mode: forwards;
+                animation-play-state: running;
+            }
+            animation-name: hover;
+            animation-duration: 15ms;
+            animation-fill-mode: backwards;
+            animation-play-state: paused;
+        }
+    }
+}
+
+#forms-btn-actions {
+    a, button {
+        flex-grow: 1;
+    }
+}
+
+.forms-btn-removeArrayItem {
+    border-top-left-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+    background: $primary !important;
+    i {
+        color: white;
+    }
+}
+
+.ui.dividing.header {
+    // background-color: $primary;
+    // color: white;
+    // padding: 6px;
+    // border-radius: 10px;
+    display: none;
+}
+
+.grouped.equal.width.fields {
+    .visible.menu.transition {
+        min-width: calc(100% + 2px) !important;
+    }
+    > .forms-textField, .forms-arrayField, .required.field{
+        margin-left: 20px;
+        max-width: 395px;
+    }
+    
+}
+
+.forms-arrayField {
+    padding: 10px;
+}
+
+.f-editing {
+    bottom: 6px;
+    position: relative;
+}
+
+.forms-arrayItem {
+    margin: 5px 0;
+    
+    .grouped.equal.width.fields {
+        margin: 0;
+    }
+    display: inline-flex;
+    .forms-textField {
+        
+        .forms-onArrayAddItem {
+            background-color: white !important;
+            color: black !important;
+        }
+        .forms-currentItems {
+            background-color: $primary !important;
+            color: white !important;
+            border: unset !important;
+            border-top-right-radius: 0px !important;
+            border-bottom-right-radius: 0px !important;
+        }
+        input {
+            position: relative;
+            bottom: 6px;
+            padding: 0 10px !important;
+            height: 30px;
+            width: auto;
+            border-top-right-radius: 0px !important;
+            border-bottom-right-radius: 0px !important;
+        }
+    }
+}
+
+.read-card-close-button {
+    position: absolute;
+    top: 10px;
+    right: 30px;
+    transform: scale(0.8);
+}

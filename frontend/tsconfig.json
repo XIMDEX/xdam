@@ -1,20 +1,26 @@
 {
-    "compileOnSave": false,
-    "compilerOptions": {
-        "baseUrl": ".",
-        "paths": {
-            "@xdam/models/*": ["projects/xdam/src/models/src/lib/*"]
-        },
-        "outDir": "./dist/out-tsc",
-        "sourceMap": true,
-        "declaration": false,
-        "module": "esnext",
-        "moduleResolution": "node",
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "resolveJsonModule": true,
-        "target": "es5",
-        "typeRoots": ["node_modules/@types"],
-        "lib": ["dom", "es2017"]
-    }
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react"
+  },
+  "include": [
+    "src"
+  ]
 }

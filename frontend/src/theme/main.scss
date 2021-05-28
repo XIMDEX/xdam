@@ -1,0 +1,47 @@
+@import './variables.scss';
+@import './overrides.scss';
+@import './itemCard.scss';
+@import './buttons.scss';
+@import './header.scss';
+@import './sidebar.scss';
+@import './forms.scss';
+@import './modals.scss';
+@import './batch.scss';
+@import './CustomCheckboxAndRadioButton.scss';  
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+
+body {
+    background: $gray1 !important;
+    font-family: 'Roboto' !important;
+    
+}
+  
+.dnone {
+    display: none !important;
+}
+
+.mr-4 {
+    margin-right: 2rem;
+}
+
+.mt-2 {
+    margin-top: 0.7rem;
+}
+
+.justifyContentBetween {
+    justify-content: space-between;
+}
+
+.darkLabel {
+    color: rgb(85, 85, 85) !important;
+}
+
+.whiteLabel {
+    color: white !important;
+}
+
+.float-right {
+    float: right;
+}

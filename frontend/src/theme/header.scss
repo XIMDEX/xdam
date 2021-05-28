@@ -1,0 +1,10 @@
+.headerLogo {
+    width: 200px;
+    filter: brightness(0) invert(1);
+    margin-left: 18px;
+}
+
+.main-header {
+    background-color: $secondary;
+    height: $headerHeight;
+}

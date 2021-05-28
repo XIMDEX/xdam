@@ -1,0 +1,56 @@
+.bg-primary {
+    background-color: $primary !important;
+}
+
+.bg-secondary {
+    background-color: $secondary !important;
+}
+
+.xdam-btn-primary {
+    border: none;
+    padding: 5px 10px;
+    color: white;
+    text-transform: capitalize;
+    cursor: pointer;
+}
+
+.xdam-btn-secondary {
+    border: none;
+    padding: 5px 10px;
+    color: white;
+    text-transform: capitalize;
+    cursor: pointer;
+}
+
+.xdam-btn-primary:hover {
+    background-color: darken($primary, 5%) !important;
+}
+
+.xdam-btn-secondary:hover {
+    background-color: darken($secondary, 5%) !important;
+}
+
+.btn-square {
+    width: 35px;
+    height: 35px;
+}
+
+.btn-half-square {
+    width: 17.5px;
+    height: 35px;
+}
+
+.btn-round-left {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.btn-round-right {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+
+.btn-round {
+    border-radius: 5px;
+}
