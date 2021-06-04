@@ -48,27 +48,38 @@ class syncKakumaIds extends Command
     public function handle(SolrService $solrService)
     {
         if ($this->confirm('WARNING! Before proceed, check the foreign keys / relations of dam_resource, and handle it. Otherwise, relations between entities will be broken. Proceed?')) {
+            if ($this->confirm('Want to update all resources or only one? (yes = update all) (no = enter the resource)')) {
+                $resources = DamResource::where('type', 'course')->get();
 
-            $resources = DamResource::where('type', 'course')->get();
-
-            foreach ($resources as $resource) {
-                $data = !is_object($resource->data) ? json_decode($resource->data) : $resource->data;
-
-                if (is_object($data)) {
-                    if (property_exists($data, 'description')) {
-                        $newId = $data->id ?? null;
-                        if($newId) {
-                            $resource->id = $newId;
-                            $resource->save(); //updated
-                            $solrService->saveOrUpdateDocument($resource); //indexed
-                            $this->line("$resource->id updated and indexed");
-                        } else {
-                            $this->line($resource->id . 'has not id prop on data column');
-                        }
-                    }
+                foreach ($resources as $resource) {
+                    $this->updateResource($resource, $solrService);
                 }
+            } else {
+                $rid = $this->ask('Enter resource id');
+                $resource = DamResource::where(['type' => 'course', 'id' => $rid])->first();
+                $this->updateResource($resource, $solrService);
             }
             echo 'finished' . PHP_EOL;
+        }
+    }
+
+    public function updateResource($resource, $solrService)
+    {
+        $data = !is_object($resource->data) ? json_decode($resource->data) : $resource->data;
+
+        if (is_object($data)) {
+            if (property_exists($data, 'description')) {
+                $newId = $data->id ?? null;
+                if($newId) {
+                    $solrService->deleteDocument($resource); //deleted from solr
+                    $resource->id = $newId;
+                    $resource->save(); //updated
+                    $solrService->saveOrUpdateDocument($resource); //indexed
+                    $this->line("$resource->id updated and indexed");
+                } else {
+                    $this->line($resource->id . 'has not id prop on data column');
+                }
+            }
         }
     }
 }
