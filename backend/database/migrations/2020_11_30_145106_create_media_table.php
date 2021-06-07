@@ -26,6 +26,14 @@ class CreateMediaTable extends Migration
             $table->unsignedInteger('order_column')->nullable();
 
             $table->nullableTimestamps();
+
+        });
+
+        Schema::table('media', function (Blueprint $table) {
+            $table->foreign('model_id', 'media_dam_fk')
+                ->references('id')
+                ->on('dam_resources')
+                ->onUpdate('cascade');
         });
     }
     /**

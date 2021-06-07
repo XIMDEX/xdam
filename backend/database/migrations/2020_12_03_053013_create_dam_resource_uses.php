@@ -19,7 +19,11 @@ class CreateDamResourceUses extends Migration
             $table->string("used_in")->nullable();
             $table->string("related_to")->nullable();
             $table->timestamps();
-            $table->foreign('dam_resource_id')->references('id')->on('dam_resources')->onDelete('cascade');
+            $table->foreign('dam_resource_id')
+                ->references('id')
+                ->on('dam_resources')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
         });
     }
 

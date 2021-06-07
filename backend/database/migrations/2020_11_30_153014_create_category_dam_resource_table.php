@@ -17,8 +17,8 @@ class CreateCategoryDamResourceTable extends Migration
             $table->uuid('dam_resource_id');
             $table->uuid('category_id');
 
-            $table->foreign('dam_resource_id')->references('id')->on('dam_resources')->onDelete('cascade');
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->foreign('dam_resource_id')->references('id')->on('dam_resources')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('category_id')->references('id')->on('categories')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

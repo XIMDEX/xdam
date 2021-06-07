@@ -44,7 +44,12 @@ class CreateLomesTable extends Migration
             $parsed_json_lomes = json_encode($schemaOutput, JSON_UNESCAPED_UNICODE, JSON_PRETTY_PRINT);
             file_put_contents(storage_path('lomes') . '/lomesSchema.json', $parsed_json_lomes);
             $table->timestamps();
-
+            $table->foreign('dam_resource_id', 'reource_lomes_fk')
+                ->constrained('dam_resources')
+                ->references('id')
+                ->on('dam_resources')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
         });
     }
 
