@@ -96,8 +96,8 @@ class MediaService
     {
         $sec = 10;
         $ffmpeg = FFMpeg::create([
-            'ffmpeg.binaries'  => config("FFMPEG_BIN_PATH"),
-            'ffprobe.binaries' => config("FFPROBE_BIN_PATH")
+            'ffmpeg.binaries'  => config('app.ffmpeg_path'),
+            'ffprobe.binaries' => config('app.ffprobe_path')
         ]);
         $video = $ffmpeg->open($videoSourcePath);
         $frame = $video->frame(TimeCode::fromSeconds($sec));
@@ -124,6 +124,7 @@ class MediaService
             $model->addMedia($files)->withCustomProperties($customProperties)->toMediaCollection($collection);
         }
         $model->save();
+
         $model->refresh();
 
         $mediaList = $this->list($model, $collection);
