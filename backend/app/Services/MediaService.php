@@ -124,6 +124,8 @@ class MediaService
             $model->addMedia($files)->withCustomProperties($customProperties)->toMediaCollection($collection);
         }
         $model->save();
+        $model->refresh();
+
         $mediaList = $this->list($model, $collection);
 
         $media = Media::findOrFail($mediaList[0]->id);
