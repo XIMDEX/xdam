@@ -14,6 +14,8 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
+    'ffprobe_path' => env('FFPROBE_BIN_PATH', '/usr/bin/ffprobe'),
+    'ffmpeg_path' => env('FFMPEG_BIN_PATH', '/usr/bin/ffmpeg'),
 
     /*
     |--------------------------------------------------------------------------
