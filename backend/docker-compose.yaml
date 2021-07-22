@@ -1,14 +1,14 @@
 version: "3.7"
 
 volumes:
-  database-data:
-  solr-data:
+  xdam-database-data:
+  xdam-solr-data:
 
 services:
-  database:
+  xdam_database:
     image: mariadb:10
     volumes:
-    - database-data:/var/lib/mysql
+    - xdam-database-data:/var/lib/mysql
     - ./docker/mariadb/initdb.d/:/docker-entrypoint-initdb.d
     ports:
     - 3306:3306
@@ -18,20 +18,20 @@ services:
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
 
-  httpd:
+  xdam_httpd:
     build:
       context: .
       dockerfile: docker/nginx/Dockerfile
       args:
         UID: ${UID}
     ports:
-      - 8000:80
+      - 8001:80
     volumes:
       - ./public:/var/www/html
     depends_on:
-      - php-fpm
+      - xdam_php_fpm
 
-  php-fpm:
+  xdam_php_fpm:
     build:
       context: .
       dockerfile: docker/php-fpm/Dockerfile
@@ -41,11 +41,11 @@ services:
       - ./:/usr/src/xdam
       - ${HOME}/.composer:/.composer
     depends_on:
-      - database
+      - xdam_database
 
-  solr:
+  xdam_solr:
     image: solr:8
     ports:
       - 8983:8983
     volumes:
-      - solr-data:/var/solr
+      - xdam-solr-data:/var/solr

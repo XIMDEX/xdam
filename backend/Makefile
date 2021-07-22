@@ -1,7 +1,7 @@
 UID=$(shell id -u)
 GID=$(shell id -g)
-DOCKER_PHP_SERVICE=php-fpm
-DOCKER_SOLR_SERVICE=solr
+DOCKER_PHP_SERVICE=xdam_php_fpm
+DOCKER_SOLR_SERVICE=xdam_solr
 
 export UID := ${UID}
 
@@ -11,14 +11,14 @@ erase: clear-cache
 	-docker-compose down -v --remove-orphans; exit 0;
 
 clear-cache:
-	-docker-compose run --rm --no-deps -u ${UID}:${GID} ${DOCKER_PHP_SERVICE} php artisan cache:clear && php artisan route:clear && php artisan config:clear && php artisan view:clear
+	-docker-compose run --rm --no-deps -u ${UID}:${GID} ${DOCKER_PHP_SERVICE} php artisan cache:clear && php artisan route:clear && php artisan config:clear && php artisan view:clear && composer dump-autoload -o
 
 prune: erase
 	docker system prune --volumes
 	docker image prune --all
 
 build:
-	-docker pull mlocati/php-extension-installer
+	docker pull mlocati/php-extension-installer
 	docker-compose build && \
 	docker-compose pull
 
