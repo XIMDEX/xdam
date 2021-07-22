@@ -10,6 +10,7 @@ RUN apt-get update && \
         npm \
         optipng \
         pngquant \
+        ffmpeg \
         unzip && \
     apt-get autoremove -y && \
     apt-get autoclean -y
