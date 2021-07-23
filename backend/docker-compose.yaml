@@ -10,8 +10,8 @@ services:
     volumes:
     - xdam-database-data:/var/lib/mysql
     - ./docker/mariadb/initdb.d/:/docker-entrypoint-initdb.d
-    ports:
-    - 3306:3306
+#    ports:
+#    - 3306:3306
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: ${DB_DATABASE}
@@ -45,7 +45,7 @@ services:
 
   xdam_solr:
     image: solr:8
-    ports:
-      - 8983:8983
+#    ports:
+#      - 8983:8983
     volumes:
       - xdam-solr-data:/var/solr
