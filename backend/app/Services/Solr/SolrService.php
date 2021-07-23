@@ -7,6 +7,7 @@ use App\Models\Collection;
 use App\Models\DamResource;
 use App\Services\Catalogue\FacetManager;
 use Exception;
+use Solarium\Client;
 use Solarium\Core\Query\Result\ResultInterface;
 use stdClass;
 
@@ -19,6 +20,7 @@ class SolrService
 {
 
     private FacetManager $facetManager;
+    /** @var Client[] $clients  */
     private array $clients;
 
     /**
@@ -46,7 +48,7 @@ class SolrService
     /**
      * given a collection returns the required solr client instance
      * @param Collection $collection
-     * @return mixed
+     * @return Client
      * @throws Exception
      */
     private function getClientFromCollection(Collection $collection)

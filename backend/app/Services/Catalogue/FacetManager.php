@@ -1,12 +1,11 @@
 <?php
 
-
 namespace App\Services\Catalogue;
 
+use Solarium\QueryType\Select\Query\Query;
 
 class FacetManager
 {
-
     //Convert to dynamic list based on input schema. This is what is going to display in front facets
     private $facetList = [];
     private $radioValues = [];
@@ -51,8 +50,8 @@ class FacetManager
 
     /**
      * Limit query by facets and facets filters
-     * @param $query
-     * @param $facetsFilter
+     * @param Query $query
+     * @param array $facetsFilter
      */
     public function setQueryByFacets($query, $facetsFilter)
     {
@@ -77,7 +76,7 @@ class FacetManager
 
     /**
      * Transform string with facets filters to array
-     * @param $facetsFilter
+     * @param array $facetsFilter
      * @return mixed
      */
     public function transformFacetsFilter($facetsFilter)
@@ -94,8 +93,8 @@ class FacetManager
 
     /**
      * Define facets from current query
-     * @param $facetSet
-     * @param $facetsFilter
+     * @param \Solarium\Component\FacetSet $facetSet
+     * @param array $facetsFilter
      */
     public function setFacets($facetSet, $facetsFilter, $core)
     {
@@ -114,8 +113,8 @@ class FacetManager
 
     /**
      * Get facets returned from current query
-     * @param $facetSet
-     * @param $facetsFilter
+     * @param \Solarium\Component\FacetSet $facetSet
+     * @param array $facetsFilter
      * @return array
      */
     public function getFacets($facetSet, $facetsFilter, $core)
