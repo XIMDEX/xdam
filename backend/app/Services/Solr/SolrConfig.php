@@ -17,7 +17,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  */
 class SolrConfig
 {
-
+    /** @var Client[] $clients */
     private array $clients;
     private array $solrFullConfig;
 
@@ -30,7 +30,7 @@ class SolrConfig
 
     /**
      * Returns the connection instances for Solr
-     * @return array
+     * @return Client[]
      */
     public function getClients(): array
     {
@@ -39,7 +39,7 @@ class SolrConfig
 
     /**
      * Returns a list of instantiated connection clients
-     * @return array
+     * @return Client[]
      */
     private function getSolariumClients(): array
     {

@@ -23,6 +23,13 @@ class CreateDamResourcesTable extends Migration
             $table->json("data")->nullable();
             $table->timestamps();
         });
+
+        Schema::table('media', function (Blueprint $table) {
+            $table->foreign('model_id', 'media_dam_fk')
+                ->references('id')
+                ->on('dam_resources')
+                ->onUpdate('cascade');
+        });
     }
 
     /**
@@ -32,6 +39,10 @@ class CreateDamResourcesTable extends Migration
      */
     public function down()
     {
+        Schema::table('media', function (Blueprint $table) {
+            $table->dropForeign('media_dam_fk');
+        });
+
         Schema::dropIfExists('dam_resources');
     }
 }
