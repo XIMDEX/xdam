@@ -3,7 +3,7 @@ import 'semantic-ui-css/semantic.min.css'
 import './theme/main.scss';
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setUser, selectUser, setLoading, selectLoading, setResourcesLoading, setLomesSchema } from './appSlice';
+import { setUser, selectUser, setLoading, selectLoading, setResourcesLoading, selectReloadApp } from './appSlice';
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import { Login } from './features/Login/Login';
 import { Header } from './features/Layout/Header/Header';
@@ -40,18 +40,19 @@ const useStyles = makeStyles((theme) => {
 function App() {
   const classes = useStyles();
   const user = useSelector(selectUser);
-  const [initialized, setInitialized] = useState(false);
+  const reloadApp = useSelector(selectReloadApp);
   const dispatch = useDispatch();
   const loading = useSelector(selectLoading);
   const mainService = MainService();
-  const facetsQuery = useSelector(selectFacetsQuery)
+  const facetsQuery = useSelector(selectFacetsQuery);
   const query = useSelector(selectQuery);
-  const [sidebarOpen, setSidebarOpen] = useState(true)
-  let organization_id = useSelector(selectOrganization)
-  let collection_id = useSelector(selectCollection)
-  const [initialOrganization, setInitialOrganization] = useState(null)
-  const [initialCollection, setInitialCollection] = useState(null)
-  
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  let organization_id = useSelector(selectOrganization);
+  let collection_id = useSelector(selectCollection);
+  const [initialOrganization, setInitialOrganization] = useState(null);
+  const [initialCollection, setInitialCollection] = useState(null);
+  const [logged, setLogged] = useState(null);
+
   function clearAllFilters()
   {
     let newQuery = {
@@ -72,33 +73,37 @@ function App() {
       setSidebarOpen(toggle)
   }
 
-  const init = async () => {
-    if (mainService.getToken()) {
-      const logged = await MainService().getUser();
-      if (logged.error) {
-        throw new Error('Error1.1: ' + logged.error)
-      }
-      // debugger
-      dispatch(setUser(logged))
-      setInitialOrganization(logged.data.selected_org_data.id) 
-      setInitialCollection(logged.data.selected_org_data.collections[0].id)
-      dispatch(setOrganization({oid: initialOrganization, cid: initialCollection}))
-      // dispatch(setCollection())
-      localStorage.setItem('lomes_loaded', '0');
-      dispatch(setLoading(false))
-      setInitialized(true);
-    } else {
-      dispatch(setLoading(false))
-    }
-  }
-
   useEffect( () => {
-    if(!initialized) {
-      init();
+    const initUser = async () => {
+      if (mainService.getToken()) {
+        if(!logged) {
+          let fetchedUser = await MainService().getUser();
+          if (fetchedUser.error) {
+            throw new Error('Error1.1: ' + fetchedUser.error)
+          }
+          setLogged(fetchedUser);
+          dispatch(setUser(fetchedUser));
+        }
+      }
+      return;
     }
-  }, [user, collection_id, organization_id, facetsQuery, initialOrganization, initialCollection]);
 
-  if (user) {
+    const prepareData = () => {
+      if(logged && !organization_id && !collection_id) {
+        setInitialOrganization(logged.data.selected_org_data.id) 
+        setInitialCollection(logged.data.selected_org_data.collections[0].id)
+        dispatch(setOrganization({oid: initialOrganization, cid: initialCollection}))
+        localStorage.setItem('lomes_loaded', '0');
+      } 
+      dispatch(setLoading(false))
+    }
+
+    initUser();
+    prepareData();
+    
+  }, [reloadApp, logged, collection_id, organization_id, facetsQuery, initialOrganization, initialCollection]);
+
+  if (logged) {
     return (
       <Container maxWidth='xl' disableGutters>
         {/* {
@@ -195,3 +200,4 @@ function App() {
 }
 
 export default App;
+
