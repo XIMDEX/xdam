@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux';
-import { setUser } from '../../appSlice';
+import { reloadApp } from '../../appSlice';
 import { Grid, Button } from '@material-ui/core';
 import MainService from '../../api/service';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { useHistory } from "react-router-dom";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -29,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 export function Login() { 
+  let history = useHistory();
   const classes = useStyles();
   const dispatch = useDispatch(); 
   const [loading, setLoading] = useState(false);
@@ -53,11 +55,8 @@ export function Login() {
     }
     MainService().setToken('JWT', user.data.access_token)
 
-    const logged = await MainService().getUser();
-    if (logged.error) {
-      throw new Error('Error1: ' + logged.error)
-    }
-    dispatch(setUser(logged))
+    history.push('/home');
+    dispatch(reloadApp());
   }
 
   function RenderErrors ({ errors }) {

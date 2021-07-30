@@ -12,7 +12,8 @@ interface AppState {
   schemas: null|Record<string,any>;
   lomesSchema: null|Record<string,any>;
   catalogueFlag: boolean,
-  formData: any
+  formData: any,
+  reloadApp: boolean
 }
 
 const initialState: AppState = {
@@ -25,7 +26,8 @@ const initialState: AppState = {
   schemas: null,
   lomesSchema: null,
   catalogueFlag: true,
-  formData: null
+  formData: null,
+  reloadApp: false
 };
 
 export const appSlice = createSlice({
@@ -67,12 +69,15 @@ export const appSlice = createSlice({
     setFormData: (state, { payload }) => {
       state.formData = payload
     },
+    reloadApp: (state) => {
+      state.reloadApp = !state.reloadApp;
+    },
   },
 });
 
 export const { setUser, setLoading, setFixedFacets, setFacets, 
   setResources, setResourcesLoading, setSchemas, setLomesSchema, 
-  reloadCatalogue, setFormData} = appSlice.actions;
+  reloadCatalogue, setFormData, reloadApp} = appSlice.actions;
 
 // The function below is called a thunk and allows us to perform async logic. It
 // can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
@@ -96,6 +101,7 @@ export const selectResources = (state: RootState) => state.app.resources;
 export const selectSchemas = (state: RootState) => state.app.schemas;
 export const selectLomesSchema = (state: RootState) => state.app.lomesSchema;
 export const selectCatalogueFlag = (state: RootState) => state.app.catalogueFlag;
+export const selectReloadApp = (state: RootState) => state.app.reloadApp;
 export const selectFormData = (state: RootState) => state.app.formData;
 
 export default appSlice.reducer;
