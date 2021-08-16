@@ -10,40 +10,12 @@ class FacetManager
     private $facetList = [];
     private $radioValues = [];
     // "name to display" => "name faceted"
-    private $facetLists = [
-        "course" => [
-            "categories" => "categories",
-            "active" => "active",
-            "tags" => "tags",
-            "internal" => "internal",
-            "aggregated" => "aggregated",
-            "workspaces" => "workspaces"
-        ],
-        "multimedia" => [
-            "categories" => "categories",
-            "active" => "active",
-            "type" => "type",
-            "attached files" => "types",
-            "tags" => "tags",
-            "workspaces" => "workspaces"
-        ],
-        "activity" => [
-            "categories" => "categories",
-            "active" => "active",
-            "workspaces" => "workspaces"
-        ],
-        "assessment" => [
-            "categories" => "categories",
-            "active" => "active",
-            "workspaces" => "workspaces"
-        ],
-        "book" => [
-            "categories" => "categories",
-            "active" => "active",
-            "tags" => "tags",
-            "workspaces" => "workspaces"
-        ]
-    ];
+    private $facetLists;
+
+    public function __construct(CoreFacetsBuilder $coreFacetsBuilder)
+    {
+        $this->facetLists = $coreFacetsBuilder->upCoreConfig();
+    }
 
     //Define black-list fields (organization_id)
 
@@ -53,15 +25,16 @@ class FacetManager
      * @param Query $query
      * @param array $facetsFilter
      */
-    public function setQueryByFacets($query, $facetsFilter)
+    public function setQueryByFacets($query, $facetsFilter, $core)
     {
         if (!empty($facetsFilter)) {
             foreach ($facetsFilter as $filterName => $filterValue) {
                 // The filter value can be single or an array
                 if (is_array($filterValue)) {
                     $q = '';
+                    $operator = $this->facetLists[$core][$filterName]['operator'];
                     foreach ($filterValue as $key => $id) {
-                        $q .= $key == 0 ? $filterName . ':' . $id : ' OR ' . $filterName . ':' . $id;
+                        $q .= $key == 0 ? "$filterName:$id" : " $operator $filterName : $id";
                     }
                     //$q .= ' AND organization:'. $oid;
                     $query->createFilterQuery($filterName)->setQuery($q);
@@ -100,10 +73,10 @@ class FacetManager
     {
         $this->facetList = $this->facetLists[$core];
         foreach ($this->facetList as $key => $value) {
-            $facetSet->createFacetField($value)->setField($value);
+            $facetSet->createFacetField($value['name'])->setField($value['name']);
             if (!empty($facetsFilter)) {
                 foreach ($facetsFilter as $keyFilter => $valueFilter) {
-                    if ($keyFilter == $value) {
+                    if ($keyFilter == $value['name']) {
                         $facetSet->createFacetQuery($valueFilter)->setQuery($keyFilter . ": " . $valueFilter);
                     }
                 }
@@ -117,14 +90,14 @@ class FacetManager
      * @param array $facetsFilter
      * @return array
      */
-    public function getFacets($facetSet, $facetsFilter, $core)
+    public function getFacets($facetSet, $facetsFilter, $core): array
     {
         $this->facetList = $this->facetLists[$core];
         $facetsArray = [];
         // go through each of the facets list
         foreach ($this->facetList as $facetLabel => $facetKey) {
             $facetItem = null;
-            $facet = $facetSet->getFacet($facetKey);
+            $facet = $facetSet->getFacet($facetKey['name']);
 
             if ($facet) {
                 $property = new \stdClass();
@@ -132,26 +105,26 @@ class FacetManager
                 foreach ($facet as $valueFaceSet => $count) {
                     // if ($count > 0) {
                         $facetItem = new \stdClass();
-                        $facetItem->key = $facetKey;
+                        $facetItem->key = $facetKey['name'];
                         $facetItem->label = $facetLabel;
                         $isSelected = false;
                         // if it exists in the parameter filter, mark it as selected
-                        if (array_key_exists($facetKey, $facetsFilter)) {
-                            if (is_array($facetsFilter[$facetKey])) {
-                                foreach ($facetsFilter[$facetKey] as $filterValue) {
+                        if (array_key_exists($facetKey['name'], $facetsFilter)) {
+                            if (is_array($facetsFilter[$facetKey['name']])) {
+                                foreach ($facetsFilter[$facetKey['name']] as $filterValue) {
                                     if ($filterValue === $valueFaceSet) {
                                         $isSelected = true;
                                     }
                                 }
                             } else {
-                                if ($facetsFilter[$facetKey] === $valueFaceSet)
+                                if ($facetsFilter[$facetKey['name']] === $valueFaceSet)
                                 {
                                     $isSelected = true;
                                 }
                             }
                         }
-                        // return the occurrence count and if it is selected or nots
-                        $property->$valueFaceSet = ["count" => $count, "selected" => $isSelected, "radio" => in_array($facetKey, $this->radioValues)];
+                        // return the occurrence count and if it is selected or not
+                        $property->$valueFaceSet = ["count" => $count, "selected" => $isSelected, "radio" => in_array($facetKey['name'], $this->radioValues)];
                         //$property->$valueFaceSet = ["count" => $count, "selected" => $isSelected];
                         $facetItem->values = $property;
                     // }

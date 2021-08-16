@@ -155,12 +155,15 @@ class SolrService
         /* the facets to be applied to the query  */
         $this->facetManager->setFacets($facetSet, [], $core);
         /*  limit the query to facets that the user has marked us */
-        $this->facetManager->setQueryByFacets($query, []);
+        $this->facetManager->setQueryByFacets($query, [], $core);
 
         /* if we have a search param, restrict the query */
         if (!empty($search)) {
-            $parsed_for_solr_query = str_replace(" ", "\ ", $search);
-            $query->setQuery('name:*' . $parsed_for_solr_query . '* OR data:*'. $parsed_for_solr_query.'*');
+            // $parsed_for_solr_query = $search;
+            $search = str_replace("-", " ", $search);
+            $search = str_replace("_", " ", $search);
+            $search = str_replace(" ", "\ ", $search);
+            $query->setQuery("name:$search OR data:*$search*");
         }
 
         // the query is done without the facet filter, so that it returns the complete list of facets and the counter present in the entire index
@@ -168,7 +171,7 @@ class SolrService
         // $faceSetFound = $allDocuments->getFacetSet();
 
         // make a new request, filtering for each facet
-        $this->facetManager->setQueryByFacets($query, $facetsFilter);
+        $this->facetManager->setQueryByFacets($query, $facetsFilter, $core);
         $allDocuments = $client->select($query);
         $documentsFound = $allDocuments->getNumFound();
         $faceSetFound = $allDocuments->getFacetSet();
