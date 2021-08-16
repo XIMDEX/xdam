@@ -75,7 +75,9 @@ class CourseSolrResource extends JsonResource
             'files' => $files,
             'previews' => $previews,
             'workspaces' => $workspaces,
-            'organization' => $this->organization()->id
+            'organization' => $this->organization()->id,
+            'cost' => $data->description->cost ?? '0.0',
+            'duration' => $data->description->duration ?? '0.0',
         ];
     }
 }

@@ -1,0 +1,89 @@
+{
+	"add-field-type": {
+		"name": "text_es_custom",
+		"class": "solr.TextField",
+		"positionIncrementGap": "100",
+		"indexAnalyzer": {
+			"charFilters": [
+				{
+					"class": "solr.MappingCharFilterFactory",
+					"mapping": "mapping-ISOLatin1Accent.txt"
+				},
+				{
+					"class": "solr.MappingCharFilterFactory",
+					"mapping": "mapping-FoldToASCII.txt"
+				}
+			],
+			"tokenizer": {
+				"class": "solr.WhitespaceTokenizerFactory"
+			},
+			"filters": [
+				{
+					"class": "solr.StopFilterFactory",
+					"words": "stopwords.txt",
+					"ignoreCase": "true"
+				},
+				{
+					"class": "solr.WordDelimiterFilterFactory",
+					"catenateNumbers": "1",
+					"generateNumberParts": "0",
+					"generateWordParts": "0",
+					"catenateAll": "0",
+					"catenateWords": "1"
+				},
+				{
+					"class": "solr.LowerCaseFilterFactory"
+				},
+				{
+					"class": "solr.RemoveDuplicatesTokenFilterFactory"
+				}
+			]
+		},
+		"queryAnalyzer": {
+			"charFilters": [
+				{
+					"class": "solr.MappingCharFilterFactory",
+					"mapping": "mapping-ISOLatin1Accent.txt"
+				},
+				{
+					"class": "solr.MappingCharFilterFactory",
+					"mapping": "mapping-FoldToASCII.txt"
+				}
+			],
+			"tokenizer": {
+				"class": "solr.WhitespaceTokenizerFactory"
+			},
+			"filters": [
+				{
+					"class": "solr.SynonymFilterFactory",
+					"expand": "true",
+					"ignoreCase": "true",
+					"synonyms": "synonyms.txt",
+					"tokenizerFactory": "solr.WhitespaceTokenizerFactory"
+				},
+				{
+					"class": "solr.ASCIIFoldingFilterFactory"
+				},
+				{
+					"class": "solr.StopFilterFactory",
+					"words": "stopwords.txt",
+					"ignoreCase": "true"
+				},
+				{
+					"class": "solr.WordDelimiterFilterFactory",
+					"catenateNumbers": "1",
+					"generateNumberParts": "0",
+					"generateWordParts": "0",
+					"catenateAll": "0",
+					"catenateWords": "1"
+				},
+				{
+					"class": "solr.LowerCaseFilterFactory"
+				},
+				{
+					"class": "solr.RemoveDuplicatesTokenFilterFactory"
+				}
+			]
+		}
+	}
+}
