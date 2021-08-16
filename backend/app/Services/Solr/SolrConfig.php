@@ -131,22 +131,33 @@ class SolrConfig
      * @return string
      * @throws Exception
      */
-    public function install(): string
+    public function install($core = null): string
     {
         $schemasUpdated = 0;
         foreach ($this->clients as $client) {
-            $configSchema = $client->getOptions()["schema"];
-            $currentSchema = $this->getCurrentSchema($client);
-            $diffSchema = $this->getSchemaDifferences($currentSchema, (array)$configSchema);
-            if (!empty($diffSchema)) {
-                $result = $this->updateSchema($client, $diffSchema);
-                if (array_key_exists("error", $result)) {
-                    throw new Exception($result["error"]);
-                }
-                $schemasUpdated++;
+            if($core && $client->getEndpoint()->getOptions()['core'] === $core) {
+                $this->installCore($client);
+                $schemasUpdated = 1;
+                break;
             }
+            $this->installCore($client);
+            $schemasUpdated++;
         }
         return "$schemasUpdated schemas updated";
+    }
+
+    public function installCore($client)
+    {
+        $configSchema = $client->getOptions()["schema"];
+
+        $currentSchema = $this->getCurrentSchema($client);
+        $diffSchema = $this->getSchemaDifferences($currentSchema, (array)$configSchema);
+        if (!empty($diffSchema)) {
+            $result = $this->updateSchema($client, $diffSchema);
+            if (array_key_exists("error", $result)) {
+                throw new Exception(json_encode($result["error"]));
+            }
+        }
     }
 
     /**
@@ -181,4 +192,67 @@ class SolrConfig
         }
         return "$counter instances has been cleared";
     }
+
+    public function reinstallCore($core): string
+    {
+        $ok = false;
+        foreach ($this->clients as $client) {
+            $clientCoreName = $client->getEndpoint()->getOptions()['core'];
+
+            if($clientCoreName === $core) {
+                //delete core
+                exec("sudo su - solr -c '/opt/solr/bin/solr delete -c $core'");
+                //install core
+                exec("sudo su - solr -c '/opt/solr/bin/solr create -c $core'");
+                //config xml fieldType
+                $this->addFieldType($client);
+
+                $this->install($core);
+                $ok = true;
+                break;
+            }
+        }
+        return $ok ? "$core core reinstalled" : 'Core not found';
+    }
+
+    public function addFieldType($client)
+    {
+
+        $query = $client->createSelect();
+        $request = $client->createRequest($query);
+        $request->setHandler('schema');
+        $request->setMethod('POST');
+
+        $json_field_type = file_get_contents(storage_path('solr_core_conf') . '/fieldType.json');
+
+        $this->copyRequiredFiles($client);
+        $request->setRawData($json_field_type);
+        $res = json_decode($client->executeRequest($request)->getBody(), true);
+        if(array_key_exists('error', $res)) {
+            throw new Exception(json_encode($res));
+        }
+        $a = 0;
+    }
+
+    public function copyRequiredFiles($client): void
+    {
+        $opts = $client->getEndpoint()->getOptions();
+        $endpoint =
+            $opts['scheme'] .
+            '://' .
+            $opts['host'] .
+            ( $opts['port'] ? ':'.$opts['port'] : '' ) .
+            '/solr/admin/cores?action=STATUS&core=' . $opts['core'];
+
+        $res = json_decode(file_get_contents($endpoint), true);
+        $coreConfigDir = $res['status'][$opts['core']]['instanceDir'];
+        $core_files_path = storage_path('solr_core_conf/core_files');
+        $core_config_files_path = storage_path('solr_core_conf/core_conf_files');
+        exec("sudo cp $core_files_path/* $coreConfigDir");
+        exec("sudo chown -R solr:solr $coreConfigDir");
+
+        exec("sudo cp $core_config_files_path/* $coreConfigDir/conf");
+        exec("sudo chown -R solr:solr $coreConfigDir/conf");
+    }
+
 }

@@ -55,6 +55,14 @@
         "active": {
           "title": "active",
           "type": "boolean"
+        },
+        "duration": {
+            "title": "Course duration",
+            "type": "number"
+        },
+        "cost": {
+            "name": "Course cost",
+            "type": "number"
         }
       }
     }
