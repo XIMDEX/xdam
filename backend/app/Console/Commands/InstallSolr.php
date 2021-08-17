@@ -13,7 +13,7 @@ class InstallSolr extends Command
      *
      * @var string
      */
-    protected $signature = 'solr:install';
+    protected $signature = 'solr:install {--core=*}';
 
     /**
      * The console command description.
@@ -40,7 +40,9 @@ class InstallSolr extends Command
     public function handle(SolrConfig $solrConfig)
     {
         try {
-            $this->line($solrConfig->install());
+            $cores = $this->option('core');
+            $this->line($solrConfig->install($cores, count($cores) > 0 ? false : true));
+
         } catch (Exception $e) {
             $this->error($e->getMessage());
         }
