@@ -5,6 +5,7 @@ namespace App\Services\Solr;
 
 
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Solarium\Client;
 use Solarium\Core\Client\Adapter\Curl;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -131,19 +132,25 @@ class SolrConfig
      * @return string
      * @throws Exception
      */
-    public function install($core = null): string
+    public function install(array $cores, bool $allCores): string
     {
         $schemasUpdated = 0;
         foreach ($this->clients as $client) {
-            if($core && $client->getEndpoint()->getOptions()['core'] === $core) {
+            $coreName = $client->getEndpoint()->getOptions()['core'];
+            if($allCores) {
                 $this->installCore($client);
-                $schemasUpdated = 1;
-                break;
+                $schemasUpdated++;
+            } else {
+                foreach ($cores as $core) {
+                    if($coreName === $core) {
+                        $this->installCore($client);
+                        $schemasUpdated++;
+                    }
+                }
+
             }
-            $this->installCore($client);
-            $schemasUpdated++;
         }
-        return "$schemasUpdated schemas updated";
+        return "$schemasUpdated schemas and cores updated";
     }
 
     public function installCore($client)
@@ -152,6 +159,7 @@ class SolrConfig
 
         $currentSchema = $this->getCurrentSchema($client);
         $diffSchema = $this->getSchemaDifferences($currentSchema, (array)$configSchema);
+        $this->addFieldType($client);
         if (!empty($diffSchema)) {
             $result = $this->updateSchema($client, $diffSchema);
             if (array_key_exists("error", $result)) {
@@ -172,12 +180,12 @@ class SolrConfig
             $clientCoreName = $client->getEndpoint()->getOptions()['core'];
 
             if (!array_key_exists($clientCoreName, config('solarium.connections', []))) {
-                echo 'Client detected not valid for xdam' . PHP_EOL;
+                echo "Client detected not valid for xdam \n";
                 continue;
             }
 
             if (in_array($clientCoreName, $excludedCores)) {
-                echo $clientCoreName . ' core excluded from '. $action . PHP_EOL;
+                echo "$clientCoreName core excluded from $action \n";
                 continue;
             }
 
@@ -193,50 +201,41 @@ class SolrConfig
         return "$counter instances has been cleared";
     }
 
-    public function reinstallCore($core): string
+    public function addFieldType($client): void
     {
-        $ok = false;
-        foreach ($this->clients as $client) {
-            $clientCoreName = $client->getEndpoint()->getOptions()['core'];
-
-            if($clientCoreName === $core) {
-                //delete core
-                exec("sudo su - solr -c '/opt/solr/bin/solr delete -c $core'");
-                //install core
-                exec("sudo su - solr -c '/opt/solr/bin/solr create -c $core'");
-                //config xml fieldType
-                $this->addFieldType($client);
-
-                $this->install($core);
-                $ok = true;
-                break;
-            }
-        }
-        return $ok ? "$core core reinstalled" : 'Core not found';
-    }
-
-    public function addFieldType($client)
-    {
-
         $query = $client->createSelect();
         $request = $client->createRequest($query);
         $request->setHandler('schema');
         $request->setMethod('POST');
 
-        $json_field_type = file_get_contents(storage_path('solr_core_conf') . '/fieldType.json');
+        $json_field_type = file_get_contents(storage_path('solr_core_conf/field_types') . '/text_es_custom.json');
 
-        $this->copyRequiredFiles($client);
+        $out = $this->copyRequiredFiles($client);
+
+        echo "\n BEFORE CONTINUE: $out \n Continue? [y/N]";
+
+        $answer = fgetc(STDIN);
+
+        if($answer === 'y'){
+            echo "... resuming installation \n";
+        } else {
+            echo "Aborted \n";
+            die();
+        }
+
         $request->setRawData($json_field_type);
         $res = json_decode($client->executeRequest($request)->getBody(), true);
         if(array_key_exists('error', $res)) {
-            throw new Exception(json_encode($res));
+            echo "\n Error occurred adding field type in core " . $client->getEndpoint()->getOptions()['core'] . ". Check laravel log. \n";
+            Log::error(json_encode($res));
+            throw new Exception(json_encode($res['error']));
         }
-        $a = 0;
     }
 
-    public function copyRequiredFiles($client): void
+    public function copyRequiredFiles($client): string
     {
         $opts = $client->getEndpoint()->getOptions();
+
         $endpoint =
             $opts['scheme'] .
             '://' .
@@ -248,11 +247,8 @@ class SolrConfig
         $coreConfigDir = $res['status'][$opts['core']]['instanceDir'];
         $core_files_path = storage_path('solr_core_conf/core_files');
         $core_config_files_path = storage_path('solr_core_conf/core_conf_files');
-        exec("sudo cp $core_files_path/* $coreConfigDir");
-        exec("sudo chown -R solr:solr $coreConfigDir");
 
-        exec("sudo cp $core_config_files_path/* $coreConfigDir/conf");
-        exec("sudo chown -R solr:solr $coreConfigDir/conf");
+        return 'For core ' . $opts['core'] . " execute this command to continue the installation: \n sudo cp $core_files_path/* $coreConfigDir && sudo chown -R solr:solr $coreConfigDir && sudo cp $core_config_files_path/* $coreConfigDir/conf && sudo chown -R solr:solr $coreConfigDir/conf \n";
     }
 
 }
