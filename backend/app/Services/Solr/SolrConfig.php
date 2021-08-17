@@ -135,21 +135,26 @@ class SolrConfig
     public function install(array $cores, bool $allCores): string
     {
         $schemasUpdated = 0;
+
         foreach ($this->clients as $client) {
-            $coreName = $client->getEndpoint()->getOptions()['core'];
-            if($allCores) {
-                $this->installCore($client);
-                $schemasUpdated++;
+            $found = false;
+
+            if ($allCores) {
+                $found = true;
             } else {
                 foreach ($cores as $core) {
-                    if($coreName === $core) {
-                        $this->installCore($client);
-                        $schemasUpdated++;
+                    if ($client->getEndpoint()->getOptions()['core'] === $core) {
+                        $found = true;
                     }
                 }
+            }
 
+            if ($found) {
+                $this->installCore($client);
+                $schemasUpdated++;
             }
         }
+
         return "$schemasUpdated schemas and cores updated";
     }
 
