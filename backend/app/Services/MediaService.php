@@ -2,6 +2,7 @@
 
 namespace App\Services;
 use App\Enums\MediaType;
+use App\Models\DamResource;
 use App\Models\Media;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
@@ -125,7 +126,7 @@ class MediaService
         }
         $model->save();
 
-        $model->refresh();
+        $model = $model->fresh();
 
         $mediaList = $this->list($model, $collection);
 
