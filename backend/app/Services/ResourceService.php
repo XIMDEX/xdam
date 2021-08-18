@@ -264,16 +264,20 @@ class ResourceService
             $resource_data['id'] = Str::orderedUuid();
         }
 
-        $newResource = DamResource::create($resource_data);
-
-        $this->setResourceWorkspace($newResource, $wsp);
-        $this->linkCategoriesFromJson($newResource, $params['data']);
-        $this->linkTagsFromJson($newResource, $params['data']);
-        $this->saveAssociatedFiles($newResource, $params);
-        $this->solr->saveOrUpdateDocument($newResource);
-        $newResource->refresh();
-        $this->linkTagsFromJson($newResource, $params['data']);
-        return $newResource;
+        try {
+            $newResource = DamResource::create($resource_data);
+            $this->setResourceWorkspace($newResource, $wsp);
+            $this->linkCategoriesFromJson($newResource, $params['data']);
+            $this->linkTagsFromJson($newResource, $params['data']);
+            $this->saveAssociatedFiles($newResource, $params);
+            $this->solr->saveOrUpdateDocument($newResource);
+            $newResource = $newResource->fresh();
+            return $newResource;
+        } catch (\Exception $th) {
+            $this->solr->deleteDocument($newResource);
+            $newResource->delete();
+            throw $th;
+        }
     }
 
 
