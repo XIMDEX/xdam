@@ -2,7 +2,6 @@
 
 namespace App\Services;
 use App\Enums\MediaType;
-use App\Models\DamResource;
 use App\Models\Media;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
