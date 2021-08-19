@@ -206,8 +206,8 @@ class ResourceService
             $this->linkTagsFromJson($resource, $params['data']);
         }
         $this->saveAssociatedFiles($resource, $params);
+        $resource = $resource->fresh();
         $this->solr->saveOrUpdateDocument($resource);
-        $resource->refresh();
         return $resource;
     }
 
@@ -270,8 +270,8 @@ class ResourceService
             $this->linkCategoriesFromJson($newResource, $params['data']);
             $this->linkTagsFromJson($newResource, $params['data']);
             $this->saveAssociatedFiles($newResource, $params);
-            $this->solr->saveOrUpdateDocument($newResource);
             $newResource = $newResource->fresh();
+            $this->solr->saveOrUpdateDocument($newResource);
             return $newResource;
         } catch (\Exception $th) {
             $this->solr->deleteDocument($newResource);
