@@ -353,6 +353,13 @@ class ResourceService
         return $schema;
     }
 
+    public function lomSchema ($asArray = false)
+    {
+        $json_file = file_get_contents(storage_path('/lom') . '/lomSchema.json');
+        $schema = json_decode($json_file, $asArray);
+        return $schema;
+    }
+
     public function searchForAssociativeKey($key, $tabKey, $array )
     {
         //move to Utils
@@ -383,6 +390,25 @@ class ResourceService
         $dam_lomes->save();
     }
 
+    public function setLomData($damResource, $params)
+    {
+        $dam_lom = $damResource->lom()->firstOrCreate();
+        $updateArray = [];
+        $formData = $params->all();
+        $tabKey = $formData['_tab_key'];
+        $lomSchema = $this->lomSchema(true);
+        $tabSchema = $this->searchForAssociativeKey('key', $tabKey, $lomSchema['tabs']);
+        foreach ($tabSchema['properties'] as $label => $props) {
+            foreach ($formData as $f_key => $f_value) {
+                if($f_key === $label && $f_value !== null) {
+                    $updateArray[$props['data_field']] = $f_value;
+                }
+            }
+        }
+        $dam_lom->update($updateArray);
+        $dam_lom->save();
+    }
+
     public function getLomesData($damResource)
     {
         $schema = $this->lomesSchema(true);
@@ -391,6 +417,24 @@ class ResourceService
             return [];
         }
         $lomes = $lomes->toArray();
+        $response = $this->getDataFromSchema($lomes, $schema);
+        return $response;
+    }
+
+    public function getLomData($damResource)
+    {
+        $schema = $this->lomSchema(true);
+        $lom = $damResource->lom()->first();
+        if(!$lom) {
+            return [];
+        }
+        $lom = $lom->toArray();
+        $response = $this->getDataFromSchema($lom, $schema);
+        return $response;
+    }
+
+    private function getDataFromSchema($data, $schema)
+    {
         $response = [];
 
         foreach ($schema['tabs'] as $tab_key => $tab_values) {
@@ -406,7 +450,8 @@ class ResourceService
             }
 
         }
-        foreach ($lomes as $db_field => $value) {
+
+        foreach ($data as $db_field => $value) {
             foreach ($response as $key => $arr_v) {
                 foreach ($arr_v['formData'] as $label => $res_db_field) {
                     if ($db_field == $res_db_field) {
