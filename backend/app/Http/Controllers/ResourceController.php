@@ -58,6 +58,11 @@ class ResourceController extends Controller
         return response()->json($this->resourceService->lomesSchema());
     }
 
+    public function lomSchema ()
+    {
+        return response()->json($this->resourceService->lomSchema());
+    }
+
     private function getThumbnailBySize($size, $media)
     {
         if (null !== $size) {
@@ -147,8 +152,24 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    public function setLomData(DamResource $damResource, Request $request)
+    {
+        $resource = $this->resourceService->setLomData($damResource, $request);
+        return (new JsonResource($resource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
     public function getLomesData(DamResource $damResource) {
         $resource = $this->resourceService->getLomesData($damResource);
+        return (new JsonResource($resource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function getLomData(DamResource $damResource)
+    {
+        $resource = $this->resourceService->getLomData($damResource);
         return (new JsonResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);

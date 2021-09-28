@@ -83,6 +83,10 @@ class DamResource extends Model implements HasMedia, TaggableInterface
         return $this->hasOne(Lomes::class);
     }
 
+    public function lom(): HasOne
+    {
+        return $this->hasOne(Lom::class);
+    }
 
     // public function organizations()
     // {
