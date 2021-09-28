@@ -59,6 +59,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
 
         Route::get('resourcesSchema', [ResourceController::class, 'resourcesSchema'])->name('resources.schemas');
         Route::get('lomesSchema', [ResourceController::class, 'lomesSchema'])->name('resources.lomes.schemas');
+        Route::get('lomSchema', [ResourceController::class, 'lomSchema'])->name('resources.lom.schemas');
 
         Route::get('workspaceOfCollection/{collection}', [WorkspaceController::class, 'workspaceOfCollection'])   ->name('collection.org.wsp.get');
 
@@ -157,11 +158,13 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             // });
 
             Route::get('/{damResource}/lomes', [ResourceController::class, 'getLomesData'])->name('resources.getLomesData');
+            Route::get('/{damResource}/lom', [ResourceController::class, 'getLomData'])->name('resources.getLomData');
             Route::group(['middleware' => 'create.resource'], function() {
                 Route::post('/',                        [ResourceController::class, 'store'])->name('damResource.store');
                 Route::post('/createBatch',             [ResourceController::class, 'storeBatch'])->name('damResource.store.batch');
                 Route::post('/{collection_id}/create',  [ResourceController::class, 'store'])->name('collection.damResource.store');
                 Route::post('/{damResource}/lomes',     [ResourceController::class, 'setLomesData'])->name('resources.setLomesData');
+                Route::post('/{damResource}/lom',     [ResourceController::class, 'setLomData'])->name('resources.setLomData');
 
             });
 
