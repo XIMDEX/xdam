@@ -63,7 +63,17 @@
         "cost": {
             "name": "Course cost",
             "type": "number"
+        },
+        "isFree": {
+            "title": "is Course Free",
+            "type": "boolean"
+        },
+        "currency": {
+            "name": "Currency of the cost",
+            "type": "string",
+            "enum": ["EUR", "USD"]
         }
+
       }
     }
   },
