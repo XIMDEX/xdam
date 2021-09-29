@@ -13,6 +13,7 @@ return [
                 'core' => 'activity',
             ],
             'resource' => 'ActivitySolrResource',
+            'classHandler' => 'ActivityHandler',
             'accepts_types' => [ResourceType::activity]
         ],
         'assessment' => [
@@ -24,6 +25,7 @@ return [
                 'core' => 'assessment',
             ],
             'resource' => 'AssessmentSolrResource',
+            'classHandler' => 'AssessmentHandler',
             'accepts_types' => [ResourceType::assessment]
         ],
 
@@ -36,6 +38,7 @@ return [
                 'core' => 'course',
             ],
             'resource' => 'CourseSolrResource',
+            'classHandler' => 'CourseHandler',
             'accepts_types' => [ResourceType::course]
         ],
 
@@ -49,6 +52,7 @@ return [
                 'timeout' => 120,
             ],
             'resource' => 'MultimediaSolrResource',
+            'classHandler' => 'MultimediaHandler',
             'accepts_types' => [ResourceType::multimedia]
         ],
         'book' => [
@@ -60,6 +64,7 @@ return [
                 'core' => 'book',
             ],
             'resource' => 'BookSolrResource',
+            'classHandler' => 'BookHandler',
             'accepts_types' => [ResourceType::book]
         ]
     ],

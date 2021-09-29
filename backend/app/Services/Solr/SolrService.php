@@ -145,6 +145,7 @@ class SolrService
 
         $client = $this->getClientFromCollection($collection);
         $core = $collection->accept;
+        $classCore = $client->getOptions()['classHandler'];
         $search = $pageParams['search'];
         $currentPage = $pageParams['currentPage'];
         $limit = $pageParams['limit'];
@@ -162,7 +163,7 @@ class SolrService
             $helper = $query->getHelper();
             $searchTerm = $helper->escapeTerm($search);
             $searchPhrase = $helper->escapePhrase($search);
-            $query->setQuery("name:$searchTerm OR data:*$searchPhrase*");
+            $query->setQuery("name:$searchTerm OR data:*$searchPhrase* OR achievements:*$searchPhrase* OR preparations:*$searchPhrase*");
         }
 
         // the query is done without the facet filter, so that it returns the complete list of facets and the counter present in the entire index
@@ -171,6 +172,13 @@ class SolrService
 
         // make a new request, filtering for each facet
         $this->facetManager->setQueryByFacets($query, $facetsFilter, $core);
+        try {
+            //overwrite curren fq to core specifics
+            $coreHandler = new $classCore($query);
+            $query = $coreHandler->queryCoreSpecifics($facetsFilter);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
         $allDocuments = $client->select($query);
         $documentsFound = $allDocuments->getNumFound();
         $faceSetFound = $allDocuments->getFacetSet();
