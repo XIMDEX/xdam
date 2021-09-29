@@ -59,6 +59,9 @@ class CourseSolrResource extends JsonResource
         }
 
         $finalData = is_object($finalData) ? json_encode($finalData) : $finalData;
+        $cost = $data->description->cost ?? 0;
+        $isFree = $cost > 0 ? false : true;
+
         return [
             'id' => $this->id,
             //way to get name, temporal required by frontend. Must be only $data->description->name
@@ -76,8 +79,15 @@ class CourseSolrResource extends JsonResource
             'previews' => $previews,
             'workspaces' => $workspaces,
             'organization' => $this->organization()->id,
-            'cost' => $data->description->cost ?? '0.0',
-            'duration' => $data->description->duration ?? '0.0',
+            //Cost is an integer representing the value. int 1000 = 10.00€
+            'cost' => $cost,
+            'currency' => $data->description->currency ?? 'EUR',
+            'isFree' => $isFree,
+            //Duration is an integer representing the value. int 1000 = 1000 seconds
+            'duration' => $data->description->duration ?? 0,
+            'skills' => $data->description->skills ?? [],
+            'preparations' => $data->description->preparations ?? [],
+            'achievements' => $data->description->achievements ?? [],
         ];
     }
 }
