@@ -2,11 +2,9 @@
 
 namespace App\Console\Commands\Maintenance;
 
-use App\Enums\ResourceType;
 use App\Models\DamResource;
 use App\Services\ResourceService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 
 class FixCourseNames extends Command
 {
@@ -54,8 +52,6 @@ class FixCourseNames extends Command
     {
         $data = json_decode(json_encode($course->data), true);
 
-
-
         if(isset($data['description']['course_title']) && !isset($data['description']['name'])) {
             $data['description']['name'] = $data['description']['course_title'];
             unset($data['description']['course_title']);
@@ -82,7 +78,5 @@ class FixCourseNames extends Command
             $course->save();
             return;
         }
-
-
     }
 }
