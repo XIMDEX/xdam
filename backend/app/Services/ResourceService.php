@@ -199,7 +199,8 @@ class ResourceService
             $resource->update(
                 [
                     'data' => $params['data'],
-                    'active' => $params['data']->description->active
+                    'active' => $params['data']->description->active,
+                    'name' => $params['data']->description->name ?? 'name not found'
                 ]
             );
             $this->linkCategoriesFromJson($resource, $params['data']);
