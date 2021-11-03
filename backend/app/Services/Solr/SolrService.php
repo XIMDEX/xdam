@@ -173,13 +173,11 @@ class SolrService
 
         // make a new request, filtering for each facet
         $this->facetManager->setQueryByFacets($query, $facetsFilter, $core);
-        try {
-            //overwrite curren fq to core specifics
-            $coreHandler = new $classCore($query);
-            $query = $coreHandler->queryCoreSpecifics($facetsFilter);
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
+        
+        //overwrite current fq to core specifics
+        $coreHandler = new $classCore($query);
+        $query = $coreHandler->queryCoreSpecifics($facetsFilter);
+        
         $allDocuments = $client->select($query);
         $documentsFound = $allDocuments->getNumFound();
         $faceSetFound = $allDocuments->getFacetSet();
