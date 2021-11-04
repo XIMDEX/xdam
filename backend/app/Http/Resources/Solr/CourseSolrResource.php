@@ -88,6 +88,8 @@ class CourseSolrResource extends JsonResource
             'skills' => $data->description->skills ?? [],
             'preparations' => $data->description->preparations ?? [],
             'achievements' => $data->description->achievements ?? [],
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }
