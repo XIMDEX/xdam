@@ -108,10 +108,26 @@
   },
   "duration": {
     "name": "duration",
-    "type": "pfloat"
+    "type": "pints"
   },
   "cost": {
     "name": "cost",
-    "type": "pfloat"
+    "type": "pints"
+  },
+  "isFree": {
+    "name": "isFree",
+    "type": "boolean"
+  },
+  "currency": {
+    "name": "currency",
+    "type": "text_general"
+  },
+  "achievements": {
+    "name": "achievements",
+    "type": "text_general"
+  },
+  "preparations": {
+    "name": "preparations",
+    "type": "text_general"
   }
 }
