@@ -36,8 +36,12 @@ class CreateLomTable extends Migration
                 foreach ($tab['properties'] as $label => $props) {
                     $db_field_prop = strtr( str_replace(' ', '_', strtolower($db_field_key . '_' . $label)), $unwanted_array );
                     $schemaOutput["tabs"][$key]["properties"][$label]["data_field"] = $db_field_prop;
-
-                    $table->string($db_field_prop)->nullable();
+                    $method = ($props["type"] == "json" || $props["type"] == "array" || $props["type"] == "object") ? "jsonb" : $props["type"];
+                    if (method_exists($table, $method)) {
+                        $table->$method($db_field_prop)->nullable();
+                    } else {
+                        $table->string($db_field_prop)->nullable();
+                    }
                 }
             }
             $parsed_json_lom = json_encode($schemaOutput, JSON_UNESCAPED_UNICODE, JSON_PRETTY_PRINT);
