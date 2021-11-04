@@ -442,12 +442,13 @@ class ResourceService
             $response[$tab_values['key']] = [
                 'title' => $tab_values['title'],
                 'key' => $tab_values['key'],
-                // 'db_field' => $tab_values['data_field'],
                 'formData' => []
             ];
             foreach ($tab_values['properties'] as $prop_label => $prop_values) {
-
-                $response[$tab_values['key']]['formData'][$prop_label] = $prop_values['data_field'];
+                $response[$tab_values['key']]['formData'][$prop_label] = [
+                    'data_field' => $prop_values['data_field'],
+                    'type' => $prop_values['type']
+                ];
             }
 
         }
@@ -455,7 +456,9 @@ class ResourceService
         foreach ($data as $db_field => $value) {
             foreach ($response as $key => $arr_v) {
                 foreach ($arr_v['formData'] as $label => $res_db_field) {
-                    if ($db_field == $res_db_field) {
+                    $data_field = isset($res_db_field["data_field"]) ? $res_db_field["data_field"] : $res_db_field;
+                    if ($db_field == $data_field) {
+                        if (isset($res_db_field['type']) && strpos('json', $res_db_field['type']) || $res_db_field['type'] == 'array') $value = json_decode($value);
                         $response[$key]['formData'][$label] = $value;
                     }
                 }
