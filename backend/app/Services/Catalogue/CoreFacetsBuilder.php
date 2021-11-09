@@ -4,7 +4,7 @@ namespace App\Services\Catalogue;
 
 class CoreFacetsBuilder {
     private $coreList;
-    private $and_facets = []; //add here facets with AND operator behaviour. Example ['tags'];
+    private $and_facets = []; //add here facets with AND operator behaviour. Example ['tags']; The default operator is OR
     private $formedList;
 
     public function __construct()
@@ -18,7 +18,10 @@ class CoreFacetsBuilder {
                 "internal",
                 "aggregated",
                 "duration",
-                "cost"
+                "isFree",
+                "currency",
+                "cost",
+                "skills"
             ],
             "multimedia" => [
                 "categories",

@@ -199,7 +199,8 @@ class ResourceService
             $resource->update(
                 [
                     'data' => $params['data'],
-                    'active' => $params['data']->description->active
+                    'active' => $params['data']->description->active,
+                    'name' => $params['data']->description->name ?? 'name not found'
                 ]
             );
             $this->linkCategoriesFromJson($resource, $params['data']);
@@ -451,7 +452,7 @@ class ResourceService
             }
 
         }
-        
+
         foreach ($data as $db_field => $value) {
             foreach ($response as $key => $arr_v) {
                 foreach ($arr_v['formData'] as $label => $res_db_field) {

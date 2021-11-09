@@ -55,8 +55,8 @@ class SolrConfig
                 ],
                 'schema' => $config["schema"],
                 'validator' => $config["validator"],
-                'resource' =>  "\\App\\Http\\Resources\\Solr\\" . $config['resource']
-
+                'resource' =>  "\\App\\Http\\Resources\\Solr\\" . $config['resource'],
+                'classHandler' => "\\App\\Services\\Solr\\CoreHandlers\\" . $config['classHandler']
             ];
             $clients[$config['endpoint']['core']] = new Client($adapter, $eventDispatcher, $solrConfig);
         }
