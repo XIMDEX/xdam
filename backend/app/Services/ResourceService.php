@@ -458,12 +458,18 @@ class ResourceService
                 foreach ($arr_v['formData'] as $label => $res_db_field) {
                     $data_field = isset($res_db_field["data_field"]) ? $res_db_field["data_field"] : $res_db_field;
                     if ($db_field == $data_field) {
-                        if (isset($res_db_field['type']) && strpos('json', $res_db_field['type']) || $res_db_field['type'] == 'array') $value = json_decode($value);
-                        $response[$key]['formData'][$label] = $value;
+                        if (null === $value) {
+                            unset($response[$key]['formData'][$label]);
+                        } else {
+                            if (isset($res_db_field['type']) && strpos('json', $res_db_field['type']) || $res_db_field['type'] == 'array') $value = json_decode($value);
+                            $response[$key]['formData'][$label] = $value;
+                        }
                     }
-                }
+                    }
+                if (count($response[$key]['formData']) === 0) unset($response[$key]);
             }
         }
+        // unset($response[1]);
         return $response;
     }
 
