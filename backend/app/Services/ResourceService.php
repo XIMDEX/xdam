@@ -469,7 +469,6 @@ class ResourceService
                 if (count($response[$key]['formData']) === 0) unset($response[$key]);
             }
         }
-        // unset($response[1]);
         return $response;
     }
 
