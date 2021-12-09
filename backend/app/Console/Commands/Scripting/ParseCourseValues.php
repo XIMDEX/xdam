@@ -15,6 +15,8 @@ class ParseCourseValues extends Command
     private $operator;
     private $value;
     private $prop;
+    private $globalWarn;
+    private $badValuescourse;
 
     public function __construct()
     {
@@ -57,6 +59,10 @@ class ParseCourseValues extends Command
 
         }
         echo "\n Finished" . PHP_EOL;
+        echo $this->globalWarn . PHP_EOL;
+        foreach ($this->badValuescourse as $course) {
+            echo $course . PHP_EOL;
+        }
     }
 
     public function parseDuration() {
@@ -84,6 +90,7 @@ class ParseCourseValues extends Command
 
     public function applyMath($course, $data)
     {
+        $initialValue = $data['description'][$this->prop];
         switch ($this->operator) {
             case '=':
                 $math = $data['description'][$this->prop] = $this->value;
@@ -105,11 +112,17 @@ class ParseCourseValues extends Command
                 break;
         }
 
-        $data['description'][$this->prop] = (int)$math;
+        $data['description'][$this->prop] = $math;
         $course->data = $data;
         $course->save();
         $course->refresh();
-        echo "\n Success: $course->id $this->prop is now " . (string)$course->data->description->{$this->prop} . PHP_EOL;
+        $warnBadValue = $math < 1 && $initialValue > 0 ? true : false;
+        
+        echo "\n Success: $course->id $this->prop is now " . (string)$course->data->description->{$this->prop} . ($warnBadValue ? ' Warning: '. $this->prop  .' is greater than 0 but final math result in 0' : '') . PHP_EOL;
+        if($warnBadValue) {
+            $this->badValuescourse[] = $course->id;
+            $this->globalWarn = "Execute this query to check for bad values. Must be int, float found: SELECT * FROM dam_resources where type='course' and data like '%". ($this->prop == 'cost' ? 'price' : $this->prop)."\": \"0.%';";
+        }
     }
 
 }
