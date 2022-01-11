@@ -18,5 +18,9 @@
     "assessment": {
         "mainTypes": ["*"],
         "subTypes": ["*"]
+    },
+    "document": {
+        "mainTypes": ["*"],
+        "subTypes": ["*"]
     }
 }

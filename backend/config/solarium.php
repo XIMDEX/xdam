@@ -66,6 +66,18 @@ return [
             'resource' => 'BookSolrResource',
             'classHandler' => 'BookHandler',
             'accepts_types' => [ResourceType::book]
+        ],
+        'document' => [
+            'endpoint' => [
+                'scheme' => 'http', # or https
+                'host' => env('SOLR_HOST', 'localhost'),
+                'port' => env('SOLR_PORT', '8983'),
+                'path' => env('SOLR_PATH', '/'),
+                'core' => 'document',
+            ],
+            'resource' => 'DocumentSolrResource',
+            'classHandler' => 'DocumentHandler',
+            'accepts_types' => [ResourceType::document]
         ]
     ],
     'solr_validators_folder' => env('SOLR_VALIDATORS_FOLDER', ''),
