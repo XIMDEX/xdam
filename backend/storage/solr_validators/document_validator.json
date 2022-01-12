@@ -1,1 +1,52 @@
-//TODO
+{
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "object",
+      "required": ["active", "partials", "name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "format": "string"
+        },
+        "external_url": {
+          "type": "string",
+          "format": "string"
+        },
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "tags": {
+            "title": "tags",
+            "type": "array",
+            "format": "string",
+            "items": {
+                "type":"string"
+            }
+        },
+          "categories": {
+            "title": "categories",
+            "type": "array",
+            "format": "string",
+            "items": {
+              "type":"string"
+            }
+        },
+        "partials": {
+          "type": "object",
+          "properties": {
+            "pages": {
+              "type": "integer",
+              "format": "integer"
+            }
+          }
+        },
+        "active": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "required": ["description"]
+}

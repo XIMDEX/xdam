@@ -2,12 +2,12 @@
 
 namespace App\Http\Resources\Solr;
 
-use App\Enums\MediaType;
+// use App\Enums\MediaType;
+// use App\Http\Resources\MediaResource;
+// use App\Models\Media;
+// use App\Utils\DamUrlUtil;
 use App\Enums\ResourceType;
-use App\Http\Resources\MediaResource;
-use App\Models\Media;
-use App\Utils\DamUrlUtil;
-use App\Utils\Utils;
+use App\Utils\Utils as AppUtils;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DocumentSolrResource extends JsonResource
@@ -20,24 +20,29 @@ class DocumentSolrResource extends JsonResource
      */
     public function toArray($request)
     {
-        $files = array_column(
-            json_decode(MediaResource::collection($this->getMedia(MediaType::File()->key))->toJson(), true),
-            'dam_url'
-        );
-        $previews = array_column(
-            json_decode(MediaResource::collection($this->getMedia(MediaType::Preview()->key))->toJson(), true),
-            'dam_url'
-        );
-        $workspaces = Utils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
+        // $files = array_column(
+        //     json_decode(MediaResource::collection($this->getMedia(MediaType::File()->key))->toJson(), true),
+        //     'dam_url'
+        // );
+        // $previews = array_column(
+        //     json_decode(MediaResource::collection($this->getMedia(MediaType::Preview()->key))->toJson(), true),
+        //     'dam_url'
+        // );
+
+        $workspaces = AppUtils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
+        $tags = $this->tags()->pluck('name')->toArray();
 
         return [
             'id' => $this->id,
             'name' => $this->data->description->name,
             'data' => is_object($this->data) ? json_encode($this->data) : $this->data,
             'active' => $this->active,
-            'type' => (is_array($files) && count($files) === 0 ? 'image' : $this->type),
-            'files' => $files,
-            'previews' => $previews,
+            'type' => ResourceType::book,
+            'tags' =>  count($tags) > 0 ? $tags : ['untagged'],
+            // 'categories' => $this->categories()->pluck('name')->toArray() ?? ['uncategorized'],
+            // 'files' => $files,
+            // 'previews' => $previews,
+            'collection' => $this->collection->id,
             'workspaces' => $workspaces,
             'organization' => $this->organization()->id
         ];

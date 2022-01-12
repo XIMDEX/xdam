@@ -55,6 +55,7 @@ return [
             'classHandler' => 'MultimediaHandler',
             'accepts_types' => [ResourceType::multimedia]
         ],
+
         'book' => [
             'endpoint' => [
                 'scheme' => 'http', # or https
@@ -67,6 +68,7 @@ return [
             'classHandler' => 'BookHandler',
             'accepts_types' => [ResourceType::book]
         ],
+        
         'document' => [
             'endpoint' => [
                 'scheme' => 'http', # or https

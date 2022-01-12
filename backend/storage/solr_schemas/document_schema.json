@@ -1,1 +1,86 @@
-// TODO
+{
+    "active": {
+      "name": "active",
+      "type": "boolean",
+      "omitNorms": true,
+      "omitTermFreqAndPositions": true,
+      "indexed": true,
+      "stored": true,
+      "uninvertible": true,
+      "sortMissingLast": true,
+      "omitPositions": true
+    },
+    "categories": {
+      "name": "categories",
+      "type": "text_general"
+    },
+    "category": {
+      "name": "category",
+      "type": "string",
+      "omitNorms": true,
+      "omitTermFreqAndPositions": true,
+      "indexed": true,
+      "stored": true,
+      "uninvertible": true,
+      "sortMissingLast": true,
+      "docValues": true,
+      "multiValued": true
+    },
+    "data": {
+      "name": "data",
+      "type": "string",
+      "omitNorms": true,
+      "omitTermFreqAndPositions": true,
+      "indexed": true,
+      "stored": true,
+      "uninvertible": true,
+      "sortMissingLast": true,
+      "docValues": false,
+      "omitPositions": true
+    },
+    "id": {
+      "name": "id",
+      "type": "string",
+      "multiValued": false,
+      "indexed": true,
+      "required": true,
+      "stored": true
+    },
+    "tags": {
+      "name": "tags",
+      "type": "text_general"
+    },
+    "name": {
+      "name": "name",
+      "type": "string",
+      "omitNorms": true,
+      "omitTermFreqAndPositions": true,
+      "indexed": true,
+      "stored": true,
+      "uninvertible": true,
+      "docValues": true,
+      "sortMissingLast": true,
+      "omitPositions": true
+    },
+    "type": {
+      "name": "type",
+      "type": "string",
+      "omitNorms": true,
+      "omitTermFreqAndPositions": true,
+      "indexed": true,
+      "stored": true,
+      "uninvertible": true,
+      "sortMissingLast": true,
+      "docValues": true,
+      "omitPositions": true
+    },
+    "organization": {
+      "name": "organization",
+      "type": "strings"
+    },
+    "workspaces": {
+      "name": "workspaces",
+      "type": "string",
+      "multiValued": true
+    }
+}
