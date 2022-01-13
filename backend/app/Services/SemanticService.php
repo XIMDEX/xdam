@@ -31,18 +31,20 @@ class SemanticService
 
         $enhancedText = $response->getBody()->getContents();
         
-        return $this->createResourceStructure($enhancedText);
+        return $this->createResourceStructure($enhancedText, $semanticRequest);
 
     }
 
-    private function createResourceStructure($enhancedText) {
+    private function createResourceStructure($enhancedText, $semanticRequest) {
 
         return [
             'type' => 'document',
             'data' => [
                 'description' => [
                     'active' => true,
+                    // CHANGE NAME
                     'name' => 'test',
+                    'tags' => $this->getTags(json_decode($enhancedText, true)),
                 ],
                 'semantic_data' => $enhancedText
             ],
@@ -58,6 +60,19 @@ class SemanticService
             return $this->xowlUrl . '/enhance';
         }
 
+    }
+
+    private function getTags($enhancedText) {
+
+        $tags = array();
+
+        foreach ($enhancedText['entities'] as $entity) {
+            if (!in_array($entity['text'], $tags)) {
+                array_push($tags, $entity['text']);
+            }
+        }
+
+        return $tags;
     }
 
 }
