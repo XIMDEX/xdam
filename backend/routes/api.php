@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CatalogueController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ResourceController;
+use App\Http\Controllers\SemanticController;
 use App\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
@@ -204,6 +205,11 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::post('/{category}', [CategoryController::class, 'update'])->name('category.update');
             Route::post('/', [CategoryController::class, 'store'])->name('category.store');
             Route::delete('/{category}', [CategoryController::class, 'delete'])->name('category.delete');
+        });
+
+        Route::group(['prefix' => 'semantic'], function() {
+            Route::post('enhance', [SemanticController::class, 'enhance'])->name('semantic.enhance');
+            Route::post('storeEnhancement', [SemanticController::class, 'storeEnhancement'])->name('semantic.storeEnhancement');
         });
 
         Route::group(['prefix' => 'catalogue'], function() {
