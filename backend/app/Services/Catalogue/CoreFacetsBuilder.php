@@ -46,6 +46,12 @@ class CoreFacetsBuilder {
                 "active",
                 "tags",
                 "workspaces"
+            ],
+            "document" => [
+                "categories",
+                "active",
+                "tags",
+                "workspaces"
             ]
         ];
     }
