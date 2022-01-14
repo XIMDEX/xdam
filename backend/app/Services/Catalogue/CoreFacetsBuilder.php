@@ -7,53 +7,10 @@ class CoreFacetsBuilder {
     private $and_facets = []; //add here facets with AND operator behaviour. Example ['tags']; The default operator is OR
     private $formedList;
 
+
     public function __construct()
     {
-        $this->coreList = [
-            "course" => [
-                "categories",
-                "active",
-                "workspaces",
-                "tags",
-                "internal",
-                "aggregated",
-                "duration",
-                "isFree",
-                "currency",
-                "cost",
-                "skills"
-            ],
-            "multimedia" => [
-                "categories",
-                "active",
-                "type",
-                "types",
-                "tags",
-                "workspaces"
-            ],
-            "activity" => [
-                "categories",
-                "active",
-                "workspaces"
-            ],
-            "assessment" => [
-                "categories",
-                "active",
-                "workspaces"
-            ],
-            "book" => [
-                "categories",
-                "active",
-                "tags",
-                "workspaces"
-            ],
-            "document" => [
-                "categories",
-                "active",
-                "tags",
-                "workspaces"
-            ]
-        ];
+        $this->coreList = config('solarium.facets');
     }
 
     public function upCoreConfig(): array

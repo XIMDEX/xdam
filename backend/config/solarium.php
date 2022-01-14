@@ -84,5 +84,49 @@ return [
     ],
     'solr_validators_folder' => env('SOLR_VALIDATORS_FOLDER', ''),
     'solr_schemas_folder' => env('SOLR_SCHEMAS_FOLDER', ''),
-
+    'facets' => [
+        "course" => [
+            "categories",
+            "active",
+            "workspaces",
+            "tags",
+            "internal",
+            "aggregated",
+            "duration",
+            "isFree",
+            "currency",
+            "cost",
+            "skills"
+        ],
+        "multimedia" => [
+            "categories",
+            "active",
+            "type",
+            "types",
+            "tags",
+            "workspaces"
+        ],
+        "activity" => [
+            "categories",
+            "active",
+            "workspaces"
+        ],
+        "assessment" => [
+            "categories",
+            "active",
+            "workspaces"
+        ],
+        "book" => [
+            "categories",
+            "active",
+            "tags",
+            "workspaces"
+        ],
+        "document" => [
+            "category",
+            "language",
+            "entities_linked",
+            "entities_non_linked",
+        ]
+    ]
 ];
