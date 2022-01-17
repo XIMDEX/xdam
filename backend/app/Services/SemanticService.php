@@ -66,7 +66,7 @@ class SemanticService
 
         $tags = array();
 
-        foreach ($enhancedText['entities'] as $entity) {
+        foreach ($enhancedText['xtags'] as $entity) {
             if (!in_array($entity['text'], $tags)) {
                 array_push($tags, $entity['text']);
             }
