@@ -32,6 +32,7 @@ class SolrService
     {
         $this->facetManager = $facetManager;
         $this->clients = $solrConfig->getClients();
+        $this->solrConfigReque = $solrConfig;
     }
 
     /**
@@ -205,6 +206,10 @@ class SolrService
         foreach ($facets as $key => $facet) {
             ksort($facets[$key]['values']);
         }
+
+        $solr_schema = $client->getOptions()['schema'];
+        $this->addFacetType($facets, $solr_schema);
+
         $response->facets = $facets;
         $response->current_page = $currentPage;
         $response->data = $documentsResponse;
@@ -221,4 +226,25 @@ class SolrService
         return json_decode(json_encode($std), true);
     }
 
+
+    private function addFacetType(&$facet, $solr_schema)
+    {
+
+        foreach ($facet as $key => $facet_element) {
+            $facet_name = $facet_element['key'];
+
+            if (!property_exists($solr_schema, $facet_name)) continue;
+
+            switch ($solr_schema->$facet_name->type) {
+                case 'boolean':
+                    $type = 'boolean';
+                    break;
+                default:
+                    $type = 'string';
+                    break;
+            }
+            $facet[$key]['type'] = $type;
+        }
+
+    }
 }

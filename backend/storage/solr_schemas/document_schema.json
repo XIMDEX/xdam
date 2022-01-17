@@ -10,9 +10,35 @@
       "sortMissingLast": true,
       "omitPositions": true
     },
-    "categories": {
-      "name": "categories",
-      "type": "text_general"
+    "id": {
+      "name": "id",
+      "type": "string",
+      "multiValued": false,
+      "indexed": true,
+      "required": true,
+      "stored": true
+    },
+    "external_id": {
+      "name": "external_id",
+      "type": "string",
+      "multiValued": false,
+      "indexed": true,
+      "required": true,
+      "stored": true
+    },
+    "external_uuid": {
+      "name": "external_uuid",
+      "type": "string",
+      "multiValued": false,
+      "indexed": true,
+      "required": true,
+      "stored": true
+    },
+    "langcode": {
+      "name": "Language",
+      "type": "string",
+      "indexed": true,
+      "stored": true
     },
     "category": {
       "name": "category",
@@ -26,8 +52,20 @@
       "docValues": true,
       "multiValued": true
     },
-    "data": {
-      "name": "data",
+    "title": {
+      "name": "title",
+      "type": "string",
+      "omitNorms": true,
+      "omitTermFreqAndPositions": true,
+      "indexed": true,
+      "stored": true,
+      "uninvertible": true,
+      "docValues": true,
+      "sortMissingLast": true,
+      "omitPositions": true
+    },
+    "body": {
+      "name": "body",
       "type": "string",
       "omitNorms": true,
       "omitTermFreqAndPositions": true,
@@ -38,29 +76,13 @@
       "docValues": false,
       "omitPositions": true
     },
-    "id": {
-      "name": "id",
-      "type": "string",
-      "multiValued": false,
-      "indexed": true,
-      "required": true,
-      "stored": true
-    },
-    "tags": {
-      "name": "tags",
+    "entities_linked": {
+      "name": "Entities Linked",
       "type": "text_general"
     },
-    "name": {
-      "name": "name",
-      "type": "string",
-      "omitNorms": true,
-      "omitTermFreqAndPositions": true,
-      "indexed": true,
-      "stored": true,
-      "uninvertible": true,
-      "docValues": true,
-      "sortMissingLast": true,
-      "omitPositions": true
+    "entities_non_linked": {
+      "name": "Entitites Non-Linked",
+      "type": "text_general"
     },
     "type": {
       "name": "type",
@@ -82,5 +104,17 @@
       "name": "workspaces",
       "type": "string",
       "multiValued": true
+    },
+    "enhanced": {
+      "name": "Enhanced",
+      "type": "boolean",
+      "indexed": true,
+      "stored": true
+    },
+    "enhanced_interactive": {
+      "name": "Enhanced Interactive",
+      "type": "boolean",
+      "indexed": true,
+      "stored": true
     }
 }

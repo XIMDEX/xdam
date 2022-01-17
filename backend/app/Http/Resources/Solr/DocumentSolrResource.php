@@ -20,28 +20,24 @@ class DocumentSolrResource extends JsonResource
      */
     public function toArray($request)
     {
-        // $files = array_column(
-        //     json_decode(MediaResource::collection($this->getMedia(MediaType::File()->key))->toJson(), true),
-        //     'dam_url'
-        // );
-        // $previews = array_column(
-        //     json_decode(MediaResource::collection($this->getMedia(MediaType::Preview()->key))->toJson(), true),
-        //     'dam_url'
-        // );
 
         $workspaces = AppUtils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
-        $tags = $this->tags()->pluck('name')->toArray();
+
+        $entities_linked = array_column($this->data->description->entities_linked, 'name');
+        $entities_non_linked =  array_column($this->data->description->entities_non_linked, 'name');
 
         return [
             'id' => $this->id,
-            'name' => $this->data->description->name,
-            'data' => is_object($this->data) ? json_encode($this->data) : $this->data,
+            'external_id' => $this->data->description->id,
+            'external_uuid' => $this->data->description->uuid,
+            'langcode' => $this->data->description->langcode,
+            'title' => $this->data->description->title,
+            'body' => $this->data->description->body,
             'active' => $this->active,
-            'type' => ResourceType::book,
-            'tags' =>  count($tags) > 0 ? $tags : ['untagged'],
-            // 'categories' => $this->categories()->pluck('name')->toArray() ?? ['uncategorized'],
-            // 'files' => $files,
-            // 'previews' => $previews,
+            'type' => ResourceType::document,
+            'entities_non_linked' =>  count($entities_non_linked) > 0 ? $entities_non_linked : [],
+            'entities_linked' => count($entities_linked) > 0 ? $entities_linked : [],
+            'category' => $this->data->description->category,
             'collection' => $this->collection->id,
             'workspaces' => $workspaces,
             'organization' => $this->organization()->id
