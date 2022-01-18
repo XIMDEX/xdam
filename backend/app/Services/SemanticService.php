@@ -263,7 +263,6 @@ class SemanticService
             }
 
             $result = json_decode($response['value']->getBody()->getContents());
-//!! CHECK enhanced_interactive    
             $resourcesInesJA[$key]['enhanced_interactive'] = true; //1 == $params['extra_links'];
             $resourcesInesJA[$key]['enhanced'] = true;
             $resourcesInesJA[$key]['xtags'] = $result->xtags;
