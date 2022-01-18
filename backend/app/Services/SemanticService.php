@@ -244,7 +244,7 @@ class SemanticService
         ];
         
         foreach ($resourcesInesJA as $uuid=>$resource) {
-            $options['form_params']['text'] = $resource['body'];
+            $options['form_params']['text'] = $this->cleanText($resource['body']);
             $promises[$uuid] = $this->client->postAsync($this->getUrl($enhance), $options);
         }
 
