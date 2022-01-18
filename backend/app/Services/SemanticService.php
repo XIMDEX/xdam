@@ -44,7 +44,7 @@ class SemanticService
                 'id' => $uuid,
                 'uuid' => $uuid,
                 'title' => isset($semanticRequest['title']) ? $semanticRequest['title'] : $uuid,
-                'body' => $semanticRequest['text'],
+                'body' => $this->cleanText($semanticRequest['text']),
                 'language' => $langcode,
                 'category' => isset($semanticRequest['category']) ? $semanticRequest['category'] : 'Otros',
                 'external_url' => isset($semanticRequest['external_url']) ? $semanticRequest['external_url'] : '',
@@ -284,4 +284,15 @@ class SemanticService
 
         return $output;
     }
+
+    private function cleanText($text) {
+
+        $text = preg_replace_callback("# <(?![/a-z]) | (?<=\s)>(?![a-z]) #xi", array( $this, 'replaceContent' ), $text);
+        return strip_tags($text);
+
+    }
+
+    private function replaceContent( $item  = null, $item2 = null ) {
+        return str_repeat( "" , mb_strlen( $item[0]) )  ;
+     }
 }
