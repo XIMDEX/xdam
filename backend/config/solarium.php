@@ -124,7 +124,7 @@ return [
         ],
         "document" => [
             "category",
-            "language",
+            "langcode",
             "entities_linked",
             "entities_non_linked",
         ]

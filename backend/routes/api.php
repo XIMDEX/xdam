@@ -208,6 +208,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
         });
 
         Route::group(['prefix' => 'semantic'], function() {
+            Route::get('enhance/automatic', [SemanticController::class, 'enhanceAutomatic'])->name('semantic.enhanceAutomatic');
             Route::post('enhance', [SemanticController::class, 'enhance'])->name('semantic.enhance');
             Route::post('storeEnhancement', [SemanticController::class, 'storeEnhancement'])->name('semantic.storeEnhancement');
         });

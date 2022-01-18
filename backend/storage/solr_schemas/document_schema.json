@@ -35,7 +35,7 @@
       "stored": true
     },
     "langcode": {
-      "name": "Language",
+      "name": "langcode",
       "type": "string",
       "indexed": true,
       "stored": true
@@ -77,12 +77,14 @@
       "omitPositions": true
     },
     "entities_linked": {
-      "name": "Entities Linked",
-      "type": "text_general"
+      "name": "entities_linked",
+      "type": "string",
+      "multiValued": true
     },
     "entities_non_linked": {
-      "name": "Entitites Non-Linked",
-      "type": "text_general"
+      "name": "entities_non_linked",
+      "type": "string",
+      "multiValued": true
     },
     "type": {
       "name": "type",
@@ -106,15 +108,27 @@
       "multiValued": true
     },
     "enhanced": {
-      "name": "Enhanced",
+      "name": "enhanced",
       "type": "boolean",
       "indexed": true,
       "stored": true
     },
     "enhanced_interactive": {
-      "name": "Enhanced Interactive",
+      "name": "enhanced_interactive",
       "type": "boolean",
       "indexed": true,
       "stored": true
+    },
+    "data": {
+      "name": "data",
+      "type": "string",
+      "omitNorms": true,
+      "omitTermFreqAndPositions": true,
+      "indexed": true,
+      "stored": true,
+      "uninvertible": true,
+      "sortMissingLast": true,
+      "docValues": false,
+      "omitPositions": true
     }
 }

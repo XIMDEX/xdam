@@ -261,6 +261,8 @@ class ResourceService
 
         if ($type == ResourceType::course) {
             $resource_data['id'] = $params['kakuma_id'];
+        } else if ($type == ResourceType::document && isset($params['data']->description->uuid)) {
+            $resource_data['id'] = $params['data']->description->uuid;
         } else {
             $resource_data['id'] = Str::orderedUuid();
         }

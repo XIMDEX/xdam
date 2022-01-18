@@ -7,6 +7,7 @@ use App\Http\Resources\ResourceResource;
 use App\Services\SemanticService;
 use App\Services\ResourceService;
 use App\Http\Requests\StoreResourceRequest;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class SemanticController extends Controller
@@ -39,13 +40,19 @@ class SemanticController extends Controller
      */
     public function enhance(Request $request) {
 
-        $resourceToStore = $this->semanticService->enhance($request->all());
+        $response = $this->semanticService->enhance($request->all());
+        $resource = false;
+        if (count($response['resources']) == 1){
+            $resource = $this->resourceService->store($response['resources'][0]);
+        }
 
-        $resource = $this->resourceService->store($resourceToStore);
-        return (new ResourceResource($resource))
-            ->response()
-            ->setStatusCode(Response::HTTP_OK);
-
+        return new JsonResponse(
+            [
+                'data' => $resource ? $resource->toArray() : [],
+                'errors' => $response['errors'] 
+            ],
+            Response::HTTP_OK
+        );
     }
 
     public function storeEnhancement(StoreResourceRequest $request) {
@@ -54,6 +61,28 @@ class SemanticController extends Controller
         return (new ResourceResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
+    }
 
+    /**
+     * @param Request $request
+     * @return String
+     */
+    public function enhanceAutomatic(Request $request) {
+
+        $data = $this->semanticService->automaticEnhance($request->all());
+        $arrayResources = [];
+
+        foreach ($data['resources'] as $resource) {
+            $new_resource = $this->resourceService->store($resource);
+            $arrayResources[] = $new_resource->toArray();
+        }
+        
+        return new JsonResponse(
+            [
+                'data' => $arrayResources,
+                'errors' => $data['errors'] 
+            ],
+            Response::HTTP_OK
+        );
     }
 }
