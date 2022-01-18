@@ -106,7 +106,7 @@ class SemanticService
         }
 
         $description = array_merge($resource, [
-            'active' => true,
+            'active' => 1,
             'entities_linked' => $entities_linked,
             'entities_non_linked' => $entities_non_linked
         ]);
@@ -261,12 +261,12 @@ class SemanticService
                 unset($resourcesInesJA[$key]);
                 continue;
             }
-
             $result = json_decode($response['value']->getBody()->getContents());
             $resourcesInesJA[$key]['enhanced_interactive'] = true; //1 == $params['extra_links'];
             $resourcesInesJA[$key]['enhanced'] = true;
-            $resourcesInesJA[$key]['xtags'] = $result->xtags;
-            $resourcesInesJA[$key]['xtags_interlinked'] = $result->xtags_interlinked;
+            $resourcesInesJA[$key]['xtags'] = $result->data->xtags;
+            $resourcesInesJA[$key]['xtags_interlinked'] = $result->data->xtags_interlinked;
+            $resourcesInesJA[$key]['request_data'] = $result->request;
         }
     }
 
