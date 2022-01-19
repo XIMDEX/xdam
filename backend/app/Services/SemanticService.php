@@ -161,6 +161,7 @@ class SemanticService
             foreach ($results as $resultdata) {
                 $newResource = $this->parseStdClassToResource($resultdata, $data['fields']);
                 $newResource['category'] = $data['category'];
+                $newResource['body'] = $this->cleanText($newResource['body']);
                 $resources[$newResource['uuid']] = $newResource;
             }
         }
@@ -244,7 +245,7 @@ class SemanticService
         ];
         
         foreach ($resourcesInesJA as $uuid=>$resource) {
-            $options['form_params']['text'] = $this->cleanText($resource['body']);
+            $options['form_params']['text'] = $resource['body'];
             $promises[$uuid] = $this->client->postAsync($this->getUrl($enhance), $options);
         }
 
@@ -287,7 +288,8 @@ class SemanticService
 
     private function cleanText($text) {
 
-        $text = preg_replace_callback("# <(?![/a-z]) | (?<=\s)>(?![a-z]) #xi", array( $this, 'replaceContent' ), $text);
+        $text = preg_replace_callback("# <(?![/a-z]) | (?<=\s)>(?![a-z]) #i", array( $this, 'replaceContent' ), $text);
+        $text = str_replace("\t", "", $text);
         return strip_tags($text);
 
     }
