@@ -124,9 +124,10 @@ return [
         ],
         "document" => [
             "category",
+            "enhanced",
             "langcode",
             "entities_linked",
-            "entities_non_linked",
+            "entities_non_linked"
         ]
     ]
 ];
