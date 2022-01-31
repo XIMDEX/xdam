@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 class SemanticService
 {
     const PAGE = 0;
-    const PAGE_SIZE = 1;
+    const PAGE_SIZE = 2;
 
     private $client;
     private $xowlUrl;
@@ -68,7 +68,7 @@ class SemanticService
     {
         $page = key_exists('p', $semanticRequest) ? ($semanticRequest['p'] * self::PAGE_SIZE) + 1 : self::PAGE;
         $page_size = key_exists('ps', $semanticRequest) ? $semanticRequest['ps'] : self::PAGE_SIZE;
-        $enhance = key_exists('enhancer', $semanticRequest) ? $semanticRequest['enhancer'] : 'all';
+        $enhance = key_exists('enhancer', $semanticRequest) ? $semanticRequest['enhancer'] : 'All';
         $interactive = 1; // key_exists('interactive', $semanticRequest) && $semanticRequest['interactive'] == 1 ? 1 : 0;
         $type = key_exists('type', $semanticRequest) ? $semanticRequest['type'] : 'all';
         
@@ -87,22 +87,43 @@ class SemanticService
         ];
     }
 
+    public function updateWithEnhance($semanticResource, $semanticRequest) {
+
+        $resourceToEnhance = [];
+        $errors = [];
+
+        $resourceToEnhance[$semanticResource->uuid] = json_decode(json_encode($semanticResource), true);
+
+        $this->concurrentPost($resourceToEnhance, $errors, $semanticRequest['enhance']);
+
+        $enhancedResource = $this->createResourceStructure($resourceToEnhance[$semanticResource->uuid], $semanticRequest);
+
+        return [
+            'resources' => $enhancedResource,
+            'errors' => $errors
+        ];
+    }
+
     private function createResourceStructure($resource, $params) {
         $entities_linked = [];
         $entities_non_linked = [];
         $array_linked = [];
 
-        foreach ($resource['xtags_interlinked'] as $key => $entity) {
-            $entities_linked[] = $this->getInfoXtags($entity, true);
-            $array_linked[] = $key;
-            unset($resource['xtags_interlinked']);
-        }
-
-        foreach ($resource['xtags'] as $key => $entity) {
-            if (!in_array($key, $array_linked)) {
-                $entities_non_linked[] = $this->getInfoXtags($entity, false);
+        if (key_exists('xtags_interlinked', $resource)) {
+            foreach ($resource['xtags_interlinked'] as $key => $entity) {
+                $entities_linked[] = $this->getInfoXtags($entity, true);
+                $array_linked[] = $key;
+                unset($resource['xtags_interlinked']);
             }
-            unset($resource['xtags']);
+        }
+        
+        if (key_exists('xtags', $resource)) {
+            foreach ($resource['xtags'] as $key => $entity) {
+                if (!in_array($key, $array_linked)) {
+                    $entities_non_linked[] = $this->getInfoXtags($entity, false);
+                }
+                unset($resource['xtags']);
+            }
         }
 
         $description = array_merge($resource, [
@@ -120,11 +141,82 @@ class SemanticService
 
     private function getUrl($enhancer) {
 
-        if ($enhancer == 'All') {
+        if ($enhancer == 'All' || count(explode(',', $enhancer)) > 1) {
             return $this->xowlUrl . '/enhance/all';
         } else {
             return $this->xowlUrl . '/enhance';
         }
+    }
+
+    public function getDocuments($semanticRequest, $isUuidSearch = false) {
+
+        $categories = config('inesja.dataset');
+
+        if (!$isUuidSearch) {
+            $keys = key_exists('ids', $semanticRequest) ? explode(',', $semanticRequest['ids']) : [];
+        } else {
+            $keys = key_exists('uuids', $semanticRequest) ? explode(',', $semanticRequest['uuids']) : [];
+        }
+        
+        $type = key_exists('type', $semanticRequest) && isset($categories[$semanticRequest['type']]) ? $semanticRequest['type'] : config('inesja.default_type');
+        $enhance = key_exists('enhance', $semanticRequest) ? $semanticRequest['enhance'] : '';
+
+        $resourcesInesJA = [];
+
+        foreach ($keys as $key) {
+            $document = $this->getSingleDocument($key, $type, $categories[$type]['search']['_source'], $isUuidSearch);
+            if (empty($document)) continue;
+            $newResource = $this->parseStdClassToResource($document, $categories[$type]['fields']);
+            $newResource['category'] = $categories[$type]['category'];
+            $newResource['body'] = $this->cleanText($newResource['body']);
+            $resourcesInesJA[$newResource['uuid']] = $newResource;
+        }
+
+        $errors = [];
+        if ($enhance) {
+            $this->concurrentPost($resourcesInesJA, $errors, $enhance);
+        }
+
+        $resources = [];
+        foreach ($resourcesInesJA as $resource) {
+            $resources[] = $this->createResourceStructure($resource, $semanticRequest);
+        }
+
+        return [
+            'resources' => $resources,
+            'errors' => $errors 
+        ];
+
+    }
+
+    public function getSingleDocument($key, $type, $source, $isUuidSearch = false) {
+
+        $uri = config('inesja.base_url');
+        $uri .= $type . '.json';
+        $uri .= '?_source=' . $source;
+        if (!$isUuidSearch) {
+            $uri .= '&' . config('inesja.search_id') . '"' . $key . '"';
+        } else {
+            $uri .= '&' . config('inesja.search_uuid') . '"' . $key . '"';
+        }
+        
+
+        $response = $this->client->get($uri);
+        try {
+            $responseBody = json_decode($response->getBody());
+        } catch (Exception $th) {
+            throw new Exception($th->getMessage());
+        }
+
+        $field_name_result = config('inesja.field_result');
+
+        $result = [];
+        if (property_exists($responseBody, 'numResultados') && $responseBody->numResultados > 0) {
+            $result = $responseBody->$field_name_result;
+        }
+        
+        return $result;
+
     }
 
     public function getDataINES($p, $ps, $type)

@@ -7,6 +7,7 @@ use App\Http\Resources\ResourceResource;
 use App\Services\SemanticService;
 use App\Services\ResourceService;
 use App\Http\Requests\StoreResourceRequest;
+use App\Http\Requests\UpdateResourceRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -54,6 +55,112 @@ class SemanticController extends Controller
             Response::HTTP_OK
         );
     }
+
+    /**
+     * @param Request $request
+     * @return String
+     */
+    public function getDocumentsById(Request $request) {
+
+        $data = $this->semanticService->getDocuments($request->all());
+        $arrayResources = [];
+
+        foreach ($data['resources'] as $resource) {
+            $new_resource = $this->resourceService->store($resource);
+            $arrayResources[] = $new_resource->toArray();
+        }
+        
+        return new JsonResponse(
+            [
+                'data' => $arrayResources,
+                'errors' => $data['errors'] 
+            ],
+            Response::HTTP_OK
+        );
+
+    }
+
+    /**
+     * @param Request $request
+     * @return String
+     */
+    public function getDocumentsByUuid(Request $request) {
+
+        $data = $this->semanticService->getDocuments($request->all(), true);
+        $arrayResources = [];
+
+        foreach ($data['resources'] as $resource) {
+            $new_resource = $this->resourceService->store($resource);
+            $arrayResources[] = $new_resource->toArray();
+        }
+        
+        return new JsonResponse(
+            [
+                'data' => $arrayResources,
+                'errors' => $data['errors'] 
+            ],
+            Response::HTTP_OK
+        );
+
+    }
+
+    /**
+     * @param $semanticResource
+     * @return \Illuminate\Http\Response
+     */
+    public function delete($semanticResource)
+    {
+        $semanticResource = $this->resourceService->getById($semanticResource);
+
+        $res = $this->resourceService->delete($semanticResource);
+        return response(['deleted' => $res], Response::HTTP_OK);
+    }
+
+    /**
+     * @param $semanticResource
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|object
+     */
+    public function update($semanticResource, Request $request)
+    {
+        $semanticResource = $this->resourceService->getById($semanticResource);
+
+        $semanticRequest = $request->all();
+        if (array_key_exists("data", $semanticRequest) && gettype($semanticRequest['data']) == "string") {
+            $semanticRequest['data'] = json_decode($semanticRequest['data']);
+        } 
+
+        $resource = $this->resourceService->update($semanticResource, $semanticRequest);
+        return (new ResourceResource($resource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    /**
+     * @param $semanticResource
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|object
+     */
+    public function patch($semanticResource, Request $request)
+    {
+        $semanticResource = $this->resourceService->getById($semanticResource);
+
+        if ($request->get('enhance')) {
+            $semanticRequest = $request->all();
+            $semanticRequest['text'] = $semanticResource->data->description->body;
+            $enhanced = $this->semanticService->updateWithEnhance($semanticResource->data->description, $semanticRequest);
+            $semanticRequest['data'] = json_encode($enhanced['resources']['data']);
+            $resource = $this->resourceService->patch($semanticResource, $semanticRequest);
+        } else {
+            $resource = $this->resourceService->patch($semanticResource, $request->all());
+        }
+
+        
+        return (new ResourceResource($resource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
 
     public function storeEnhancement(StoreResourceRequest $request) {
 

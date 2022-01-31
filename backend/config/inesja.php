@@ -42,6 +42,9 @@ return [
     ],
     'search_sort' => 'sort=date:desc',
     'search_only_published' => 'q=data.moderation_state:"published"',
+    'search_id' => 'q=_id:',
+    'search_uuid' => 'q=data.uuid:',
+    'default_type' => 'noticia',
     'base_url' => 'https://www.juntadeandalucia.es/ssdigitales/datasets/contentapi/1.0.0/search/',
     'field_result' => 'resultado',
     'url' => 'https://www.juntadeandalucia.es'

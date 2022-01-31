@@ -209,6 +209,11 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
 
         Route::group(['prefix' => 'semantic'], function() {
             Route::get('enhance/automatic', [SemanticController::class, 'enhanceAutomatic'])->name('semantic.enhanceAutomatic');
+            Route::get('documents', [SemanticController::class, 'getDocumentsById'])->name('semantic.getDocumentsById');
+            Route::get('documentsUuid', [SemanticController::class, 'getDocumentsByUuid'])->name('semantic.getDocumentsByUuid');
+            Route::put('documents/{id}', [SemanticController::class, 'update'])->name('semantic.update');
+            Route::patch('documents/{id}', [SemanticController::class, 'patch'])->name('semantic.patch');
+            Route::delete('documents/{id}', [SemanticController::class, 'delete'])->name('semantic.delete');
             Route::post('enhance', [SemanticController::class, 'enhance'])->name('semantic.enhance');
             Route::post('storeEnhancement', [SemanticController::class, 'storeEnhancement'])->name('semantic.storeEnhancement');
         });

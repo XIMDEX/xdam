@@ -171,12 +171,55 @@ class ResourceService
     }
 
     /**
+     * @param String $id
+     * @return DamResource
+     */
+    public function getById($id) : DamResource {
+        return DamResource::findOrFail($id);
+    }
+    
+
+    /**
      * @return mixed
      */
     public function exploreCourses(): Collection
     {
         $course = ResourceType::course;
         return Category::where('type', $course)->orWhere('type', "=", strval($course))->get();
+    }
+
+    /**
+     * @param $resource
+     * @param $params
+     * @return DamResource
+     * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
+     */
+    public function patch($resource, $params): DamResource
+    {
+        if (array_key_exists("type", $params) && $params["type"]) {
+            $resource->update(
+                [
+                    'type' => ResourceType::fromKey($params["type"])->value,
+                ]
+            );
+            unset($params["type"]);
+        }
+
+        if (array_key_exists("data", $params)) {
+            if (gettype($params['data']) == "string") $params['data'] = json_decode($params["data"], true);
+
+            $resourceData = json_decode(json_encode($resource->data), true);
+
+            $params['data']['description'] = array_merge($resourceData['description'], $params['data']['description']);
+        }
+
+        $resource->update($params);
+
+
+        $this->saveAssociatedFiles($resource, $params);
+        $resource = $resource->fresh();
+        $this->solr->saveOrUpdateDocument($resource);
+        return $resource;
     }
 
     /**
@@ -261,14 +304,14 @@ class ResourceService
 
         if ($type == ResourceType::course) {
             $resource_data['id'] = $params['kakuma_id'];
-        } else if ($type == ResourceType::document && isset($params['data']->description->uuid)) {
+        } else if ($type == ResourceType::document && isset($params['data']->description->uuid) && null != $params['data']->description->uuid) {
             $resource_data['id'] = $params['data']->description->uuid;
         } else {
             $resource_data['id'] = Str::orderedUuid();
         }
 
+        $newResource = DamResource::create($resource_data);
         try {
-            $newResource = DamResource::create($resource_data);
             $this->setResourceWorkspace($newResource, $wsp);
             $this->linkCategoriesFromJson($newResource, $params['data']);
             $this->linkTagsFromJson($newResource, $params['data']);
