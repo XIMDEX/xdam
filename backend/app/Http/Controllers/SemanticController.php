@@ -180,8 +180,8 @@ class SemanticController extends Controller
         $arrayResources = [];
 
         foreach ($data['resources'] as $resource) {
-            $new_resource = $this->resourceService->store($resource);
-            $arrayResources[] = $new_resource->toArray();
+            $new_resource = $this->resourceService->store($resource, null, null, false);
+            if ($new_resource) $arrayResources[] = $new_resource->toArray();
         }
         
         return new JsonResponse(

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use \GuzzleHttp\Client;
 use App\Models\Collection;
+use App\Models\DamResource;
 use GuzzleHttp\Promise\Utils;
 use Illuminate\Support\Str;
 
@@ -11,7 +12,7 @@ use Illuminate\Support\Str;
 class SemanticService
 {
     const PAGE = 0;
-    const PAGE_SIZE = 2;
+    const PAGE_SIZE = 5;
 
     private $client;
     private $xowlUrl;
@@ -66,7 +67,14 @@ class SemanticService
 
     public function automaticEnhance($semanticRequest)
     {
-        $page = key_exists('p', $semanticRequest) ? ($semanticRequest['p'] * self::PAGE_SIZE) + 1 : self::PAGE;
+    
+        $countDocuments = DamResource::where('type', 'document')->get();
+        if($countDocuments) $countDocuments = count($countDocuments);
+
+        $isEnhanceResource = !key_exists('only-text', $semanticRequest);
+
+        // $page = key_exists('p', $semanticRequest) ? ($semanticRequest['p'] * self::PAGE_SIZE) + 1 : self::PAGE;
+        $page = $countDocuments; 
         $page_size = key_exists('ps', $semanticRequest) ? $semanticRequest['ps'] : self::PAGE_SIZE;
         $enhance = key_exists('enhancer', $semanticRequest) ? $semanticRequest['enhancer'] : 'All';
         $interactive = 1; // key_exists('interactive', $semanticRequest) && $semanticRequest['interactive'] == 1 ? 1 : 0;
@@ -74,7 +82,7 @@ class SemanticService
         
         $errors = [];
         $resourcesInesJA = $this->getDataINES($page, $page_size, $type);
-        $this->concurrentPost($resourcesInesJA, $errors, $enhance);
+        $isEnhanceResource ? $this->concurrentPost($resourcesInesJA, $errors, $enhance) : $this->addOnlyResource($resourcesInesJA);
 
         $resources = [];
         foreach ($resourcesInesJA as $resource) {
@@ -297,6 +305,17 @@ class SemanticService
             }
         }
         return $output;
+    }
+
+    public function addOnlyResource(&$resourcesInesJA) {
+        foreach ($resourcesInesJA as $key => $resource) {
+
+            $resourcesInesJA[$key]['enhanced_interactive'] = false; //1 == $params['extra_links'];
+            $resourcesInesJA[$key]['enhanced'] = false;
+            $resourcesInesJA[$key]['xtags'] = [];
+            $resourcesInesJA[$key]['xtags_interlinked'] = [];
+            $resourcesInesJA[$key]['request_data'] = [];
+        }
     }
 
     public function concurrentPost(&$resourcesInesJA, &$errors, $enhance, $params = [])

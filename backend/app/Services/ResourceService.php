@@ -45,12 +45,13 @@ class ResourceService
      * @param SolrService $solr
      * @param CategoryService $categoryService
      */
-    public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService)
+    public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService, SemanticService $semanticService)
     {
         $this->mediaService = $mediaService;
         $this->categoryService = $categoryService;
         $this->solr = $solr;
         $this->workspaceService = $workspaceService;
+        $this->semanticService = $semanticService;
     }
 
     private function saveAssociateFile($type, $params, $model)
@@ -257,15 +258,15 @@ class ResourceService
 
     /**
      * @param $params
-     * @return DamResource
+     * @return DamResource | false
      * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
      */
     public function store(
         $params,
         $toWorkspaceId = null,
-        $fromBatchType = null
-    ): DamResource
-
+        $fromBatchType = null,
+        $launchThrow = true
+    )
     {
         /*
             $wid cannot be null
@@ -310,19 +311,28 @@ class ResourceService
             $resource_data['id'] = Str::orderedUuid();
         }
 
-        $newResource = DamResource::create($resource_data);
+        $_newResource = false;
         try {
+            $newResource = DamResource::create($resource_data);
+            $_newResource = $newResource;
             $this->setResourceWorkspace($newResource, $wsp);
             $this->linkCategoriesFromJson($newResource, $params['data']);
             $this->linkTagsFromJson($newResource, $params['data']);
             $this->saveAssociatedFiles($newResource, $params);
             $newResource = $newResource->fresh();
             $this->solr->saveOrUpdateDocument($newResource);
+            $_newResource = false;
             return $newResource;
         } catch (\Exception $th) {
-            $this->solr->deleteDocument($newResource);
-            $newResource->delete();
-            throw $th;
+            if (false !== $_newResource) {
+                $this->solr->deleteDocument($_newResource);
+                $newResource->delete();
+                $_newResource = false;
+                return false;
+            }
+            if ($launchThrow) {
+                throw $th;
+            }
         }
     }
 
