@@ -160,11 +160,20 @@ class SolrService
 
         /* if we have a search param, restrict the query */
         if (!empty($search)) {
+            $core_schema = $client->getOptions()['schema'];
             $helper = $query->getHelper();
             $searchTerm = $helper->escapeTerm($search);
-            $searchPhrase = $helper->escapePhrase($search);
-            //$query->setQuery("name:$searchTerm OR data:*$searchPhrase* OR achievements:*$searchPhrase* OR preparations:*$searchPhrase*");
-            $query->setQuery("name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5 achievements:*$searchTerm*^3 OR preparations:*$searchTerm*^3");
+            $searchPhrase = "name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5";
+
+            if (property_exists($core_schema, 'achievements')) {
+                $searchPhrase .= " OR achievements:*$searchTerm*^3";
+            }
+
+            if (property_exists($core_schema, 'preparations')) {
+                $searchPhrase .= " OR preparations:*$searchTerm*^3";
+            }
+
+            $query->setQuery($searchPhrase);
         }
 
         // the query is done without the facet filter, so that it returns the complete list of facets and the counter present in the entire index
