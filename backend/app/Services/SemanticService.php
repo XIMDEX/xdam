@@ -102,7 +102,7 @@ class SemanticService
 
         $resourceToEnhance[$semanticResource->uuid] = json_decode(json_encode($semanticResource), true);
 
-        $this->concurrentPost($resourceToEnhance, $errors, $semanticRequest['enhance']);
+        $this->concurrentPost($resourceToEnhance, $errors, $semanticRequest['enhancer']);
 
         $enhancedResource = $this->createResourceStructure($resourceToEnhance[$semanticResource->uuid], $semanticRequest);
 
@@ -156,7 +156,7 @@ class SemanticService
         }
     }
 
-    public function getDocuments($semanticRequest, $isUuidSearch = false) {
+    public function fetchDocuments($semanticRequest, $isUuidSearch = false) {
 
         $categories = config('inesja.dataset');
 

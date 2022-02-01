@@ -10,7 +10,7 @@
               "default": ""
           },
           "confidence": {
-              "type": "string",
+              "type": "number",
               "title": "Entry",
               "default": ""
           },
@@ -20,12 +20,12 @@
               "default": ""
           },
           "start": {
-              "type": "string",
+              "type": "number",
               "title": "Entry",
               "default": ""
           },
           "end": {
-              "type": "string",
+              "type": "number",
               "title": "Entry",
               "default": ""
           },

@@ -8,7 +8,7 @@ use App\Traits\JsonValidatorTrait;
 use BenSampo\Enum\Rules\EnumKey;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateResourceRequest extends FormRequest
+class PatchResourceRequest extends FormRequest
 {
     use JsonValidatorTrait;
 
@@ -30,33 +30,28 @@ class UpdateResourceRequest extends FormRequest
      */
     public function rules()
     {
-        if ($this->type == ResourceType::document) {
-            return [
-                'type' => ['required', new EnumKey(ResourceType::class)],
-                'collection_id' => 'required|exists:collections,id',
-                'data' => 'required'
-            ];
-        } else {
-            return [
-                MediaType::Preview()->key => 'file',
-            ];
-        }
-        
+        return [
+            'type' => [new EnumKey(ResourceType::class)],
+            'collection_id' => 'exists:collections,id',
+        ];
     }
 
     public function prepareForValidation()
     {
         $all = $this->all();
-        $castedData = [];
         if (array_key_exists('data', $all)) {
             $castedData = json_decode($all['data']);
+            return $this->merge(['data' => $castedData])->all();
         }
-        return $this->merge(['data' => $castedData])->all();
+        return $this->all();
     }
 
     public function withValidator($factory)
     {
-        $this->throwErrorWithValidator($factory, 'data');
-        return $factory;
+        $all = $this->all();
+        if (array_key_exists('data', $all)) {
+            $this->throwErrorWithValidator($factory, 'data');
+            return $factory;
+        }
     }
 }

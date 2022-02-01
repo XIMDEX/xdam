@@ -190,12 +190,12 @@ class ResourceService
     }
 
     /**
-     * @param $resource
+     * @param DamResource $resource
      * @param $params
      * @return DamResource
      * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
      */
-    public function patch($resource, $params): DamResource
+    public function patch(DamResource $resource, $params): DamResource
     {
         if (array_key_exists("type", $params) && $params["type"]) {
             $resource->update(
@@ -206,12 +206,8 @@ class ResourceService
             unset($params["type"]);
         }
 
-        if (array_key_exists("data", $params)) {
-            if (gettype($params['data']) == "string") $params['data'] = json_decode($params["data"], true);
-
-            $resourceData = json_decode(json_encode($resource->data), true);
-
-            $params['data']['description'] = array_merge($resourceData['description'], $params['data']['description']);
+        if (array_key_exists("data", $params) && gettype($params["data"]) == "string") {
+            $params["data"] = json_decode($params["data"]);
         }
 
         $resource->update($params);
