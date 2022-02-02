@@ -102,7 +102,7 @@ class SemanticService
 
         $resourceToEnhance[$semanticResource->uuid] = json_decode(json_encode($semanticResource), true);
 
-        $this->concurrentPost($resourceToEnhance, $errors, $semanticRequest['enhancer']);
+        $this->concurrentPost($resourceToEnhance, $errors, $semanticRequest['enhancer'], $semanticRequest);
 
         $enhancedResource = $this->createResourceStructure($resourceToEnhance[$semanticResource->uuid], $semanticRequest);
 

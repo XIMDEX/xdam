@@ -138,32 +138,6 @@ class SemanticController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
     
-
-    /**
-     * @param DamResource $damResource
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse|object
-     */
-    public function updateWithEnhancement2($damResource, Request $request)
-    {
-        $semanticResource = $this->resourceService->getById($semanticResource);
-
-        if ($request->get('enhance')) {
-            $semanticRequest = $request->all();
-            $semanticRequest['text'] = $semanticResource->data->description->body;
-            $enhanced = $this->semanticService->updateWithEnhance($semanticResource->data->description, $semanticRequest);
-            $semanticRequest['data'] = json_encode($enhanced['resources']['data']);
-            $resource = $this->resourceService->patch($semanticResource, $semanticRequest);
-        } else {
-            $resource = $this->resourceService->patch($semanticResource, $request->all());
-        }
-
-        
-        return (new ResourceResource($resource))
-            ->response()
-            ->setStatusCode(Response::HTTP_OK);
-    }
-
     /**
      * @param Request $request
      * @return String
