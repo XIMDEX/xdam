@@ -207,7 +207,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::delete('/{category}', [CategoryController::class, 'delete'])->name('category.delete');
         });
 
-        Route::group(['prefix' => 'semantic'], function() {
+        Route::group(['prefix' => 'semantic', 'middleware' => 'collection.automatic'], function() {
             Route::get('documents', [SemanticController::class, 'getAll'])->name('semantic.getAll');
             Route::post('documents', [SemanticController::class, 'store'])->name('semantic.store');
             Route::get('documents/fetch', [SemanticController::class, 'fetchDocumentsById'])->name('semantic.fetchDocumentsById');
