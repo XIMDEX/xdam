@@ -324,7 +324,7 @@ class SemanticService
 
         if (count($params) === 0) {
             $options = [
-                "watson"=> ["features" => ["entities" => ["mentions"=> false]], "extra_links" => true],
+                "watson"=> ["features" => ["entities" => ["mentions"=> true]], "extra_links" => true],
                 "dbpedia" => ["confidence"=> 1, "extra_links" => true],
                 "comprehend" => ["LanguageCode"=> "es", "extra_links" => true],
                 "extra_links" => true
@@ -352,7 +352,7 @@ class SemanticService
                 'Accept' => 'application/json',
             ],
             'form_params' => $params,
-            'timeout' => 30
+            'timeout' => 60
         ];
         
         foreach ($resourcesInesJA as $uuid=>$resource) {
