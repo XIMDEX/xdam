@@ -29,6 +29,12 @@ use App\Http\Controllers\WorkspaceController;
 
 Route::group(['prefix'=>'v1','as'=>'v1'], function(){
 
+    Route::get('/health', function() {
+        return [
+            'status' => 'OK',
+        ];
+    })->name('health.check');
+
     Route::group(['prefix' => 'auth'], function(){
         Route::post('login',    [AuthController::class, 'login'])->name('auth.login');
         Route::post('signup',   [AuthController::class, 'signup'])->name('auth.signup');
@@ -212,7 +218,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::post('documents', [SemanticController::class, 'store'])->name('semantic.store');
             Route::get('documents/fetch', [SemanticController::class, 'fetchDocumentsById'])->name('semantic.fetchDocumentsById');
             Route::get('documents/fetch-uuid', [SemanticController::class, 'fetchDocumentsByUuid'])->name('semantic.fetchDocumentsByUuid');
-            Route::get('documents/{damResource}', [SemanticController::class, 'get'])->name('semantic.get');       
+            Route::get('documents/{damResource}', [SemanticController::class, 'get'])->name('semantic.get');
             Route::put('documents/{damResource}', [SemanticController::class, 'update'])->name('semantic.update');
             Route::patch('documents/{damResource}', [SemanticController::class, 'patch'])->name('semantic.patch');
             Route::delete('documents/{damResource}', [SemanticController::class, 'delete'])->name('semantic.delete');
