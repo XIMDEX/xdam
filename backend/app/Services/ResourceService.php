@@ -178,7 +178,7 @@ class ResourceService
     public function getById($id) : DamResource {
         return DamResource::findOrFail($id);
     }
-    
+
 
     /**
      * @return mixed
@@ -322,7 +322,7 @@ class ResourceService
         } catch (\Exception $th) {
             if (false !== $_newResource) {
                 $this->solr->deleteDocument($_newResource);
-                $newResource->delete();
+                $_newResource->delete();
                 $_newResource = false;
                 return false;
             }
