@@ -22,7 +22,7 @@ class AddAutomaticCollection
     {
 
         if (in_array($request->getMethod(), ['POST', 'PUT', 'PATCH'])) {
-            $request->request->add(['collection_id' => 6]);
+            $request->request->add(['collection_id' => getenv('PUBLIC_DOC_ID_COLLECTION')]);
         }
 
         return $next($request);

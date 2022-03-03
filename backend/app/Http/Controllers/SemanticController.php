@@ -59,7 +59,7 @@ class SemanticController extends Controller
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
-    
+
     /**
      * @param StoreResourceRequest $request
      * @return \Illuminate\Http\JsonResponse|object
@@ -76,7 +76,7 @@ class SemanticController extends Controller
         } else {
             $resource = $this->resourceService->store($request->all());
         }
-       
+
         return (new ResourceResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -132,12 +132,12 @@ class SemanticController extends Controller
         $enhanced = $this->semanticService->updateWithEnhance($damResourceData->description, $semanticRequest);
         $semanticRequest['data'] = json_encode($enhanced['resources']['data']);
         $resource = $this->resourceService->patch($damResource, $semanticRequest);
-        
+
         return (new ResourceResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
-    
+
     /**
      * @param Request $request
      * @return String
@@ -151,11 +151,11 @@ class SemanticController extends Controller
             $new_resource = $this->resourceService->store($resource);
             $arrayResources[] = $new_resource->toArray();
         }
-        
+
         return new JsonResponse(
             [
                 'data' => $arrayResources,
-                'errors' => $data['errors'] 
+                'errors' => $data['errors']
             ],
             Response::HTTP_OK
         );
@@ -175,11 +175,11 @@ class SemanticController extends Controller
             $new_resource = $this->resourceService->store($resource);
             $arrayResources[] = $new_resource->toArray();
         }
-        
+
         return new JsonResponse(
             [
                 'data' => $arrayResources,
-                'errors' => $data['errors'] 
+                'errors' => $data['errors']
             ],
             Response::HTTP_OK
         );
@@ -201,7 +201,7 @@ class SemanticController extends Controller
         return new JsonResponse(
             [
                 'data' => $resource ? $resource->toArray() : [],
-                'errors' => $response['errors'] 
+                'errors' => $response['errors']
             ],
             Response::HTTP_OK
         );
@@ -220,11 +220,11 @@ class SemanticController extends Controller
             $new_resource = $this->resourceService->store($resource, null, null, false);
             if ($new_resource) $arrayResources[] = $new_resource->toArray();
         }
-        
+
         return new JsonResponse(
             [
                 'data' => $arrayResources,
-                'errors' => $data['errors'] 
+                'errors' => $data['errors']
             ],
             Response::HTTP_OK
         );

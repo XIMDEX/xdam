@@ -28,7 +28,7 @@ class SemanticService
         $uuid = Str::orderedUuid()->toString();
 
         if (
-            isset($semanticRequest['options']) && 
+            isset($semanticRequest['options']) &&
             isset($semanticRequest['options']['comprehend']) &&
             isset($semanticRequest['options']['comprehend']['LanguageCode'])
         ) {
@@ -58,7 +58,7 @@ class SemanticService
         foreach ($resources as $resource) {
             $resourceStructure[] = $this->createResourceStructure($resource, $semanticRequest);
         }
-        
+
         return [
             'resources' => $resourceStructure,
             'errors' => $errors
@@ -67,19 +67,19 @@ class SemanticService
 
     public function automaticEnhance($semanticRequest)
     {
-    
+
         $countDocuments = DamResource::where('type', 'document')->get();
         if($countDocuments) $countDocuments = count($countDocuments);
 
         $isEnhanceResource = !key_exists('only-text', $semanticRequest);
 
         // $page = key_exists('p', $semanticRequest) ? ($semanticRequest['p'] * self::PAGE_SIZE) + 1 : self::PAGE;
-        $page = $countDocuments; 
+        $page = $countDocuments;
         $page_size = key_exists('ps', $semanticRequest) ? $semanticRequest['ps'] : self::PAGE_SIZE;
         $enhance = key_exists('enhancer', $semanticRequest) ? $semanticRequest['enhancer'] : 'All';
         $interactive = 1; // key_exists('interactive', $semanticRequest) && $semanticRequest['interactive'] == 1 ? 1 : 0;
         $type = key_exists('type', $semanticRequest) ? $semanticRequest['type'] : 'all';
-        
+
         $errors = [];
         $resourcesInesJA = $this->getDataINES($page, $page_size, $type);
         $isEnhanceResource ? $this->concurrentPost($resourcesInesJA, $errors, $enhance) : $this->addOnlyResource($resourcesInesJA);
@@ -91,7 +91,7 @@ class SemanticService
 
         return [
             'resources' => $resources,
-            'errors' => $errors 
+            'errors' => $errors
         ];
     }
 
@@ -124,7 +124,7 @@ class SemanticService
                 unset($resource['xtags_interlinked']);
             }
         }
-        
+
         if (key_exists('xtags', $resource)) {
             foreach ($resource['xtags'] as $key => $entity) {
                 if (!in_array($key, $array_linked)) {
@@ -165,7 +165,7 @@ class SemanticService
         } else {
             $keys = key_exists('uuids', $semanticRequest) ? explode(',', $semanticRequest['uuids']) : [];
         }
-        
+
         $type = key_exists('type', $semanticRequest) && isset($categories[$semanticRequest['type']]) ? $semanticRequest['type'] : config('inesja.default_type');
         $enhance = key_exists('enhance', $semanticRequest) ? $semanticRequest['enhance'] : '';
 
@@ -192,7 +192,7 @@ class SemanticService
 
         return [
             'resources' => $resources,
-            'errors' => $errors 
+            'errors' => $errors
         ];
 
     }
@@ -207,13 +207,13 @@ class SemanticService
         } else {
             $uri .= '&' . config('inesja.search_uuid') . '"' . $key . '"';
         }
-        
+
 
         $response = $this->client->get($uri);
         try {
             $responseBody = json_decode($response->getBody());
-        } catch (Exception $th) {
-            throw new Exception($th->getMessage());
+        } catch (\Exception $th) {
+            throw new \Exception($th->getMessage());
         }
 
         $field_name_result = config('inesja.field_result');
@@ -222,7 +222,7 @@ class SemanticService
         if (property_exists($responseBody, 'numResultados') && $responseBody->numResultados > 0) {
             $result = $responseBody->$field_name_result;
         }
-        
+
         return $result;
 
     }
@@ -236,7 +236,7 @@ class SemanticService
 
         foreach ($categories as $category=>$data) {
             $uri = config('inesja.base_url');
-            
+
             $uri .= $category . '.json';                            // dataset and format
             $uri .= '?_source=' . $data['search']['_source'];       // data response
             $uri .= '&size=' . $ps . '&from=' . $p;                 // pagination
@@ -250,7 +250,7 @@ class SemanticService
             } catch (\Exception $th) {
                 throw new \Exception($th->getMessage());
             }
-            
+
             $field_name_result = config('inesja.field_result');
 
             $results = [];
@@ -295,7 +295,7 @@ class SemanticService
                         $output[$key] = $output[$key][0];
                     }
                     $output[$key] = isset($output[$key]->$field_key) ? $output[$key]->$field_key : '';
-                }                
+                }
             }
             foreach ($add_url_fields as $field) {
                 if (isset($output[$field]) && '' !== $output[$field] && strpos($output[$field], $urlJA) !== 0) {
@@ -324,7 +324,7 @@ class SemanticService
 
         if (count($params) === 0) {
             $options = [
-                "watson"=> ["features" => ["entities" => ["mentions"=> true]], "extra_links" => true],
+                "watson"=> ["features" => ["entities" => ["mentions"=> false]], "extra_links" => true],
                 "dbpedia" => ["confidence"=> 1, "extra_links" => true],
                 "comprehend" => ["LanguageCode"=> "es", "extra_links" => true],
                 "extra_links" => true
@@ -337,15 +337,16 @@ class SemanticService
                 $options['extra_links'] = true;
             }
             $params = [
-                'options' => json_encode($options),
-                'interactive' => 1,
-                'extra_links' => true,
+                'options' => json_encode($options)
             ];
 
             if ('All' !== $enhance) {
                 $params['enhancer'] = $enhance;
             }
         }
+
+        $params['interactive'] = 1;
+        $params['extra_links'] = true;
 
         $options = [
             'headers' => [
@@ -354,7 +355,7 @@ class SemanticService
             'form_params' => $params,
             'timeout' => 60
         ];
-        
+
         foreach ($resourcesInesJA as $uuid=>$resource) {
             $options['form_params']['text'] = $resource['body'];
             $promises[$uuid] = $this->client->postAsync($this->getUrl($enhance), $options);
@@ -373,7 +374,8 @@ class SemanticService
                 unset($resourcesInesJA[$key]);
                 continue;
             }
-            $result = json_decode($response['value']->getBody()->getContents());
+            $output_xowl = $response['value']->getBody()->getContents();
+            $result = json_decode($output_xowl);
             $resourcesInesJA[$key]['enhanced_interactive'] = true; //1 == $params['extra_links'];
             $resourcesInesJA[$key]['enhanced'] = true;
             $resourcesInesJA[$key]['xtags'] = $result->data->xtags;
