@@ -44,6 +44,14 @@
         },
         "active": {
           "type": "boolean"
+        },
+        "isbn": {
+            "name": "ISBN of the book",
+            "type": "string"
+        },
+        "units": {
+            "name": "Number of units of the book",
+            "type": "integer"
         }
       }
     }

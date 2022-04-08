@@ -42,7 +42,9 @@ class BookSolrResource extends JsonResource
             'previews' => $previews,
             'collection' => $this->collection->id,
             'workspaces' => $workspaces,
-            'organization' => $this->organization()->id
+            'organization' => $this->organization()->id,
+            'units' => $data->description->units ?? 0,
+            'isbn' => $data->description->isbn ?? "",
         ];
     }
 }

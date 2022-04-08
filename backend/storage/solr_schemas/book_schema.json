@@ -99,5 +99,13 @@
     "name": "workspaces",
     "type": "string",
     "multiValued": true
+  },
+  "isbn": {
+    "name": "isbn",
+    "type": "text_general"
+  },
+  "units": {
+    "name": "units",
+    "type": "pint"
   }
 }
