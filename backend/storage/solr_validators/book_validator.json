@@ -46,11 +46,11 @@
           "type": "boolean"
         },
         "isbn": {
-            "name": "ISBN of the book",
+            "title": "isbn",
             "type": "string"
         },
         "units": {
-            "name": "Number of units of the book",
+            "title": "units",
             "type": "integer"
         }
       }
