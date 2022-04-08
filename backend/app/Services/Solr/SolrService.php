@@ -164,7 +164,11 @@ class SolrService
             $searchTerm = $helper->escapeTerm($search);
             $searchPhrase = $helper->escapePhrase($search);
             //$query->setQuery("name:$searchTerm OR data:*$searchPhrase* OR achievements:*$searchPhrase* OR preparations:*$searchPhrase*");
-            $query->setQuery("name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5 achievements:*$searchTerm*^3 OR preparations:*$searchTerm*^3");
+            if ('document' === $core) {
+                $query->setQuery("title:$searchTerm^10 title:*$searchTerm*^7 OR body:*$searchTerm*^5");
+            } else {
+                $query->setQuery("name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5 achievements:*$searchTerm*^3 OR preparations:*$searchTerm*^3");
+            }
         }
 
         // the query is done without the facet filter, so that it returns the complete list of facets and the counter present in the entire index
