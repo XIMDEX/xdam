@@ -44,6 +44,14 @@
         },
         "active": {
           "type": "boolean"
+        },
+        "isbn": {
+            "title": "isbn",
+            "type": "string"
+        },
+        "units": {
+            "title": "units",
+            "type": "integer"
         }
       }
     }
