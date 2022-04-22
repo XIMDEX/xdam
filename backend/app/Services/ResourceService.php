@@ -39,6 +39,8 @@ class ResourceService
      */
     private WorkspaceService $workspaceService;
 
+    private $PAGE_SIZE = 30;
+
     /**
      * ResourceService constructor.
      * @param MediaService $mediaService
@@ -156,9 +158,10 @@ class ResourceService
      * @param null $type
      * @return Collection
      */
-    public function getAll($type = null)
+    public function getAll($type = null, $ps = null)
     {
-        return $type ? DamResource::where('type', $type)->paginate(1) : DamResource::paginate(1);
+        $ps = $ps != null ?: $this->PAGE_SIZE;
+        return $type ? DamResource::where('type', $type)->paginate($ps) : DamResource::paginate($ps);
     }
 
     /**

@@ -81,9 +81,9 @@ class ResourceController extends Controller
     /**
      * @return \Illuminate\Http\JsonResponse|object
      */
-    public function getAll()
+    public function getAll(Request $request)
     {
-        $resources = $this->resourceService->getAll();
+        $resources = $this->resourceService->getAll(null, $request->get('ps'));
         return (new ResourceCollection($resources))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
