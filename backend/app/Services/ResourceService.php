@@ -158,7 +158,7 @@ class ResourceService
      */
     public function getAll($type = null)
     {
-        return $type ? DamResource::where('type', $type)->get() : DamResource::all();
+        return $type ? DamResource::where('type', $type)->paginate(1) : DamResource::paginate(1);
     }
 
     /**
