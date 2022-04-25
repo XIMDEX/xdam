@@ -41,7 +41,7 @@ class CourseTagsReindex extends Command
      */
     public function handle(ResourceService $resourceService)
     {
-        $resources = $resourceService->getAll(ResourceType::course);
+        $resources = $resourceService->getAll(ResourceType::course, ResourceService::PAGE_SIZE);
         $count = 0;
         foreach ($resources as $resource) {
             $data = !is_object($resource->data) ? json_decode($resource->data) : $resource->data;

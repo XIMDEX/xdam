@@ -39,7 +39,7 @@ class ResourceService
      */
     private WorkspaceService $workspaceService;
 
-    private $PAGE_SIZE = 30;
+    const PAGE_SIZE = 30;
 
     /**
      * ResourceService constructor.
@@ -160,7 +160,6 @@ class ResourceService
      */
     public function getAll($type = null, $ps = null)
     {
-        $ps = $ps != null ?: $this->PAGE_SIZE;
         return $type ? DamResource::where('type', $type)->paginate($ps) : DamResource::paginate($ps);
     }
 
