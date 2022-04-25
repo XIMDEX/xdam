@@ -83,7 +83,7 @@ class ResourceController extends Controller
      */
     public function getAll(Request $request)
     {
-        $resources = $this->resourceService->getAll(null, $request->get('ps'));
+        $resources = $this->resourceService->getAll(null, $request->get('ps', ResourceService::PAGE_SIZE));
         return (new ResourceCollection($resources))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
