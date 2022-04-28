@@ -3,6 +3,7 @@
 use App\Http\Controllers\AbilityController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CatalogueController;
+use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\TagController;
@@ -194,6 +195,11 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
                 Route::delete('/{damResource}/deleteCategory/{category}',   [ResourceController::class, 'deleteCategory'])       ->name('damResource.deleteCategory');
                 Route::delete('/{damResource}/associatedFile/{media}',      [ResourceController::class, 'deleteAssociatedFile']) ->name('damResource.deleteAssociatedFile');
                 Route::put('/{damResource}/deleteAssociatedFiles',          [ResourceController::class, 'deleteAssociatedFiles'])->name('damResource.deleteAssociatedFiles');
+            });
+
+            Route::group(['prefix' => 'book'], function() {
+                Route::get('/{isbn}/{unit}/links',     [BookController::class, 'listBookLinks'])     ->name('book.retriveLinks');
+
             });
         });
 

@@ -76,6 +76,16 @@ class SolrService
         return $this->getClientFromCollection($damResource->collection);
     }
 
+
+    public function getClient(string $client)
+    {
+        if(!array_key_exists($client, $this->clients)) {
+            throw new Exception("There is no client ${client}");
+        }
+
+        return $this->clients[$client];
+    }
+
     /**
      * update or save a document in solr
      * @param DamResource $damResource

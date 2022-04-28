@@ -52,6 +52,13 @@
         "unit": {
             "title": "unit",
             "type": "integer"
+        },
+        "links": {
+          "title": "links",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     }
