@@ -55,10 +55,7 @@
         },
         "links": {
           "title": "links",
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "type": "object"
         }
       }
     }

@@ -199,7 +199,9 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
 
             Route::group(['prefix' => 'book'], function() {
                 Route::get('/{isbn}/{unit}/links',     [BookController::class, 'listBookLinks'])     ->name('book.retriveLinks');
-
+                Route::post('/{isbn}/links',           [BookController::class, 'updateBookLinks'])   ->name('book.updateLinks');
+                Route::delete('/{isbn}/links',         [BookController::class, 'deleteUnitsLinks'])  ->name('book.deleteLinks');
+                Route::delete('/{isbn}/links/all',     [BookController::class, 'deleteAllUnitsLinks'])  ->name('book.deleteAllLinks');
             });
         });
 
