@@ -9,6 +9,7 @@ use App\Services\Solr\SolrService;
 use App\Services\Solr\CoreHandlers\BookHandler;
 use Solarium\Client;
 use \Error;
+use Intervention\Image\Exception\NotFoundException;
 
 class BookService
 {
@@ -39,7 +40,22 @@ class BookService
         return $documentsResponse;
     }
 
-    public function bookLink(string $isbn, int $unit): ?string
+    public function bookUnitLink(DamResource $book, int $unit): ?string
+    {
+        $description = $book['data']->description;
+
+        if (!property_exists($description, 'links')) {
+            return null;
+        }
+
+        if (!property_exists($description->links, (string) $unit)) {
+            throw new NotFoundException("Unit $unit link not found");
+        }
+
+        return $description->links->{$unit};
+    }
+
+    public function findBookFromIsbn(string $isbn)
     {
         $query = $this->client
             ->createSelect()
@@ -55,41 +71,7 @@ class BookService
             return $book['data']->description->isbn == $isbn;
         });
 
-        $book = $books[0];
-
-        if (!property_exists($book['data']->description, 'links')) {
-            return [];
-        }
-
-        $links = (array) $book['data']->description->links;
-
-        return $links[$unit];
-    }
-
-    public function findBookIdFromIsbn(string $isbn)
-    {
-        $query = $this->client
-            ->createSelect()
-            ->setQuery("data:*$isbn*");
-
-        $results = $this->execute($query);
-
-        if (count($results) > 1) {
-            throw new Error("Several books found with isbn ${isbn}");
-        }
-
-        return $results[0]["id"];
-    }
-
-    public function findBookFromIsbn(string $isbn)
-    {
-        $query = $this->client
-            ->createSelect()
-            ->setQuery("data:*$isbn*");
-
-        $results = $this->execute($query);
-
-        if (count($results) > 1) {
+        if (count($books) > 1) {
             throw new Error("Several books found with isbn ${isbn}");
         }
 

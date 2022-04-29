@@ -17,12 +17,22 @@ class BookController extends Controller
         $this->bookService = $bookService;
     }
 
-    public function listBookLinks(Request $request)
+    public function retriveBookUnitLink(Request $request)
     {
         $isbn = $request->isbn;
         $unit = (int) $request->unit;
 
-        return $this->bookService->bookLink($isbn, $unit);
+        $book = $this->bookService->findBookFromIsbn($isbn);
+
+        $link = $this->bookService->bookUnitLink($book, $unit);
+
+        if(!$link) {
+            return response()->noContent(Response::HTTP_NOT_FOUND);
+        }
+
+        return response()->json([
+            "link" => $link
+        ]);
     }
 
     public function updateBookLinks(Request $request)
