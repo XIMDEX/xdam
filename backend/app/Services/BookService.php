@@ -55,6 +55,21 @@ class BookService
         return $description->links->{$unit};
     }
 
+    /**
+     * @param DamResource $book
+     * @return object|null
+     */
+    public function allBookUnitsLink(DamResource $book): ?object
+    {
+        $description = $book['data']->description;
+
+        if (!property_exists($description, 'links')) {
+            return null;
+        }
+
+        return $description->links;
+    }
+
     public function findBookFromIsbn(string $isbn)
     {
         $query = $this->client

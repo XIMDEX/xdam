@@ -35,6 +35,21 @@ class BookController extends Controller
         ]);
     }
 
+    public function retriveAllBookUnitsLink(Request $request)
+    {
+        $isbn = $request->isbn;
+
+        $book = $this->bookService->findBookFromIsbn($isbn);
+
+        $links = $this->bookService->allBookUnitsLink($book);
+
+        if (!$links) {
+            return response()->noContent(Response::HTTP_NOT_FOUND);
+        }
+
+        return response()->json((array) $links);
+    }
+
     public function updateBookLinks(Request $request)
     {
         if (!$request->has('links')) {
