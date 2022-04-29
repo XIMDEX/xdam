@@ -3,7 +3,7 @@
 use App\Http\Controllers\AbilityController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CatalogueController;
-use App\Http\Controllers\BookController;
+use App\Http\Controllers\Book\BookUnitController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\TagController;
@@ -198,11 +198,11 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             });
 
             Route::group(['prefix' => 'book'], function() {
-                Route::get('/{isbn}/{unit}/links',     [BookController::class, 'retriveBookUnitLink'])     ->name('book.retriveUnitLink');
-                Route::get('/{isbn}/links',            [BookController::class, 'retriveAllBookUnitsLink'])     ->name('book.retriveUnitsLink');
-                Route::post('/{isbn}/links',           [BookController::class, 'updateBookLinks'])   ->name('book.updateLinks');
-                Route::delete('/{isbn}/links',         [BookController::class, 'deleteUnitsLinks'])  ->name('book.deleteLinks');
-                Route::delete('/{isbn}/links/all',     [BookController::class, 'deleteAllUnitsLinks'])  ->name('book.deleteAllLinks');
+                Route::get('/{isbn}/{unit}/links',     [BookUnitController::class, 'retriveUnitLink'])     ->name('book.retriveUnitLink');
+                Route::get('/{isbn}/links',            [BookUnitController::class, 'retriveAllUnitsLink'])     ->name('book.retriveUnitsLink');
+                Route::post('/{isbn}/links',           [BookUnitController::class, 'updateLinks'])   ->name('book.updateLinks');
+                Route::delete('/{isbn}/links',         [BookUnitController::class, 'deleteUnitsLink'])  ->name('book.deleteLink');
+                Route::delete('/{isbn}/links/all',     [BookUnitController::class, 'deleteAllUnitsLink'])  ->name('book.deleteAllLink');
             });
         });
 

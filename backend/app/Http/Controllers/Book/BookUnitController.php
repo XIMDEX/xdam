@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Book;
 
+use App\Http\Controllers\Controller;
 use App\Services\BookService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class BookController extends Controller
+class BookUnitController extends Controller
 {
     private $bookService;
 
@@ -17,7 +18,7 @@ class BookController extends Controller
         $this->bookService = $bookService;
     }
 
-    public function retriveBookUnitLink(Request $request)
+    public function retriveUnitLink(Request $request)
     {
         $isbn = $request->isbn;
         $unit = (int) $request->unit;
@@ -35,7 +36,7 @@ class BookController extends Controller
         ]);
     }
 
-    public function retriveAllBookUnitsLink(Request $request)
+    public function retriveAllUnitsLink(Request $request)
     {
         $isbn = $request->isbn;
 
@@ -50,7 +51,7 @@ class BookController extends Controller
         return response()->json((array) $links);
     }
 
-    public function updateBookLinks(Request $request)
+    public function updateLinks(Request $request)
     {
         if (!$request->has('links')) {
             return response()->noContent(Response::HTTP_BAD_REQUEST);
@@ -65,7 +66,7 @@ class BookController extends Controller
         $this->bookService->updateBookLinks($book, $links);
     }
 
-    public function deleteUnitsLinks(Request $request)
+    public function deleteUnitsLink(Request $request)
     {
         $isbn = $request->isbn;
         $units = $request->input('units');
@@ -76,7 +77,7 @@ class BookController extends Controller
     }
 
 
-    public function deleteAllUnitsLinks(Request $request)
+    public function deleteAllUnitsLink(Request $request)
     {
         $isbn = $request->isbn;
 
