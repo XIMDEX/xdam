@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Book;
 
+use App\Http\Requests\Resource\Book\Unit\RetriveUnitLinkRequest;
+use App\Http\Requests\Resource\Book\Unit\DeleteUnitsLinkRequest;
+use App\Http\Requests\Resource\Book\Unit\UpdateLinksRequest;
 use App\Http\Controllers\Controller;
 use App\Services\BookService;
 use Illuminate\Http\Request;
@@ -18,7 +21,7 @@ class BookUnitController extends Controller
         $this->bookService = $bookService;
     }
 
-    public function retriveUnitLink(Request $request)
+    public function retriveUnitLink(RetriveUnitLinkRequest $request)
     {
         $isbn = $request->isbn;
         $unit = (int) $request->unit;
@@ -51,7 +54,7 @@ class BookUnitController extends Controller
         return response()->json((array) $links);
     }
 
-    public function updateLinks(Request $request)
+    public function updateLinks(UpdateLinksRequest $request)
     {
         if (!$request->has('links')) {
             return response()->noContent(Response::HTTP_BAD_REQUEST);
@@ -66,7 +69,7 @@ class BookUnitController extends Controller
         $this->bookService->updateBookLinks($book, $links);
     }
 
-    public function deleteUnitsLink(Request $request)
+    public function deleteUnitsLink(DeleteUnitsLinkRequest $request)
     {
         $isbn = $request->isbn;
         $units = $request->input('units');
@@ -75,7 +78,6 @@ class BookUnitController extends Controller
 
         $this->bookService->deleteBookUnitsLink($book, $units);
     }
-
 
     public function deleteAllUnitsLink(Request $request)
     {
