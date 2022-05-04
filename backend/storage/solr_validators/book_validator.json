@@ -49,8 +49,8 @@
             "title": "isbn",
             "type": "string"
         },
-        "units": {
-            "title": "units",
+        "unit": {
+            "title": "unit",
             "type": "integer"
         }
       }

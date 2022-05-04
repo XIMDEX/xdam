@@ -104,8 +104,8 @@
     "name": "isbn",
     "type": "text_general"
   },
-  "units": {
-    "name": "units",
+  "unit": {
+    "name": "unit",
     "type": "pint"
   }
 }
