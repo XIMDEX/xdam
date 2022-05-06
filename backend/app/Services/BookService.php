@@ -10,6 +10,7 @@ use App\Services\Solr\CoreHandlers\BookHandler;
 use Solarium\Client;
 use \Error;
 use Intervention\Image\Exception\NotFoundException;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 class BookService
 {
@@ -117,17 +118,15 @@ class BookService
         $this->solrSerice->saveOrUpdateDocument($book);
     }
 
-    /**
-     * @param DamResource $book
-     * @param int[] $units
-     */
-    public function deleteBookUnitsLink(DamResource $book, array $units): void
+    public function deleteBookUnitLink(DamResource $book, int $unit): void
     {
         $dataForUpdate = $book->data;
 
-        foreach ($units as $unit) {
-            unset($dataForUpdate->description->links->{$unit});
+        if(!property_exists($dataForUpdate->description->links, "$unit")) {
+            throw new ResourceNotFoundException("Unit ${unit} does not have any link");
         }
+
+        unset($dataForUpdate->description->links->{$unit});
 
         $book->update([
             'data' => $dataForUpdate
@@ -137,10 +136,23 @@ class BookService
         $this->solrSerice->saveOrUpdateDocument($book);
     }
 
-    public function deleteBookAllUnitsLink(DamResource $book): void
+    /**
+     * @param DamResource $book
+     * @param int[] $units
+     */
+    public function deleteBookUnitsLink(DamResource $book, array $units): void
     {
-        $maxUnit = $book->data->description->unit;
+        $dataForUpdate = $book->data;
 
-        $this->deleteBookUnitsLink($book, range(0, $maxUnit));
+        foreach($units as $unit) {
+            unset($dataForUpdate->description->links->{$unit});
+        }
+
+        $book->update([
+            'data' => $dataForUpdate
+        ]);
+
+        $book = $book->fresh();
+        $this->solrSerice->saveOrUpdateDocument($book);
     }
 }

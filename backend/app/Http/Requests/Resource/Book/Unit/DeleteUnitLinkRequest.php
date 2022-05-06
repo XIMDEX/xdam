@@ -6,7 +6,7 @@ namespace App\Http\Requests\Resource\Book\Unit;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DeleteUnitsLinkRequest extends FormRequest
+class DeleteUnitLinkRequest extends FormRequest
 {
     public function authorize()
     {
@@ -17,8 +17,7 @@ class DeleteUnitsLinkRequest extends FormRequest
     {
         return [
             'isbn' => 'required|string',
-            'units' => 'nullable|array',
-            'units.*' => 'required|int',
+            'unit' => 'required|int',
         ];
     }
 
@@ -26,7 +25,7 @@ class DeleteUnitsLinkRequest extends FormRequest
     {
         return [
             'isbn' => $this->isbn,
-            'units' => $this->input('units')
+            'unit' => $this->unit
         ];
     }
 }

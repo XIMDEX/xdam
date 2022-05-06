@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Book;
 
 use App\Http\Requests\Resource\Book\Unit\RetriveUnitLinkRequest;
+use App\Http\Requests\Resource\Book\Unit\DeleteUnitLinkRequest;
 use App\Http\Requests\Resource\Book\Unit\DeleteUnitsLinkRequest;
 use App\Http\Requests\Resource\Book\Unit\UpdateLinksRequest;
 use App\Http\Controllers\Controller;
@@ -51,7 +52,7 @@ class BookUnitController extends Controller
             return response()->noContent(Response::HTTP_NOT_FOUND);
         }
 
-        return response()->json((array) $links);
+        return response()->json($links);
     }
 
     public function updateLinks(UpdateLinksRequest $request)
@@ -69,22 +70,24 @@ class BookUnitController extends Controller
         $this->bookService->updateBookLinks($book, $links);
     }
 
+    public function deleteUnitLink(DeleteUnitLinkRequest $request)
+    {
+        $isbn = $request->isbn;
+        $unit = (int) $request->unit;
+
+        $book = $this->bookService->findBookFromIsbn($isbn);
+
+        $this->bookService->deleteBookUnitLink($book, $unit);
+    }
+
     public function deleteUnitsLink(DeleteUnitsLinkRequest $request)
     {
         $isbn = $request->isbn;
-        $units = $request->input('units');
 
         $book = $this->bookService->findBookFromIsbn($isbn);
+        
+        $units = $request->input('units')?? range(0, $book->data->description->unit);
 
         $this->bookService->deleteBookUnitsLink($book, $units);
-    }
-
-    public function deleteAllUnitsLink(Request $request)
-    {
-        $isbn = $request->isbn;
-
-        $book = $this->bookService->findBookFromIsbn($isbn);
-
-        $this->bookService->deleteBookAllUnitsLink($book);
     }
 }
