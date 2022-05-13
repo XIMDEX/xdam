@@ -3,9 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\MediaType;
-use App\Enums\ResourceType;
 use App\Traits\JsonValidatorTrait;
-use BenSampo\Enum\Rules\EnumKey;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateResourceRequest extends FormRequest
