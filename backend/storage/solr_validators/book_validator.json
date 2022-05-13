@@ -52,6 +52,10 @@
         "unit": {
             "title": "unit",
             "type": "integer"
+        },
+        "links": {
+          "title": "links",
+          "type": "object"
         }
       }
     }
