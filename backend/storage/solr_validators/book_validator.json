@@ -60,6 +60,21 @@
         "links": {
           "title": "links",
           "type": "object"
+        },
+        "extra": {
+          "title": "extra",
+          "type": "object",
+          "properties": {
+            "link": {
+              "type": "string"
+            },
+            "hover": {
+              "type": "string"
+            },
+            "content": {
+              "type": "string"
+            }
+          }
         }
       }
     }

@@ -40,6 +40,7 @@ class ResourceService
     private WorkspaceService $workspaceService;
 
     const PAGE_SIZE = 30;
+    const DEFAULT_BOOK_LANGUAGE = "es";
 
     /**
      * ResourceService constructor.
@@ -135,6 +136,13 @@ class ResourceService
         }
     }
 
+    private function setDefaultLanguageIfNeeded(array $params): void 
+    {
+        if($params["type"] === ResourceType::book && !property_exists($params["data"]->description, "lang")) {
+            $params["data"]->description->lang = self::DEFAULT_BOOK_LANGUAGE;
+        }
+    }
+
 
     /**
      * @param $resource
@@ -210,6 +218,9 @@ class ResourceService
         }
 
         if (array_key_exists("data", $params) && !empty($params["data"])) {
+
+            $this->setDefaultLanguageIfNeeded($params);
+
             $resource->update(
                 [
                     'data' => $params['data'],
@@ -263,6 +274,8 @@ class ResourceService
         if(is_array($params['data'])) {
             $params['data'] = Utils::arrayToObject($params['data']);
         }
+
+        $this->setDefaultLanguageIfNeeded($params);
 
         $resource_data = [
             'data' => $params['data'],
