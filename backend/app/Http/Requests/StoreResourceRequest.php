@@ -75,9 +75,24 @@ class StoreResourceRequest extends FormRequest
             return [
                 'type' => ['required', new EnumKey(ResourceType::class)],
                 'collection_id' => 'required|exists:collections,id',
-                'data' => 'required'
+                'data' => 'required',
+                'extra' => 'sometimes|nullable',
+                'extra.link' => 'string',
+                'extra.hover' => 'string',
+                'extra.content' => 'string',
             ];
         }
+    }
+
+    public function validationData()
+    {
+        $all = $this->all();
+
+        if(property_exists($all['data']->description, 'extra')) {
+            $all['extra'] = (array) $all['data']->description->extra;
+        }
+
+        return $all;
     }
 
     public function prepareForValidation()

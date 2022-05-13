@@ -52,6 +52,10 @@
         "units": {
             "title": "units",
             "type": "integer"
+        },
+        "lang": {
+          "title": "lang",
+          "type": "string"
         }
       }
     }
