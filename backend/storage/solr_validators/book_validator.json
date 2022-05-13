@@ -49,13 +49,17 @@
             "title": "isbn",
             "type": "string"
         },
-        "units": {
-            "title": "units",
+        "unit": {
+            "title": "unit",
             "type": "integer"
         },
         "lang": {
           "title": "lang",
           "type": "string"
+        },
+        "links": {
+          "title": "links",
+          "type": "object"
         }
       }
     }

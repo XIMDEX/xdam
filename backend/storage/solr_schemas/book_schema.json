@@ -104,8 +104,8 @@
     "name": "isbn",
     "type": "text_general"
   },
-  "units": {
-    "name": "units",
+  "unit": {
+    "name": "unit",
     "type": "pint"
   },
   "lang": {
@@ -113,5 +113,12 @@
     "type": "string",
     "indexed": true,
     "multiValued": false
+  },
+  "links": {
+    "name": "links",
+    "type": "string",
+    "docValues": false,
+    "indexed": false,
+    "multiValued": true 
   }
 }

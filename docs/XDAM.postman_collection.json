@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3302de87-f83a-48b1-9d54-89e8a9decb38",
+		"_postman_id": "f59ea9c7-e1f0-4bdc-8344-6f9d8bc31657",
 		"name": "XDAM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -2319,6 +2319,727 @@
 			]
 		},
 		{
+			"name": "BOOKS",
+			"item": [
+				{
+					"name": "RETRIVE BOOK UNIT LINK",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}{{api}}/resource/book/123456/5/links",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"book",
+								"123456",
+								"5",
+								"links"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "✔ Unit with a link associated",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}{{api}}/resource/book/123456/5/links",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"resource",
+										"book",
+										"123456",
+										"5",
+										"links"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 29 Apr 2022 10:52:36 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.53 (Unix) OpenSSL/1.1.1n PHP/7.4.28 mod_perl/2.0.12 Perl/v5.34.1"
+								},
+								{
+									"key": "Vary",
+									"value": "Authorization,Origin"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/7.4.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "1800"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "1795"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Methods",
+									"value": "GET, POST, PUT, DELETE, OPTIONS"
+								},
+								{
+									"key": "Content-Length",
+									"value": "24"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=99"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"link\": \"LINK UNIDAD 5\"\n}"
+						},
+						{
+							"name": "✖ Unit has not a link associated",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}{{api}}/resource/book/123456/5/links",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"resource",
+										"book",
+										"123456",
+										"5",
+										"links"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 29 Apr 2022 10:52:09 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.53 (Unix) OpenSSL/1.1.1n PHP/7.4.28 mod_perl/2.0.12 Perl/v5.34.1"
+								},
+								{
+									"key": "Vary",
+									"value": "Authorization,Origin"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/7.4.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "1800"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "1797"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Methods",
+									"value": "GET, POST, PUT, DELETE, OPTIONS"
+								},
+								{
+									"key": "Content-Length",
+									"value": "33"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Unit 5 link not found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "RETRIVE BOOK ALL UNITS LINK",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}{{api}}/resource/book/123456/links",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"book",
+								"123456",
+								"links"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "✔ Units with some links",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}{{api}}/resource/book/123456/links",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"resource",
+										"book",
+										"123456",
+										"links"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 29 Apr 2022 10:50:40 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.53 (Unix) OpenSSL/1.1.1n PHP/7.4.28 mod_perl/2.0.12 Perl/v5.34.1"
+								},
+								{
+									"key": "Vary",
+									"value": "Authorization,Origin"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/7.4.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "1800"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "1797"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Methods",
+									"value": "GET, POST, PUT, DELETE, OPTIONS"
+								},
+								{
+									"key": "Content-Length",
+									"value": "61"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=99"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"0\": \"LINK UNIDAD 0\",\n    \"1\": \"LINK UNIDAD 1\",\n    \"5\": \"LINK UNIDAD 5\"\n}"
+						},
+						{
+							"name": "✔ Units without links",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}{{api}}/resource/book/123456/links",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"resource",
+										"book",
+										"123456",
+										"links"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 29 Apr 2022 10:51:49 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.53 (Unix) OpenSSL/1.1.1n PHP/7.4.28 mod_perl/2.0.12 Perl/v5.34.1"
+								},
+								{
+									"key": "Vary",
+									"value": "Authorization,Origin"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/7.4.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "1800"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "1798"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Methods",
+									"value": "GET, POST, PUT, DELETE, OPTIONS"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=99"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[]"
+						}
+					]
+				},
+				{
+					"name": "UPDATE BOOKS UNIT LINKS",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"links\": {\n        \"0\": \"LINK UNIDAD 0\",\n        \"1\": \"LINK UNIDAD 1\",\n        \"5\": \"LINK UNIDAD 5\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource/book/123456/links",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"book",
+								"123456",
+								"links"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "✔ Update book units link",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"links\": {\n        \"0\": \"LINK UNIDAD 0\",\n        \"1\": \"LINK UNIDAD 1\",\n        \"5\": \"LINK UNIDAD 5\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}{{api}}/resource/book/123456/links",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"resource",
+										"book",
+										"123456",
+										"links"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 29 Apr 2022 10:29:28 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.53 (Unix) OpenSSL/1.1.1n PHP/7.4.28 mod_perl/2.0.12 Perl/v5.34.1"
+								},
+								{
+									"key": "Vary",
+									"value": "Authorization,Origin"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/7.4.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "1800"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "1797"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Methods",
+									"value": "GET, POST, PUT, DELETE, OPTIONS"
+								},
+								{
+									"key": "Content-Length",
+									"value": "0"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=98"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=UTF-8"
+								}
+							],
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "DELETE BOOK UNIT LINKS",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"units\": [0, 2]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/resource/book/123456/links",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"book",
+								"123456",
+								"links"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "✔ Delete some units",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"units\": [0, 2]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}{{api}}/resource/book/123456/links",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"resource",
+										"book",
+										"123456",
+										"links"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 29 Apr 2022 10:53:28 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.53 (Unix) OpenSSL/1.1.1n PHP/7.4.28 mod_perl/2.0.12 Perl/v5.34.1"
+								},
+								{
+									"key": "Vary",
+									"value": "Authorization,Origin"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/7.4.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "1800"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "1799"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Methods",
+									"value": "GET, POST, PUT, DELETE, OPTIONS"
+								},
+								{
+									"key": "Content-Length",
+									"value": "0"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=UTF-8"
+								}
+							],
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "DELETE BOOK ALL UNIT LINKS",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}{{api}}/resource/book/123456/links/all",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"resource",
+								"book",
+								"123456",
+								"links",
+								"all"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "✔ Delete all units",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{url}}{{api}}/resource/book/123456/links/all",
+									"host": [
+										"{{url}}{{api}}"
+									],
+									"path": [
+										"resource",
+										"book",
+										"123456",
+										"links",
+										"all"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 29 Apr 2022 10:54:02 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.53 (Unix) OpenSSL/1.1.1n PHP/7.4.28 mod_perl/2.0.12 Perl/v5.34.1"
+								},
+								{
+									"key": "Vary",
+									"value": "Authorization,Origin"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/7.4.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "1800"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "1798"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Methods",
+									"value": "GET, POST, PUT, DELETE, OPTIONS"
+								},
+								{
+									"key": "Content-Length",
+									"value": "0"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=UTF-8"
+								}
+							],
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			]
+		},
+		{
 			"name": "LIST TYPES",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
@@ -2434,7 +3155,9 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": null
+				"url": {
+					"raw": ""
+				}
 			},
 			"response": []
 		}
@@ -2444,7 +3167,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiYzk3MzdlOWE5YjFmZjNiOGM2MzlhYTRlOGUyYWY1Y2IwZjM1OGZmZDJlYWZmNDIzZTNjNzc3YWM0ZjJmNGI1MDk1YWE1NmMwNDJkNmRiMzMiLCJpYXQiOiIxNjE0ODQ3NzQ0Ljk3MDQ3MSIsIm5iZiI6IjE2MTQ4NDc3NDQuOTcwNDk1IiwiZXhwIjoiMTYzMDc0NTM0NC41NDg2OTAiLCJzdWIiOiIyIiwic2NvcGVzIjpbXX0.Xh10ucpwiT9E3GGO7lNVVSIA8bCR8aAUeVwMpxsCLq6U6QSSblWQbaVZVu8NVliSKSxpc9N9tBaq-ufld1xr9Cy5NyC5eGsubhInJ8Sdag3zuq80ShjfFRNNfPWwvnSroYM_6lSXQ5JGY82XmwgYEvwsh0NejzwES68h-yIuCepbkQ3t4ufKBVi37EYjTnCJil3YuFAtflHJmN5HgOz3xeZM_gy16WfZAE6f1lfvieTJv3QwMh7qwPWmgyMcoqFpJ7SPU_oCfePfMaLvNr1-nVv4J2m3ENc6R2vlXEUyisq_8446s2s94eiuYz-tSqYk-dEwwVT3E_QJr_EHW_njoXeqmjA3JQmxszYITwqwWr7Me8EpWZUB25rkftVJHkT0AHJrqA1JVFsVIVO5dGtzJG9vU9vcHTOr7GgtShQrfFSDSqSdo1-XIqq6Oupvy_2XW9lDPlKcFfv0Gfjmcq3ulwxCbSoUKLYhz-WmOHgrSQbDlLXGC7BWoFsaomfBBnC0BCRF5GTif0iAVaZTjpS2KEa5AjzI9AMQeRzZDRtxwPDpGhZs4tAqmVsQmjb6y-FO54npsUIF36gMvema-SNlWP2OoVN5RwgVxRX-C3Qq4_uS1Pd-2kd0A5wMcGbRnXhKjLmpCQALkFrj2qC2Bls4xZmVKiKaAYb13MJKWQDvKag",
+				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiODAyNWMyNjRmMmU0YjVkNWQxODFmMzEwNmQ4NmM2ZDU2M2U5OGRlY2Q5ZDY5MDFlYzk0YzhmNThiNGViYTI4NWY4OGFmMTU3Yjk5NTc4NjEiLCJpYXQiOiIxNjUwNTQwMzI0LjMxOTMxMSIsIm5iZiI6IjE2NTA1NDAzMjQuMzE5MzE2IiwiZXhwIjoiMTY2NjM1MTUyNC4yMTc5MjAiLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.EiDyxfUlxyA-kVIu2ZPZ6rYrP35OOHzCEOsvMHnD5c5-iy3vvLvc8ifDqskdFQ70EfgYHb2M_QX2tHdBZ6tD4y5XyMQ-HQ82TZUPXhD0Q0xhvnrSDEkWZcxhlIY4y5181nJIhr8QwBkcY_abcB-EMcEsiuuHu3epy5Z_hPBriwaqsukKU8uarY53yLrvC9fcgWzIAVQGw9BSGsDSB2n5Y3-qkR9Udk9cYbTh1yaQbIKm5pDX5lXpZRN49M4AJBZDQUEaTosqf3ca00CRhn2hCcm6gQZ_1c-DSnwHtkR6LhU0_TNJNYShHEEqcjG3-DFiKBrvDgSmBc3mc41qdtTDMHaYOYthxDOUFoFDmRiSmp668fvgM2M77hBgDB6zPceJrD_jx4VeM2IW_hmEHbyzvMA0bfRho2ML-DH_mBkvz0cxG1t78H7-T9fnkp7PlVqU78MHbcKzV9X-sKUKE46DHGR5-89bSkj6_BtbTBrKnILNU2NMSHQ59tVSP5AtxD12_J4D1z1TRP02jmpiet-VvcCdZ4nG4Nw7FXB2-uFrBh_IVsp7XkGMHKi0D7wThvoHE9-ZDUzyCww4Ig2AN1z7pDZhqAOMtzXe7cqz4L2ENMrOM4tyYKBCNaQu5K8tVvUL9mHpEJjVhrOnIP5lv0x4n7Q5bqH2uOXiyzkzFA62u-c",
 				"type": "string"
 			}
 		]
@@ -2486,7 +3209,7 @@
 		},
 		{
 			"key": "url",
-			"value": "http://localhost/xdam/backend/public"
+			"value": "http://localhost/projects/xdam/backend/public"
 		},
 		{
 			"key": "url",
