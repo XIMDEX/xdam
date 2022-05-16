@@ -108,6 +108,12 @@
     "name": "unit",
     "type": "pint"
   },
+  "lang": {
+    "name": "lang",
+    "type": "string",
+    "indexed": true,
+    "multiValued": false
+  },
   "links": {
     "name": "links",
     "type": "string",

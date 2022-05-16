@@ -43,8 +43,9 @@ class BookSolrResource extends JsonResource
             'collection' => $this->collection->id,
             'workspaces' => $workspaces,
             'organization' => $this->organization()->id,
-            'units' => $data->description->units ?? 0,
-            'isbn' => $data->description->isbn ?? "",
+            'units' => $this->data->description->units ?? 0,
+            'isbn' => $this->data->description->isbn ?? "",
+            'lang' => $this->data->description->lang ?? getenv('BOOK_DEFAULT_LANGUAGE'),
         ];
     }
 }
