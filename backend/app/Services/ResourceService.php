@@ -40,7 +40,6 @@ class ResourceService
     private WorkspaceService $workspaceService;
 
     const PAGE_SIZE = 30;
-    const DEFAULT_BOOK_LANGUAGE = "es";
 
     /**
      * ResourceService constructor.
@@ -139,7 +138,7 @@ class ResourceService
     private function setDefaultLanguageIfNeeded(array $params): void 
     {
         if($params["type"] === ResourceType::book && !property_exists($params["data"]->description, "lang")) {
-            $params["data"]->description->lang = self::DEFAULT_BOOK_LANGUAGE;
+            $params["data"]->description->lang = getenv('BOOK_DEFAULT_LANGUAGE');
         }
     }
 

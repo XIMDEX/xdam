@@ -10,8 +10,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class BookSolrResource extends JsonResource
 {
-    const DEFAULT_LANGUGE = "es";
-
     /**
      * Transform the resource into an array.
      *
@@ -47,7 +45,7 @@ class BookSolrResource extends JsonResource
             'organization' => $this->organization()->id,
             'units' => $this->data->description->units ?? 0,
             'isbn' => $this->data->description->isbn ?? "",
-            'lang' => $this->data->description->lang ?? $this->DEFAULT_LANGUGE,
+            'lang' => $this->data->description->lang ?? getenv('BOOK_DEFAULT_LANGUAGE'),
         ];
     }
 }
