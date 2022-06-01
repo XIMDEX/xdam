@@ -1,0 +1,8 @@
+<?php
+
+return [
+  'XOWL_URL' => env('XOWL_URL'),
+  'PUBLIC_DOC_ID_COLLECTION' => env('PUBLIC_DOC_ID_COLLECTION'),
+  'BOOK_DEFAULT_LANGUAGE' => env('BOOK_DEFAULT_LANGUAGE'),
+  'MAX_MEDIA_FILE_SIZE' => (Integer) env('MAX_MEDIA_FILE_SIZE')
+];

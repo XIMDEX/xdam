@@ -2,8 +2,18 @@
 
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Env;
 
 define('LARAVEL_START', microtime(true));
+
+if (!function_exists('env')) {
+    function env($key, $default = null) {
+        if (null == Env::get($key, $default)) {
+            return config('ximdex.' . $key, $default);
+        }
+        return Env::get($key, $default);
+    }
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -45,6 +55,7 @@ require __DIR__.'/../vendor/autoload.php';
 */
 
 $app = require_once __DIR__.'/../bootstrap/app.php';
+
 
 $kernel = $app->make(Kernel::class);
 
