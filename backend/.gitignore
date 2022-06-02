@@ -7,3 +7,4 @@ storage/*.key
 storage/logs
 .env
 .phpunit.result.cache
+*.pem

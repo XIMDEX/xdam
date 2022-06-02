@@ -17,6 +17,8 @@ class User extends Authenticatable
 {
     use HasRolesAndAbilities, HasApiTokens, HasFactory, Notifiable, SetDefaultOrganizationAndWorkspace;
 
+    public $xdirRoles = [];
+
     /**
      * The attributes that are mass assignable.
      *

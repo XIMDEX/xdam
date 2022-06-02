@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\v2\Organizations\CanManageOrganization;
 use Fruitcake\Cors\HandleCors;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -78,5 +79,8 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+
+        'aut.jwt' => \App\Http\Middleware\v2\Auth\AuthenticateWithJWT::class,
+        'manage.organizations_by_hash' => CanManageOrganization::class
     ];
 }

@@ -18,7 +18,7 @@ class Organization extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'type'
+        'name', 'type', 'xdir_id'
     ];
 
     public function users()

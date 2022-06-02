@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CollectionController extends Controller
 {
-    private $collectionService;
+    private CollectionService $collectionService;
 
     public function __construct(CollectionService $collectionService)
     {
@@ -31,5 +31,19 @@ class CollectionController extends Controller
         return (new ResourceResource($damResource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function get(Request $request)
+    {
+        $collectionId = $request->route('collection_id');
+
+        return $this->collectionService->get($collectionId);
+    }
+
+    public function createOrganizationCollections(Request $request)
+    {
+        $organizationId = $request->get('organizationId');
+
+        $this->collectionService->createOrganizationCollections($organizationId);
     }
 }

@@ -104,4 +104,9 @@ class OrganizationService
         }
     }
 
+    public function findByXdirId(string $xdirId)
+    {
+        return Organization::where('xdir_id', $xdirId)->firstOrFail();
+    }
+
 }
