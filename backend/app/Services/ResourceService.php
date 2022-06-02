@@ -137,7 +137,7 @@ class ResourceService
 
     private function setDefaultLanguageIfNeeded(array $params): void 
     {
-        if($params["type"] === ResourceType::book && !property_exists($params["data"]->description, "lang")) {
+        if( isset($params['type']) && $params["type"] === ResourceType::book && !property_exists($params["data"]->description, "lang")) {
             $params["data"]->description->lang = getenv('BOOK_DEFAULT_LANGUAGE');
         }
     }
