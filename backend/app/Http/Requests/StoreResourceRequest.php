@@ -80,7 +80,7 @@ class StoreResourceRequest extends FormRequest
                 'extra.link' => 'string',
                 'extra.hover' => 'string',
                 'extra.content' => 'string',
-                'lang' => 'sometimes|nullable|in:ca,en,es',
+                'lang' => 'sometimes|nullable|in:cat,en,es',
             ];
         }
     }
