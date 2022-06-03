@@ -7,10 +7,12 @@ use Illuminate\Auth\GuardHelpers;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\JWT;
+use Illuminate\Support\Facades\Auth;
 
 class JWTGuard implements Guard
 {
     use GuardHelpers;
+
     /**
      * @var JWT $jwt
      */
@@ -29,22 +31,33 @@ class JWTGuard implements Guard
         $this->jwt = $jwt;
         $this->request = $request;
     }
-    
+
     public function user()
     {
-        $set = $this->jwt->setRequest($this->request)->getToken();
+        $this->jwt->setRequest($this->request)->getToken();
         $check = $this->jwt->check();
 
         if ($check) {
             $id = $this->jwt->payload()->get('sub');
-            $this->user = new User();
-            $this->user->id = $id;
+
+            // $this->user = new User();
+            // $this->user->id = getenv('SUPER_ADMIN_USER_ID');
+            
+            $this->user = User::find(getenv('SUPER_ADMIN_USER_ID'));
+            $this->user->selected_workspace = getenv('WORKSPACE_ID');
+            $this->user->save();
+
             $this->user->xdirRoles = $this->jwt->payload()->get('roles');
-            // Set data from custom claims               
+
             return $this->user;
         }
         return null;
     }
+
+    public function attempt() {
+        return true;
+    }
+
     public function validate(array $credentials = [])
     {
     }
