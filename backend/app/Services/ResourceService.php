@@ -347,6 +347,8 @@ class ResourceService
             $wsp = $data['workspace'];
         }
 
+        $genericResourceDescription = array_key_exists('generic', $data) ? json_decode($data['generic'], true) : [];
+
         $createdResources = [];
 
         //$supported_mime_types = $this->resourcesSchema();
@@ -356,12 +358,19 @@ class ResourceService
         foreach ($data['files'] as $file) {
             $name = $file->getClientOriginalName();
             $type = explode('/', $file->getMimeType())[0];
+
+            $description = array_merge(
+                [
+                    'name' => $name,
+                    'active' => false,
+                ],
+                $genericResourceDescription,
+
+            );
+
             $params = [
                 'data' => [
-                    'description' => [
-                        'name' => $name,
-                        'active' => false,
-                    ]
+                    'description' => $description
                 ],
                 'collection_id' => $collection->id,
                 'File' => [$file],
