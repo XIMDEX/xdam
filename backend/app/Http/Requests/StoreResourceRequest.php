@@ -94,7 +94,9 @@ class StoreResourceRequest extends FormRequest
         }
 
         if (property_exists($all['data']->description, 'lang')) {
-            $all['lang'] = $all['data']->description->lang;
+            $language = $all['data']->description->lang;
+
+            $all['lang'] = $language === 'ca' ? 'cat' : $language;
         }
 
         return $all;
