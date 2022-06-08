@@ -18,6 +18,7 @@ use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ResourceService
 {
@@ -336,6 +337,13 @@ class ResourceService
         return $schemas;
     }
 
+    private function searchPreviewImage($data, $name): ?UploadedFile
+    {
+        $fileName = str_replace('.', '_', $name).'_preview';
+
+        return array_key_exists($fileName, $data) ? $data[$fileName] : null;
+    }
+
     public function storeBatch ($data)
     {
         $collection = ModelsCollection::find($data['collection']);
@@ -378,6 +386,7 @@ class ResourceService
                 ],
                 'collection_id' => $collection->id,
                 'File' => [$file],
+                'Preview' => $this->searchPreviewImage($data, $name),
             ];
             $resource = $this->store($params, $wsp, $collection->accept === ResourceType::multimedia ? $type : $collection->accept);
             $createdResources[] = $resource;
