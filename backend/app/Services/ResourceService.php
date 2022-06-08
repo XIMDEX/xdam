@@ -336,6 +336,19 @@ class ResourceService
         return $schemas;
     }
 
+    private function obtainFileToUnitMap(ModelsCollection $collection, array $data): array
+    {
+        if ($collection->accept !== ResourceType::book) {
+            return [];
+        }
+
+        if (!array_key_exists('filesUnits', $data)) {
+            return [];
+        }
+
+        return json_decode($data['filesUnits'], true);
+    }
+
     public function storeBatch ($data)
     {
         $collection = ModelsCollection::find($data['collection']);
@@ -348,6 +361,8 @@ class ResourceService
         }
 
         $genericResourceDescription = array_key_exists('generic', $data) ? json_decode($data['generic'], true) : [];
+
+        $fileToUnitMap = $this->obtainFileToUnitMap($collection, $data);
 
         $createdResources = [];
 
@@ -365,7 +380,7 @@ class ResourceService
                     'active' => false,
                 ],
                 $genericResourceDescription,
-
+                array_key_exists($name, $fileToUnitMap) ? ['unit' => $fileToUnitMap[$name]] : []
             );
 
             $params = [
