@@ -18,6 +18,7 @@ use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ResourceService
 {
@@ -336,17 +337,11 @@ class ResourceService
         return $schemas;
     }
 
-    private function obtainFileToUnitMap(ModelsCollection $collection, array $data): array
+    private function searchPreviewImage($data, $name): ?UploadedFile
     {
-        if ($collection->accept !== ResourceType::book) {
-            return [];
-        }
+        $fileName = str_replace('.', '_', $name).'_preview';
 
-        if (!array_key_exists('filesUnits', $data)) {
-            return [];
-        }
-
-        return json_decode($data['filesUnits'], true);
+        return array_key_exists($fileName, $data) ? $data[$fileName] : null;
     }
 
     public function storeBatch ($data)
@@ -362,7 +357,7 @@ class ResourceService
 
         $genericResourceDescription = array_key_exists('generic', $data) ? json_decode($data['generic'], true) : [];
 
-        $fileToUnitMap = $this->obtainFileToUnitMap($collection, $data);
+        $especificFilesInfoMap = array_key_exists('filesInfo', $data) ? json_decode($data['filesInfo'], true) : [];
 
         $createdResources = [];
 
@@ -374,13 +369,15 @@ class ResourceService
             $name = $file->getClientOriginalName();
             $type = explode('/', $file->getMimeType())[0];
 
+            $specificInfo = array_key_exists($name, $especificFilesInfoMap) ? $especificFilesInfoMap[$name] : [];
+
             $description = array_merge(
                 [
                     'name' => $name,
                     'active' => false,
                 ],
                 $genericResourceDescription,
-                array_key_exists($name, $fileToUnitMap) ? ['unit' => $fileToUnitMap[$name]] : []
+                $specificInfo,
             );
 
             $params = [
@@ -389,6 +386,7 @@ class ResourceService
                 ],
                 'collection_id' => $collection->id,
                 'File' => [$file],
+                'Preview' => $this->searchPreviewImage($data, $name),
             ];
             $resource = $this->store($params, $wsp, $collection->accept === ResourceType::multimedia ? $type : $collection->accept);
             $createdResources[] = $resource;
