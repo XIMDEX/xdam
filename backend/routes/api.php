@@ -105,6 +105,7 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
                 Route::get('types/all', [OrganizationController::class, 'indexCollectionTypes'])->name('org.collectionType.all');
             });
             Route::get('{organization_id}/workspaces', [WorkspaceController::class, 'index'])->name('wsp.index');
+            Route::post('{organization}/workspace/update/byName/{workspace_name}',   [WorkspaceController::class, 'updateWorkspaceByName'])->name('wsp.updateByName');
         });
 
         Route::group(['prefix' => 'workspace', 'middleware' => 'manage.workspaces'], function(){

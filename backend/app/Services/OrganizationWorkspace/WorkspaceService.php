@@ -4,21 +4,26 @@ namespace App\Services\OrganizationWorkspace;
 
 use App\Enums\Roles;
 use App\Enums\WorkspaceType;
+use App\Exceptions\NeedForceFlagException;
 use App\Models\DamResource;
 use App\Models\Organization;
 use App\Models\Workspace;
 use App\Services\Admin\AdminService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use App\Services\Solr\SolrService;
 
 class WorkspaceService
 {
 
     private $adminService;
 
-    public function __construct(AdminService $adminService)
+    private SolrService $solrService;
+
+    public function __construct(AdminService $adminService, SolrService $solrService)
     {
         $this->adminService = $adminService;
+        $this->solrService = $solrService;
     }
 
     public function index($organization)
@@ -89,5 +94,30 @@ class WorkspaceService
             }
         }
         return $res;
+    }
+
+    public function updateByName(Organization $organization, string $currentName, string $newName, ?bool $forceUpdata = false): void
+    {
+        $workpaceCollection = Workspace::select('*')
+            ->where('organization_id', '=', $organization->id)
+            ->where('name', '=', $currentName)
+            ->get();
+            
+        if(!$forceUpdata && $workpaceCollection->count() > 1) {
+            throw new NeedForceFlagException();
+        }
+
+        $workspaces = $workpaceCollection->values()->all();
+
+        foreach($workspaces as $workspace) {
+            $workspace->update(['name' => $newName]);
+            $workspace->refresh();
+
+            $workspaceResources = $workspace->resources()->get();
+
+            foreach($workspaceResources as $resource) {
+                $this->solrService->saveOrUpdateDocument($resource);
+            }
+        }
     }
 }

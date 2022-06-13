@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\NeedForceFlagException;
 use App\Http\Requests\GetOrganizationResourcesRequest;
 use App\Http\Requests\Workspace\GetWorkspaceRequest;
 use App\Http\Requests\Workspace\ListWorkspacesRequest;
 use App\Http\Requests\Workspace\CreateWorkspaceRequest;
 use App\Http\Requests\Workspace\DeleteWorkspaceRequest;
 use App\Http\Requests\Workspace\UpdateWorkspaceRequest;
+use App\Http\Requests\Workspace\UpdateWorkspaceByNameRequest;
 use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\ResourceResource;
 use App\Http\Resources\WorkspaceCollection;
@@ -16,6 +18,7 @@ use App\Models\Collection;
 use App\Models\Organization;
 use App\Models\User;
 use App\Services\OrganizationWorkspace\WorkspaceService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection as JsonResourceCollection;
 use Illuminate\Support\Facades\Auth;
@@ -102,5 +105,18 @@ class WorkspaceController extends Controller
             return Auth::user()->workspaces()->where('organization_id', $org->id)->get();
         }
         return ['error'];
+    }
+
+    public function updateWorkspaceByName(Organization $organization, UpdateWorkspaceByNameRequest $request)
+    {
+        $currentWorkspaceName = $request->workspace_name;
+        $newWorkspaceName = $request->input('name');
+        $forceUpdate = $request->input('force');
+
+        try {
+            $this->workspaceService->updateByName($organization, $currentWorkspaceName, $newWorkspaceName, $forceUpdate);
+        } catch (NeedForceFlagException $exception) {
+            return response('', Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
     }
 }
