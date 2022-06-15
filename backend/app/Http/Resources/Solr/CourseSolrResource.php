@@ -27,7 +27,7 @@ class CourseSolrResource extends JsonResource
             json_decode(MediaResource::collection($this->getMedia(MediaType::Preview()->key))->toJson(), true),
             'dam_url'
         );
-        $workspaces = Utils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
+        $workspaces = $this->resource->workspaces->pluck('id')->toArray();
         $data = $this->data;
 
         if (property_exists($data,  "description") && property_exists($data->description, 'course_source'))
