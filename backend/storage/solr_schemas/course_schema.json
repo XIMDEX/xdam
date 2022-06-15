@@ -103,7 +103,7 @@
   },
   "workspaces": {
     "name": "workspaces",
-    "type": "string",
+    "type": "pint",
     "multiValued": true
   },
   "duration": {
