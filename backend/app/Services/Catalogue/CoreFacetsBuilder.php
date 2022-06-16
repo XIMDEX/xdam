@@ -21,8 +21,7 @@ class CoreFacetsBuilder {
                 "isFree",
                 "currency",
                 "cost",
-                "skills",
-                "lang"
+                "skills"
             ],
             "multimedia" => [
                 "categories",
@@ -30,20 +29,17 @@ class CoreFacetsBuilder {
                 "type",
                 "types",
                 "tags",
-                "workspaces",
-                "lang"
+                "workspaces"
             ],
             "activity" => [
                 "categories",
                 "active",
-                "workspaces",
-                "lang"
+                "workspaces"
             ],
             "assessment" => [
                 "categories",
                 "active",
-                "workspaces",
-                "lang"
+                "workspaces"
             ],
             "book" => [
                 "categories",
