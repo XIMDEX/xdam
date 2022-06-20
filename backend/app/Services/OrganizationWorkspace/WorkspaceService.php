@@ -90,4 +90,15 @@ class WorkspaceService
         }
         return $res;
     }
+
+     /**
+      * @param int[] $workspacesId
+      * @return Worspace[]
+      */
+    public function getMultpleWorkspaces(array $workspacesId): Collection
+    {
+        $collection = Workspace::whereIn('id', $workspacesId)->get();
+
+        return $collection;
+    }
 }
