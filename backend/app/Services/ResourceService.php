@@ -350,16 +350,12 @@ class ResourceService
         $collection = ModelsCollection::find($data['collection']);
         $organization = $collection->organization()->first();
 
-        $workspace = $this->workspaceService->findUniqueWorkspace(
-            $organization,
+        $wsp = $this->workspaceService->getOrCreateWorkspace(
+            $organization->id,
+            $data['workspace'],
             WorkspaceType::fromValue('generic'),
-            $data['workspace']
-        );
-
-        $wsp = is_null($workspace)
-            ? $this->workspaceService->create($organization->id, $data['workspace'])->id
-            : $workspace->id;
-
+        )->id;
+        
         $genericResourceDescription = array_key_exists('generic', $data) ? json_decode($data['generic'], true) : [];
 
         $especificFilesInfoMap = array_key_exists('filesInfo', $data) ? json_decode($data['filesInfo'], true) : [];
