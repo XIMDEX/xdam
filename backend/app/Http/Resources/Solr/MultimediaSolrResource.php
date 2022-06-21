@@ -28,7 +28,7 @@ class MultimediaSolrResource extends JsonResource
             json_decode(MediaResource::collection($this->getMedia(MediaType::Preview()->key))->toJson(), true),
             'dam_url'
         );
-        $workspaces = array_map(fn ($id) => intval($id), $this->resource->workspaces->pluck('id')->toArray());
+        $workspaces = $this->resource->workspaces->pluck('id')->toArray();
 
         // If the resource does not have a preview, but has an associated file, take the first one as preview
         if (empty($previews) && !empty($files))
