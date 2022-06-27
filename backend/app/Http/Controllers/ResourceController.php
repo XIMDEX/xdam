@@ -39,6 +39,10 @@ class ResourceController extends Controller
      */
     private $mediaService;
 
+    const AdditionalBatchStepsMap = [
+        AdditionalBatchSteps::CONVERT_BOOKS_AFETER_UPDATE => BooksForConversionStored::class
+    ];
+
     /**
      * CategoryController constructor.
      * @param ResourceService $resourceService
@@ -146,13 +150,10 @@ class ResourceController extends Controller
 
         $resources = $this->resourceService->storeBatch($data);
 
-        if (array_key_exists('additionalSteps', $data)) {
-            foreach ($data['additionalSteps'] as $step) {
-                if ($step === AdditionalBatchSteps::CONVERT_BOOKS_AFETER_UPDATE) {
-                    BooksForConversionStored::dispatch($resources);
-                }
-            }
-        }
+        array_map(
+            fn($step) => call_user_func([self::AdditionalBatchStepsMap[$step], 'dispatch'], $resources), 
+            $data['additionalSteps']
+        );
 
         return (new ResourceCollection($resources))
             ->response()
