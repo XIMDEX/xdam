@@ -27,6 +27,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Mimey\MimeTypes;
 use Symfony\Component\HttpFoundation\Response;
+use App\Events\BooksForConversionStored;
+use App\Enums\AdditionalBatchSteps;
 
 class ResourceController extends Controller
 {
@@ -139,7 +141,17 @@ class ResourceController extends Controller
 
     public function storeBatch(Request $request)
     {
-        $resources = $this->resourceService->storeBatch($request->all());
+        $data = $request->all();
+        $resources = $this->resourceService->storeBatch($data);
+
+        if (array_key_exists('additionalSteps', $data)) {
+            foreach ($data['additionalSteps'] as $step) {
+                if ($step === AdditionalBatchSteps::CONVERT_BOOKS_AFETER_UPDATE) {
+                    BooksForConversionStored::dispatch($resources);
+                }
+            }
+        }
+
         return (new ResourceCollection($resources))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
