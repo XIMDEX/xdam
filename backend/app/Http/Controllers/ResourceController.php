@@ -29,6 +29,7 @@ use Mimey\MimeTypes;
 use Symfony\Component\HttpFoundation\Response;
 use App\Events\BooksForConversionStored;
 use App\Enums\AdditionalBatchSteps;
+use App\Http\Requests\Resource\StoreResourcesBatchRequest;
 
 class ResourceController extends Controller
 {
@@ -139,9 +140,10 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function storeBatch(Request $request)
+    public function storeBatch(StoreResourcesBatchRequest $request)
     {
         $data = $request->all();
+
         $resources = $this->resourceService->storeBatch($data);
 
         if (array_key_exists('additionalSteps', $data)) {

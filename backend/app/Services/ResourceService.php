@@ -339,14 +339,16 @@ class ResourceService
 
     private function searchPreviewImage($data, $name): ?UploadedFile
     {
-        $fileName = str_replace('.', '_', $name).'_preview';
+        $fileName = str_replace(' ', '_', $name);
+        $fileName = str_replace('.', '_', $fileName);
+        $fileName .= '_preview';
 
         return array_key_exists($fileName, $data) ? $data[$fileName] : null;
     }
 
     public function storeBatch ($data)
     {
-        $collection = ModelsCollection::find($data['collection']);
+        $collection = ModelsCollection::find($data['collectionId']);
         $organization = $collection->organization()->first();
 
         if($data['create_wsp'] === '1') {
@@ -354,10 +356,6 @@ class ResourceService
         } else {
             $wsp = $data['workspace'];
         }
-
-        $genericResourceDescription = array_key_exists('generic', $data) ? json_decode($data['generic'], true) : [];
-
-        $especificFilesInfoMap = array_key_exists('filesInfo', $data) ? json_decode($data['filesInfo'], true) : [];
 
         $createdResources = [];
 
@@ -369,14 +367,14 @@ class ResourceService
             $name = $file->getClientOriginalName();
             $type = explode('/', $file->getMimeType())[0];
 
-            $specificInfo = array_key_exists($name, $especificFilesInfoMap) ? $especificFilesInfoMap[$name] : [];
+            $specificInfo = array_key_exists($name, $data['filesInfo']) ? $data['filesInfo'][$name] : [];
 
             $description = array_merge(
                 [
                     'name' => $name,
                     'active' => false,
                 ],
-                $genericResourceDescription,
+                $data['generic'],
                 $specificInfo,
             );
 
