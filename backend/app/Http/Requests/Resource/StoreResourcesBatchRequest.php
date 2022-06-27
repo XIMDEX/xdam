@@ -65,11 +65,13 @@ class StoreResourcesBatchRequest extends FormRequest
 
     public function all($keys = null)
     {
-        $parentAll = parent::all();
+        $parentAll = parent::all($keys);
 
         $genericResourceDescription = array_key_exists('generic', $parentAll) ? json_decode($parentAll['generic'], true) : [];
 
         $especificFilesInfoMap = array_key_exists('filesInfo', $parentAll) ? json_decode($parentAll['filesInfo'], true) : [];
+
+        $additionalSteps = !is_null($this->input('additionalSteps')) ? $this->input('additionalSteps') : [];
 
         return array_merge(
             $parentAll,
@@ -77,6 +79,7 @@ class StoreResourcesBatchRequest extends FormRequest
                 'collectionId' => $this->route('collection_id'),
                 'generic' => $genericResourceDescription,
                 'filesInfo' => $especificFilesInfoMap,
+                'additionalSteps' => $additionalSteps,
             ],
         );
     }
@@ -126,7 +129,7 @@ class StoreResourcesBatchRequest extends FormRequest
             'previewFiles' => $previewFiles,
             'generic' => $this->decodeOptionalData('generic'),
             'especificFilesInfoMap' => $this->decodeOptionalData('filesInfo'),
-            'aditionalSteps' => $this->route('additionalSteps'),
+            'aditionalSteps' => $this->input('additionalSteps'),
         ];
     }
 }
