@@ -6,7 +6,6 @@ namespace App\Http\Requests\Resource;
 
 use App\Enums\AdditionalBatchSteps;
 use App\Enums\Languages;
-use App\Models\Collection;
 use Illuminate\Foundation\Http\FormRequest;
 use BenSampo\Enum\Rules\EnumValue;
 use Illuminate\Http\UploadedFile;
@@ -16,13 +15,6 @@ class StoreResourcesBatchRequest extends FormRequest
     public function authorize()
     {
         return true;
-    }
-
-    private function decodeOptionalData(string $propertyName): array
-    {
-        return property_exists( $this, $propertyName) 
-            ? json_decode($this->$propertyName, true) 
-            : [];
     }
 
     private function filePreviewName(UploadedFile $file): string
@@ -55,7 +47,7 @@ class StoreResourcesBatchRequest extends FormRequest
         foreach($all['files'] as $file) {
             $name = $this->filePreviewName($file);
            
-            if(!is_null($all[$name . '_preview'])) {
+            if(array_key_exists($name . '_preview', $all)) {
                 $rules[$name . '_preview'] = 'mimes:jpg,bmp,png';
             }
         }
@@ -104,6 +96,10 @@ class StoreResourcesBatchRequest extends FormRequest
             'generic.lang' => ['sometimes', 'nullable', new EnumValue(Languages::class)],
             'generic.tags' => 'sometimes|nullable|array',
             'generic.categories' => 'sometimes|nullable|array',
+            'filesInfo' => 'sometimes|nullable|array',
+            'filesInfo.*.extra.link' => 'sometimes|nullable|string',
+            'filesInfo.*.extra.hover' => 'sometimes|nullable|string',
+            'filesInfo.*.extra.content' => 'sometimes|nullable|string',
             
             'especificFilesInfoMap' => '',
             
@@ -117,6 +113,8 @@ class StoreResourcesBatchRequest extends FormRequest
     public function validationData(): array
     {
 
+        $all = $this->all();
+
         $allFiles = $this->allFiles();
 
         $previewFiles = $this->previewFiles();
@@ -127,8 +125,8 @@ class StoreResourcesBatchRequest extends FormRequest
             'create_wsp' => $this->create_wsp,
             'files' => $allFiles['files'],
             'previewFiles' => $previewFiles,
-            'generic' => $this->decodeOptionalData('generic'),
-            'especificFilesInfoMap' => $this->decodeOptionalData('filesInfo'),
+            'generic' => $all['generic'],
+            'filesInfo' => $all['filesInfo'],
             'aditionalSteps' => $this->input('additionalSteps'),
         ];
     }
