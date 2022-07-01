@@ -31,8 +31,14 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $loginRequest)
     {
+        $disable_redirect = ($loginRequest->input('disable_redirect', false) == false ? false : true);
+        $loginRequest->offsetUnset('disable_redirect');
         $authResource = $this->authService->login($loginRequest->input());
-        return (new AuthResource($authResource))
+        $auxAuthResource = new AuthResource($authResource);
+        $token = $disable_redirect == true ? '' : $this->authService->generateKakumaToken();
+        $auxAuthResource->appendKeyToData('kakuma_token', $token);
+
+        return ($auxAuthResource)
             ->response()
             ->setStatusCode($authResource['code']);
     }

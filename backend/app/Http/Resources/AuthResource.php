@@ -5,6 +5,15 @@ namespace App\Http\Resources;
 class AuthResource extends BaseResource
 {
 
+    public function appendKeyToData($key, $value)
+    {
+        if ($this['code'] == 200) {
+            $data = $this['data'];
+            $data[$key] = $value;
+            $this['data'] = $data;
+        }
+    }
+
     /**
      * Transform the resource into an array.
      *

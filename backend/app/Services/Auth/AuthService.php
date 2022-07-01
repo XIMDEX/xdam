@@ -4,12 +4,20 @@ namespace App\Services\Auth;
 
 use App\Models\User;
 use App\Traits\AuthTrait;
+use App\Services\ExternalApis\KakumaService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthService
 {
     use AuthTrait;
+
+    private KakumaService $kakumaService;
+
+    public function __construct(KakumaService $kakumaService)
+    {
+        $this->kakumaService = $kakumaService;
+    }
 
     public function login($credentials): array
     {
@@ -34,6 +42,14 @@ class AuthService
     {
         Auth::user()->token()->revoke();
         return $this->success('User Logged Out', 200);
+    }
+
+    /**
+     * @TODO Fix potential SECURITY ISSUE because of using loginAsSuperAdmin
+     */
+    public function generateKakumaToken()
+    {
+        return $this->kakumaService->loginAsSuperAdmin();
     }
 
     public function getPersonalAccessToken()
