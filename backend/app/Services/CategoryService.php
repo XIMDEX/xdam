@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\ResourceType;
 use App\Models\Category;
+use Exception;
 
 class CategoryService
 {
@@ -52,10 +53,16 @@ class CategoryService
      */
     public function update(Category $category, $data)
     {
-        return $category->update([
+        $updated = $category->update([
             'name' => $this->satinizeCategoryName($data["name"]),
             'type' => ResourceType::fromKey($data["type"])->value
         ]);
+
+        if(!$updated) {
+            throw new Exception("Category with id: $category->id was unable to be updated");
+        }
+
+        return Category::find($category->id)->first();
     }
 
     /**
