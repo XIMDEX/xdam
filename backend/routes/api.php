@@ -28,6 +28,9 @@ use App\Http\Controllers\WorkspaceController;
 
 
 Route::group(['prefix'=>'v1','as'=>'v1'], function(){
+    Route::get('temp', function() {
+        return response()->json(['prueba' => __('facets.DEFAULT.categories')]);
+    });
 
     Route::group(['prefix' => 'auth'], function(){
         Route::post('login',    [AuthController::class, 'login'])->name('auth.login');
