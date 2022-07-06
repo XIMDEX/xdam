@@ -18,28 +18,6 @@ class BaseApi
     protected string $TOKEN = "";
     protected string $AUTH_TYPE = "Bearer";
 
-    function copyRemote($fromUrl, $toFile)
-    {
-        try {
-            $client = new Client();
-            $headers = ['sink' => $toFile];
-            if ($this->TOKEN) {
-                $headers['headers']["Authorization"] = "$this->AUTH_TYPE $this->TOKEN";
-            }
-            $data = $client->request('GET', $fromUrl, $headers)->getHeaders();
-            $contentDisposition = $data["Content-Disposition"][0];
-            $exploded = explode(".", $contentDisposition);
-            $extension = end($exploded);
-            $extension = rtrim($extension, '"');
-
-            File::move($toFile, "$toFile.$extension");
-            return basename($toFile) . "." . $extension;
-        } catch (Exception | GuzzleException $e) {
-            throw new Exception($e);
-            return false;
-        }
-    }
-
     public function call(
         string $url,
         array $params = [],

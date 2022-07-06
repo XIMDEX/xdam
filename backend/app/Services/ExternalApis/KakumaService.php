@@ -21,7 +21,7 @@ class KakumaService extends BaseApi
             [
                 "email" => config("kakuma.kakuma_admin_email"),
                 "password" => config("kakuma.kakuma_admin_password"),
-                "disable_redirect" => 'EMPTY VALUE'
+                "disable_redirect" => true
             ],
             "post"
         );
