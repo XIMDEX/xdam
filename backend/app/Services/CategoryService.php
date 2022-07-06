@@ -62,7 +62,7 @@ class CategoryService
             throw new Exception("Category with id: $category->id was unable to be updated");
         }
 
-        return Category::find($category->id)->first();
+        return Category::find($category->id);
     }
 
     /**
