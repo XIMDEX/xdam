@@ -4,10 +4,19 @@ namespace App\Services;
 
 use App\Enums\ResourceType;
 use App\Models\Category;
+use App\Models\DamResource;
+use App\Services\Solr\SolrService;
 use Exception;
 
 class CategoryService
 {
+
+    private SolrService $solr;
+
+    public function __construct(SolrService $solr)
+    {
+        $this->solr = $solr;
+    }
 
     /**
      * @param $name
@@ -16,6 +25,24 @@ class CategoryService
     private function satinizeCategoryName($name)
     {
         return str_replace(" ", "_", $name);
+    }
+
+    private function updateCategoryResources(Category $category, string $newCategoryName): void
+    {
+        foreach ($category->resources as $resource) {
+            $data = $resource->data;
+
+            $data->description->categories = array_map(
+                function ($categoryName) use ($category, $newCategoryName) 
+                {
+                    return $categoryName == $category->name ? $newCategoryName : $category->name;
+                },
+                $data->description->categories
+            );
+
+            $resource->update(['data' => $data]);
+            $this->solr->saveOrUpdateDocument($resource);
+        }
     }
 
     /**
@@ -61,6 +88,8 @@ class CategoryService
         if(!$updated) {
             throw new Exception("Category with id: $category->id was unable to be updated");
         }
+
+        $this->updateCategoryResources($category, $data["name"]);
 
         return Category::find($category->id);
     }
