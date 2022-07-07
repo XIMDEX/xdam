@@ -29,7 +29,7 @@ class CategoryService
 
     private function updateCategoryResources(Category $category, string $newCategoryName): void
     {
-        foreach ($category->resources as $resource) {
+        foreach ($category->resources->lazy() as $resource) {
             $data = $resource->data;
 
             $data->description->categories = array_map(
@@ -89,7 +89,9 @@ class CategoryService
             throw new Exception("Category with id: $category->id was unable to be updated");
         }
 
-        $this->updateCategoryResources($category, $data["name"]);
+        if($category->name !== $data["name"]) {
+            $this->updateCategoryResources($category, $data["name"]);
+        }
 
         return Category::find($category->id);
     }
