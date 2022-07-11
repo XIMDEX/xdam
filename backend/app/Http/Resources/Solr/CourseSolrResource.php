@@ -11,6 +11,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CourseSolrResource extends JsonResource
 {
+    public static function generateQuery($searchTerm)
+    {
+        return "name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5 achievements:*$searchTerm*^3 OR preparations:*$searchTerm*^3";
+    }
+
     /**
      * Transform the resource into an array.
      *

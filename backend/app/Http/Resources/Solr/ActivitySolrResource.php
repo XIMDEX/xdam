@@ -10,6 +10,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ActivitySolrResource extends JsonResource
 {
+    public static function generateQuery($searchTerm)
+    {
+        return "name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5";
+    }
+
     /**
      * Transform the resource into an array.
      *
