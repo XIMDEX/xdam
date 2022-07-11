@@ -1,32 +1,36 @@
 #!/bin/bash
 delete_core() {
+	# Gets the core argument
 	local core="$1"
+
+	# Deletes the Solr core
 	sudo su - solr -c "/opt/solr/bin/solr delete -c $core"	
 }
 
 create_core() {
+	# Gets the core argument
 	local core="$1"
+
+	# Creates the Solr core
 	sudo su - solr -c "/opt/solr/bin/solr create -c $core -n data_driven_schema_configs"
+
+	# Stores the core's configuration
 	sudo cp /home/lluis/htdocs/Projects/xdam/backend/storage/solr_core_conf/core_files/* /var/solr/data/$core
 	sudo chown -R solr:solr /var/solr/data/$core
 	sudo cp /home/lluis/htdocs/Projects/xdam/backend/storage/solr_core_conf/core_conf_files/* /var/solr/data/$core/conf
 	sudo chown -R solr:solr /var/solr/data/$core/conf
+
+	# Installs the Solr core
 	echo "y" | php artisan solr:install --core=$core
 }
 
-# Deletes the cores
-delete_core "activity"
-delete_core "assessment"
-delete_core "book"
-delete_core "course"
-delete_core "multimedia"
-
-# Creates the cores
-create_core "activity"
-create_core "assessment"
-create_core "book"
-create_core "course"
-create_core "multimedia"
+# Sets the array with the cores to delete/create, and iterates through it
+cores=("activity" "assessment" "book" "course" "multimedia")
+for core in ${cores[@]}; do
+	# Deletes and creates the core
+	delete_core $core
+	create_core $core
+done
 
 # Reindexes the DB content
 php artisan solr:reindex
