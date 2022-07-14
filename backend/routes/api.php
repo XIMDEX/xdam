@@ -28,6 +28,13 @@ use App\Http\Controllers\WorkspaceController;
 
 
 Route::group(['prefix'=>'v1','as'=>'v1'], function(){
+    Route::group(['prefix' => 'cdn'], function() {
+        Route::group(['prefix' => '{cdn_code}'], function() {
+            Route::group(['prefix' => 'resource'], function() {
+                Route::get('/{damResourceHash}',    [ResourceController::class, 'getCDNResource'])->name('damResource.getCDNResource');
+            });
+        });
+    });
 
     Route::group(['prefix' => 'auth'], function(){
         Route::post('login',    [AuthController::class, 'login'])->name('auth.login');

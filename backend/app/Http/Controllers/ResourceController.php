@@ -7,6 +7,7 @@ use App\Enums\ThumbnailTypes;
 use App\Http\Requests\addFileToResourceRequest;
 use App\Http\Requests\addPreviewToResourceRequest;
 use App\Http\Requests\addUseRequest;
+use App\Http\Requests\CDNRequest;
 use App\Http\Requests\GetDamResourceRequest;
 use App\Http\Requests\ResouceCategoriesRequest;
 use App\Http\Requests\SetTagsRequest;
@@ -16,6 +17,7 @@ use App\Http\Resources\ExploreCoursesCollection;
 use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\ResourceResource;
 use App\Models\Category;
+use App\Services\CDNService;
 use App\Models\DamResource;
 use App\Models\DamResourceUse;
 use App\Models\Media;
@@ -30,21 +32,32 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ResourceController extends Controller
 {
+    /**
+     * @var ResourceService
+     */
     private $resourceService;
+
     /**
      * @var MediaService
      */
     private $mediaService;
 
     /**
+     * @var CDNService
+     */
+    private $cdnService;
+
+    /**
      * CategoryController constructor.
      * @param ResourceService $resourceService
      * @param MediaService $mediaService
+     * @param CDNService $cdnService
      */
-    public function __construct(ResourceService $resourceService, MediaService $mediaService)
+    public function __construct(ResourceService $resourceService, MediaService $mediaService, CDNService $cdnService)
     {
         $this->resourceService = $resourceService;
         $this->mediaService = $mediaService;
+        $this->cdnService = $cdnService;
     }
 
     public function resourcesSchema ()
@@ -263,6 +276,11 @@ class ResourceController extends Controller
      */
     public function render($damUrl, $size = null)
     {
+        return $this->renderImage($damUrl, $size);
+    }
+
+    private function renderImage($damUrl, $size = null, $media = null)
+    {
         $sizes = ['small', 'medium', 'raw'];
 
         if($size && !in_array($size, $sizes)) {
@@ -286,14 +304,22 @@ class ResourceController extends Controller
 
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         $media = Media::findOrFail($mediaId);
+        $mediaFileName = explode('/', $media->getPath());
+        $mediaFileName = $mediaFileName[count($mediaFileName) - 1];
 
         $mimeType = $media->mime_type;
         $fileType = explode('/', $mimeType)[0];
 
         if($fileType == 'video' || $fileType == 'image') {
             $compressed = $this->mediaService->preview($media, $size);
-            return $compressed->response('jpeg', $size === 'raw' ? 100 : $size);
+            echo '<pre>' . var_export($compressed, true) . '</pre>';
+            exit();
+            $response = $compressed->response('jpeg', $size === 'raw' ? 100 : $size);
+            $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
+            return $response;
         }
+        echo 'FORA';
+        exit();
 
         return response()->file($this->mediaService->preview($media));
     }
@@ -407,5 +433,25 @@ class ResourceController extends Controller
         return (new ResourceResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function getCDNResource(CDNRequest $request)
+    {
+        $cdnInfo = $this->cdnService->getCDNInfo($request->cdn_code);
+        $resource = $request->getAttachedDamResource();
+
+        if ($cdnInfo === null)
+            return response(['error' => 'This CDN doesn\'t exist!']);
+
+        if (!$request->isCollectionAccessible($resource, $cdnInfo) || !$cdnInfo->checkAccessRequirements($_SERVER['REMOTE_ADDR']))
+            return response(['error' => 'Forbidden access!']);
+
+        $resourceResponse = new ResourceResource($resource);
+        $responseJson = json_decode($resourceResponse->toJson());
+    
+        if (count($responseJson->files) == 0)
+            return response(['error' => 'No files attached!']);
+        
+        return $this->renderImage($responseJson->files[0]->dam_url, 'raw');
     }
 }
