@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Models\DamResource;
 use App\Models\Collection;
+use App\Models\CDNCollection;
 
 class CDNRequest extends FormRequest
 {
@@ -15,14 +16,14 @@ class CDNRequest extends FormRequest
                         ->where('collection_id', $info->collection_id)
                         ->first();
         $this->collection_id = $info->collection_id;
+        $this->resource_id = $info->resource_id;
 
         return $resource;
     }
 
-    public function isCollectionAccessible($resource, $cdnInfo)
+    public function isCollectionAccessible($resource, $cdn)
     {
-        if ($resource === null) return false;
-        return $cdnInfo->isCollectionAccessible($this->collection_id);
+        return $cdn->isCollectionAccessible($this->collection_id);
     }
 
     /**

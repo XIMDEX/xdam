@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\CDN\CDN;
+use App\Models\CDN;
 
 class CDNService
 {
@@ -15,12 +15,6 @@ class CDNService
 
     public function getCDNInfo($cdnCode)
     {
-        if (!$this->doesCDNExist($cdnCode)) return null;
-        return new CDN($this->cdnInfo[$cdnCode]);
-    }
-
-    private function doesCDNExist($cdnCode)
-    {
-        return array_key_exists($cdnCode, $this->cdnInfo);
+        return CDN::where('id', $cdnCode)->first();
     }
 }

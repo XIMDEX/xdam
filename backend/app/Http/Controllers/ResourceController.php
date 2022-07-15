@@ -312,14 +312,10 @@ class ResourceController extends Controller
 
         if($fileType == 'video' || $fileType == 'image') {
             $compressed = $this->mediaService->preview($media, $size);
-            echo '<pre>' . var_export($compressed, true) . '</pre>';
-            exit();
             $response = $compressed->response('jpeg', $size === 'raw' ? 100 : $size);
             $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
             return $response;
         }
-        echo 'FORA';
-        exit();
 
         return response()->file($this->mediaService->preview($media));
     }
