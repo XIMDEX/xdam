@@ -20,6 +20,5 @@ return [
         'workspaces' => 'Workspaces',
     ],
     'MHE' => [],
-    'SEK' => [],
-    'temp' => 'sdgg'
+    'SEK' => []
 ];

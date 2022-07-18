@@ -1,6 +1,10 @@
 <?php
 
 return [
-    'languages' => ['es', 'en', 'cat'],
-    'defaultLanguage' => 'es'
+    'DEFAULT' => [
+        'languages' => ['es', 'en', 'cat'],
+        'defaultLanguage' => 'es'
+    ],
+    'MHE' => [],
+    'SEK' => []
 ];
