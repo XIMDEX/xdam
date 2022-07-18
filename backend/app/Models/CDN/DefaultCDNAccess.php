@@ -4,9 +4,9 @@ namespace App\Models\CDN;
 
 class DefaultCDNAccess
 {
-    public function __construct($parameters) 
+    public function __construct($rules) 
     {
-        $this->parameters = json_decode($parameters);
+        $this->rules = $rules;
     }
 
     public function areRequirementsMet($ipAddress = null)

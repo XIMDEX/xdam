@@ -6,8 +6,8 @@ use App\Models\CDN\DefaultCDNAccess;
 
 class LTICDNAccess extends DefaultCDNAccess
 {
-    public function __construct($parameters)
+    public function __construct($rules)
     {
-        parent::__construct($parameters);
+        parent::__construct($rules);
     }
 }

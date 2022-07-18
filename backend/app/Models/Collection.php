@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,5 +24,10 @@ class Collection extends Model
     public function resources()
     {
         return $this->hasMany(DamResource::class);
+    }
+
+    public function cdn_collections(): BelongsToMany
+    {
+        return $this->belongsToMany(CDNCollection::class);
     }
 }

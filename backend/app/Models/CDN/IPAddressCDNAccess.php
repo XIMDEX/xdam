@@ -8,13 +8,13 @@ class IPAddressCDNAccess extends DefaultCDNAccess
 {
     private $ipAddresses;
 
-    public function __construct($parameters)
+    public function __construct($rules)
     {
-        parent::__construct($parameters);
+        parent::__construct($rules);
     }
 
     public function areRequirementsMet($ipAddress = null)
     {
-        return in_array($ipAddress, $this->parameters->ip_addresses);
+        return in_array($ipAddress, $this->rules);
     }
 }

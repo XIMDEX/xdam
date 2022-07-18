@@ -3,10 +3,15 @@
 namespace App\Models;
 
 use App\Enums\AccessPermission;
+use App\Models\CDNAccessPermission;
 use App\Models\CDNCollection;
 use App\Models\CDN\DefaultCDNAccess;
 use App\Models\CDN\IPAddressCDNAccess;
 use App\Models\CDN\LTICDNAccess;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,6 +20,22 @@ class CDN extends Model
     use HasFactory;
 
     protected $table = "cdns";
+    protected $fillable = ['name'];
+
+    public function getID()
+    {
+        return $this->attributes['id'];
+    }
+
+    public function cdn_access_permission(): HasOne
+    {
+        return $this->hasOne(CDNAccessPermission::class, 'cdn_id');
+    }
+
+    public function cdn_collections(): HasMany
+    {
+        return $this->hasMany(CDNCollection::class, 'cdn_id');
+    }
 
     public function isCollectionAccessible($collectionID)
     {
@@ -30,22 +51,25 @@ class CDN extends Model
 
     public function checkAccessRequirements($ipAddress = null)
     {
-        $accessPermission = $this->getAccessPermission($this->attributes['access_permission'],
-                                                        $this->attributes['access_permission_properties']);
+        $accessPermission = $this->getAccessPermission();
         return $accessPermission->areRequirementsMet($ipAddress);
     }
     
-    private function getAccessPermission($accessPermission, $properties): DefaultCDNAccess
+    private function getAccessPermission(): DefaultCDNAccess
     {
-        switch ($accessPermission) {
+        $cdnAccessPermission = $this->cdn_access_permission()->first();
+        $rules = $cdnAccessPermission->getRules();
+
+        switch ($cdnAccessPermission->getType()) {
             case AccessPermission::default:
-                return new DefaultCDNAccess($properties);
+                return new DefaultCDNAccess($rules);
 
             case AccessPermission::ipAddress:
-                return new IPAddressCDNAccess($properties);
+                echo 'IP Address';
+                return new IPAddressCDNAccess($rules);
 
             case AccessPermission::lti:
-                return new LTICDNAccess($properties);
+                return new LTICDNAccess($rules);
         }
 
         return null;
