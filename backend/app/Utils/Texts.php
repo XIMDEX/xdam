@@ -27,7 +27,7 @@ class Texts {
 
     public static function web(string $key, string $lang = null, array $replace = [], $default = null)
     {
-        $client = env('APP_CLIENT') ?? 'DEFAULT';
+        $client = env('APP_CLIENT') ?? self::DEFAULT;
         return self::getText(self::getKey($key, self::TYPE_FACETS, $client), $lang, $key, $replace, $default);
     }
 
@@ -49,7 +49,8 @@ class Texts {
 
     public static function isAvailableLanguage($lang)
     {
-        $lang_available = config('constants.' . self::DEFAULT . '.languages');
+        $client = env('APP_CLIENT') ?? self::DEFAULT;
+        $lang_available = config('constants.' . $client . '.languages');
         return in_array($lang, $lang_available);
     }
 }
