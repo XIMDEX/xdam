@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services;
+use App\Utils\VideoStreamTest;
 use App\Enums\MediaType;
 use App\Models\Media;
 use FFMpeg\Coordinate\TimeCode;
@@ -72,6 +73,14 @@ class MediaService
         if ($fileType === 'video') {
 
             if($size === 'raw') {
+                $opciones = [
+                    'http' => [
+                        'method' => 'GET',
+                        'header' => 'Content-Disposition: inline; filename=VIDEO TEST 1'
+                    ]
+                ];
+                $video = new VideoStreamTest($mediaPath);
+                return $video->start('VIDEO TEST 1');
                 return VideoStreamer::streamFile($mediaPath);
             }
 
