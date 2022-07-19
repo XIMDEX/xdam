@@ -191,7 +191,6 @@ class SolrService
         //overwrite current fq to core specifics
         $coreHandler = new $classCore($query);
         $query = $coreHandler->queryCoreSpecifics($facetsFilter);
-        
         $allDocuments = $client->select($query);
         $documentsFound = $allDocuments->getNumFound();
         $faceSetFound = $allDocuments->getFacetSet();

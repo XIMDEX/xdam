@@ -49,7 +49,7 @@ class Texts {
 
     public static function isAvailableLanguage($lang)
     {
-        $lang_available = config('constants.languages');
+        $lang_available = config('constants.' . self::DEFAULT . '.languages');
         return in_array($lang, $lang_available);
     }
 }
