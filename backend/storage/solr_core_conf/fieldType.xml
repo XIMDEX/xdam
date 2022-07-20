@@ -21,8 +21,3 @@
         <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
     </analyzer>
 </fieldType>
-<fieldType name="text" class="solr.TextField" positionIncrementGap="100">
-    <analyzer type="query">
-        <filter class="solr.LowerCaseFilterFactory" />
-    </analyzer>
-</fieldType>

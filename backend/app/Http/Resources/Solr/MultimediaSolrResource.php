@@ -2,21 +2,16 @@
 
 namespace App\Http\Resources\Solr;
 
+use App\Http\Resources\Solr\BaseSolrResource;
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use App\Http\Resources\MediaResource;
 use App\Models\Media;
 use App\Utils\DamUrlUtil;
 use App\Utils\Utils;
-use Illuminate\Http\Resources\Json\JsonResource;
 
-class MultimediaSolrResource extends JsonResource
+class MultimediaSolrResource extends BaseSolrResource
 {
-    public static function generateQuery($searchTerm)
-    {
-        return "name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5";
-    }
-
     /**
      * Transform the resource into an array.
      *

@@ -191,7 +191,6 @@ class SolrService
         $limit = $pageParams['limit'];
 
         $query = $client->createSelect();
-        //var_dump(get_class($query));
         $facetSet = $query->getFacetSet();
 
         /* the facets to be applied to the query  */
@@ -204,7 +203,7 @@ class SolrService
             $helper = $query->getHelper();
             $searchTerm = $helper->escapeTerm($search);
             $searchPhrase = $helper->escapePhrase($search);
-            $query->setQuery($this->generateQuery($core, $searchTerm));
+            $query->setQuery($this->generateQuery($collection, $core, $searchTerm));
             //$query->setQuery("name:$searchTerm OR data:*$searchPhrase* OR achievements:*$searchPhrase* OR preparations:*$searchPhrase*");
             /*if ('document' === $core) {
                 $query->setQuery("title:$searchTerm^10 title:*$searchTerm*^7 OR body:*$searchTerm*^5");
@@ -268,7 +267,7 @@ class SolrService
         return json_decode(json_encode($std), true);
     }
 
-    private static function generateQuery($core, $searchTerm): string
+    private function generateQuery($collection, $core, $searchTerm): string
     {
         if ('document' === $core) {
             return "title:$searchTerm^10 title:*$searchTerm*^7 OR body:*$searchTerm*^5";

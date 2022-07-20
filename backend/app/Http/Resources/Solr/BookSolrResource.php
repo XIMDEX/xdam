@@ -2,19 +2,14 @@
 
 namespace App\Http\Resources\Solr;
 
+use App\Http\Resources\Solr\BaseSolrResource;
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use App\Http\Resources\MediaResource;
 use App\Utils\Utils as AppUtils;
-use Illuminate\Http\Resources\Json\JsonResource;
 
-class BookSolrResource extends JsonResource
+class BookSolrResource extends BaseSolrResource
 {
-    public static function generateQuery($searchTerm)
-    {
-        return "name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5";
-    }
-
     /**
      * Transform the resource into an array.
      *
