@@ -1,15 +1,17 @@
 <?php
 
 namespace App\Services;
-use App\Utils\VideoStreamTest;
 use App\Enums\MediaType;
 use App\Models\Media;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Iman\Streamer\VideoStreamer;
 use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Imagine;
 use stdClass;
 
 
@@ -71,34 +73,72 @@ class MediaService
         $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.png';
 
         if ($fileType === 'video') {
+            return $this->previewVideo($media->file_name, $mediaPath, $size, $thumbnail);
+        } else if($fileType === 'image') {
+            return $this->previewImage($mediaPath, $size);
+        } else {
+            return $mediaPath;
+        }
+    }
 
-            if($size === 'raw') {
-                $opciones = [
-                    'http' => [
-                        'method' => 'GET',
-                        'header' => 'Content-Disposition: inline; filename=VIDEO TEST 1'
-                    ]
-                ];
-                $video = new VideoStreamTest($mediaPath);
-                return $video->start('VIDEO TEST 1');
-                return VideoStreamer::streamFile($mediaPath);
-            }
-
+    private function previewVideo($mediaFileName, $mediaPath, $size = null, $thumbnail = null)
+    {
+        if ($size == 'thumbnail') {
             $thumb_exists = File::exists($thumbnail);
-            if(!$thumb_exists) {
+
+            if (!$thumb_exists) {
                 $this->saveVideoSnapshot($thumbnail, $mediaPath);
             } else {
                 return Image::make($thumbnail);
             }
-            //USE THIS PACKAGE TO RENDER THE VIDEO
-
-
-
-        } else if($fileType === 'image') {
-            return Image::make($mediaPath);
+        } else if ($size == 'raw') {
+            return VideoStreamer::streamFile($mediaPath);
         } else {
-            return $mediaPath;
+            $fileDirectory = implode('/', array_slice(explode('/', $mediaPath), 0, -1))
+                                . '/' . pathinfo($mediaFileName, PATHINFO_FILENAME) . '_'
+                                . $size . '.m3u8';
+            $relFileDirectory = str_replace(storage_path('app') . '/', '', $fileDirectory);
+
+            if (!file_exists($fileDirectory))
+                return $this->previewVideo($mediaFileName, $mediaPath, 'raw', $thumbnail);
+
+            return
+                [
+                    Storage::disk('local')->path($relFileDirectory),
+                    [
+                        'Content-Type'  => 'application/vnd.apple.mpegURL',
+                        'isHls'         => true
+                    ]
+                ];
         }
+
+        return $mediaPath;
+    }
+
+    private function previewImage($mediaPath, $size)
+    {
+        $manager = new ImageManager(['driver' => 'imagick']);
+        $image = $manager->make($mediaPath);
+
+        if ($size !== 'raw') {
+            $width = $image->width();
+            $height = $image->height();
+            $aspectRatio = $width / $height;
+
+            if ($size >= $height) return $image;
+
+            if ($aspectRatio >= 1.0) {
+                $newHeight = $height * $size / 100;
+                $newWidth = $newHeight / $aspectRatio;
+            } else {
+                $newWidth = $width * $size / 100;
+                $newHeight = $newWidth * $aspectRatio;
+            }
+    
+            $image->resize($newHeight, $newWidth);
+        }
+
+        return $image;
     }
 
     public function saveVideoSnapshot($thumbPath, $videoSourcePath)

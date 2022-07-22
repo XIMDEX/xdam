@@ -65,7 +65,6 @@ class CDN extends Model
                 return new DefaultCDNAccess($rules);
 
             case AccessPermission::ipAddress:
-                echo 'IP Address';
                 return new IPAddressCDNAccess($rules);
 
             case AccessPermission::lti:

@@ -27,28 +27,40 @@ use App\Http\Controllers\WorkspaceController;
 */
 
 
-Route::group(['prefix'=>'v1','as'=>'v1'], function(){
+Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
     Route::group(['prefix' => 'cdn'], function() {
-        // Route::post('/create',  [ResourceController::class, 'createCDN'])->name('damResource.createCDN');
-        // Route::post('/remove',  [ResourceController::class, 'removeCDN'])->name('damResource.removeCDN');
+        /* Route::group(['prefix' => 'admin'], function() {
+            Route::post('/create',                  [ResourceController::class, 'createCDN'])
+                    ->name('damResource.createCDN');
+            Route::post('/remove',                  [ResourceController::class, 'removeCDN'])
+                    ->name('damResource.removeCDN');
+            Route::post('/generate_resource_hash',  [ResourceController::class, 'createCDNResourceHash'])
+                    ->name('dameResource.createCDNResourceHash');
 
-        /* Route::group(['prefix' => 'collection'], function() {
-            Route::post('/add',     [ResourceController::class, 'addCollection'])->name('damResource.addCDNCollection');
-            Route::post('/remove',  [ResourceController::class, 'removeCollection'])->name('damResource.removeCDNCollection');
-        }); */
+            Route::group(['prefix' => 'collection'], function() {
+                Route::post('/add',     [ResourceController::class, 'addCollection'])
+                        ->name('damResource.addCDNCollection');
+                Route::post('/remove',  [ResourceController::class, 'removeCollection'])
+                        ->name('damResource.removeCDNCollection');
+            });
 
-        /* Route::group(['prefix' => 'access_permission'], function() {
-            Route::post('/update',  [ResourceController::class, 'updateAccessPermission'])->name('damResource.updateCDNAccessPermission');
-
-            Route::group(['prefix' => 'rule'], function() {
-                Route::post('/add',     [ResourceController::class, 'addAccessPermissionRule'])->name('dameResource.addCDNAccessPermissionRule');
-                Route::post('/remove',  [ResourceController::class, 'removeAccessPermissionRule'])->name('dameResource.removeCDNAccessPermissionRule');
+            Route::group(['prefix' => 'access_permission'], function() {
+                Route::post('/update',  [ResourceController::class, 'updateAccessPermission'])
+                        ->name('damResource.updateCDNAccessPermission');
+    
+                Route::group(['prefix' => 'rule'], function() {
+                    Route::post('/add',     [ResourceController::class, 'addAccessPermissionRule'])
+                            ->name('dameResource.addCDNAccessPermissionRule');
+                    Route::post('/remove',  [ResourceController::class, 'removeAccessPermissionRule'])
+                            ->name('dameResource.removeCDNAccessPermissionRule');
+                });
             });
         }); */
 
         Route::group(['prefix' => '{cdn_code}'], function() {
             Route::group(['prefix' => 'resource'], function() {
-                Route::get('/{damResourceHash}',    [ResourceController::class, 'getCDNResource'])->name('damResource.getCDNResource');
+                Route::get('/{damResourceHash}',    [ResourceController::class, 'getCDNResource'])
+                        ->name('damResource.getCDNResource');
             });
         });
     });

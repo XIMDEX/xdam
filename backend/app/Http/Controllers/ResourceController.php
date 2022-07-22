@@ -276,32 +276,11 @@ class ResourceController extends Controller
      */
     public function render($damUrl, $size = null)
     {
-        return $this->renderImage($damUrl, $size);
+        return $this->renderResource($damUrl, $size);
     }
 
-    private function renderImage($damUrl, $size = null, $media = null)
+    private function renderResource($damUrl, $size = null)
     {
-        $sizes = ['small', 'medium', 'raw'];
-
-        if($size && !in_array($size, $sizes)) {
-            throw new Error('last url paramater must be equals to "small", "medium" or "raw"');
-        }
-
-        switch ($size) {
-            case 'small':
-                $size = 25;
-                break;
-            case 'medim':
-                $size = 50;
-                break;
-            case 'raw':
-                $size = 'raw';
-                break;
-            default:
-                $size = 90;
-                break;
-        }
-
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         $media = Media::findOrFail($mediaId);
         $mediaFileName = explode('/', $media->getPath());
@@ -311,13 +290,84 @@ class ResourceController extends Controller
         $fileType = explode('/', $mimeType)[0];
 
         if($fileType == 'video' || $fileType == 'image') {
+            $size = $this->getResourceSize($fileType, $size);
             $compressed = $this->mediaService->preview($media, $size);
-            $response = $compressed->response('jpeg', $size === 'raw' ? 100 : $size);
-            $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
-            return $response;
+
+            if ($fileType == 'image') {
+                $response = $compressed->response('jpeg', $size === 'raw' ? 100 : $size);
+                $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
+                return $response;
+            }
+
+            return response()->file($compressed[0], $compressed[1]);
         }
 
         return response()->file($this->mediaService->preview($media));
+    }
+
+    public function getResourceSize($fileType, $size = null)
+    {
+        $sizes = [
+            'image' => [
+                'allowed_sizes' => ['small', 'medium', 'raw', 'default'],
+                'sizes' => [
+                    'small'     => 25,
+                    'medium'    => 50,
+                    'raw'       => 'raw',
+                    'default'   => 90
+                ],
+                'error_message' => ''
+            ],
+            'video' => [
+                'allowed_sizes' => ['lowest', 'very_low', 'low', 'standard', 'hd', 'raw', 'thumbnail', 'default'],
+                'sizes' => [
+                    'lowest'        => '144p',
+                    'very_low'      => '240p',
+                    'low'           => '360p',
+                    'standard'      => '480p',
+                    'hd'            => '720p',
+                    'raw'           => 'raw',
+                    'thumbnail'     => 'thumbnail',
+                    'default'       => 'raw'
+                ],
+                'error_message' => ''
+            ]
+        ];
+
+        if ($size === null) $size = 'default';
+
+        foreach ($sizes as $k => $v) {
+            $sizes[$k]['error_message'] = $this->setErrorMessage($sizes[$k]['allowed_sizes']);
+        }
+
+        if (!in_array($size, $sizes[$fileType]['allowed_sizes'])) {
+            throw new Error($sizes[$fileType]['error_message']);
+            $size = 'default';
+        }
+
+        return $sizes[$fileType]['sizes'][$size];
+    }
+
+    private function setErrorMessage($sizes)
+    {
+        $errorMessage = "Size parameter must be equals to ";
+
+        for ($i = 0; $i < count($sizes); $i++) {
+            $current = $sizes[$i];
+            if ($i < count($sizes) - 2) {
+                $errorMessage .= "'$current', ";
+            } else if ($i < count($sizes) - 1) {
+                $errorMessage .= "'$current' ";
+            } else if ($i == count($sizes) - 1) {
+                if ($i == 0) {
+                    $errorMessage .= "'$current'.";
+                } else {
+                    $errorMessage .= "or '$current'.";
+                }
+            }
+        }
+        
+        return $errorMessage;
     }
 
     /**
@@ -448,6 +498,16 @@ class ResourceController extends Controller
         return response(['cdn_removed' => $res], Response::HTTP_OK);
     }
 
+    public function createCDNResourceHash(CDNRequest $request)
+    {
+        if (!isset($request->resource_id) || !isset($request->collection_id))
+            return response(['error' => 'The resource ID and the collection ID must be provided.']);
+
+        $result = array("resource_id" => $request->resource_id, "collection_id" => $request->collection_id);
+        $result = base64_encode(json_encode($result));
+        return response(['resource_hash' => $result], Response::HTTP_OK);
+    }
+
     public function addCollection(CDNRequest $request)
     {
         if (!isset($request->cdn_id) || !isset($request->collection_id))
@@ -535,6 +595,6 @@ class ResourceController extends Controller
         if (count($responseJson->files) == 0)
             return response(['error' => 'No files attached!']);
         
-        return $this->renderImage($responseJson->files[0]->dam_url, 'raw');
+        return $this->renderResource($responseJson->files[0]->dam_url, 'lowest');
     }
 }
