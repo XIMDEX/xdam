@@ -290,8 +290,9 @@ class ResourceController extends Controller
         $fileType = explode('/', $mimeType)[0];
 
         if($fileType == 'video' || $fileType == 'image') {
-            $size = $this->getResourceSize($fileType, $size);
-            $compressed = $this->mediaService->preview($media, $size);
+            $sizeValue = $this->getResourceSize($fileType, $size);
+            $availableSizes = $this->getAvailableResourceSizes();
+            $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue);
 
             if ($fileType == 'image') {
                 $response = $compressed->response('jpeg', $size === 'raw' ? 100 : $size);
@@ -299,13 +300,13 @@ class ResourceController extends Controller
                 return $response;
             }
 
-            return response()->file($compressed[0], $compressed[1]);
+            return response()->file($compressed);
         }
 
         return response()->file($this->mediaService->preview($media));
     }
 
-    public function getResourceSize($fileType, $size = null)
+    private function getAvailableResourceSizes()
     {
         $sizes = [
             'image' => [
@@ -319,13 +320,15 @@ class ResourceController extends Controller
                 'error_message' => ''
             ],
             'video' => [
-                'allowed_sizes' => ['lowest', 'very_low', 'low', 'standard', 'hd', 'raw', 'thumbnail', 'default'],
+                'allowed_sizes' => ['very_low', 'low', 'standard', 'hd', 'raw', 'thumbnail', 'default'],
+                'sizes_scale'   => ['very_low', 'low', 'standard', 'hd'],   // Order Lowest to Greatest
                 'sizes' => [
-                    'lowest'        => '144p',
-                    'very_low'      => '240p',
-                    'low'           => '360p',
-                    'standard'      => '480p',
-                    'hd'            => '720p',
+                    // 'lowest'        => array('width' => 256, 'height' => 144, 'name' => '144p'),
+                    'very_low'      => array('width' => 426, 'height' => 240, 'name' => '240p'),
+                    'low'           => array('width' => 640, 'height' => 360, 'name' => '360p'),
+                    'standard'      => array('width' => 854, 'height' => 480, 'name' => '480p'),
+                    'hd'            => array('width' => 1280, 'height' => 720, 'name' => '720p'),
+                    // 'full_hd'       => array('width' => 1920, 'height' => 1080, 'name' => '1080p'),
                     'raw'           => 'raw',
                     'thumbnail'     => 'thumbnail',
                     'default'       => 'raw'
@@ -334,18 +337,11 @@ class ResourceController extends Controller
             ]
         ];
 
-        if ($size === null) $size = 'default';
-
         foreach ($sizes as $k => $v) {
             $sizes[$k]['error_message'] = $this->setErrorMessage($sizes[$k]['allowed_sizes']);
         }
 
-        if (!in_array($size, $sizes[$fileType]['allowed_sizes'])) {
-            throw new Error($sizes[$fileType]['error_message']);
-            $size = 'default';
-        }
-
-        return $sizes[$fileType]['sizes'][$size];
+        return $sizes;
     }
 
     private function setErrorMessage($sizes)
@@ -368,6 +364,20 @@ class ResourceController extends Controller
         }
         
         return $errorMessage;
+    }
+
+    private function getResourceSize($fileType, $size = null)
+    {
+        $sizes = $this->getAvailableResourceSizes();
+
+        if ($size === null) $size = 'default';
+
+        if (!in_array($size, $sizes[$fileType]['allowed_sizes'])) {
+            throw new Error($sizes[$fileType]['error_message']);
+            $size = 'default';
+        }
+
+        return $sizes[$fileType]['sizes'][$size];
     }
 
     /**
