@@ -96,10 +96,13 @@ class MediaService
         } else {
             $fileDirectory = implode('/', array_slice(explode('/', $mediaPath), 0, -1))
                                 . '/' . pathinfo($mediaFileName, PATHINFO_FILENAME) . '_'
-                                . $size . '.m3u8';
+                                . $size . '.' . pathinfo($mediaFileName, PATHINFO_EXTENSION);
             $relFileDirectory = str_replace(storage_path('app') . '/', '', $fileDirectory);
 
-            if (!file_exists($fileDirectory))
+            if (!file_exists($fileDirectory)) {
+                $command = "ffmpeg -i $mediaPath -vf scale=256:144 -preset slow -crf 18 $fileDirectory";
+                exec($command);
+            }
                 return $this->previewVideo($mediaFileName, $mediaPath, 'raw', $thumbnail);
 
             return

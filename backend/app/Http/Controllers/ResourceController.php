@@ -481,104 +481,7 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function createCDN(CDNRequest $request)
-    {
-        if (!isset($request->name)) return response(['error' => 'The name hasn\'t been provided.']);
-        if ($this->cdnService->createCDN($request->name))
-            return response(['created' => true], Response::HTTP_OK);
-
-        return response(['cdn_created' => false], Response::HTTP_OK);
-    }
-
-    public function removeCDN(CDNRequest $request)
-    {
-        if (!isset($request->cdn_id)) return response(['error' => 'The CDN ID hasn\'t been provided.']);
-        if (!$this->cdnService->existsCDN($request->cdn_id)) return response(['error' => 'The CDN doesn\'t exist.']);
-        $res = $this->cdnService->removeCDN($request->cdn_id);
-        return response(['cdn_removed' => $res], Response::HTTP_OK);
-    }
-
-    public function createCDNResourceHash(CDNRequest $request)
-    {
-        if (!isset($request->resource_id) || !isset($request->collection_id))
-            return response(['error' => 'The resource ID and the collection ID must be provided.']);
-
-        $result = array("resource_id" => $request->resource_id, "collection_id" => $request->collection_id);
-        $result = base64_encode(json_encode($result));
-        return response(['resource_hash' => $result], Response::HTTP_OK);
-    }
-
-    public function addCollection(CDNRequest $request)
-    {
-        if (!isset($request->cdn_id) || !isset($request->collection_id))
-            return response(['error' => 'The CDN ID and the collection ID must be provided.']);
-
-        if (!$this->cdnService->existsCDN($request->cdn_id))
-            return response(['error' => 'The CDN ID doesn\'t exist.']);
-
-        if (!$this->cdnService->existsCollection($request->collection_id))
-            return response(['error' => 'The collection ID doesn\'t exist.']);
-
-        $res = $this->cdnService->addCDNCollection($request->cdn_id, $request->collection_id);
-        return response(['collection_added' => $res], Response::HTTP_OK);
-    }
-
-    public function removeCollection(CDNRequest $request)
-    {
-        if (!isset($request->cdn_id) || !isset($request->collection_id))
-            return response(['error' => 'The CDN ID and the collection ID must be provided.']);
-
-        $res = $this->cdnService->removeCDNCollection($request->cdn_id, $request->collection_id);
-        return response(['collection_removed' => $res], Response::HTTP_OK);
-    }
-
-    public function updateAccessPermission(CDNRequest $request)
-    {
-        if (!isset($request->cdn_id) || !isset($request->access_permission))
-            return response(['error' => 'The CDN ID and the access permission type must be provided.']);
-
-        if (!$this->cdnService->existsAccessPermissionType($request->access_permission))
-            return response(['error' => 'The access permission type must be valid.']);
-
-        $res = $this->cdnService->updateAccessPermissionType($request->cdn_id, $request->access_permission);
-        return response(['access_permission_updated' => $res], Response::HTTP_OK);
-    }
-
-    public function addAccessPermissionRule(CDNRequest $request)
-    {
-        if (!isset($request->cdn_id) || !isset($request->access_permission) 
-            || (!isset($request->ip_address) && !isset($request->lti)))
-            return response(['error' => 'The CDN ID, the access permission type, and the rule must be provided.']);
-
-        if (!$this->cdnService->existsCDN($request->cdn_id))
-            return response(['error' => 'The CDN ID doesn\'t exist.']);
-
-        if (!$this->cdnService->existsAccessPermissionType($request->access_permission))
-            return response(['error' => 'The access permission type must be valid.']);
-
-        $res = $this->cdnService->addAccessPermissionRule($request->cdn_id, $request->access_permission,
-                                                            $request->ip_address, $request->lti);
-        return response(['access_permission_rule_added' => $res], Response::HTTP_OK);
-    }
-
-    public function removeAccessPermissionRule(CDNRequest $request)
-    {
-        if (!isset($request->cdn_id) || !isset($request->access_permission) 
-            || (!isset($request->ip_address) && !isset($request->lti)))
-            return response(['error' => 'The CDN ID, the access permission type, and the rule must be provided.']);
-
-        if (!$this->cdnService->existsCDN($request->cdn_id))
-            return response(['error' => 'The CDN ID doesn\'t exist.']);
-
-        if (!$this->cdnService->existsAccessPermissionType($request->access_permission))
-            return response(['error' => 'The access permission type must be valid.']);
-
-        $res = $this->cdnService->removeAccessPermissionRule($request->cdn_id, $request->access_permission,
-                                                            $request->ip_address, $request->lti);
-        return response(['access_permission_rule_removed' => $res], Response::HTTP_OK);
-    }
-
-    public function getCDNResource(CDNRequest $request)
+    public function renderCDNResource(CDNRequest $request)
     {
         $cdnInfo = $this->cdnService->getCDNInfo($request->cdn_code);
         $resource = $request->getAttachedDamResource();
@@ -589,12 +492,15 @@ class ResourceController extends Controller
         if (!$request->isCollectionAccessible($resource, $cdnInfo) || !$cdnInfo->checkAccessRequirements($_SERVER['REMOTE_ADDR']))
             return response(['error' => 'Forbidden access!']);
 
+        if (!isset($request->size))
+            $request->size = null;
+
         $resourceResponse = new ResourceResource($resource);
         $responseJson = json_decode($resourceResponse->toJson());
     
         if (count($responseJson->files) == 0)
             return response(['error' => 'No files attached!']);
         
-        return $this->renderResource($responseJson->files[0]->dam_url, 'lowest');
+        return $this->renderResource($responseJson->files[0]->dam_url, $request->size);
     }
 }

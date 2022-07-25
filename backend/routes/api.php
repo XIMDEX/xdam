@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CatalogueController;
 use App\Http\Controllers\Book\BookUnitController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CDNController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
@@ -30,37 +31,39 @@ use App\Http\Controllers\WorkspaceController;
 Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
     Route::group(['prefix' => 'cdn'], function() {
         /* Route::group(['prefix' => 'admin'], function() {
-            Route::post('/create',                  [ResourceController::class, 'createCDN'])
-                    ->name('damResource.createCDN');
-            Route::post('/remove',                  [ResourceController::class, 'removeCDN'])
-                    ->name('damResource.removeCDN');
-            Route::post('/generate_resource_hash',  [ResourceController::class, 'createCDNResourceHash'])
-                    ->name('dameResource.createCDNResourceHash');
+            Route::post('/create',                  [CDNController::class, 'createCDN'])
+                    ->name('cdn.createCDN');
+            Route::post('/remove',                  [CDNController::class, 'removeCDN'])
+                    ->name('cdn.removeCDN');
+            Route::post('/generate_resource_hash',  [CDNController::class, 'createCDNResourceHash'])
+                    ->name('cdn.createCDNResourceHash');
 
             Route::group(['prefix' => 'collection'], function() {
-                Route::post('/add',     [ResourceController::class, 'addCollection'])
-                        ->name('damResource.addCDNCollection');
-                Route::post('/remove',  [ResourceController::class, 'removeCollection'])
-                        ->name('damResource.removeCDNCollection');
+                Route::post('/add',     [CDNController::class, 'addCollection'])
+                        ->name('cdn.addCDNCollection');
+                Route::post('/remove',  [CDNController::class, 'removeCollection'])
+                        ->name('cdn.removeCDNCollection');
             });
 
             Route::group(['prefix' => 'access_permission'], function() {
-                Route::post('/update',  [ResourceController::class, 'updateAccessPermission'])
-                        ->name('damResource.updateCDNAccessPermission');
+                Route::post('/update',  [CDNController::class, 'updateAccessPermission'])
+                        ->name('cdn.updateCDNAccessPermission');
     
                 Route::group(['prefix' => 'rule'], function() {
-                    Route::post('/add',     [ResourceController::class, 'addAccessPermissionRule'])
-                            ->name('dameResource.addCDNAccessPermissionRule');
-                    Route::post('/remove',  [ResourceController::class, 'removeAccessPermissionRule'])
-                            ->name('dameResource.removeCDNAccessPermissionRule');
+                    Route::post('/add',     [CDNController::class, 'addAccessPermissionRule'])
+                            ->name('cdn.addCDNAccessPermissionRule');
+                    Route::post('/remove',  [CDNController::class, 'removeAccessPermissionRule'])
+                            ->name('cdn.removeCDNAccessPermissionRule');
                 });
             });
         }); */
 
         Route::group(['prefix' => '{cdn_code}'], function() {
             Route::group(['prefix' => 'resource'], function() {
-                Route::get('/{damResourceHash}',    [ResourceController::class, 'getCDNResource'])
-                        ->name('damResource.getCDNResource');
+                Route::get('/{damResourceHash}',        [ResourceController::class, 'renderCDNResource'])
+                        ->name('damResource.renderCDNResource');
+                Route::get('/{damResourceHash}/{size}', [ResourceController::class, 'renderCDNResource'])
+                        ->name('damResource.renderCDNResourceWithSize');
             });
         });
     });
