@@ -20,7 +20,7 @@ class CDN extends Model
     use HasFactory;
 
     protected $table = "cdns";
-    protected $fillable = ['name'];
+    protected $fillable = ['uuid', 'name'];
 
     public function getID()
     {
@@ -39,12 +39,11 @@ class CDN extends Model
 
     public function isCollectionAccessible($collectionID)
     {
-        $collections = CDNCollection::where('cdn_id', $this->attributes['id'])->get();
-        foreach ($collections as $item) {
-            if ($item->collectionIDMatches($collectionID)) {
+        $collections = CDNCollection::where('cdn_id', $this->id)->get();
+
+        foreach ($collections as $item)
+            if ($item->collection_id === $collectionID)
                 return true;
-            }
-        }
 
         return false;
     }

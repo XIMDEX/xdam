@@ -15,6 +15,7 @@ class CreateCdnsTable extends Migration
     {
         Schema::create('cdns', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->uuid('uuid');
             $table->string('name');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();

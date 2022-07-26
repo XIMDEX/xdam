@@ -25,8 +25,4 @@ class CDNCollection extends Model
     {
         return $this->hasOne(Collection::class);
     }
-
-    public function collectionIDMatches($collectionID) {
-        return $this->attributes['collection_id'] == $collectionID;
-    }
 }

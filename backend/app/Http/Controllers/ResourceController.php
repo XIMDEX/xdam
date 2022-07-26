@@ -494,12 +494,13 @@ class ResourceController extends Controller
     public function renderCDNResource(CDNRequest $request)
     {
         $cdnInfo = $this->cdnService->getCDNInfo($request->cdn_code);
-        $resource = $request->getAttachedDamResource();
+        $resource = $this->cdnService->getAttachedDamResource($cdnInfo, $request->damResourceHash);
 
         if ($cdnInfo === null)
             return response(['error' => 'This CDN doesn\'t exist!']);
 
-        if (!$request->isCollectionAccessible($resource, $cdnInfo) || !$cdnInfo->checkAccessRequirements($_SERVER['REMOTE_ADDR']))
+        if (!$this->cdnService->isCollectionAccessible($resource, $cdnInfo)
+             || !$cdnInfo->checkAccessRequirements($_SERVER['REMOTE_ADDR']))
             return response(['error' => 'Forbidden access!']);
 
         if (!isset($request->size))

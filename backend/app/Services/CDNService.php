@@ -8,6 +8,8 @@ use App\Models\CDNCollection;
 use App\Models\CDNAccessPermission;
 use App\Models\CDNAccessPermissionRule;
 use App\Models\Collection;
+use App\Models\DamResource;
+use Illuminate\Support\Str;
 
 class CDNService
 {
@@ -20,12 +22,18 @@ class CDNService
 
     public function createCDN($name)
     {
-        $cdn = CDN::create(['name' => $name]);
+        $cdn = CDN::create([
+            'uuid' => Str::uuid(),
+            'name' => $name]
+        );
         $res = $cdn->save();
 
         if ($res) {
             try {
-                $accessPermission = CDNAccessPermission::create(['cdn_id' => $cdn->getID(), 'type' => AccessPermission::default]);
+                $accessPermission = CDNAccessPermission::create([
+                    'cdn_id' => $cdn->getID(),
+                    'type' => AccessPermission::default
+                ]);
             } catch (Exception $e) {
                 return false;
             }
@@ -170,5 +178,49 @@ class CDNService
     public function getCDNInfo($cdnCode)
     {
         return CDN::where('id', $cdnCode)->first();
+    }
+
+    public function generateDamResourceHash($cdn, $resource, $collectionID)
+    {
+        $hash = substr($resource->id, 0, 3) . substr($cdn->uuid, 14, 4) . $collectionID . substr($resource->id, 14, 4) . substr($cdn->uuid, -3);
+        return $hash;
+    }
+
+    public function getAttachedDamResource($cdn, $hash)
+    {
+        $resourceMatch = $cdnMatch = null;
+
+        $resourcePart1 = substr($hash, 0, 3);
+        $cdnPart1 = substr($hash, 3, 4);
+        $collectionID = intval(substr($hash, 7, 1));
+        $resourcePart2 = substr($hash, 8, 4);
+        $cdnPart2 = substr($hash, 12, 4);
+
+        $resourcesRes = DamResource::where('id', 'LIKE', $resourcePart1 . '%')
+                            ->where('id', 'LIKE', '%' . $resourcePart2 . '%')
+                            ->where('collection_id', $collectionID)
+                            ->get();
+        $cdnRes = CDN::where('uuid', 'LIKE', '%' . $cdnPart1 . '%')
+                    ->where('uuid', 'LIKE', '%' . $cdnPart2 . '%')
+                    ->get();
+
+        foreach ($resourcesRes as $item) {
+            if (substr($item->id, 0, 3) == $resourcePart1
+                    && substr($item->id, 14, 4) == $resourcePart2)
+                $resourceMatch = $item;
+        }
+        
+        foreach ($cdnRes as $item) {
+            if ($item->uuid === $cdn->uuid) $cdnMatch = $item;
+        }
+
+        if ($cdnMatch === null) return null;
+
+        return $resourceMatch;
+    }
+
+    public function isCollectionAccessible($resource, $cdn)
+    {
+        return $cdn->isCollectionAccessible($resource->collection_id);
     }
 }

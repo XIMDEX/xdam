@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CDNRequest;
 use App\Services\CDNService;
+use App\Services\ResourceService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,12 +17,19 @@ class CDNController extends Controller
     private $cdnService;
 
     /**
+     * @var ResourceService
+     */
+    private $resourceService;
+
+    /**
      * CategoryController constructor.
      * @param CDNService $cdnService
+     * @param ResourceService $resourceService
      */
-    public function __construct(CDNService $cdnService)
+    public function __construct(CDNService $cdnService, ResourceService $resourceService)
     {
         $this->cdnService = $cdnService;
+        $this->resourceService = $resourceService;
     }
 
     public function createCDN(CDNRequest $request)
@@ -46,8 +54,13 @@ class CDNController extends Controller
         if (!isset($request->resource_id) || !isset($request->collection_id))
             return response(['error' => 'The resource ID and the collection ID must be provided.']);
 
-        $result = array("resource_id" => $request->resource_id, "collection_id" => $request->collection_id);
-        $result = base64_encode(json_encode($result));
+        if (($cdn = $this->cdnService->getCDNInfo($request->cdn_code)) === null)
+            return response(['error' => 'The CDN doesn\'t exist.']);
+
+        if (($resource = $this->resourceService->getResource($request->resource_id, $request->collection_id)) === null)
+            return response(['error' => 'The resource doesn\'t exist.']);
+        
+        $result = $this->cdnService->generateDamResourceHash($cdn, $resource, $request->collection_id);
         return response(['resource_hash' => $result], Response::HTTP_OK);
     }
 
