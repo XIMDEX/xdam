@@ -17,26 +17,6 @@ class PendingVideoCompressionTask extends Model
 
     protected $fillable = ['media_id', 'resolution', 'src_path', 'dest_path'];
 
-    public function getID()
-    {
-        return $this->attributes['id'];
-    }
-
-    public function getResolution()
-    {
-        return $this->attributes['resolution'];
-    }
-
-    public function getSrcPath()
-    {
-        return $this->attributes['src_path'];
-    }
-
-    public function getDestPath()
-    {
-        return $this->attributes['dest_path'];
-    }
-
     public function media()
     {
         return $this->belongsTo(Media::class);

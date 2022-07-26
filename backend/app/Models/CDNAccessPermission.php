@@ -17,11 +17,6 @@ class CDNAccessPermission extends Model
     protected $table = 'access_permissions';
     protected $fillable = ['cdn_id', 'type'];
 
-    public function getID()
-    {
-        return $this->attributes['id'];
-    }
-
     public function getType()
     {
         return $this->attributes['type'];
@@ -39,7 +34,7 @@ class CDNAccessPermission extends Model
 
     public function getRules()
     {
-        $rulesAux = CDNAccessPermissionRule::where('access_permission_id', $this->getID())->get();
+        $rulesAux = CDNAccessPermissionRule::where('access_permission_id', $this->id)->get();
         $rules = [];
 
         foreach ($rulesAux as $item) {

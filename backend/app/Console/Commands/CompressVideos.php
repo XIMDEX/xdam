@@ -40,9 +40,9 @@ class CompressVideos extends Command
     {
         $tasks = PendingVideoCompressionTask::all();
         $tasks->each(function($task) {
-            $command = "ffmpeg -i " . $task->getSrcPath() . " -vf scale=" 
-                            . $task->getResolution() . " -preset slow -crf 18 "
-                            . $task->getDestPath();
+            $command = "ffmpeg -i " . $task->src_path . " -vf scale=" 
+                            . $task->resolution . " -preset slow -crf 18 "
+                            . $task->dest_path;
             exec($command);
             $task->delete();
         });

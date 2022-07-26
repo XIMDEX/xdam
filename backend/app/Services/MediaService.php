@@ -73,7 +73,7 @@ class MediaService
         $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.png';
 
         if ($fileType === 'video') {
-            return $this->previewVideo($media->getID(), $media->file_name, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail);
+            return $this->previewVideo($media->id, $media->file_name, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail);
         } else if($fileType === 'image') {
             return $this->previewImage($mediaPath, $size);
         } else {

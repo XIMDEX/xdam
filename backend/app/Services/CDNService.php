@@ -31,7 +31,7 @@ class CDNService
         if ($res) {
             try {
                 $accessPermission = CDNAccessPermission::create([
-                    'cdn_id' => $cdn->getID(),
+                    'cdn_id' => $cdn->id,
                     'type' => AccessPermission::default
                 ]);
             } catch (Exception $e) {
@@ -101,7 +101,7 @@ class CDNService
         
         if ($cdnAccessPermission === null) return false;
         if ($accessPermissionType !== $cdnAccessPermission->getType()) {
-            $deleted = CDNAccessPermissionRule::where('access_permission_id', $cdnAccessPermission->getID())
+            $deleted = CDNAccessPermissionRule::where('access_permission_id', $cdnAccessPermission->id)
                         ->delete();
             $cdnAccessPermission->type = $accessPermissionType;
             $cdnAccessPermission->save();
@@ -131,14 +131,14 @@ class CDNService
             if ($lti === null) return false;
         }
 
-        $rule = CDNAccessPermissionRule::where('access_permission_id', $cdnAccessPermission->getID())
+        $rule = CDNAccessPermissionRule::where('access_permission_id', $cdnAccessPermission->id)
                     ->where('ip_address', $ipAddress)
                     ->where('lti', $lti)
                     ->first();
 
         if ($rule === null) {
             $rule = CDNAccessPermissionRule::create([
-                        'access_permission_id' => $cdnAccessPermission->getID(),
+                        'access_permission_id' => $cdnAccessPermission->id,
                         'ip_address' => $ipAddress,
                         'lti' => $lti
                     ]);
@@ -168,7 +168,7 @@ class CDNService
             if ($lti === null) return false;
         }
 
-        $rule = CDNAccessPermissionRule::where('access_permission_id', $cdnAccessPermission->getID())
+        $rule = CDNAccessPermissionRule::where('access_permission_id', $cdnAccessPermission->id)
                     ->where('ip_address', $ipAddress)
                     ->where('lti', $lti)
                     ->delete();
