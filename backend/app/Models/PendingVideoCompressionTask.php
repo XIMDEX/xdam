@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,4 +16,29 @@ class PendingVideoCompressionTask extends Model
     protected $table = "pending_video_compression_tasks";
 
     protected $fillable = ['media_id', 'resolution', 'src_path', 'dest_path'];
+
+    public function getID()
+    {
+        return $this->attributes['id'];
+    }
+
+    public function getResolution()
+    {
+        return $this->attributes['resolution'];
+    }
+
+    public function getSrcPath()
+    {
+        return $this->attributes['src_path'];
+    }
+
+    public function getDestPath()
+    {
+        return $this->attributes['dest_path'];
+    }
+
+    public function media()
+    {
+        return $this->belongsTo(Media::class);
+    }
 }

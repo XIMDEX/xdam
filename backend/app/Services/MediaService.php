@@ -94,6 +94,9 @@ class MediaService
     {
         foreach ($availableSizes['sizes_scale'] as $k) {
             $availableSizes['sizes'][$k]['width'] = ceil($availableSizes['sizes'][$k]['height'] / $aspectRatio);
+            
+            if ($availableSizes['sizes'][$k]['width'] % 2 !== 0) $availableSizes['sizes'][$k]['width'] -= 1;
+
             $availableSizes['sizes'][$k]['path'] = implode('/', array_slice(explode('/', $mediaPath), 0, -1))
                                                     . '/' . pathinfo($mediaFileName, PATHINFO_FILENAME) . '_'
                                                     . $availableSizes['sizes'][$k]['name'] . '.'
@@ -161,10 +164,6 @@ class MediaService
                     $item = $validSizes[$validSizesKeys[$i]];
                     if (file_exists($item['path'])) return VideoStreamer::streamFile($item['path']);
                 }
-
-                /*$command = "ffmpeg -i $mediaPath -vf scale=" . $validSizes[$sizeKey]['width'] . ":" . $validSizes[$sizeKey]['height'] 
-                            . " -preset slow -crf 18 " . $validSizes[$sizeKey]['path'];
-                exec($command);*/
                 
                 return $this->previewVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey, 'raw', $thumbnail);
             }
