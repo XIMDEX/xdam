@@ -35,8 +35,6 @@ class AuthController extends Controller
         $loginRequest->offsetUnset('disable_redirect');
         $authResource = $this->authService->login($loginRequest->input());
         $auxAuthResource = new AuthResource($authResource);
-        $token = ($disable_redirect ? '' : $this->authService->generateKakumaToken());
-        $auxAuthResource->appendKeyToData('kakuma_token', $token);
 
         return ($auxAuthResource)
             ->response()
