@@ -2,12 +2,6 @@
 
 use App\Enums\ResourceType;
 
-use App\Http\Resources\Solr\ActivitySolrResource;
-use App\Http\Resources\Solr\AssessmentSolrResource;
-use App\Http\Resources\Solr\CourseSolrResource;
-use App\Http\Resources\Solr\MultimediaSolrResource;
-use App\Http\Resources\Solr\BookSolrResource;
-
 return [
     'connections' => [
         'activity' => [
@@ -18,7 +12,7 @@ return [
                 'path' => env('SOLR_PATH', '/'),
                 'core' => 'activity',
             ],
-            'resource' => className(ActivitySolrResource::class),
+            'resource' => 'ActivitySolrResource',
             'classHandler' => 'ActivityHandler',
             'accepts_types' => [ResourceType::activity]
         ],
@@ -30,7 +24,7 @@ return [
                 'path' => env('SOLR_PATH', '/'),
                 'core' => 'assessment',
             ],
-            'resource' => className(AssessmentSolrResource::class),
+            'resource' => 'AssessmentSolrResource',
             'classHandler' => 'AssessmentHandler',
             'accepts_types' => [ResourceType::assessment]
         ],
@@ -43,7 +37,7 @@ return [
                 'path' => env('SOLR_PATH', '/'),
                 'core' => 'course',
             ],
-            'resource' => className(CourseSolrResource::class),
+            'resource' => 'CourseSolrResource',
             'classHandler' => 'CourseHandler',
             'accepts_types' => [ResourceType::course]
         ],
@@ -57,7 +51,7 @@ return [
                 'core' => 'multimedia',
                 'timeout' => 120,
             ],
-            'resource' => className(MultimediaSolrResource::class),
+            'resource' => 'MultimediaSolrResource',
             'classHandler' => 'MultimediaHandler',
             'accepts_types' => [ResourceType::multimedia]
         ],
@@ -69,7 +63,7 @@ return [
                 'path' => env('SOLR_PATH', '/'),
                 'core' => 'book',
             ],
-            'resource' => className(BookSolrResource::class),
+            'resource' => 'BookSolrResource',
             'classHandler' => 'BookHandler',
             'accepts_types' => [ResourceType::book]
         ]
@@ -78,10 +72,3 @@ return [
     'solr_schemas_folder' => env('SOLR_SCHEMAS_FOLDER', ''),
 
 ];
-
-
-function className(string $className): string
-{
-    $class_parts = explode('\\', $className);
-    return end($class_parts);
-}
