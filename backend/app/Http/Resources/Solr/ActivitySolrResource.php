@@ -27,7 +27,7 @@ class ActivitySolrResource extends JsonResource
             'dam_url'
         );
 
-        $workspaces = Utils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
+        $workspaces = $this->resource->workspaces->pluck('id')->toArray();
 
         return [
             'id' => $this->id,

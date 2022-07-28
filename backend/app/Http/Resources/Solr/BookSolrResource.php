@@ -27,7 +27,7 @@ class BookSolrResource extends JsonResource
             'dam_url'
         );
 
-        $workspaces = AppUtils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
+        $workspaces = $this->resource->workspaces->pluck('id')->toArray();
         $tags = $this->tags()->pluck('name')->toArray();
 
         return [
