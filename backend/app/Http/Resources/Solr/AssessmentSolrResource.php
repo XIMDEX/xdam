@@ -27,7 +27,7 @@ class AssessmentSolrResource extends JsonResource
             'dam_url'
         );
 
-        $workspaces = $this->resource->workspaces->pluck('id')->toArray();
+        $workspaces = Utils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
 
         return [
             'id' => $this->id,

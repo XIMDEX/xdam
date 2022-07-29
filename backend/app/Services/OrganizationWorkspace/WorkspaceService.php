@@ -4,8 +4,7 @@ namespace App\Services\OrganizationWorkspace;
 
 use App\Enums\Roles;
 use App\Enums\WorkspaceType;
-use App\Exceptions\Workspace\TooManyWorkspaces;
-use App\Exceptions\Workspace\WorkspaceAlreadyExists;
+use App\Models\DamResource;
 use App\Models\Organization;
 use App\Models\Workspace;
 use App\Services\Admin\AdminService;
@@ -34,46 +33,22 @@ class WorkspaceService
         return $wsp;
     }
 
-    private function createAndAsssignWorkspace(int $organizationId, WorkspaceType $type, string $workspaceName): Workspace
-    {
-        $workspace = Workspace::create([
-            'name' => $workspaceName,
-            'type' => WorkspaceType::getValue($type),
-            'organization_id' => $organizationId
-        ]);
-
-        $this->adminService->setWorkspaces(Auth::user()->id, $workspace->id, (new Roles)->WORKSPACE_MANAGER_ID());
-        return $workspace;
-    }
-
-    public function create(int $oid, string $wsp_name): Workspace
+    public function create($oid, $wsp_name)
     {
         try {
             $org = Organization::find($oid);
             if ($org) {
-
-                $workspace = $this->findUniqueWorkspace($oid, WorkspaceType::fromKey('generic') , $wsp_name);
-
-                if (!is_null($workspace)) {
-                    throw new WorkspaceAlreadyExists($wsp_name, $oid, WorkspaceType::fromKey('generic'));
-                }
-
-                return $this->createAndAsssignWorkspace($oid, WorkspaceType::fromKey('generic'), $wsp_name);
+                $wsp = Workspace::create([
+                    'name' => $wsp_name,
+                    'type' => WorkspaceType::generic,
+                    'organization_id' => $org->id
+                ]);
+                $this->adminService->setWorkspaces(Auth::user()->id, $wsp->id, (new Roles)->WORKSPACE_MANAGER_ID());
+                return $wsp;
             }
         } catch (\Throwable $th) {
             return [$th];
         }
-    }
-
-    public function getOrCreateWorkspace(int $organizationId, string $workspaceName, WorkspaceType $type): Workspace
-    {
-        $workspace = $this->findUniqueWorkspace($organizationId, $type, $workspaceName);
-
-        if(!is_null($workspace)) {
-            return $workspace;
-        }
-
-        return $this->createAndAsssignWorkspace($organizationId, $type, $workspaceName);
     }
 
     public function delete($id)
@@ -114,24 +89,5 @@ class WorkspaceService
             }
         }
         return $res;
-    }
-
-    private function findUniqueWorkspace(int $organizationId, WorkspaceType $type, string $workspaceName): ?Workspace
-    {
-        $workpaceCollection = Workspace::select('*')
-            ->where('organization_id', '=', $organizationId)
-            ->where('type', '=', $type)
-            ->where('name', '=', $workspaceName)
-            ->get();
-
-        if($workpaceCollection->count() === 0) {
-            return null;
-        }
-
-        if($workpaceCollection->count() > 1) {
-            throw new TooManyWorkspaces($workspaceName);
-        }
-
-        return $workpaceCollection->values()->first();
     }
 }

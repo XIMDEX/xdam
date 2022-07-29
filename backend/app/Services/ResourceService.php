@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
-use App\Enums\WorkspaceType;
 use App\Models\Category;
 use App\Models\Collection as ModelsCollection;
 use App\Models\DamResource;
@@ -350,12 +349,12 @@ class ResourceService
         $collection = ModelsCollection::find($data['collection']);
         $organization = $collection->organization()->first();
 
-        $wsp = $this->workspaceService->getOrCreateWorkspace(
-            $organization->id,
-            $data['workspace'],
-            WorkspaceType::fromValue('generic'),
-        )->id;
-        
+        if($data['create_wsp'] === '1') {
+            $wsp = $this->workspaceService->create($organization->id, $data['workspace'])->id;
+        } else {
+            $wsp = $data['workspace'];
+        }
+
         $genericResourceDescription = array_key_exists('generic', $data) ? json_decode($data['generic'], true) : [];
 
         $especificFilesInfoMap = array_key_exists('filesInfo', $data) ? json_decode($data['filesInfo'], true) : [];
