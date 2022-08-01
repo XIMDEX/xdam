@@ -15,7 +15,7 @@ class PendingVideoCompressionTask extends Model
 
     protected $table = "pending_video_compression_tasks";
 
-    protected $fillable = ['media_id', 'resolution', 'src_path', 'dest_path'];
+    protected $fillable = ['media_id', 'resolution', 'src_path', 'dest_path', 'media_conversion_name_id'];
 
     public function media()
     {

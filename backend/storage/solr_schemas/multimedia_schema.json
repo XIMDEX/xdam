@@ -62,6 +62,19 @@
     "sortMissingLast": true,
     "omitPositions": true
   },
+  "conversions": {
+    "name": "conversions",
+    "type": "strings",
+    "omitNorms": true,
+    "omitTermFreqAndPositions": true,
+    "indexed": true,
+    "stored": true,
+    "uninvertible": true,
+    "sortMissingLast": true,
+    "docValues": false,
+    "omitPositions": true,
+    "multiValued": true
+  },
   "previews": {
     "name": "previews",
     "type": "strings",

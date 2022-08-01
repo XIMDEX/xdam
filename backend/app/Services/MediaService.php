@@ -147,6 +147,7 @@ class MediaService
                             ->where('resolution', $validSizes[$sizeKey]['width'] . ':' . $validSizes[$sizeKey]['height'])
                             ->where('src_path', $mediaPath)
                             ->where('dest_path', $validSizes[$sizeKey]['path'])
+                            ->where('media_conversion_name_id', $validSizes[$sizeKey]['name'])
                             ->first();
 
                 if ($task === null) {
@@ -154,7 +155,8 @@ class MediaService
                         'media_id' => $mediaID,
                         'resolution' => $validSizes[$sizeKey]['width'] . ':' . $validSizes[$sizeKey]['height'],
                         'src_path' => $mediaPath,
-                        'dest_path' => $validSizes[$sizeKey]['path']
+                        'dest_path' => $validSizes[$sizeKey]['path'],
+                        'media_conversion_name_id' => $validSizes[$sizeKey]['name']
                     ]);
                 }
 
