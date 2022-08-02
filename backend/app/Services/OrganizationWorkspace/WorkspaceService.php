@@ -8,6 +8,7 @@ use App\Models\DamResource;
 use App\Models\Organization;
 use App\Models\Workspace;
 use App\Services\Admin\AdminService;
+use App\Services\Solr\SolrService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,9 +17,12 @@ class WorkspaceService
 
     private $adminService;
 
-    public function __construct(AdminService $adminService)
+    private $solrService;
+
+    public function __construct(AdminService $adminService, SolrService $solrService)
     {
         $this->adminService = $adminService;
+        $this->solrService = $solrService;
     }
 
     public function index($organization)
@@ -54,6 +58,10 @@ class WorkspaceService
     public function delete($id)
     {
         $wsp = Workspace::find($id);
+
+        if (!$this->setDefaultWorkspaceToResources($id))
+            return ['Workspace not exists or cannot be deleted', $wsp];
+        
         if ($wsp != null && !$wsp->isPublic()) {
             $wsp->delete();
             return ['deleted' => $wsp];
@@ -89,5 +97,31 @@ class WorkspaceService
             }
         }
         return $res;
+    }
+
+    private function setDefaultWorkspaceToResources($wid)
+    {
+        $current = $this->get($wid);
+        $default = $this->getDefaultWorkspace();
+        $resources = $this->getResources($wid);
+
+        if ($default === null || $current === null) return false;
+        if ($default->id === $wid) return false;
+
+        foreach ($resources as $item) {
+            $item->updateWorkspace($current, $default);
+            $this->solrService->saveOrUpdateDocument($item);
+        }
+
+        return true;
+    }
+
+    private function getDefaultWorkspace()
+    {
+        $default = Workspace::where('name', 'Public Workspace')
+                    ->where('type', WorkspaceType::public)
+                    ->first();
+
+        return $default;
     }
 }
