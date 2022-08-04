@@ -5,9 +5,11 @@ namespace App\Services\OrganizationWorkspace;
 use App\Enums\Roles;
 use App\Enums\WorkspaceType;
 use App\Models\DamResource;
+use App\Models\DamResourceWorkspace;
 use App\Models\Organization;
 use App\Models\Workspace;
 use App\Services\Admin\AdminService;
+use App\Services\Solr\SolrService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,9 +18,12 @@ class WorkspaceService
 
     private $adminService;
 
-    public function __construct(AdminService $adminService)
+    private $solrService;
+
+    public function __construct(AdminService $adminService, SolrService $solrService)
     {
         $this->adminService = $adminService;
+        $this->solrService = $solrService;
     }
 
     public function index($organization)
@@ -89,5 +94,52 @@ class WorkspaceService
             }
         }
         return $res;
+    }
+
+    public function setResourceWorkspace($user, $resourceID, $workspaceID, $workspaceName)
+    {
+        $resource = DamResource::find($resourceID);
+        $collection = $resource->collection()->first();
+        $currentOrganization = $collection->organization()->first();
+        $workspace = Workspace::where('id', $workspaceID)->first();
+        $result = false;
+
+        if ($resource === null)
+            return ['error' => 'The specified resource doesn\'t exist.'];
+
+        if (!isset($workspaceID)) {
+            $newWorkspace = $this->create($currentOrganization->id, $workspaceName);
+
+            if ($newWorkspace === null)
+                return ['error' => 'The workspace couldn\'t be created.'];
+
+            $workspace = $newWorkspace;
+        }
+
+        if ($workspace === null)
+            return ['error' => 'The specified workspace doesn\'t exist'];
+
+        $result = $this->updateResourceWorkspace($resource, $workspace);
+        return ['status' => $result, 'resource' => $resource, 'workspace' => $workspace];
+    }
+
+    private function updateResourceWorkspace($resource, $workspace) {
+        $resourceWorkspace = DamResourceWorkspace::where('workspace_id', $workspace->id)
+                                ->where('dam_resource_id', $resource->id)
+                                ->first();
+        $result = false;
+
+        if ($resourceWorkspace !== null) {
+            $result = true;
+        } else {
+            $resourceWorkspace = DamResourceWorkspace::create([
+                'workspace_id'      => $workspace->id,
+                'dam_resource_id'   => $resource->id
+            ]);
+            $result = ($resourceWorkspace !== null);
+        }
+
+        $this->solrService->saveOrUpdateDocument($resource);
+        return $result;
     }
 }
