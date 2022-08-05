@@ -145,7 +145,12 @@ class WorkspaceService
         if ($default->id === $wid) return false;
 
         foreach ($resources as $item) {
-            $item->updateWorkspace($current, $default);
+            if (!$this->isWorkspaceAlreadyAssignedToResource($item, $default)) {
+                $item->updateWorkspace($current, $default);
+            } else {
+                $this->removeWorkspaceFromResource($item, $current);
+            }
+
             $this->solrService->saveOrUpdateDocument($item);
         }
 
@@ -240,13 +245,37 @@ class WorkspaceService
      * @param Workspace $workspace
      * @return boolean
      */
-    private function updateResourceWorkspace($resource, $workspace) {
+    private function isWorkspaceAlreadyAssignedToResource(DamResource $resource, Workspace $workspace)
+    {
         $resourceWorkspace = DamResourceWorkspace::where('workspace_id', $workspace->id)
                                 ->where('dam_resource_id', $resource->id)
                                 ->first();
+        return $resourceWorkspace !== null;
+    }
+
+    /**
+     * @param DamResource $resource
+     * @param Workspace $workspace
+     * @return DamResourceWorkspace
+     */
+    private function removeWorkspaceFromResource(DamResource $resource, Workspace $workspace)
+    {
+        $resourceWorkspace = DamResourceWorkspace::where('workspace_id', $workspace->id)
+                                ->where('dam_resource_id', $resource->id)
+                                ->first()
+                                ->delete();
+        return $resourceWorkspace;
+    }
+
+    /**
+     * @param DamResource $resource
+     * @param Workspace $workspace
+     * @return boolean
+     */
+    private function updateResourceWorkspace(DamResource $resource, Workspace $workspace) {
         $result = false;
 
-        if ($resourceWorkspace !== null) {
+        if ($this->isWorkspaceAlreadyAssignedToResource($resource, $workspace)) {
             $result = true;
         } else {
             $resourceWorkspace = DamResourceWorkspace::create([
