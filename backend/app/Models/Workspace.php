@@ -16,6 +16,7 @@ class Workspace extends Model
      * @var array
      */
     protected $fillable = [
+        'id',
         'name',
         'type',
         'organization_id'

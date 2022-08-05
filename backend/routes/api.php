@@ -119,6 +119,9 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             });
         });
 
+        Route::post('/workspace/set/resource',  [WorkspaceController::class, 'setResource'])
+                ->name('damResource.setWorkspace');
+
         Route::group(['prefix' => 'role', 'middleware' => 'manage.roles'], function() {
             Route::post('user/set/abilitiesOnEntity',    [AdminController::class, 'SetRoleAbilitiesOnEntity']) ->name('adm.usr.set.role');
         });
