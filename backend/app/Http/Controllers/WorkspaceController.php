@@ -8,6 +8,7 @@ use App\Http\Requests\Workspace\ListWorkspacesRequest;
 use App\Http\Requests\Workspace\CreateWorkspaceRequest;
 use App\Http\Requests\Workspace\DeleteWorkspaceRequest;
 use App\Http\Requests\Workspace\UpdateWorkspaceRequest;
+use App\Http\Requests\Workspace\GetMultipleWorkspacesRequest;
 use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\ResourceResource;
 use App\Http\Resources\WorkspaceCollection;
@@ -102,5 +103,16 @@ class WorkspaceController extends Controller
             return Auth::user()->workspaces()->where('organization_id', $org->id)->get();
         }
         return ['error'];
+    }
+
+    public function getMultiple(GetMultipleWorkspacesRequest $request)
+    {
+        $worksapcesId = $request->workspacesId;
+
+        $workspaces = $this->workspaceService->getMultpleWorkspaces($worksapcesId);
+
+        return (new JsonResource($workspaces))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 }
