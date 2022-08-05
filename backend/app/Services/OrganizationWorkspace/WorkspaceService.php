@@ -124,4 +124,34 @@ class WorkspaceService
 
         return $default;
     }
+
+    private function findUniqueWorkspace(int $organizationId, WorkspaceType $type, string $workspaceName): ?Workspace
+    {
+        $workpaceCollection = Workspace::select('*')
+            ->where('organization_id', '=', $organizationId)
+            ->where('type', '=', $type)
+            ->where('name', '=', $workspaceName)
+            ->get();
+
+        if($workpaceCollection->count() === 0) {
+            return null;
+        }
+
+        if($workpaceCollection->count() > 1) {
+            throw new TooManyWorkspaces($workspaceName);
+        }
+
+        return $workpaceCollection->values()->first();
+    }
+    
+     /**
+      * @param int[] $workspacesId
+      * @return Worspace[]
+      */
+    public function getMultpleWorkspaces(array $workspacesId): Collection
+    {
+        $collection = Workspace::whereIn('id', $workspacesId)->get();
+
+        return $collection;
+    }
 }
