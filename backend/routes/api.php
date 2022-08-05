@@ -107,12 +107,16 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::get('{organization_id}/workspaces', [WorkspaceController::class, 'index'])->name('wsp.index');
         });
 
-        Route::group(['prefix' => 'workspace', 'middleware' => 'manage.workspaces'], function(){
-            Route::post('set/user',             [AdminController::class, 'setWorkspaces'])  ->name('adm.usr.set.wsp');
-            Route::post('unset/user',           [AdminController::class, 'unsetWorkspaces'])->name('adm.usr.unset.wsp');
-            Route::get('/get/{workspace_id}',   [WorkspaceController::class, 'get'])        ->name('wsp.get');
-            Route::post('update',               [WorkspaceController::class, 'update'])     ->name('wsp.update');
-            Route::delete('/{workspace_id}',    [WorkspaceController::class, 'delete'])     ->name('wsp.delete');
+        Route::group(['prefix' => 'workspace'], function(){
+            Route::get('/getMultiple',          [WorkspaceController::class, 'getMultiple'])->name('wsp.getMutliple');
+
+            Route::group(['middleware' => 'manage.workspaces'], function() {
+                Route::post('set/user',             [AdminController::class, 'setWorkspaces'])  ->name('adm.usr.set.wsp');
+                Route::post('unset/user',           [AdminController::class, 'unsetWorkspaces'])->name('adm.usr.unset.wsp');
+                Route::get('/get/{workspace_id}',   [WorkspaceController::class, 'get'])        ->name('wsp.get');
+                Route::post('update',               [WorkspaceController::class, 'update'])     ->name('wsp.update');
+                Route::delete('/{workspace_id}',    [WorkspaceController::class, 'delete'])     ->name('wsp.delete');
+            });
         });
 
         Route::post('/workspace/set/resource',  [WorkspaceController::class, 'setResource'])

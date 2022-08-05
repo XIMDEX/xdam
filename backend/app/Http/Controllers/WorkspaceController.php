@@ -9,6 +9,7 @@ use App\Http\Requests\Workspace\GetWorkspaceRequest;
 use App\Http\Requests\Workspace\ListWorkspacesRequest;
 use App\Http\Requests\Workspace\SetResourceWorkspaceRequest;
 use App\Http\Requests\Workspace\UpdateWorkspaceRequest;
+use App\Http\Requests\Workspace\GetMultipleWorkspacesRequest;
 use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\ResourceResource;
 use App\Http\Resources\WorkspaceCollection;
@@ -113,7 +114,6 @@ class WorkspaceController extends Controller
         return ['error'];
     }
 
-
     public function setResource(SetResourceWorkspaceRequest $request)
     {
         if (!$request->checkResourceWorkspaceChangeData())
@@ -125,5 +125,16 @@ class WorkspaceController extends Controller
                                                                 $request->workspace_name);
 
         return response($result)->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function getMultiple(GetMultipleWorkspacesRequest $request)
+    {
+        $worksapcesId = $request->workspacesId;
+
+        $workspaces = $this->workspaceService->getMultpleWorkspaces($worksapcesId);
+
+        return (new JsonResource($workspaces))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 }
