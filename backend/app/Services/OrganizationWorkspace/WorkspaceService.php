@@ -25,18 +25,32 @@ class WorkspaceService
         $this->solrService = $solrService;
     }
 
+    /**
+     * @param int $organization
+     * @return Workspace[]
+     */
     public function index($organization)
     {
         //list workspaces of $request->org
         return $organization->workspaces()->get();
     }
 
+    /**
+     * @param int $id
+     * @return Workspace
+     */
     public function get($id)
     {
         $wsp = Workspace::find($id);
         return $wsp;
     }
 
+    /**
+     * @param int $oid
+     * @param string $wsp_name
+     * @return Workspace
+     * @throws Throwable
+     */
     public function create($oid, $wsp_name)
     {
         try {
@@ -55,6 +69,10 @@ class WorkspaceService
         }
     }
 
+    /**
+     * @param int $id
+     * @return array
+     */
     public function delete($id)
     {
         $wsp = Workspace::find($id);
@@ -70,6 +88,11 @@ class WorkspaceService
         }
     }
 
+    /**
+     * @param int $id
+     * @param string $name
+     * @return array
+     */
     public function update($id, $name)
     {
         $wsp = Workspace::find($id);
@@ -81,12 +104,20 @@ class WorkspaceService
         }
     }
 
+    /**
+     * @param int $wid
+     * @return Workspace[]
+     */
     public function getResources($wid)
     {
         $wsp = Workspace::find($wid);
         return $wsp->resources()->get();
     }
 
+    /**
+     * @param int $oid
+     * @return Collection
+     */
     public function getOrganizationResources($oid)
     {
         $res = new Collection();
@@ -99,6 +130,10 @@ class WorkspaceService
         return $res;
     }
 
+    /**
+     * @param int $wid
+     * @return boolean
+     */
     private function setDefaultWorkspaceToResources($wid)
     {
         $current = $this->get($wid);
@@ -116,6 +151,9 @@ class WorkspaceService
         return true;
     }
 
+    /**
+     * @return Workspace
+     */
     private function getDefaultWorkspace()
     {
         $default = Workspace::where('name', 'Public Workspace')
@@ -125,6 +163,13 @@ class WorkspaceService
         return $default;
     }
 
+    /**
+     * @param int $organizationId
+     * @param WorkspaceType $type
+     * @param string $workspaceName
+     * @return Workspace
+     * @throws TooManyWorkspaces
+     */
     private function findUniqueWorkspace(int $organizationId, WorkspaceType $type, string $workspaceName): ?Workspace
     {
         $workpaceCollection = Workspace::select('*')
