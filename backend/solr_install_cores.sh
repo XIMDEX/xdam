@@ -8,16 +8,16 @@ delete_core() {
 }
 
 create_core() {
-	# Gets the core argument
+	# Gets the core and the user's argument
 	local core="$1"
 
 	# Creates the Solr core
 	sudo su - solr -c "/opt/solr/bin/solr create -c $core -n data_driven_schema_configs"
 
 	# Stores the core's configuration
-	sudo cp /home/lluis/htdocs/Projects/xdam/backend/storage/solr_core_conf/core_files/* /var/solr/data/$core
+	sudo cp ./storage/solr_core_conf/core_files/* /var/solr/data/$core
 	sudo chown -R solr:solr /var/solr/data/$core
-	sudo cp /home/lluis/htdocs/Projects/xdam/backend/storage/solr_core_conf/core_conf_files/* /var/solr/data/$core/conf
+	sudo cp ./storage/solr_core_conf/core_conf_files/* /var/solr/data/$core/conf
 	sudo chown -R solr:solr /var/solr/data/$core/conf
 
 	# Installs the Solr core
