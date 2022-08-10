@@ -45,4 +45,12 @@ class Workspace extends Model
     {
         return $this->type == WorkspaceType::public ? true : false;
     }
+
+    public function toArray()
+    {
+        return [
+            'id'    => $this->id,
+            'name'  => $this->name
+        ];
+    }
 }
