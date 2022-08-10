@@ -35,29 +35,33 @@ class CatalogueService
 
     private function formatSolrResponseWithWorkspaceInformation($solrResponse)
     {
-        foreach ($solrResponse->facets as $key => $value) {
-            if ($value['key'] === 'workspaces') {
-                $newValues = array();
+        $response = $solrResponse;
 
-                foreach ($value['values'] as $subkey => $subvalue) {
-                    $newValues[$this->getWorkspaceJSON($subkey)] = $subvalue;
+        foreach ($response->facets as $facetKey => $facetValue) {
+            if ($facetValue['key'] === 'workspaces') {
+                foreach ($facetValue['values'] as $workspaceID => $workspaceValues) {
+                    $newValues = array();
+
+                    foreach ($workspaceValues as $key => $item) {
+                        $newValues[$key] = $item;
+                    }
+
+                    $newValues['name'] = $this->getWorkspaceName($workspaceID);
+                    $response->facets[$facetKey]['values'][$workspaceID] = $newValues;
                 }
-
-                $solrResponse->facets[$key]['values'] = $newValues;
             }
         }
 
-        return $solrResponse;
+        return $response;
     }
 
-    private function getWorkspaceJSON($workspaceName)
+    private function getWorkspaceName($workspaceID)
     {
-        $workspace = Workspace::where('name', $workspaceName)->first();
-        
+        $workspace = Workspace::where('id', $workspaceID)->first();
+
         if ($workspace === null)
             return '';
 
-        $json = ['id' => $workspace->id, 'name' => $workspaceName];
-        return json_encode($json);
+        return $workspace->name;
     }
 }

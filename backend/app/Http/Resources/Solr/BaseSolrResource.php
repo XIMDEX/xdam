@@ -32,8 +32,9 @@ class BaseSolrResource extends JsonResource
     
     protected function getWorkspaces()
     {
-        return Utils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
+        // return Utils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
         // return Utils::formatWorkspaces($this->resource->workspaces->pluck('id')->toArray());
+        return $this->resource->workspaces->pluck('id')->toArray();
     }
 
     protected function getTags()
