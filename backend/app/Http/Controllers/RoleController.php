@@ -9,6 +9,7 @@ use App\Http\Requests\RoleAbility\RoleStoreRequest;
 use App\Http\Requests\UpdateRoleRequest;
 use App\Http\Resources\RoleResource;
 use App\Models\Organization;
+use App\Services\ExternalApis\KakumaService;
 use Silber\Bouncer\Database\Role;
 use App\Services\RoleService;
 use Illuminate\Http\JsonResponse;
@@ -26,12 +27,19 @@ class RoleController extends Controller
     private $roleService;
 
     /**
+     * @var KakumaService
+     */
+    private $kakumaService;
+
+    /**
      * RoleController constructor.
      * @param RoleService $roleService
+     * @param KakumaService $kakumaService
      */
-    public function __construct(RoleService $roleService)
+    public function __construct(RoleService $roleService, KakumaService $kakumaService)
     {
         $this->roleService = $roleService;
+        $this->kakumaService = $kakumaService;
     }
 
     public function store(Organization $organization, RoleStoreRequest $roleRequest): JsonResponse
@@ -79,6 +87,13 @@ class RoleController extends Controller
         $role = $this->roleService->delete($organization, $request->id);
         return (new JsonResource($role))
             ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function kakumaLogin(Request $request)
+    {
+        $token = $this->kakumaService->loginAsSuperAdmin();
+        return response(['kakuma_token' => $token])
             ->setStatusCode(Response::HTTP_OK);
     }
 }

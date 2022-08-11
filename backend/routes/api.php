@@ -29,9 +29,13 @@ use App\Http\Controllers\WorkspaceController;
 
 Route::group(['prefix'=>'v1','as'=>'v1'], function(){
 
-    Route::group(['prefix' => 'auth'], function(){
-        Route::post('login',    [AuthController::class, 'login'])->name('auth.login');
-        Route::post('signup',   [AuthController::class, 'signup'])->name('auth.signup');
+    Route::group(['prefix' => 'auth'], function() {
+        Route::post('login',        [AuthController::class, 'login'])
+            ->name('auth.login');
+        Route::post('signup',       [AuthController::class, 'signup'])
+            ->name('auth.signup');
+        Route::post('kakumaLogin',  [RoleController::class, 'kakumaLogin'])
+            ->name('auth.kakumaLogin')->middleware('auth:api');
     });
 
     Route::group(['middleware' => 'show.resource'], function() {
