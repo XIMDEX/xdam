@@ -43,7 +43,7 @@ class BookSolrResource extends JsonResource
             'collection' => $this->collection->id,
             'workspaces' => $workspaces,
             'organization' => $this->organization()->id,
-            'units' => $this->data->description->units ?? 0,
+            'units' => $this->data->description->unit ?? 0,
             'isbn' => $this->data->description->isbn ?? "",
             'lang' => $this->data->description->lang ?? getenv('BOOK_DEFAULT_LANGUAGE'),
         ];
