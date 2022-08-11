@@ -3,7 +3,7 @@
 
 namespace App\Services\Catalogue;
 
-
+use App\Models\Workspace;
 use App\Services\Solr\SolrService;
 use phpDocumentor\GraphViz\Exception;
 use stdClass;
@@ -26,6 +26,42 @@ class CatalogueService
 
     public function indexByCollection($pageParams, $sortParams, $facetsFilter, $collection): stdClass
     {
-        return $this->solrService->paginatedQueryByFacet($pageParams, $sortParams, $facetsFilter, $collection);
+        return $this->formatSolrResponseWithWorkspaceInformation(
+            $this->solrService->paginatedQueryByFacet(
+                $pageParams, $sortParams, $facetsFilter, $collection
+            )
+        );
+    }
+
+    private function formatSolrResponseWithWorkspaceInformation($solrResponse)
+    {
+        $response = $solrResponse;
+
+        foreach ($response->facets as $facetKey => $facetValue) {
+            if ($facetValue['key'] === 'workspaces') {
+                foreach ($facetValue['values'] as $workspaceID => $workspaceValues) {
+                    $newValues = array();
+
+                    foreach ($workspaceValues as $key => $item) {
+                        $newValues[$key] = $item;
+                    }
+
+                    $newValues['name'] = $this->getWorkspaceName($workspaceID);
+                    $response->facets[$facetKey]['values'][$workspaceID] = $newValues;
+                }
+            }
+        }
+
+        return $response;
+    }
+
+    private function getWorkspaceName($workspaceID)
+    {
+        $workspace = Workspace::where('id', $workspaceID)->first();
+
+        if ($workspace === null)
+            return '';
+
+        return $workspace->name;
     }
 }
