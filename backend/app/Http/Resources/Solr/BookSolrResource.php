@@ -6,10 +6,20 @@ use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use App\Http\Resources\MediaResource;
 use App\Utils\Utils as AppUtils;
-use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Solr\BaseSolrResource;
 
-class BookSolrResource extends JsonResource
+class BookSolrResource extends BaseSolrResource
 {
+    protected function formatCategories($categories)
+    {
+        return $categories ?? ['uncategorized'];
+    }
+
+    protected function getType()
+    {
+        return ResourceType::book;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -27,24 +37,21 @@ class BookSolrResource extends JsonResource
             'dam_url'
         );
 
-        $workspaces = AppUtils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
-        $tags = $this->tags()->pluck('name')->toArray();
-
         return [
-            'id' => $this->id,
-            'name' => $this->data->description->name,
-            'data' => is_object($this->data) ? json_encode($this->data) : $this->data,
-            'active' => $this->active,
-            'type' => ResourceType::book,
-            'tags' =>  count($tags) > 0 ? $tags : ['untagged'],
-            'categories' => $this->categories()->pluck('name')->toArray() ?? ['uncategorized'],
-            'files' => $files,
-            'previews' => $previews,
+            'id' => $this->getID(),
+            'name' => $this->getName(),
+            'data' => $this->getData(),
+            'active' => $this->getActive(),
+            'type' => $this->getType(),
+            'tags' =>  $this->formatTags($this->getTags()),
+            'categories' => $this->formatCategories($this->getCategories()),
+            'files' => $this->getFiles(),
+            'previews' => $this->getPreviews(),
             'collection' => $this->collection->id,
-            'workspaces' => $workspaces,
-            'organization' => $this->organization()->id,
+            'workspaces' => $this->getWorkspaces(),
+            'organization' => $this->getOrganization(),
             'units' => $this->data->description->units ?? 0,
-            'isbn' => $this->data->description->isbn ?? "",
+            'isbn' => $this->data->description->isbn ?? '',
             'lang' => $this->data->description->lang ?? getenv('BOOK_DEFAULT_LANGUAGE'),
         ];
     }

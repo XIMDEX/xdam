@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GetOrganizationResourcesRequest;
-use App\Http\Requests\Workspace\GetWorkspaceRequest;
-use App\Http\Requests\Workspace\ListWorkspacesRequest;
 use App\Http\Requests\Workspace\CreateWorkspaceRequest;
 use App\Http\Requests\Workspace\DeleteWorkspaceRequest;
+use App\Http\Requests\Workspace\GetWorkspaceRequest;
+use App\Http\Requests\Workspace\ListWorkspacesRequest;
+use App\Http\Requests\Workspace\SetResourceWorkspaceRequest;
 use App\Http\Requests\Workspace\UpdateWorkspaceRequest;
 use App\Http\Requests\Workspace\GetMultipleWorkspacesRequest;
 use App\Http\Resources\ResourceCollection;
@@ -16,6 +17,7 @@ use App\Http\Resources\WorkspaceResource;
 use App\Models\Collection;
 use App\Models\Organization;
 use App\Models\User;
+use App\Services\UserService;
 use App\Services\OrganizationWorkspace\WorkspaceService;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection as JsonResourceCollection;
@@ -31,13 +33,20 @@ class WorkspaceController extends Controller
     private WorkspaceService $workspaceService;
 
     /**
-     * WorkspaceController constructor.
-     * @param WorkspaceService $workspaceService
+     * @var UserService
      */
+    private UserService $userService;
 
-    public function __construct(WorkspaceService $workspaceService)
+    /**
+     * WorkspaceController constructor.
+     * 
+     * @param WorkspaceService $workspaceService
+     * @param UserService $userService
+     */
+    public function __construct(WorkspaceService $workspaceService, UserService $userService)
     {
         $this->workspaceService = $workspaceService;
+        $this->userService = $userService;
     }
 
     public function index(ListWorkspacesRequest $request)
@@ -105,11 +114,23 @@ class WorkspaceController extends Controller
         return ['error'];
     }
 
+    public function setResource(SetResourceWorkspaceRequest $request)
+    {
+        if (!$request->checkResourceWorkspaceChangeData())
+            return response(['error' => 'The needed data hasn\'t been provided.']);
+
+        $user = $this->userService->user();
+        $result = $this->workspaceService->setResourceWorkspace($user, $request->resource_id,
+                                                                $request->workspace_id,
+                                                                $request->workspace_name);
+
+        return response($result)->setStatusCode(Response::HTTP_OK);
+    }
+
     public function getMultiple(GetMultipleWorkspacesRequest $request)
     {
-        $worksapcesId = $request->workspacesId;
-
-        $workspaces = $this->workspaceService->getMultpleWorkspaces($worksapcesId);
+        $workspacesId = $request->workspacesId;
+        $workspaces = $this->workspaceService->getMultpleWorkspaces($workspacesId);
 
         return (new JsonResource($workspaces))
             ->response()
