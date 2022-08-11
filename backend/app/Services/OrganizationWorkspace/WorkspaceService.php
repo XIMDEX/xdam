@@ -4,6 +4,7 @@ namespace App\Services\OrganizationWorkspace;
 
 use App\Enums\Roles;
 use App\Enums\WorkspaceType;
+use App\Exceptions\Workspace\TooManyWorkspaces;
 use App\Models\DamResource;
 use App\Models\Organization;
 use App\Models\Workspace;
@@ -89,5 +90,24 @@ class WorkspaceService
             }
         }
         return $res;
+    }
+
+    private function findUniqueWorkspace(int $organizationId, WorkspaceType $type, string $workspaceName): ?Workspace
+    {
+        $workpaceCollection = Workspace::select('*')
+            ->where('organization_id', '=', $organizationId)
+            ->where('type', '=', $type)
+            ->where('name', '=', $workspaceName)
+            ->get();
+
+        if($workpaceCollection->count() === 0) {
+            return null;
+        }
+
+        if($workpaceCollection->count() > 1) {
+            throw new TooManyWorkspaces($workspaceName);
+        }
+
+        return $workpaceCollection->values()->first();
     }
 }
