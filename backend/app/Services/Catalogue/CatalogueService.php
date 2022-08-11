@@ -5,6 +5,7 @@ namespace App\Services\Catalogue;
 
 use App\Models\Workspace;
 use App\Services\Solr\SolrService;
+use App\Services\OrganizationWorkspace\WorkspaceService;
 use phpDocumentor\GraphViz\Exception;
 use stdClass;
 
@@ -16,12 +17,19 @@ class CatalogueService
     private SolrService $solrService;
 
     /**
+     * @var WorkspaceService
+     */
+    private WorkspaceService $workspaceService;
+
+    /**
      * CatalogueService constructor.
      * @param SolrService $solrService
+     * @param WorkspaceService $workspaceService
      */
-    public function __construct(SolrService $solrService)
+    public function __construct(SolrService $solrService, WorkspaceService $workspaceService)
     {
         $this->solrService = $solrService;
+        $this->workspaceService = $workspaceService;
     }
 
     public function indexByCollection($pageParams, $sortParams, $facetsFilter, $collection): stdClass
@@ -36,6 +44,7 @@ class CatalogueService
     private function formatSolrResponseWithWorkspaceInformation($solrResponse)
     {
         $response = $solrResponse;
+        $defaultWorkspace = (string) $this->workspaceService->getDefaultWorkspace()->id;
 
         foreach ($response->facets as $facetKey => $facetValue) {
             if ($facetValue['key'] === 'workspaces') {
@@ -47,6 +56,7 @@ class CatalogueService
                     }
 
                     $newValues['name'] = $this->getWorkspaceName($workspaceID);
+                    $newValues['canBeEdit'] = $this->getWorkspaceCanBeEdit($defaultWorkspace, $workspaceID);
                     $response->facets[$facetKey]['values'][$workspaceID] = $newValues;
                 }
             }
@@ -63,5 +73,10 @@ class CatalogueService
             return '';
 
         return $workspace->name;
+    }
+
+    private function getWorkspaceCanBeEdit($defaultWorkspaceID, $workspaceID)
+    {
+        return $defaultWorkspaceID != $workspaceID;
     }
 }

@@ -167,7 +167,7 @@ class WorkspaceService
     /**
      * @return Workspace
      */
-    private function getDefaultWorkspace()
+    public function getDefaultWorkspace()
     {
         $default = Workspace::where('name', 'Public Workspace')
                     ->where('type', WorkspaceType::public)
