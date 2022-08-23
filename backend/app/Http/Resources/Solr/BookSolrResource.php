@@ -2,13 +2,13 @@
 
 namespace App\Http\Resources\Solr;
 
+use App\Http\Resources\Solr\BaseSolrResource;
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use App\Http\Resources\MediaResource;
 use App\Utils\Utils as AppUtils;
-use Illuminate\Http\Resources\Json\JsonResource;
 
-class BookSolrResource extends JsonResource
+class BookSolrResource extends BaseSolrResource
 {
     /**
      * Transform the resource into an array.
@@ -43,7 +43,7 @@ class BookSolrResource extends JsonResource
             'collection' => $this->collection->id,
             'workspaces' => $workspaces,
             'organization' => $this->organization()->id,
-            'units' => $this->data->description->units ?? 0,
+            'units' => $this->data->description->unit ?? 0,
             'isbn' => $this->data->description->isbn ?? "",
             'lang' => $this->data->description->lang ?? getenv('BOOK_DEFAULT_LANGUAGE'),
         ];

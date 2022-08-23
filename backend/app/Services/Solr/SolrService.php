@@ -10,6 +10,11 @@ use Exception;
 use Solarium\Client;
 use Solarium\Core\Query\Result\ResultInterface;
 use stdClass;
+use App\Http\Resources\Solr\ActivitySolrResource;
+use App\Http\Resources\Solr\AssessmentSolrResource;
+use App\Http\Resources\Solr\BookSolrResource;
+use App\Http\Resources\Solr\CourseSolrResource;
+use App\Http\Resources\Solr\MultimediaSolrResource;
 
 /**
  * Class that is responsible for making crud with Apache Solr and each of its instances
@@ -139,6 +144,25 @@ class SolrService
         $facetsFilter,
         $collection
     ): stdClass {
+        // Gets the results
+        $results = $this->executeSearchQuery($pageParams, $sortParams, $facetsFilter, $collection);
+
+        /* Response with pagination data */
+        $response = new \stdClass();
+
+        $response->facets = $results['facets'];
+        $response->current_page = $results['currentPage'];
+        $response->data = $results['documentsResponse'];
+        $response->per_page = $results['limit'];
+        $response->last_page = $results['totalPages'];
+        $response->next_page = $results['nextPage'];
+        $response->prev_page = $results['prevPage'];
+        $response->total = $results['documentsFound'];
+        return $response;
+    }
+
+    private static function updateFacetsFilter(&$facetsFilter)
+    {
         //we need to replace all strings with spaces to  "\ " otherwise, Solr don't recognize it.
         foreach ($facetsFilter as $key => $value) {
             if(is_string($value)) {
@@ -152,7 +176,13 @@ class SolrService
                 }
             }
         }
+    }
 
+    private function executeSearchQuery($pageParams = [], $sortParams = [], $facetsFilter, $collection)
+    {
+        // Updates the facets filter
+        $this->updateFacetsFilter($facetsFilter);
+        
         $client = $this->getClientFromCollection($collection);
         $core = $collection->accept;
         $classCore = $client->getOptions()['classHandler'];
@@ -173,12 +203,13 @@ class SolrService
             $helper = $query->getHelper();
             $searchTerm = $helper->escapeTerm($search);
             $searchPhrase = $helper->escapePhrase($search);
+            $query->setQuery($this->generateQuery($collection, $core, $searchTerm));
             //$query->setQuery("name:$searchTerm OR data:*$searchPhrase* OR achievements:*$searchPhrase* OR preparations:*$searchPhrase*");
-            if ('document' === $core) {
+            /*if ('document' === $core) {
                 $query->setQuery("title:$searchTerm^10 title:*$searchTerm*^7 OR body:*$searchTerm*^5");
             } else {
                 $query->setQuery("name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5 achievements:*$searchTerm*^3 OR preparations:*$searchTerm*^3");
-            }
+            }*/
         }
 
         // the query is done without the facet filter, so that it returns the complete list of facets and the counter present in the entire index
@@ -191,7 +222,6 @@ class SolrService
         //overwrite current fq to core specifics
         $coreHandler = new $classCore($query);
         $query = $coreHandler->queryCoreSpecifics($facetsFilter);
-        
         $allDocuments = $client->select($query);
         $documentsFound = $allDocuments->getNumFound();
         $faceSetFound = $allDocuments->getFacetSet();
@@ -211,23 +241,24 @@ class SolrService
             $documentsResponse[] = $fields;
         }
 
-        /* Response with pagination data */
-        $response = new \stdClass();
-
         // the facets returned here are a complete unfiltered list, only the one that has been selected is marked as selected
         $facets = $this->stdToArray($this->facetManager->getFacets($faceSetFound, $facetsFilter, $core));
         foreach ($facets as $key => $facet) {
             ksort($facets[$key]['values']);
         }
-        $response->facets = $facets;
-        $response->current_page = $currentPage;
-        $response->data = $documentsResponse;
-        $response->per_page = $limit;
-        $response->last_page = $totalPages;
-        $response->next_page = (($currentPage + 1) > $totalPages) ? $totalPages : $currentPage + 1;
-        $response->prev_page = (($currentPage - 1) > 1) ? $currentPage - 1 : 1;
-        $response->total = $documentsFound;
-        return $response;
+
+        return [
+            'documentsFound'        => $documentsFound,
+            'faceSetFound'          => $faceSetFound,
+            'totalPages'            => $totalPages,
+            'currentPageFrom'       => $currentPageFrom,
+            'documentsResponse'    => $documentsResponse,
+            'facets'                => $facets,
+            'currentPage'           => $currentPage,
+            'limit'                 => $limit,
+            'nextPage'              => (($currentPage + 1) > $totalPages) ? $totalPages : $currentPage + 1,
+            'prevPage'              => (($currentPage - 1) > 1) ? $currentPage - 1 : 1
+        ];
     }
 
     public static function stdToArray($std): array
@@ -235,4 +266,22 @@ class SolrService
         return json_decode(json_encode($std), true);
     }
 
+    private function generateQuery($collection, $core, $searchTerm): string
+    {
+        if ('document' === $core) {
+            return "title:$searchTerm^10 title:*$searchTerm*^7 OR body:*$searchTerm*^5";
+        } else if ('activity' === $core) {
+            return ActivitySolrResource::generateQuery($searchTerm);
+        } else if ('assessment' === $core) {
+            return AssessmentSolrResource::generateQuery($searchTerm);
+        } else if ('book' === $core) {
+            return BookSolrResource::generateQuery($searchTerm);
+        } else if ('course' === $core) {
+            return CourseSolrResource::generateQuery($searchTerm);
+        } else if ('multimedia' === $core) {
+            return MultimediaSolrResource::generateQuery($searchTerm);
+        }
+
+        return "";
+    }
 }

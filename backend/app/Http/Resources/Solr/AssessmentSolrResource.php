@@ -2,13 +2,14 @@
 
 namespace App\Http\Resources\Solr;
 
+
+use App\Http\Resources\Solr\BaseSolrResource;
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use App\Http\Resources\MediaResource;
 use App\Utils\Utils;
-use Illuminate\Http\Resources\Json\JsonResource;
 
-class AssessmentSolrResource extends JsonResource
+class AssessmentSolrResource extends BaseSolrResource
 {
     /**
      * Transform the resource into an array.
