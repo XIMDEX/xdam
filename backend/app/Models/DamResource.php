@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Silber\Bouncer\Database\Role;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class DamResource extends Model implements HasMedia, TaggableInterface
 {
@@ -34,7 +35,7 @@ class DamResource extends Model implements HasMedia, TaggableInterface
         "id" => "string"
     ];
 
-    public function registerMediaConversions(\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+    public function registerMediaConversions(Media $media = null): void
     {
 
         $this->addMediaConversion(ThumbnailTypes::thumb_64x64)
@@ -87,15 +88,6 @@ class DamResource extends Model implements HasMedia, TaggableInterface
     {
         return $this->hasOne(Lom::class);
     }
-
-    // public function organizations()
-    // {
-    //     $orgs = [];
-    //     foreach ($this->workspaces()->get() as $wsp) {
-    //         $orgs[] = $wsp->organization()->first()->id;
-    //     }
-    //     return $orgs;
-    // }
 
     public function organization()
     {
