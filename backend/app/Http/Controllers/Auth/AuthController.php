@@ -31,8 +31,12 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $loginRequest)
     {
+        $disable_redirect = $loginRequest->boolean('disable_redirect', false);
+        $loginRequest->offsetUnset('disable_redirect');
         $authResource = $this->authService->login($loginRequest->input());
-        return (new AuthResource($authResource))
+        $auxAuthResource = new AuthResource($authResource);
+
+        return ($auxAuthResource)
             ->response()
             ->setStatusCode($authResource['code']);
     }

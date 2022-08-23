@@ -48,6 +48,7 @@ class CoreFacetsBuilder {
                 "workspaces",
                 "isbn",
                 "units",
+                "lang"
             ]
         ];
     }

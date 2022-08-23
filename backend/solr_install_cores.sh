@@ -25,6 +25,7 @@ create_core() {
 	echo "y" | php artisan solr:install --core=$core
 }
 
+
 # Asks for the username
 echo "Which is your current user?"
 read username

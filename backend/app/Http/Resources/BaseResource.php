@@ -33,4 +33,15 @@ class BaseResource extends JsonResource
             'content' => $this->transformToJson($this->content)->description
         ];
     }
+
+    public function appendKeyToData($key, $value)
+    {
+        if ($this['code'] == 200) {
+            $data = $this['data'];
+            $data[$key] = $value;
+            $this['data'] = $data;
+        } else {
+            $this['error'] = ['data' => [$this['error']], $key => $value];
+        }
+    }
 }
