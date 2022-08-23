@@ -31,7 +31,6 @@ class CatalogueController extends Controller
      */
     public function index(GetCatalogueRequest $request, Collection $collection)
     {
-
         $pageParams = [];
         $pageParams['currentPage'] = $request->get('page', 1);
         $pageParams['limit'] = $request->get('limit', 1);

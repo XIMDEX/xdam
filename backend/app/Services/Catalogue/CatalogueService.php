@@ -7,6 +7,7 @@ namespace App\Services\Catalogue;
 use App\Services\Solr\SolrService;
 use phpDocumentor\GraphViz\Exception;
 use stdClass;
+use App\Utils\Texts;
 
 class CatalogueService
 {
@@ -26,6 +27,12 @@ class CatalogueService
 
     public function indexByCollection($pageParams, $sortParams, $facetsFilter, $collection): stdClass
     {
-        return $this->solrService->paginatedQueryByFacet($pageParams, $sortParams, $facetsFilter, $collection);
+        $result = $this->solrService->paginatedQueryByFacet($pageParams, $sortParams, $facetsFilter, $collection);
+        for ($i = 0; $i < count($result->facets); $i++) {
+            $facet = $result->facets[$i];
+            $facet['label'] = Texts::web($facet['label']);
+            $result->facets[$i] = $facet;
+        }
+        return $result;
     }
 }
