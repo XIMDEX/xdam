@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\MediaType;
 use App\Enums\Roles;
 use App\Enums\ThumbnailTypes;
+use App\Models\Media as MediaModel;
 use App\Traits\UsesUuid;
 use App\Utils\Utils;
 use Cartalyst\Tags\TaggableInterface;
@@ -89,6 +90,11 @@ class DamResource extends Model implements HasMedia, TaggableInterface
         return $this->hasOne(Lom::class);
     }
 
+    public function associatedMedia(): BelongsToMany
+    {
+        return $this->belongsToMany(MediaModel::class);
+    }
+    
     public function organization()
     {
         return $this->collection()->first()->organization()->first();

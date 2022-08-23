@@ -24,6 +24,7 @@ create_core() {
 	echo "y" | php artisan solr:install --core=$core
 }
 
+
 # Sets the array with the cores to delete/create, and iterates through it
 cores=("activity" "assessment" "book" "course" "multimedia")
 for core in ${cores[@]}; do

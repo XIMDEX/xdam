@@ -7,6 +7,7 @@ use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use App\Http\Resources\MediaResource;
 use App\Models\Media;
+use App\Models\MediaConversion;
 use App\Utils\DamUrlUtil;
 use App\Utils\Utils;
 
@@ -38,6 +39,18 @@ class MultimediaSolrResource extends BaseSolrResource
 
         $tags = $this->tags()->pluck('name')->toArray();
         $categories = $this->categories()->pluck('name')->toArray();
+        $conversions = [];
+        $asMedia = Media::where('model_id', $this->id)->get();
+
+        foreach ($asMedia as $item) {
+            $mediaConversions = $item->conversions()->pluck('file_compression');
+
+            foreach ($mediaConversions as $subitem) {
+                $conversions[] = $subitem;
+            }
+        }
+
+        //$conversions = $this->conversions()->pluck('file_compression')->toArray();
         $types = [];
 
         foreach ($files as $dam_url) {
@@ -61,6 +74,7 @@ class MultimediaSolrResource extends BaseSolrResource
             'tags' => count($tags) > 0 ? $tags : ['untagged'],
             'categories' => count($categories) > 0 ? $categories : ['uncategorized'],
             'files' => $files,
+            'conversions' => $conversions,
             'previews' => $previews,
             'workspaces' => $workspaces,
             'organization' => $this->organization()->id
