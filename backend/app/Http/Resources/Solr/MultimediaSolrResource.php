@@ -6,6 +6,7 @@ use App\Http\Resources\Solr\BaseSolrResource;
 use App\Enums\MediaType;
 use App\Http\Resources\MediaResource;
 use App\Models\Media;
+use App\Models\MediaConversion;
 use App\Utils\DamUrlUtil;
 
 class MultimediaSolrResource extends BaseSolrResource
@@ -42,6 +43,7 @@ class MultimediaSolrResource extends BaseSolrResource
             $media = Media::findOrFail($mediaId);
             $mimeType = $media->mime_type;
             $fileType = explode('/', $mimeType)[0];
+            
             if (!in_array($fileType, $types))
             {
                 $types[] = $fileType;
@@ -60,6 +62,16 @@ class MultimediaSolrResource extends BaseSolrResource
     public function toArray($request)
     {
         $files = $this->getFiles();
+        $conversions = [];
+        $asMedia = Media::where('model_id', $this->id)->get();
+
+        foreach ($asMedia as $item) {
+            $mediaConversions = $item->conversions()->pluck('file_compression');
+
+            foreach ($mediaConversions as $subitem) {
+                $conversions[] = $subitem;
+            }
+        }
 
         return [
             'id' => $this->getID(),
@@ -71,6 +83,7 @@ class MultimediaSolrResource extends BaseSolrResource
             'tags' => $this->formatTags($this->getTags()),
             'categories' => $this->formatCategories($this->getCategories()),
             'files' => $files,
+            'conversions' => $conversions,
             'previews' => $this->getPreviews(),
             'workspaces' => $this->getWorkspaces(),
             'organization' => $this->getOrganization()

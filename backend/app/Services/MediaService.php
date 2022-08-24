@@ -3,12 +3,15 @@
 namespace App\Services;
 use App\Enums\MediaType;
 use App\Models\Media;
+use App\Models\PendingVideoCompressionTask;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
 use Iman\Streamer\VideoStreamer;
 use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Imagine;
 use stdClass;
 
 
@@ -61,7 +64,7 @@ class MediaService
      * @return mixed
      * @throws \Exception
      */
-    public function preview(Media $media, $size = null)
+    public function preview(Media $media, $availableSizes, $sizeKey = null, $size = null)
     {
         $mimeType = $media->mime_type;
         $mediaPath = $media->getPath();
@@ -70,26 +73,133 @@ class MediaService
         $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.png';
 
         if ($fileType === 'video') {
+            return $this->previewVideo($media->id, $media->file_name, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail);
+        } else if($fileType === 'image') {
+            return $this->previewImage($mediaPath, $size);
+        } else {
+            return $mediaPath;
+        }
+    }
 
-            if($size === 'raw') {
-                return VideoStreamer::streamFile($mediaPath);
+    private function getVideoDimensions($path)
+    {
+        $command = "ffmpeg -i $path 2>&1 | grep Video: | grep -Po '\d{3,5}x\d{3,5}'";
+        $output = explode('x', exec($command));
+        $resolution = array("path" => $path, "width" => $output[0], "height" => $output[1], "aspect_ratio" => $output[1] / $output[0],
+                            "name" => $output[1] . "p");
+        return $resolution;
+    }
+
+    private function updateAvailableSizes(&$availableSizes, $aspectRatio, $mediaPath, $mediaFileName)
+    {
+        foreach ($availableSizes['sizes_scale'] as $k) {
+            $availableSizes['sizes'][$k]['width'] = ceil($availableSizes['sizes'][$k]['height'] / $aspectRatio);
+            
+            if ($availableSizes['sizes'][$k]['width'] % 2 !== 0) $availableSizes['sizes'][$k]['width'] -= 1;
+
+            $availableSizes['sizes'][$k]['path'] = implode('/', array_slice(explode('/', $mediaPath), 0, -1))
+                                                    . '/' . pathinfo($mediaFileName, PATHINFO_FILENAME) . '_'
+                                                    . $availableSizes['sizes'][$k]['name'] . '.'
+                                                    . pathinfo($mediaFileName, PATHINFO_EXTENSION);
+            $availableSizes['sizes'][$k]['relative_path'] = str_replace(storage_path('app') . '/', '', $availableSizes['sizes'][$k]['path']);
+        }
+    }
+
+    private function getValidSizesRange($availableSizes, $originalResolution)
+    {
+        $sizesRange = [];
+
+        foreach ($availableSizes['sizes_scale'] as $k) {
+            if ($availableSizes['sizes'][$k]['height'] < $originalResolution['height']) {
+                $sizesRange[$k] = $availableSizes['sizes'][$k];
             }
+        }
 
+        return $sizesRange;
+    }
+
+    private function previewVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey = null, $size = null, $thumbnail = null)
+    {
+        // Gets the real resolution of the video, and updates the available resolutions, according the computed aspect ratio
+        $originalRes = $this->getVideoDimensions($mediaPath);
+        $this->updateAvailableSizes($availableSizes, $originalRes['aspect_ratio'], $mediaPath, $mediaFileName);
+        
+        // Gets the available sizes, with the valid range for this current file
+        $validSizes = $this->getValidSizesRange($availableSizes, $originalRes);
+
+        if ($size == 'thumbnail') {
             $thumb_exists = File::exists($thumbnail);
-            if(!$thumb_exists) {
+
+            if (!$thumb_exists) {
                 $this->saveVideoSnapshot($thumbnail, $mediaPath);
             } else {
                 return Image::make($thumbnail);
             }
-            //USE THIS PACKAGE TO RENDER THE VIDEO
-
-
-
-        } else if($fileType === 'image') {
-            return Image::make($mediaPath);
+        } else if ($size == 'raw') {
+            return VideoStreamer::streamFile($mediaPath);
         } else {
-            return $mediaPath;
+            if (!array_key_exists($sizeKey, $validSizes)) {
+                return $this->previewVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey, 'raw', $thumbnail);
+            }
+
+            if (!file_exists($validSizes[$sizeKey]['path'])) {
+                $task = PendingVideoCompressionTask::where('media_id', $mediaID)
+                            ->where('resolution', $validSizes[$sizeKey]['width'] . ':' . $validSizes[$sizeKey]['height'])
+                            ->where('src_path', $mediaPath)
+                            ->where('dest_path', $validSizes[$sizeKey]['path'])
+                            ->where('media_conversion_name_id', $validSizes[$sizeKey]['name'])
+                            ->first();
+
+                if ($task === null) {
+                    $task = PendingVideoCompressionTask::create([
+                        'media_id' => $mediaID,
+                        'resolution' => $validSizes[$sizeKey]['width'] . ':' . $validSizes[$sizeKey]['height'],
+                        'src_path' => $mediaPath,
+                        'dest_path' => $validSizes[$sizeKey]['path'],
+                        'media_conversion_name_id' => $validSizes[$sizeKey]['name']
+                    ]);
+                }
+
+                $validSizesKeys = array_keys($validSizes);
+                
+                for ($i = count($validSizesKeys) - 1; $i >= 0; $i--) {
+                    $item = $validSizes[$validSizesKeys[$i]];
+                    if (file_exists($item['path'])) return VideoStreamer::streamFile($item['path']);
+                }
+                
+                return $this->previewVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey, 'raw', $thumbnail);
+            }
+
+            return VideoStreamer::streamFile($validSizes[$sizeKey]['path']);
         }
+
+        return $mediaPath;
+    }
+
+    private function previewImage($mediaPath, $size)
+    {
+        $manager = new ImageManager(['driver' => 'imagick']);
+        $image = $manager->make($mediaPath);
+
+        if ($size !== 'raw') {
+            $width = $image->width();
+            $height = $image->height();
+            $aspectRatio = $width / $height;
+
+            if ($size >= $height) return $image;
+
+            if ($aspectRatio >= 1.0) {
+                $newHeight = $height * $size / 100;
+                $newWidth = $newHeight / $aspectRatio;
+            } else {
+                $newWidth = $width * $size / 100;
+                $newHeight = $newWidth * $aspectRatio;
+            }
+    
+            $image->resize($newHeight, $newWidth);
+        }
+
+        return $image;
     }
 
     public function saveVideoSnapshot($thumbPath, $videoSourcePath)

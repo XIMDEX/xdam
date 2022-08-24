@@ -717,4 +717,13 @@ class ResourceService
     public function updateAsOther($toBeCloned, $theClon) {
 
     }
+
+    public function getResource($resourceID, $collectionID)
+    {
+        $resource = DamResource::where('id', $resourceID)
+                        ->where('collection_id', $collectionID)
+                        ->first();
+        
+        return $resource;
+    }
 }

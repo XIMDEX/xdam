@@ -1,0 +1,7 @@
+{
+    "require": {
+        "aminyazdanpanah/php-ffmpeg-video-streaming": "^1.2",
+        "muxinc/mux-php": "^3.6",
+        "php-ffmpeg/php-ffmpeg": "^0.19.0"
+    }
+}
