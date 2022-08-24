@@ -34,6 +34,17 @@ class Utils
         return $array_of_names;
     }
 
+    public static function formatWorkspaces(array $ids): array
+    {
+        $output = [];
+
+        foreach (Workspace::find($ids) as $wsp) {
+            $output[] = json_encode($wsp->toArray());
+        }
+
+        return $output;
+    }
+
     public static function arrayToObject($array)
     {
         // First we convert the array to a json string
