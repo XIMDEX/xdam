@@ -30,7 +30,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ResourceController extends Controller
 {
+    /**
+     * @var ResourceService
+     */
     private $resourceService;
+
     /**
      * @var MediaService
      */

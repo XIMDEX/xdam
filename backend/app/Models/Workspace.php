@@ -16,6 +16,7 @@ class Workspace extends Model
      * @var array
      */
     protected $fillable = [
+        'id',
         'name',
         'type',
         'organization_id'
@@ -44,5 +45,13 @@ class Workspace extends Model
     public function isPublic(): bool
     {
         return $this->type == WorkspaceType::public ? true : false;
+    }
+
+    public function toArray()
+    {
+        return [
+            'id'    => $this->id,
+            'name'  => $this->name
+        ];
     }
 }

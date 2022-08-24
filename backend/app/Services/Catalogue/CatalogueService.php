@@ -3,8 +3,9 @@
 
 namespace App\Services\Catalogue;
 
-
+use App\Models\Workspace;
 use App\Services\Solr\SolrService;
+use App\Services\OrganizationWorkspace\WorkspaceService;
 use phpDocumentor\GraphViz\Exception;
 use stdClass;
 use App\Utils\Texts;
@@ -17,22 +18,66 @@ class CatalogueService
     private SolrService $solrService;
 
     /**
+     * @var WorkspaceService
+     */
+    private WorkspaceService $workspaceService;
+
+    /**
      * CatalogueService constructor.
      * @param SolrService $solrService
+     * @param WorkspaceService $workspaceService
      */
-    public function __construct(SolrService $solrService)
+    public function __construct(SolrService $solrService, WorkspaceService $workspaceService)
     {
         $this->solrService = $solrService;
+        $this->workspaceService = $workspaceService;
     }
 
     public function indexByCollection($pageParams, $sortParams, $facetsFilter, $collection): stdClass
     {
-        $result = $this->solrService->paginatedQueryByFacet($pageParams, $sortParams, $facetsFilter, $collection);
-        for ($i = 0; $i < count($result->facets); $i++) {
-            $facet = $result->facets[$i];
-            $facet['label'] = Texts::web($facet['label']);
-            $result->facets[$i] = $facet;
+        return $this->formatSolrResponseWithWorkspaceInformation(
+            $this->solrService->paginatedQueryByFacet(
+                $pageParams, $sortParams, $facetsFilter, $collection
+            )
+        );
+    }
+
+    private function formatSolrResponseWithWorkspaceInformation($solrResponse)
+    {
+        $response = $solrResponse;
+        $defaultWorkspace = (string) $this->workspaceService->getDefaultWorkspace()->id;
+
+        foreach ($response->facets as $facetKey => $facetValue) {
+            if ($facetValue['key'] === 'workspaces') {
+                foreach ($facetValue['values'] as $workspaceID => $workspaceValues) {
+                    $newValues = array();
+
+                    foreach ($workspaceValues as $key => $item) {
+                        $newValues[$key] = $item;
+                    }
+
+                    $newValues['name'] = $this->getWorkspaceName($workspaceID);
+                    $newValues['canBeEdit'] = $this->getWorkspaceCanBeEdit($defaultWorkspace, $workspaceID);
+                    $response->facets[$facetKey]['values'][$workspaceID] = $newValues;
+                }
+            }
         }
-        return $result;
+
+        return $response;
+    }
+
+    private function getWorkspaceName($workspaceID)
+    {
+        $workspace = Workspace::where('id', $workspaceID)->first();
+
+        if ($workspace === null)
+            return '';
+
+        return $workspace->name;
+    }
+
+    private function getWorkspaceCanBeEdit($defaultWorkspaceID, $workspaceID)
+    {
+        return $defaultWorkspaceID != $workspaceID;
     }
 }
