@@ -30,6 +30,6 @@ class SetResourceWorkspaceRequest extends FormRequest
 
     public function checkResourceWorkspaceChangeData()
     {
-        return (isset($this->resource_id) && (isset($this->workspace_id) || isset($this->workspace_name)));
+        return (isset($this->damResource) && (isset($this->workspace_id) || isset($this->workspace_name)));
     }
 }
