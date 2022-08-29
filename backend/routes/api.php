@@ -26,7 +26,6 @@ use App\Http\Controllers\WorkspaceController;
 |
 */
 
-
 Route::group(['prefix'=>'v1','as'=>'v1'], function(){
     Route::get('temp', function() {
         return response()->json(['prueba' => __('facets.DEFAULT.categories')]);
@@ -43,11 +42,16 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
 
     Route::group(['middleware' => 'show.resource'], function() {
         Route::group(['prefix' => 'resource'], function(){
-            Route::get('/render/{damUrl}/{size}',   [ResourceController::class, 'render'])->name('damResource.renderWithSize');
-            Route::get('/render/{damUrl}',          [ResourceController::class, 'render'])->name('damResource.render');
-            Route::get('/{damResource}',            [ResourceController::class, 'get'])   ->name('damResource.get');
-            Route::get('/lastCreated/{collection}', [CollectionController::class, 'getLastResourceCreated'])->name('collection.get.lastCreated');
-            Route::get('/lastUpdated/{collection}', [CollectionController::class, 'getLastResourceUpdated'])->name('collection.get.lastUpdated');
+            Route::get('/render/{damUrl}/{size}',       [ResourceController::class, 'render'])
+                ->name('damResource.renderWithSize');
+            Route::get('/render/{damUrl}',              [ResourceController::class, 'render'])
+                ->name('damResource.render');
+            Route::get('/{damResource}',                [ResourceController::class, 'get'])
+                ->name('damResource.get');
+            Route::get('/lastCreated/{collection}',     [CollectionController::class, 'getLastResourceCreated'])
+                ->name('collection.get.lastCreated');
+            Route::get('/lastUpdated/{collection}',     [CollectionController::class, 'getLastResourceUpdated'])
+                ->name('collection.get.lastUpdated');
         });
     });
 
@@ -55,7 +59,6 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
     //Route::get('/user/{token}/resource/{damResource}/permissions', [UserController::class, 'resourceInfo'])->name('user.get.resource.info');
 
     Route::group(['middleware' => 'auth:api'], function () {
-
 
         Route::get('/ini_pms', function() {
             return [
@@ -125,9 +128,6 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
                 Route::delete('/{workspace_id}',    [WorkspaceController::class, 'delete'])     ->name('wsp.delete');
             });
         });
-
-        Route::post('/workspace/set/resource',  [WorkspaceController::class, 'setResource'])
-                ->name('damResource.setWorkspace');
 
         Route::group(['prefix' => 'role', 'middleware' => 'manage.roles'], function() {
             Route::post('user/set/abilitiesOnEntity',    [AdminController::class, 'SetRoleAbilitiesOnEntity']) ->name('adm.usr.set.role');
@@ -219,6 +219,9 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
                 Route::delete('/{isbn}/links/',     [BookUnitController::class, 'deleteUnitsLink'])  ->name('book.deleteUnitsLink');
             });
         });
+
+        Route::post('/resource/{damResource}/setWorkspace', [ResourceController::class, 'setWorkspace'])
+            ->name('damResource.setWorkspace');
 
         Route::group(['prefix' => 'category'], function() {
             Route::get('', [CategoryController::class, 'getAll'])->name('category.getAll');
