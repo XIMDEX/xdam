@@ -91,8 +91,9 @@ class CDNService
 
     public function existsAccessPermissionType($accessPermissionType)
     {
-        $type = AccessPermission::coerce($accessPermissionType);
-        return $type !== null;
+        // $type = AccessPermission::coerce($accessPermissionType);
+        // return $type !== null;
+        return AccessPermission::existsAccessPermissionType($accessPermissionType);
     }
 
     public function updateAccessPermissionType($cdnID, $accessPermissionType)
@@ -110,7 +111,8 @@ class CDNService
         return true;
     }
 
-    public function addAccessPermissionRule($cdnID, $accessPermissionType, $ipAddress = null, $lti = null)
+    public function addAccessPermissionRule($cdnID, $accessPermissionType, $ipAddress = null, $lti = null,
+                                            $originURL = null)
     {
         $cdnAccessPermission = CDNAccessPermission::where('cdn_id', $cdnID)
                                 ->where('type', $accessPermissionType)
@@ -121,33 +123,45 @@ class CDNService
 
         if ($accessPermissionType === AccessPermission::ipAddress) {
             $lti = null;
+            $originURL = null;
 
             if ($ipAddress === null) return false;
         }
 
         if ($accessPermissionType === AccessPermission::lti) {
             $ipAddress = null;
+            $originURL = null;
 
             if ($lti === null) return false;
+        }
+
+        if ($accessPermissionType === AccessPermission::originUrl) {
+            $ipAddress = null;
+            $lti = null;
+
+            if ($originURL === null) return false;
         }
 
         $rule = CDNAccessPermissionRule::where('access_permission_id', $cdnAccessPermission->id)
                     ->where('ip_address', $ipAddress)
                     ->where('lti', $lti)
+                    ->where('origin_url', $originURL)
                     ->first();
 
         if ($rule === null) {
             $rule = CDNAccessPermissionRule::create([
                         'access_permission_id' => $cdnAccessPermission->id,
                         'ip_address' => $ipAddress,
-                        'lti' => $lti
+                        'lti' => $lti,
+                        'origin_url' => $originURL
                     ]);
         }
 
         return true;
     }
 
-    public function removeAccessPermissionRule($cdnID, $accessPermissionType, $ipAddress = null, $lti = null)
+    public function removeAccessPermissionRule($cdnID, $accessPermissionType, $ipAddress = null, $lti = null,
+                                                $originURL = null)
     {
         $cdnAccessPermission = CDNAccessPermission::where('cdn_id', $cdnID)
                                 ->where('type', $accessPermissionType)
@@ -158,19 +172,29 @@ class CDNService
 
         if ($accessPermissionType === AccessPermission::ipAddress) {
             $lti = null;
+            $originURL = null;
 
             if ($ipAddress === null) return false;
         }
 
         if ($accessPermissionType === AccessPermission::lti) {
             $ipAddress = null;
+            $originURL = null;
 
             if ($lti === null) return false;
+        }
+
+        if ($accessPermissionType === AccessPermission::originUrl) {
+            $ipAddress = null;
+            $lti = null;
+
+            if ($originURL === null) return false;
         }
 
         $rule = CDNAccessPermissionRule::where('access_permission_id', $cdnAccessPermission->id)
                     ->where('ip_address', $ipAddress)
                     ->where('lti', $lti)
+                    ->where('origin_url', $originURL)
                     ->delete();
         return true;
     }
@@ -184,6 +208,46 @@ class CDNService
     {
         $hash = substr($resource->id, 0, 3) . substr($cdn->uuid, 14, 4) . $collectionID . substr($resource->id, 14, 4) . substr($cdn->uuid, -3);
         return $hash;
+    }
+
+    public function generateMultipleDamResourcesHash($cdn, $resourceIDs, $collectionID)
+    {
+        $results = [];
+
+        foreach ($resourceIDs as $id) {
+            $item = DamResource::where('id', $id)
+                        ->where('collection_id', $collectionID)
+                        ->first();
+
+            if ($item !== null) {
+                $auxItem = [
+                    'id'    => $item->id,
+                    'name'  => $item->name,
+                    'type'  => $item->type,
+                    'hash'  => $this->generateDamResourceHash($cdn, $item, $collectionID)
+                ];
+                $results[] = $auxItem;
+            }
+        }
+
+        return $results;
+    }
+
+    public function generateCollectionDamResourcesHash($cdn, $collection)
+    {
+        $results = [];
+
+        foreach ($collection->resources()->get() as $item) {
+            $auxItem = [
+                'id'    => $item->id,
+                'name'  => $item->name,
+                'type'  => $item->type,
+                'hash'  => $this->generateDamResourceHash($cdn, $item, $collection->id)
+            ];
+            $results[] = $auxItem;
+        }
+
+        return $results;
     }
 
     public function getAttachedDamResource($cdn, $hash)
@@ -222,5 +286,10 @@ class CDNService
     public function isCollectionAccessible($resource, $cdn)
     {
         return $cdn->isCollectionAccessible($resource->collection_id);
+    }
+
+    public function isCollectionAccessible_v2($collection, $cdn)
+    {
+        return $cdn->isCollectionAccessible($collection->id);
     }
 }

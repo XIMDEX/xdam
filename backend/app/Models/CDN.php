@@ -8,6 +8,7 @@ use App\Models\CDNCollection;
 use App\Models\CDN\DefaultCDNAccess;
 use App\Models\CDN\IPAddressCDNAccess;
 use App\Models\CDN\LTICDNAccess;
+use App\Models\CDN\OriginURLAccess;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -48,10 +49,10 @@ class CDN extends Model
         return false;
     }
 
-    public function checkAccessRequirements($ipAddress = null)
+    public function checkAccessRequirements($ipAddress = null, $originURL = null)
     {
         $accessPermission = $this->getAccessPermission();
-        return $accessPermission->areRequirementsMet($ipAddress);
+        return $accessPermission->areRequirementsMet($ipAddress, $originURL);
     }
     
     private function getAccessPermission(): DefaultCDNAccess
@@ -68,6 +69,9 @@ class CDN extends Model
 
             case AccessPermission::lti:
                 return new LTICDNAccess($rules);
+            
+            case AccessPermission::originUrl:
+                return new OriginURLAccess($rules);
         }
 
         return null;

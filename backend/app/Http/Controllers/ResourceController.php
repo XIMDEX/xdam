@@ -495,12 +495,13 @@ class ResourceController extends Controller
     {
         $cdnInfo = $this->cdnService->getCDNInfo($request->cdn_code);
         $resource = $this->cdnService->getAttachedDamResource($cdnInfo, $request->damResourceHash);
+        $originURL = $request->headers->get('referer');
 
         if ($cdnInfo === null)
             return response(['error' => 'This CDN doesn\'t exist!']);
 
         if (!$this->cdnService->isCollectionAccessible($resource, $cdnInfo)
-             || !$cdnInfo->checkAccessRequirements($_SERVER['REMOTE_ADDR']))
+             || !$cdnInfo->checkAccessRequirements($_SERVER['REMOTE_ADDR'], $originURL))
             return response(['error' => 'Forbidden access!']);
 
         if (!isset($request->size))

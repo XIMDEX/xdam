@@ -60,8 +60,47 @@ class CDNController extends Controller
         if (($resource = $this->resourceService->getResource($request->resource_id, $request->collection_id)) === null)
             return response(['error' => 'The resource doesn\'t exist.']);
         
+        if (!$this->cdnService->isCollectionAccessible($resource, $cdn))
+            return response(['error' => 'The collection isn\'t accessible for this CDN.']);
+
         $result = $this->cdnService->generateDamResourceHash($cdn, $resource, $request->collection_id);
         return response(['resource_hash' => $result], Response::HTTP_OK);
+    }
+
+    public function createMultipleCDNResourcesHash(CDNRequest $request)
+    {
+        if (!isset($request->resource_ids) || !isset($request->collection_id))
+            return response(['error' => 'The resource IDs and the collection ID must be provided.']);
+
+        if (($cdn = $this->cdnService->getCDNInfo($request->cdn_code)) === null)
+            return response(['error' => 'The CDN doesn\'t exist.']);
+        
+        if (($collection = $this->resourceService->getCollection($request->collection_id)) === null)
+            return response(['error' => 'The collection doesn\'t exist.']);
+
+        if (!$this->cdnService->isCollectionAccessible_v2($collection, $cdn))
+            return response(['error' => 'The collection isn\'t accessible for this CDN.']);
+
+        $result = $this->cdnService->generateMultipleDamResourcesHash($cdn, $request->resource_ids, $request->collection_id);
+        return response(['resource_hash' => $result], Response::HTTP_OK);
+    }
+
+    public function createCDNCollectionResourcesHash(CDNRequest $request)
+    {
+        if (!isset($request->collection_id))
+            return response(['error' => 'The collection ID must be provided.']);
+
+        if (($cdn = $this->cdnService->getCDNInfo($request->cdn_code)) === null)
+            return response(['error' => 'The CDN doesn\'t exist.']);
+
+        if (($collection = $this->resourceService->getCollection($request->collection_id)) === null)
+            return response(['error' => 'The collection doesn\'t exist.']);
+
+        if (!$this->cdnService->isCollectionAccessible_v2($collection, $cdn))
+            return response(['error' => 'The collection isn\'t accessible for this CDN.']);
+        
+        $result = $this->cdnService->generateCollectionDamResourcesHash($cdn, $collection);
+        return response(['resources' => $result], Response::HTTP_OK);
     }
 
     public function addCollection(CDNRequest $request)
@@ -103,7 +142,8 @@ class CDNController extends Controller
     public function addAccessPermissionRule(CDNRequest $request)
     {
         if (!isset($request->cdn_id) || !isset($request->access_permission) 
-            || (!isset($request->ip_address) && !isset($request->lti)))
+            || (!isset($request->ip_address) && !isset($request->lti)
+                && !isset($request->origin_url)))
             return response(['error' => 'The CDN ID, the access permission type, and the rule must be provided.']);
 
         if (!$this->cdnService->existsCDN($request->cdn_id))
@@ -113,14 +153,16 @@ class CDNController extends Controller
             return response(['error' => 'The access permission type must be valid.']);
 
         $res = $this->cdnService->addAccessPermissionRule($request->cdn_id, $request->access_permission,
-                                                            $request->ip_address, $request->lti);
+                                                            $request->ip_address, $request->lti,
+                                                            $request->origin_url);
         return response(['access_permission_rule_added' => $res], Response::HTTP_OK);
     }
 
     public function removeAccessPermissionRule(CDNRequest $request)
     {
         if (!isset($request->cdn_id) || !isset($request->access_permission) 
-            || (!isset($request->ip_address) && !isset($request->lti)))
+            || (!isset($request->ip_address) && !isset($request->lti)
+                && !isset($request->origin_url)))
             return response(['error' => 'The CDN ID, the access permission type, and the rule must be provided.']);
 
         if (!$this->cdnService->existsCDN($request->cdn_id))
@@ -130,7 +172,8 @@ class CDNController extends Controller
             return response(['error' => 'The access permission type must be valid.']);
 
         $res = $this->cdnService->removeAccessPermissionRule($request->cdn_id, $request->access_permission,
-                                                            $request->ip_address, $request->lti);
+                                                            $request->ip_address, $request->lti,
+                                                            $request->origin_url);
         return response(['access_permission_rule_removed' => $res], Response::HTTP_OK);
     }
 }

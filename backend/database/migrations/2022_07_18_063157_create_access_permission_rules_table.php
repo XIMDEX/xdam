@@ -18,6 +18,7 @@ class CreateAccessPermissionRulesTable extends Migration
             $table->unsignedBigInteger('access_permission_id');
             $table->string('ip_address')->nullable()->default(null);
             $table->string('lti')->nullable()->default(null);
+            $table->string('origin_url')->nullable()->default(null);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 

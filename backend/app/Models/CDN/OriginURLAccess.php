@@ -4,10 +4,8 @@ namespace App\Models\CDN;
 
 use App\Models\CDN\DefaultCDNAccess;
 
-class IPAddressCDNAccess extends DefaultCDNAccess
+class OriginURLAccess extends DefaultCDNAccess
 {
-    private $ipAddresses;
-
     public function __construct($rules)
     {
         parent::__construct($rules);
@@ -15,6 +13,6 @@ class IPAddressCDNAccess extends DefaultCDNAccess
 
     public function areRequirementsMet($ipAddress = null, $originURL = null)
     {
-        return in_array($ipAddress, $this->rules);
+        return in_array($originURL, $this->rules);
     }
 }

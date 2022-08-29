@@ -9,7 +9,7 @@ class DefaultCDNAccess
         $this->rules = $rules;
     }
 
-    public function areRequirementsMet($ipAddress = null)
+    public function areRequirementsMet($ipAddress = null, $originURL = null)
     {
         return true;
     }

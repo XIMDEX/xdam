@@ -726,4 +726,12 @@ class ResourceService
         
         return $resource;
     }
+
+    public function getCollection($collectionID)
+    {
+        $collection = ModelsCollection::where('id', $collectionID)
+                        ->first();
+        
+        return $collection;
+    }
 }

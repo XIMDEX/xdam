@@ -31,12 +31,16 @@ use App\Http\Controllers\WorkspaceController;
 Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
     Route::group(['prefix' => 'cdn'], function() {
         Route::group(['prefix' => 'admin'], function() {
-            Route::post('/create',                              [CDNController::class, 'createCDN'])
+            Route::post('/create',                                          [CDNController::class, 'createCDN'])
                     ->name('cdn.createCDN');
-            Route::post('/remove',                              [CDNController::class, 'removeCDN'])
+            Route::post('/remove',                                          [CDNController::class, 'removeCDN'])
                     ->name('cdn.removeCDN');
-            Route::post('/{cdn_code}/generate_resource_hash',   [CDNController::class, 'createCDNResourceHash'])
+            Route::post('/{cdn_code}/generate_resource_hash',               [CDNController::class, 'createCDNResourceHash'])
                     ->name('cdn.createCDNResourceHash');
+            Route::post('/{cdn_code}/generate_multiple_resources_hash',     [CDNController::class, 'createMultipleCDNResourcesHash'])
+                    ->name('cdn.createMultipleCDNResourcesHash');
+            Route::post('/{cdn_code}/generate_collection_resources_hash',   [CDNController::class, 'createCDNCollectionResourcesHash'])
+                    ->name('cdn.createCDNCollectionResourcesHash');
 
             Route::group(['prefix' => 'collection'], function() {
                 Route::post('/add',     [CDNController::class, 'addCollection'])

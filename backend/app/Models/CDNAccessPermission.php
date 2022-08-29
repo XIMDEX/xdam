@@ -46,6 +46,10 @@ class CDNAccessPermission extends Model
                 case AccessPermission::lti:
                     $rules[] = $item->getLTI();
                     break;
+
+                case AccessPermission::originUrl:
+                    $rules[] = $item->getOriginURL();
+                    break;
             }
         }
 
