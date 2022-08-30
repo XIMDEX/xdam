@@ -4,7 +4,7 @@ namespace App\Services\Solr\CoreHandlers;
 
 use App\Services\Solr\CoreHandlers\BaseHandler;
 
-class BookHandler extends BaseHandler
+class DocumentHandler extends BaseHandler
 {
     public function __construct($query)
     {

@@ -10,11 +10,7 @@ use Exception;
 use Solarium\Client;
 use Solarium\Core\Query\Result\ResultInterface;
 use stdClass;
-use App\Http\Resources\Solr\ActivitySolrResource;
-use App\Http\Resources\Solr\AssessmentSolrResource;
-use App\Http\Resources\Solr\BookSolrResource;
-use App\Http\Resources\Solr\CourseSolrResource;
-use App\Http\Resources\Solr\MultimediaSolrResource;
+use App\Http\Resources\Solr\{ActivitySolrResource, AssessmentSolrResource, BookSolrResource, CourseSolrResource, DocumentSolrResource, MultimediaSolrResource};
 
 /**
  * Class that is responsible for making crud with Apache Solr and each of its instances
@@ -269,7 +265,8 @@ class SolrService
     private function generateQuery($collection, $core, $searchTerm): string
     {
         if ('document' === $core) {
-            return "title:$searchTerm^10 title:*$searchTerm*^7 OR body:*$searchTerm*^5";
+            // return "title:$searchTerm^10 title:*$searchTerm*^7 OR body:*$searchTerm*^5";
+            return DocumentSolrResource::generateQuery($searchTerm);
         } else if ('activity' === $core) {
             return ActivitySolrResource::generateQuery($searchTerm);
         } else if ('assessment' === $core) {
