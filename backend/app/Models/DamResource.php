@@ -7,6 +7,8 @@ use App\Enums\Roles;
 use App\Enums\ThumbnailTypes;
 use App\Models\Media as MediaModel;
 use App\Traits\UsesUuid;
+use App\Models\Workspace;
+use App\Models\WorkspaceResource;
 use App\Utils\Utils;
 use Cartalyst\Tags\TaggableInterface;
 use Cartalyst\Tags\TaggableTrait;
@@ -152,5 +154,13 @@ class DamResource extends Model implements HasMedia, TaggableInterface
             }
         }
         return false;
+    }
+
+    public function updateWorkspace(Workspace $oldWorkspace, Workspace $newWorkspace)
+    {
+        $result = WorkspaceResource::where('dam_resource_id', $this->id)
+                    ->where('workspace_id', $oldWorkspace->id)
+                    ->update(['workspace_id' => $newWorkspace->id]);
+        return true;
     }
 }

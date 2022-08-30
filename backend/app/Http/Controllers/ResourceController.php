@@ -13,6 +13,7 @@ use App\Http\Requests\ResouceCategoriesRequest;
 use App\Http\Requests\SetTagsRequest;
 use App\Http\Requests\StoreResourceRequest;
 use App\Http\Requests\UpdateResourceRequest;
+use App\Http\Requests\Workspace\SetResourceWorkspaceRequest;
 use App\Http\Resources\ExploreCoursesCollection;
 use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\ResourceResource;
@@ -23,6 +24,8 @@ use App\Models\DamResourceUse;
 use App\Models\Media;
 use App\Services\MediaService;
 use App\Services\ResourceService;
+use App\Services\UserService;
+use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Utils\DamUrlUtil;
 use Error;
 use Illuminate\Http\Request;
@@ -48,16 +51,32 @@ class ResourceController extends Controller
     private $cdnService;
 
     /**
+     * @var WorkspaceServic
+     */
+    private $workspaceService;
+
+    /**
+     * @var UserService
+     */
+    private $userService;
+
+    /**
      * CategoryController constructor.
      * @param ResourceService $resourceService
      * @param MediaService $mediaService
      * @param CDNService $cdnService
+     * @param WorkspaceService $workspaceService
+     * @param UserService $userService
      */
-    public function __construct(ResourceService $resourceService, MediaService $mediaService, CDNService $cdnService)
+    public function __construct(ResourceService $resourceService, MediaService $mediaService,
+                                CDNService $cdnService, WorkspaceService $workspaceService,
+                                UserService $userService)
     {
         $this->resourceService = $resourceService;
         $this->mediaService = $mediaService;
         $this->cdnService = $cdnService;
+        $this->workspaceService = $workspaceService;
+        $this->userService = $userService;
     }
 
     public function resourcesSchema ()
@@ -303,7 +322,7 @@ class ResourceController extends Controller
             return response()->file($compressed);
         }
 
-        return response()->file($this->mediaService->preview($media));
+        return response()->file($this->mediaService->preview($media, []));
     }
 
     private function getAvailableResourceSizes()
@@ -513,5 +532,22 @@ class ResourceController extends Controller
             return response(['error' => 'No files attached!']);
         
         return $this->renderResource($responseJson->files[0]->dam_url, $request->size);
+    }
+
+    public function setWorkspace(SetResourceWorkspaceRequest $request)
+    {
+        if (!$request->checkResourceWorkspaceChangeData())
+            return response(['error' => 'The needed data hasn\'t been provided.']);
+
+        $user = $this->userService->user();
+
+        if ($user === null)
+            return response(['error' => 'User inaccessible.']);
+
+        $result = $this->workspaceService->setResourceWorkspace($user, $request->damResource,
+                                                                $request->workspace_id,
+                                                                $request->workspace_name);
+
+        return response($result)->setStatusCode(Response::HTTP_OK);
     }
 }

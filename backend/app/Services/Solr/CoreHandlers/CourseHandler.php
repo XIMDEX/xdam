@@ -13,7 +13,7 @@ class CourseHandler extends BaseHandler
 
     public function queryCoreSpecifics($params)
     {
-        parent::queryCoreSpecifics($params);
+        return parent::queryCoreSpecifics($params);
 
         //fq behaviour for cost
         //!!POTENTIALLY DEPRECATED. Now exists a boolean facet isFree. Test it

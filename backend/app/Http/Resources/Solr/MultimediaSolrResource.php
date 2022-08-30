@@ -4,32 +4,20 @@ namespace App\Http\Resources\Solr;
 
 use App\Http\Resources\Solr\BaseSolrResource;
 use App\Enums\MediaType;
-use App\Enums\ResourceType;
 use App\Http\Resources\MediaResource;
 use App\Models\Media;
 use App\Models\MediaConversion;
 use App\Utils\DamUrlUtil;
-use App\Utils\Utils;
 
 class MultimediaSolrResource extends BaseSolrResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return array
-     */
-    public function toArray($request)
+    protected function getPreviews()
     {
-        $files = array_column(
-            json_decode(MediaResource::collection($this->getMedia(MediaType::File()->key))->toJson(), true),
-            'dam_url'
-        );
+        $files = $this->getFiles();
         $previews = array_column(
             json_decode(MediaResource::collection($this->getMedia(MediaType::Preview()->key))->toJson(), true),
             'dam_url'
         );
-        $workspaces = Utils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
 
         // If the resource does not have a preview, but has an associated file, take the first one as preview
         if (empty($previews) && !empty($files))
@@ -37,20 +25,17 @@ class MultimediaSolrResource extends BaseSolrResource
             $previews[] = $files[0];
         }
 
-        $tags = $this->tags()->pluck('name')->toArray();
-        $categories = $this->categories()->pluck('name')->toArray();
-        $conversions = [];
-        $asMedia = Media::where('model_id', $this->id)->get();
+        return $previews;
+    }
 
-        foreach ($asMedia as $item) {
-            $mediaConversions = $item->conversions()->pluck('file_compression');
+    protected function getType()
+    {
+        $files = $this->getFiles();
+        return (is_array($files) && count($files) === 0 ? 'image' : $this->type);
+    }
 
-            foreach ($mediaConversions as $subitem) {
-                $conversions[] = $subitem;
-            }
-        }
-
-        //$conversions = $this->conversions()->pluck('file_compression')->toArray();
+    private function getTypes($files)
+    {
         $types = [];
 
         foreach ($files as $dam_url) {
@@ -64,20 +49,50 @@ class MultimediaSolrResource extends BaseSolrResource
             }
         }
 
+        return $types;
+    }
+
+    private function getConversions()
+    {
+        $conversions = [];
+        $asMedia = Media::where('model_id', $this->id)->get();
+
+        foreach ($asMedia as $item) {
+            $mediaConversions = $item->conversions()->pluck('file_compression');
+
+            foreach ($mediaConversions as $subitem) {
+                $conversions[] = $subitem;
+            }
+        }
+
+        // $conversions = $this->conversions()->pluck('file_compression')->toArray();
+        return $conversions;
+    }
+
+    /**
+     * Transform the resource into an array.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return array
+     */
+    public function toArray($request)
+    {
+        $files = $this->getFiles();
+
         return [
-            'id' => $this->id,
-            'name' => $this->data->description->name,
-            'data' => is_object($this->data) ? json_encode($this->data) : $this->data,
-            'active' => $this->active,
-            'type' => (is_array($files) && count($files) === 0 ? 'image' : $this->type),
-            'types' => $types,
-            'tags' => count($tags) > 0 ? $tags : ['untagged'],
-            'categories' => count($categories) > 0 ? $categories : ['uncategorized'],
+            'id' => $this->getID(),
+            'name' => $this->getName(),
+            'data' => $this->getData(),
+            'active' => $this->getActive(),
+            'type' => $this->getType(),
+            'types' => $this->getTypes($files),
+            'tags' => $this->formatTags($this->getTags()),
+            'categories' => $this->formatCategories($this->getCategories()),
             'files' => $files,
-            'conversions' => $conversions,
-            'previews' => $previews,
-            'workspaces' => $workspaces,
-            'organization' => $this->organization()->id
+            'conversions' => $this->getConversions(),
+            'previews' => $this->getPreviews(),
+            'workspaces' => $this->getWorkspaces(),
+            'organization' => $this->getOrganization()
         ];
     }
 }
