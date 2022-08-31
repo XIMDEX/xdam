@@ -295,7 +295,7 @@ class ResourceController extends Controller
             $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue);
 
             if ($fileType == 'image') {
-                $response = $compressed->response('jpeg', $size === 'raw' ? 100 : $size);
+                $response = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['sizes'][$size]);
                 $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
                 return $response;
             }
@@ -303,7 +303,7 @@ class ResourceController extends Controller
             return response()->file($compressed);
         }
 
-        return response()->file($this->mediaService->preview($media));
+        return response()->file($this->mediaService->preview($media, []));
     }
 
     private function getAvailableResourceSizes()
@@ -494,14 +494,13 @@ class ResourceController extends Controller
     public function renderCDNResource(CDNRequest $request)
     {
         $cdnInfo = $this->cdnService->getCDNInfo($request->cdn_code);
-        $resource = $this->cdnService->getAttachedDamResource($cdnInfo, $request->damResourceHash);
-        $originURL = $request->headers->get('referer');
 
         if ($cdnInfo === null)
             return response(['error' => 'This CDN doesn\'t exist!']);
 
-        if (!$this->cdnService->isCollectionAccessible($resource, $cdnInfo)
-             || !$cdnInfo->checkAccessRequirements($_SERVER['REMOTE_ADDR'], $originURL))
+        $resource = $this->cdnService->getAttachedDamResource($cdnInfo, $request->damResourceHash);
+
+        if (!$this->cdnService->isCollectionAccessible($resource, $cdnInfo))
             return response(['error' => 'Forbidden access!']);
 
         if (!isset($request->size))

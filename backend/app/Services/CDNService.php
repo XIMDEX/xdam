@@ -10,6 +10,7 @@ use App\Models\CDNAccessPermissionRule;
 use App\Models\Collection;
 use App\Models\DamResource;
 use Illuminate\Support\Str;
+use \Exception;
 
 class CDNService
 {
@@ -111,92 +112,41 @@ class CDNService
         return true;
     }
 
-    public function addAccessPermissionRule($cdnID, $accessPermissionType, $ipAddress = null, $lti = null,
-                                            $originURL = null)
+    public function manageAccessPermissionRule($cdnID, $permissionType, $rule, $key,  bool $toRemove)
     {
         $cdnAccessPermission = CDNAccessPermission::where('cdn_id', $cdnID)
-                                ->where('type', $accessPermissionType)
+                                ->where('type', $permissionType)
                                 ->first();
 
-        if ($cdnAccessPermission === null) return false;
-        if ($accessPermissionType === AccessPermission::default) return false;
+        if ($cdnAccessPermission === null)
+            return [$key => false, 'error' => 'The CDN doesn\'t have set the indicated permission access.'];
 
-        if ($accessPermissionType === AccessPermission::ipAddress) {
-            $lti = null;
-            $originURL = null;
+        if ($permissionType === AccessPermission::default)
+            return [$key => false, 'error' => 'The CDN has a free access, and rules don\'t apply.'];
 
-            if ($ipAddress === null) return false;
+        $ruleMatch = CDNAccessPermissionRule::where('access_permission_id', $cdnAccessPermission->id)
+                        ->where('rule', $rule)
+                        ->where('rule_type', $permissionType)
+                        ->first();
+
+        if ($ruleMatch === null && $toRemove) {
+            return [$key => false, 'status' => 'The rule wasn\'t found.'];
+        } elseif ($ruleMatch !== null && !$toRemove) {
+            return [$key => false, 'status' => 'The rule already exists.'];
+        } elseif ($toRemove) {
+            $oldRule = CDNAccessPermissionRule::where('access_permission_id', $cdnAccessPermission->id)
+                        ->where('rule', $rule)
+                        ->where('rule_type', $permissionType)
+                        ->delete();
+        } else  {
+            $newRule = CDNAccessPermissionRule::create([
+                            'access_permission_id'  => $cdnAccessPermission->id,
+                            'rule'                  => $rule,
+                            'rule_type'             => $permissionType
+                        ]);
         }
 
-        if ($accessPermissionType === AccessPermission::lti) {
-            $ipAddress = null;
-            $originURL = null;
-
-            if ($lti === null) return false;
-        }
-
-        if ($accessPermissionType === AccessPermission::originUrl) {
-            $ipAddress = null;
-            $lti = null;
-
-            if ($originURL === null) return false;
-        }
-
-        $rule = CDNAccessPermissionRule::where('access_permission_id', $cdnAccessPermission->id)
-                    ->where('ip_address', $ipAddress)
-                    ->where('lti', $lti)
-                    ->where('origin_url', $originURL)
-                    ->first();
-
-        if ($rule === null) {
-            $rule = CDNAccessPermissionRule::create([
-                        'access_permission_id' => $cdnAccessPermission->id,
-                        'ip_address' => $ipAddress,
-                        'lti' => $lti,
-                        'origin_url' => $originURL
-                    ]);
-        }
-
-        return true;
-    }
-
-    public function removeAccessPermissionRule($cdnID, $accessPermissionType, $ipAddress = null, $lti = null,
-                                                $originURL = null)
-    {
-        $cdnAccessPermission = CDNAccessPermission::where('cdn_id', $cdnID)
-                                ->where('type', $accessPermissionType)
-                                ->first();
-
-        if ($cdnAccessPermission === null) return false;
-        if ($accessPermissionType === AccessPermission::default) return false;
-
-        if ($accessPermissionType === AccessPermission::ipAddress) {
-            $lti = null;
-            $originURL = null;
-
-            if ($ipAddress === null) return false;
-        }
-
-        if ($accessPermissionType === AccessPermission::lti) {
-            $ipAddress = null;
-            $originURL = null;
-
-            if ($lti === null) return false;
-        }
-
-        if ($accessPermissionType === AccessPermission::originUrl) {
-            $ipAddress = null;
-            $lti = null;
-
-            if ($originURL === null) return false;
-        }
-
-        $rule = CDNAccessPermissionRule::where('access_permission_id', $cdnAccessPermission->id)
-                    ->where('ip_address', $ipAddress)
-                    ->where('lti', $lti)
-                    ->where('origin_url', $originURL)
-                    ->delete();
-        return true;
+        return [$key => true];
     }
 
     public function getCDNInfo($cdnCode)

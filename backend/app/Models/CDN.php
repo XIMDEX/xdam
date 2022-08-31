@@ -60,7 +60,7 @@ class CDN extends Model
         $cdnAccessPermission = $this->cdn_access_permission()->first();
         $rules = $cdnAccessPermission->getRules();
 
-        switch ($cdnAccessPermission->getType()) {
+        switch ($cdnAccessPermission->type) {
             case AccessPermission::default:
                 return new DefaultCDNAccess($rules);
 
