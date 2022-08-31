@@ -51,7 +51,7 @@ class ResourceController extends Controller
     private $cdnService;
 
     /**
-     * @var WorkspaceServic
+     * @var WorkspaceService
      */
     private $workspaceService;
 

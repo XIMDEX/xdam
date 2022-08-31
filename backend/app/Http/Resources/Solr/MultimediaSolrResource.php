@@ -6,7 +6,6 @@ use App\Http\Resources\Solr\BaseSolrResource;
 use App\Enums\MediaType;
 use App\Http\Resources\MediaResource;
 use App\Models\Media;
-use App\Models\MediaConversion;
 use App\Utils\DamUrlUtil;
 
 class MultimediaSolrResource extends BaseSolrResource

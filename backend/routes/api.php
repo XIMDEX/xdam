@@ -77,7 +77,8 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
         Route::post('signup',       [AuthController::class, 'signup'])
             ->name('auth.signup');
         Route::post('kakumaLogin',  [RoleController::class, 'kakumaLogin'])
-            ->name('auth.kakumaLogin')->middleware('auth:api');
+            ->name('auth.kakumaLogin')
+            ->middleware('auth:api');
     });
 
     Route::group(['middleware' => 'show.resource'], function() {
@@ -99,32 +100,38 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
     //Route::get('/user/{token}/resource/{damResource}/permissions', [UserController::class, 'resourceInfo'])->name('user.get.resource.info');
 
     Route::group(['middleware' => 'auth:api'], function () {
-
         Route::get('/ini_pms', function() {
             return [
                 'pms' => ini_get('post_max_size'),
                 'mfu' => ini_get('max_file_uploads')
             ];
-
         })->name('ini.postMaxSize');
 
-        Route::get('resourcesSchema', [ResourceController::class, 'resourcesSchema'])->name('resources.schemas');
-        Route::get('lomesSchema', [ResourceController::class, 'lomesSchema'])->name('resources.lomes.schemas');
-        Route::get('lomSchema', [ResourceController::class, 'lomSchema'])->name('resources.lom.schemas');
-        Route::get('workspaceOfCollection/{collection}', [WorkspaceController::class, 'workspaceOfCollection'])   ->name('collection.org.wsp.get');
+        Route::get('resourcesSchema',   [ResourceController::class, 'resourcesSchema'])
+            ->name('resources.schemas');
+        Route::get('lomesSchema',       [ResourceController::class, 'lomesSchema'])
+            ->name('resources.lomes.schemas');
+        Route::get('lomSchema',         [ResourceController::class, 'lomSchema'])
+            ->name('resources.lom.schemas');
+        Route::get('workspaceOfCollection/{collection}', [WorkspaceController::class, 'workspaceOfCollection'])
+            ->name('collection.org.wsp.get');
 
         Route::group(['prefix' => 'super-admin', 'middleware' => 'can:*'], function() {
-            Route::group(['prefix' => 'organization'], function() {
-                Route::post('create',               [OrganizationController::class, 'create'])          ->name('org.create');
-                Route::get('get/{organization_id}', [OrganizationController::class, 'get'])             ->name('org.get')   ;
-                Route::get('index',                 [OrganizationController::class, 'index'])           ->name('org.index') ;
-                Route::delete('/{organization_id}', [OrganizationController::class, 'delete'])          ->name('org.delete');
-                Route::post('update',               [OrganizationController::class, 'update'])          ->name('org.update');
+            Route::group(['prefix' => 'organization'], function(){
+                Route::post('create',               [OrganizationController::class, 'create'])
+                    ->name('org.create');
+                Route::get('get/{organization_id}', [OrganizationController::class, 'get'])
+                    ->name('org.get')   ;
+                Route::get('index',                 [OrganizationController::class, 'index'])
+                    ->name('org.index') ;
+                Route::delete('/{organization_id}', [OrganizationController::class, 'delete'])
+                    ->name('org.delete');
+                Route::post('update',               [OrganizationController::class, 'update'])
+                    ->name('org.update');
             });
         });
 
         Route::group(['prefix' => 'organization', 'middleware' => 'manage.organizations'], function(){
-
             //Roles
             Route::get('{organization}/role/{role_id}',          [RoleController::class, 'get'])             ->name('role.get');
             Route::get('{organization}/roles/all',               [RoleController::class, 'index'])           ->name('role.index');
@@ -149,10 +156,12 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
             Route::post('workspace/create',                 [WorkspaceController::class, 'create'])                    ->name('wsp.create');
             Route::post('workspace/setAll/user',            [AdminController::class, 'setAllWorkspacesOfOrganization'])->name('adm.usr.set.all.wsp');
             Route::get('{organization_id}/collection/all',  [OrganizationController::class, 'indexCollections'])       ->name('org.collection.list.all');
+            
             Route::group(['prefix' => 'collection'], function(){
                 Route::post('create',   [OrganizationController::class, 'createCollection'])    ->name('org.collection.create');
                 Route::get('types/all', [OrganizationController::class, 'indexCollectionTypes'])->name('org.collectionType.all');
             });
+
             Route::get('{organization_id}/workspaces', [WorkspaceController::class, 'index'])->name('wsp.index');
         });
 
@@ -173,7 +182,6 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
         });
 
         Route::group(['prefix' => 'user'], function(){
-
             Route::post('logout',   [AuthController::class, 'logout'])->name('user.logout');
             Route::get('/me',       [UserController::class, 'userInfo'])->name('user.get.me');
             Route::get('/',         [UserController::class, 'user'])->name('user.get');
@@ -186,14 +194,15 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
                     the next route attach the resource to the corporate workspace of an organization, and to the specified collection
                 */
                 Route::post('collection/attach',   [UserController::class, 'attachResourceToCollection'])  ->name('user.resource.collection.attach');
-
                 Route::post('workspace/attach',    [UserController::class, 'attachResourceToWorkspace'])   ->name('user.resource.workspace.attach');
             });
+
             Route::group(['prefix' => 'workspaces'], function(){
                 Route::get('/',                         [UserController::class, 'getWorkspaces'])       ->name('user.wsps.get');
                 Route::post('/select',                  [UserController::class, 'selectWorkspace'])     ->name('user.select.workspace');
                 Route::get('/{workspace_id}/resources', [WorkspaceController::class, 'getResources'])   ->name('user.wsp.get.resources');
             });
+
             Route::group(['prefix' => 'organizations'], function(){
                 Route::get('/',                             [UserController::class, 'getOrganizations'])            ->name('user.org.get');
                 Route::get('/{organization_id}/workspaces', [UserController::class, 'getWorkspacesOfOrganization']) ->name('user.org.wsps.get');
@@ -213,6 +222,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
 
             Route::get('/{damResource}/lomes', [ResourceController::class, 'getLomesData'])->name('resources.getLomesData');
             Route::get('/{damResource}/lom', [ResourceController::class, 'getLomData'])->name('resources.getLomData');
+            
             Route::group(['middleware' => 'create.resource'], function() {
                 Route::post('/',                        [ResourceController::class, 'store'])->name('damResource.store');
                 Route::post('/createBatch',             [ResourceController::class, 'storeBatch'])->name('damResource.store.batch');
