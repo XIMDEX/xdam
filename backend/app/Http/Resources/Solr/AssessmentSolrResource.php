@@ -2,15 +2,26 @@
 
 namespace App\Http\Resources\Solr;
 
-
-use App\Http\Resources\Solr\BaseSolrResource;
-use App\Enums\MediaType;
 use App\Enums\ResourceType;
-use App\Http\Resources\MediaResource;
-use App\Utils\Utils;
+use App\Http\Resources\Solr\BaseSolrResource;
 
 class AssessmentSolrResource extends BaseSolrResource
 {
+    protected function formatTags($tags)
+    {
+        return $tags ?? [''];
+    }
+
+    protected function formatCategories($categories)
+    {
+        return $categories ?? [''];
+    }
+
+    protected function getType()
+    {
+        return ResourceType::assessment;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -19,30 +30,19 @@ class AssessmentSolrResource extends BaseSolrResource
      */
     public function toArray($request)
     {
-        $files = array_column(
-            json_decode(MediaResource::collection($this->getMedia(MediaType::File()->key))->toJson(), true),
-            'dam_url'
-        );
-        $previews = array_column(
-            json_decode(MediaResource::collection($this->getMedia(MediaType::Preview()->key))->toJson(), true),
-            'dam_url'
-        );
-
-        $workspaces = Utils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
-
         return [
-            'id' => $this->id,
-            'name' => $this->data->description->name,
-            'data' => is_object($this->data) ? json_encode($this->data) : $this->data,
-            'active' => $this->active,
-            'type' => ResourceType::assessment,
-            'tags' => $this->tags()->pluck('name')->toArray() ?? [''],
-            'categories' => $this->categories()->pluck('name')->toArray() ?? [''],
-            'files' => $files,
-            'previews' => $previews,
+            'id' => $this->getID(),
+            'name' => $this->getName(),
+            'data' => $this->getData(),
+            'active' => $this->getActive(),
+            'type' => $this->getType(),
+            'tags' => $this->formatTags($this->getTags()),
+            'categories' => $this->formatCategories($this->getCategories()),
+            'files' => $this->getFiles(),
+            'previews' => $this->getPreviews(),
             'collection' => $this->collection->id,
-            'workspaces' => $workspaces,
-            'organization' => $this->organization()->id
+            'workspaces' => $this->getWorkspaces(),
+            'organization' => $this->getOrganization()
         ];
     }
 }
