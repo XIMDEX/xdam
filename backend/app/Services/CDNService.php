@@ -10,6 +10,7 @@ use App\Models\CDNAccessPermissionRule;
 use App\Models\Collection;
 use App\Models\DamResource;
 use Illuminate\Support\Str;
+use \Exception;
 
 class CDNService
 {
