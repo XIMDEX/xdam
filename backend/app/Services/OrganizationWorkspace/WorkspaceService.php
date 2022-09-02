@@ -216,8 +216,15 @@ class WorkspaceService
 
         foreach ($workspaces as $workspaceInfo) {
             $workspace = null;
+            $workspaceToCreate = false;
 
-            if ($workspaceInfo->id == -1 || $workspaceInfo->id == null || $workspaceInfo->id == false) {
+            if (!isset($workspaceInfo->id)) {
+                $workspaceToCreate = true;
+            } else if ($workspaceInfo->id == -1 || $workspaceInfo->id == null || $workspaceInfo->id == false) {
+                $workspaceToCreate = true;
+            }
+
+            if ($workspaceToCreate) {
                 $workspace = $this->create($currentOrganization->id, $workspaceInfo->name);
                 
                 if ($workspace !== null)
