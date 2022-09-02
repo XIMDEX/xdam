@@ -210,14 +210,27 @@ class WorkspaceService
     public function setResourceWorkspace($user, DamResource $resource, $workspaces)
     {
         $newWorkspaces = [];
+        $workspaces = json_decode($workspaces);
+        $collection = $resource->collection()->first();
+        $currentOrganization = $collection->organization()->first();
 
-        foreach ($workspaces as $workspaceID) {
-            $workspace = Workspace::where('id', $workspaceID)
-                            ->first();
+        foreach ($workspaces as $workspaceInfo) {
+            $workspace = null;
 
-            if ($workspace !== null) {
-                if ($workspace->isAccessibleByUser($user)) {
+            if ($workspaceInfo->id == -1 || $workspaceInfo->id == null || $workspaceInfo->id == false) {
+                $workspace = $this->create($currentOrganization->id, $workspaceInfo->name);
+                
+                if ($workspace !== null)
                     $newWorkspaces[] = $workspace;
+            } else {
+                $workspace = Workspace::where('id', $workspaceInfo->id)
+                                ->where('name', $workspaceInfo->name)
+                                ->first();
+
+                if ($workspace !== null) {
+                    if ($workspace->isAccessibleByUser($user)) {
+                        $newWorkspaces[] = $workspace;
+                    }
                 }
             }
         }
