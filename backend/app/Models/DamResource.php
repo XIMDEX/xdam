@@ -157,4 +157,46 @@ class DamResource extends Model implements HasMedia, TaggableInterface
                     ->update(['workspace_id' => $newWorkspace->id]);
         return true;
     }
+
+    public function getWorkspacesToAdd(array $workspaces)
+    {
+        $workspacesToAdd = [];
+
+        foreach ($workspaces as $nWorkspace) {
+            $found = false;
+
+            foreach ($this->workspaces()->get() as $cWorkspace) {
+                if ($nWorkspace->id == $cWorkspace->id) {
+                    $found = true;
+                }
+            }
+
+            if (!$found) {
+                $workspacesToAdd[] = $nWorkspace;
+            }
+        }
+
+        return $workspacesToAdd;
+    }
+
+    public function getWorkspacesToRemove(array $workspaces)
+    {
+        $workspacesToRemove = [];
+
+        foreach ($this->workspaces()->get() as $cWorkspace) {
+            $found = false;
+
+            foreach ($workspaces as $nWorkspace) {
+                if ($cWorkspace->id == $nWorkspace->id) {
+                    $found = true;
+                }
+            }
+
+            if (!$found) {
+                $workspacesToRemove[] = $cWorkspace;
+            }
+        }
+
+        return $workspacesToRemove;
+    }
 }

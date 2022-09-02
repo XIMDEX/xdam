@@ -214,7 +214,8 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
         });
 
         Route::post('/resource/{damResource}/setWorkspace', [ResourceController::class, 'setWorkspace'])
-            ->name('damResource.setWorkspace');
+            ->name('damResource.setWorkspace')
+            ->middleware('read.workspace');
 
         Route::group(['prefix' => 'category'], function() {
             Route::get('', [CategoryController::class, 'getAll'])->name('category.getAll');

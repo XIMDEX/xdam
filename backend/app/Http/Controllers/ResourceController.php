@@ -441,10 +441,13 @@ class ResourceController extends Controller
         if ($user === null)
             return response(['error' => 'User inaccessible.']);
 
-        $result = $this->workspaceService->setResourceWorkspace($user, $request->damResource,
-                                                                $request->workspace_id,
-                                                                $request->workspace_name);
+        $resource = DamResource::where('id', $request->damResource)
+                        ->first();
+        
+        if ($resource === null)
+            return response(['error' => 'Resource doesn\'t exist.']);
 
+        $result = $this->workspaceService->setResourceWorkspace($user, $resource, $request->workspaces);
         return response($result)->setStatusCode(Response::HTTP_OK);
     }
 }
