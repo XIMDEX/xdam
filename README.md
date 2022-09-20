@@ -266,6 +266,8 @@ Existe un comando específico php artisan solr:reindex, que recorrerá todos los
 
 Hay también un comando especial, php artisan solr:clean que borra todos los documentos indexados en cada una de las instalaciones de solr asociadas.
 
+### New
+Se ha añadido un nuevo comando `php artisan solr:update --query=""` que permite actualizar recursos presentes en la base de datos a partir de una query SQL.
 
 ## ¿COMO MOVER RECURSOS DE UN SOLR/CORE A OTRO?
 
