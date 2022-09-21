@@ -90,6 +90,27 @@ class CDNService
         return false;
     }
 
+    public function checkCDNCollection($cdnID, $collectionID)
+    {
+        $cdnCollection = CDNCollection::where('cdn_id', $cdnID)
+                            ->where('collection_id', $collectionID)
+                            ->first();
+        return $cdnCollection !== null;
+    }
+
+    public function getCDNCollections($cdnID)
+    {
+        $collections = [];
+        $cdnCollections = CDNCollection::where('cdn_id', $cdnID)
+                            ->get();
+
+        foreach ($cdnCollections as $item) {
+            $collections[] = $item->collection_id;
+        }
+
+        return $collections;
+    }
+
     public function existsAccessPermissionType($accessPermissionType)
     {
         // $type = AccessPermission::coerce($accessPermissionType);

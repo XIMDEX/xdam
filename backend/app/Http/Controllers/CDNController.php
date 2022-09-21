@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\CDNControllerAction;
 use App\Http\Requests\CDNRequest;
+use App\Models\Collection;
 use App\Services\CDNService;
 use App\Services\ResourceService;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,14 +25,21 @@ class CDNController extends Controller
     private $resourceService;
 
     /**
+     * @var UserService
+     */
+    private $userService;
+
+    /**
      * CategoryController constructor.
      * @param CDNService $cdnService
      * @param ResourceService $resourceService
+     * @param UserService $userService
      */
-    public function __construct(CDNService $cdnService, ResourceService $resourceService)
+    public function __construct(CDNService $cdnService, ResourceService $resourceService, UserService $userService)
     {
         $this->cdnService = $cdnService;
         $this->resourceService = $resourceService;
+        $this->userService = $userService;
     }
 
     public function createCDN(CDNRequest $request)
@@ -113,35 +123,61 @@ class CDNController extends Controller
 
     public function addCollection(CDNRequest $request)
     {
-        return $this->manageCDNCollection($request, false);
+        return $this->manageCDNCollection($request, CDNControllerAction::ADD_COLLECTION);
     }
 
     public function removeCollection(CDNRequest $request)
     {
-        return $this->manageCDNCollection($request, true);
+        return $this->manageCDNCollection($request, CDNControllerAction::REMOVE_COLLECTION);
     }
 
-    private function manageCDNCollection(CDNRequest $request, bool $toRemove)
+    public function checkCollection(CDNRequest $request)
     {
-        if (!isset($request->cdn_id) || !isset($request->collection_id))
-            return response(['error' => 'The CDN ID and the collection ID must be provided.']);
+        return $this->manageCDNCollection($request, CDNControllerAction::CHECK_COLLECTION);
+    }
+
+    public function listCollections(CDNRequest $request)
+    {
+        return $this->manageCDNCollection($request, CDNControllerAction::LIST_COLLECTIONS);
+    }
+
+    private function manageCDNCollection(CDNRequest $request, string $action)
+    {
+        if ($action !== CDNControllerAction::LIST_COLLECTIONS) {
+            if (!isset($request->cdn_id) || !isset($request->collection_id))
+                return response(['error' => 'The CDN ID and the collection ID must be provided.'], Response::HTTP_BAD_REQUEST);
+        } else {
+            if (!isset($request->cdn_id))
+                return response(['error' => 'The CDN ID must be provided.'], Response::HTTP_BAD_REQUEST);
+        }
 
         if (!$this->cdnService->existsCDN($request->cdn_id))
-            return response(['error' => 'The CDN ID doesn\'t exist.']);
+            return response(['error' => 'The CDN ID doesn\'t exist.'], Response::HTTP_BAD_REQUEST);
 
-        if (!$this->cdnService->existsCollection($request->collection_id))
-            return response(['error' => 'The collection ID doesn\'t exist.']);
+        if ($action !== CDNControllerAction::LIST_COLLECTIONS)
+            if (!$this->cdnService->existsCollection($request->collection_id))
+                return response(['error' => 'The collection ID doesn\'t exist.'], Response::HTTP_BAD_REQUEST);
     
         $result = [];
 
-        if ($toRemove) {
+        if ($action === CDNControllerAction::REMOVE_COLLECTION) {
             $result = [
                 'collection_removed' => $this->cdnService->removeCDNCollection($request->cdn_id, $request->collection_id)
             ];
-        } else {
+        } else if ($action === CDNControllerAction::ADD_COLLECTION) {
             $result = [
                 'collection_added' => $this->cdnService->addCDNCollection($request->cdn_id, $request->collection_id)
             ];
+        } else if ($action === CDNControllerAction::CHECK_COLLECTION) {
+            $result = [
+                'collection_exists' => $this->cdnService->checkCDNCollection($request->cdn_id, $request->collection_id)
+            ];
+        } else if ($action === CDNControllerAction::LIST_COLLECTIONS) {
+            $result = [
+                'collections' => $this->cdnService->getCDNCollections($request->cdn_id)
+            ];
+        } else {
+            return response(['error' => 'Bad request'], Response::HTTP_BAD_REQUEST);
         }
 
         return response($result, Response::HTTP_OK);
@@ -186,5 +222,26 @@ class CDNController extends Controller
                     $request->access_permission, $request->rule, $key, $toRemove);
 
         return response($result, Response::HTTP_OK);
+    }
+
+    public function getCDNsCollections(CDNRequest $request)
+    {
+        $type = null;
+
+        if (isset($request->type)) {
+            $type = $request->type;
+        } else if (isset($request->collection_id)) {
+            $collection = Collection::where('id', $request->collection_id)
+                            ->first();
+
+            if ($collection === null)
+                return response(['error' => 'Error! This collection doesn\'t exist.'], Response::HTTP_BAD_REQUEST);
+
+            $type = $collection->solr_connection;
+        }
+
+        $user = $this->userService->user();
+        $cdns = $user->organizations_cdn_collections($type);
+        // echo '<pre>' . var_export($user->organizations()->get(), true) . '</pre>';
     }
 }

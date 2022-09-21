@@ -38,7 +38,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
                     ->name('cdn.createCDN');
             Route::post('/remove',                                          [CDNController::class, 'removeCDN'])
                     ->name('cdn.removeCDN');
-            
+
             Route::group(['prefix' => '{cdn_code}', 'middleware' => 'cdn.validCDN'], function () {
                 Route::post('/generate_resource_hash',              [CDNController::class, 'createCDNResourceHash'])
                     ->name('cdn.createCDNResourceHash');
@@ -53,6 +53,10 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
                         ->name('cdn.addCDNCollection');
                 Route::post('/remove',  [CDNController::class, 'removeCollection'])
                         ->name('cdn.removeCDNCollection');
+                Route::post('/check',   [CDNController::class, 'checkCollection'])
+                        ->name('cdn.checkCDNCollection');
+                Route::post('/list',    [CDNController::class, 'listCollections'])
+                        ->name('cdn.listCDNCollections');
             });
 
             Route::group(['prefix' => 'access_permission'], function() {
@@ -114,6 +118,15 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
                 'mfu' => ini_get('max_file_uploads')
             ];
         })->name('ini.postMaxSize');
+
+        Route::group(['prefix' => 'cdn'], function() {
+            Route::get('/getCDNsCollections',                   [CDNController::class, 'getCDNsCollections'])
+                    ->name('api.getCDNsCollections');
+            Route::get('/getCDNsCollections/{type}',            [CDNController::class, 'getCDNsCollections'])
+                    ->name('api.getCDNsCollectionsWithType');
+            Route::get('/getCDNsCollections/{collectionID}',    [CDNController::class, 'getCDNsCollections'])
+                    ->name('api.getCDNsCollectionsWithCollection');
+        });
 
         Route::get('resourcesSchema',                       [ResourceController::class, 'resourcesSchema'])
                 ->name('resources.schemas');
