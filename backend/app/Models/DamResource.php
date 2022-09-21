@@ -6,6 +6,7 @@ use App\Enums\MediaType;
 use App\Enums\Roles;
 use App\Enums\ThumbnailTypes;
 use App\Traits\UsesUuid;
+use App\Models\DamResourceRender;
 use App\Models\Workspace;
 use App\Models\WorkspaceResource;
 use App\Utils\Utils;
@@ -25,7 +26,7 @@ class DamResource extends Model implements HasMedia, TaggableInterface
 {
     use HasFactory, TaggableTrait, InteractsWithMedia;
 
-    protected $fillable = ['id', 'type', 'data', 'name', 'active', 'user_owner_id', 'collection_id'];
+    protected $fillable = ['id', 'type', 'data', 'name', 'active', 'user_owner_id', 'collection_id', 'total_renders'];
 
     protected $table = "dam_resources";
 
@@ -156,5 +157,30 @@ class DamResource extends Model implements HasMedia, TaggableInterface
                     ->where('workspace_id', $oldWorkspace->id)
                     ->update(['workspace_id' => $newWorkspace->id]);
         return true;
+    }
+
+    public function logRenderUse($remoteKey)
+    {
+        $this->countTotalRenders();
+        if ($remoteKey === null) return false;
+
+        $use = DamResourceRender::where('resource_id', $this->id)
+                    ->where('remote_key', $remoteKey)
+                    ->first();
+
+        if ($use !== null) {
+            $use->increaseTotalRendersCount();
+        } else {
+            $newUse = DamResourceRender::create(['resource_id' => $this->id, 'remote_key' => $remoteKey]);
+        }
+
+        return true;
+    }
+
+    private function countTotalRenders()
+    {
+        if ($this->total_renders === null) $this->total_renders = 0;
+        $this->total_renders++;
+        $this->save();
     }
 }

@@ -283,8 +283,11 @@ class ResourceController extends Controller
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      * @throws \Exception
      */
-    public function render($damUrl, $size = null)
+    public function render(Request $request)
     {
+        $damUrl = $request->damUrl;
+        $size = isset($request->size) ? $request->size : null;
+        $remoteKey = isset($request->remote_key) ? $request->remote_key : null;
         $sizes = ['small', 'medium', 'raw'];
 
         if($size && !in_array($size, $sizes)) {
@@ -308,6 +311,11 @@ class ResourceController extends Controller
 
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         $media = Media::findOrFail($mediaId);
+        $resource = DamResource::where('id', $media->model_id)->first();
+
+        if ($resource !== null) {
+            $resource->logRenderUse($remoteKey);
+        }
 
         $mimeType = $media->mime_type;
         $fileType = explode('/', $mimeType)[0];
