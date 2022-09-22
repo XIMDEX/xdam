@@ -515,12 +515,15 @@ class ResourceController extends Controller
         $cdnInfo = $this->cdnService->getCDNInfo($request->cdn_code);
 
         if ($cdnInfo === null)
-            return response(['error' => 'This CDN doesn\'t exist!']);
+            return response(['error' => 'This CDN doesn\'t exist!'], Response::HTTP_BAD_REQUEST);
 
         $resource = $this->cdnService->getAttachedDamResource($cdnInfo, $request->damResourceHash);
 
+        if ($resource === null)
+            return response(['error' => 'Error! No resource found.'], Response::HTTP_BAD_REQUEST);
+
         if (!$this->cdnService->isCollectionAccessible($resource, $cdnInfo))
-            return response(['error' => 'Forbidden access!']);
+            return response(['error' => 'Forbidden access!'], Response::HTTP_BAD_REQUEST);
 
         if (!isset($request->size))
             $request->size = null;

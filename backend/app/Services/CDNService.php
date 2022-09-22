@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\AccessPermission;
 use App\Models\CDN;
+use App\Models\CDNHash;
 use App\Models\CDNCollection;
 use App\Models\CDNAccessPermission;
 use App\Models\CDNAccessPermissionRule;
@@ -177,8 +178,57 @@ class CDNService
 
     public function generateDamResourceHash($cdn, $resource, $collectionID)
     {
-        $hash = substr($resource->id, 0, 3) . substr($cdn->uuid, 14, 4) . $collectionID . substr($resource->id, 14, 4) . substr($cdn->uuid, -3);
+        if (($hash = $this->getExistingDamResourceHash($cdn, $resource, $collectionID)) !== null) return $hash;
+        $error = true;
+        $limit = 30;
+        $current = 0;
+
+        while ($error) {
+            $hash = $this->getCurrentResourceHashAttempt($cdn, $resource, $collectionID, $current);
+            if ($this->registerResourceHash($cdn, $resource, $collectionID, $hash)) $error = false;
+            $current++;
+            if ($current >= $limit && $error) return null;
+        }
+
         return $hash;
+    }
+
+    private function getExistingDamResourceHash($cdn, $resource, $collectionID)
+    {
+        $item = CDNHash::where('cdn_id', $cdn->id)
+                    ->where('resource_id', $resource->id)
+                    ->where('collection_id', $collectionID)
+                    ->first();
+
+        if ($item !== null) return $item->resource_hash;
+        return null;
+    }
+
+    private function getCurrentResourceHashAttempt($cdn, $resource, $collectionID, $attempt)
+    {
+        $factor = random_int(1, 5000);
+        $value = (string) (time() * intdiv(($attempt * $factor + $collectionID * $factor), $collectionID));
+        $hash = substr(Str::orderedUuid(), -2, 2) . substr($resource->id, 0, 3) . substr($cdn->uuid, 14, 4)
+                . substr($value, random_int(0, strlen($value) - 1), 2) . substr($resource->id, 14, 4) . substr($cdn->uuid, -3)
+                . substr(Str::orderedUuid(), -2, 2);
+        return $hash;
+    }
+
+    private function registerResourceHash($cdn, $resource, $collectionID, $resourceHash)
+    {
+        try {
+            $register = CDNHash::create([
+                'cdn_id'        => $cdn->id,
+                'resource_id'   => $resource->id,
+                'collection_id' => $collectionID,
+                'resource_hash' => $resourceHash
+            ]);
+        } catch (\Exception $e) {
+            // echo $e->getMessage();
+            return false;
+        }
+
+        return true;
     }
 
     public function generateMultipleDamResourcesHash($cdn, $resourceIDs, $collectionID)
@@ -223,35 +273,17 @@ class CDNService
 
     public function getAttachedDamResource($cdn, $hash)
     {
-        $resourceMatch = $cdnMatch = null;
-
-        $resourcePart1 = substr($hash, 0, 3);
-        $cdnPart1 = substr($hash, 3, 4);
-        $collectionID = intval(substr($hash, 7, 1));
-        $resourcePart2 = substr($hash, 8, 4);
-        $cdnPart2 = substr($hash, 12, 4);
-
-        $resourcesRes = DamResource::where('id', 'LIKE', $resourcePart1 . '%')
-                            ->where('id', 'LIKE', '%' . $resourcePart2 . '%')
-                            ->where('collection_id', $collectionID)
-                            ->get();
-        $cdnRes = CDN::where('uuid', 'LIKE', '%' . $cdnPart1 . '%')
-                    ->where('uuid', 'LIKE', '%' . $cdnPart2 . '%')
-                    ->get();
-
-        foreach ($resourcesRes as $item) {
-            if (substr($item->id, 0, 3) == $resourcePart1
-                    && substr($item->id, 14, 4) == $resourcePart2)
-                $resourceMatch = $item;
-        }
+        $match = CDNHash::where('cdn_id', $cdn->id)
+                    ->where('resource_hash', $hash)
+                    ->first();
         
-        foreach ($cdnRes as $item) {
-            if ($item->uuid === $cdn->uuid) $cdnMatch = $item;
+        if ($match !== null) {
+            $resource = DamResource::where('id', $match->resource_id)
+                            ->first();
+            return $resource;
         }
 
-        if ($cdnMatch === null) return null;
-
-        return $resourceMatch;
+        return null;
     }
 
     public function isCollectionAccessible($resource, $cdn)
@@ -262,5 +294,18 @@ class CDNService
     public function isCollectionAccessible_v2($collection, $cdn)
     {
         return $cdn->isCollectionAccessible($collection->id);
+    }
+
+    public function getCDNsAttachedToCollection(Collection $collection)
+    {
+        $cdns = [];
+        $matches = CDNCollection::where('collection_id', $collection->id)
+                        ->get();
+
+        foreach ($matches as $result) {
+            $cdns[] = $result->cdn()->first();
+        }
+
+        return $cdns;
     }
 }

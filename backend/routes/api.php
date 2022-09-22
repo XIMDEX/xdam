@@ -119,15 +119,6 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
             ];
         })->name('ini.postMaxSize');
 
-        Route::group(['prefix' => 'cdn'], function() {
-            Route::get('/getCDNsCollections',                   [CDNController::class, 'getCDNsCollections'])
-                    ->name('api.getCDNsCollections');
-            Route::get('/getCDNsCollections/{type}',            [CDNController::class, 'getCDNsCollections'])
-                    ->name('api.getCDNsCollectionsWithType');
-            Route::get('/getCDNsCollections/{collectionID}',    [CDNController::class, 'getCDNsCollections'])
-                    ->name('api.getCDNsCollectionsWithCollection');
-        });
-
         Route::get('resourcesSchema',                       [ResourceController::class, 'resourcesSchema'])
                 ->name('resources.schemas');
         Route::get('lomesSchema',                           [ResourceController::class, 'lomesSchema'])

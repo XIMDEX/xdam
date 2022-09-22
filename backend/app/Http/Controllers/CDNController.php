@@ -223,25 +223,4 @@ class CDNController extends Controller
 
         return response($result, Response::HTTP_OK);
     }
-
-    public function getCDNsCollections(CDNRequest $request)
-    {
-        $type = null;
-
-        if (isset($request->type)) {
-            $type = $request->type;
-        } else if (isset($request->collection_id)) {
-            $collection = Collection::where('id', $request->collection_id)
-                            ->first();
-
-            if ($collection === null)
-                return response(['error' => 'Error! This collection doesn\'t exist.'], Response::HTTP_BAD_REQUEST);
-
-            $type = $collection->solr_connection;
-        }
-
-        $user = $this->userService->user();
-        $cdns = $user->organizations_cdn_collections($type);
-        // echo '<pre>' . var_export($user->organizations()->get(), true) . '</pre>';
-    }
 }

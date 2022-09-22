@@ -22,6 +22,7 @@ class CDN extends Model
 
     protected $table = "cdns";
     protected $fillable = ['uuid', 'name'];
+    private $resource_hash = null;
 
     public function getID()
     {
@@ -75,5 +76,24 @@ class CDN extends Model
         }
 
         return null;
+    }
+
+    public function setHash($hash)
+    {
+        $this->resource_hash = $hash;
+    }
+
+    public function getHash()
+    {
+        return $this->resource_hash;
+    }
+
+    public function toArray()
+    {
+        return [
+            'id'    => $this->id,
+            'name'  => $this->name,
+            'hash'  => $this->resource_hash
+        ];
     }
 }
