@@ -128,7 +128,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
         Route::get('workspaceOfCollection/{collection}',    [WorkspaceController::class, 'workspaceOfCollection'])
                 ->name('collection.org.wsp.get');
 
-        Route::group(['prefix' => 'super-admin', 'middleware' => 'can:*'], function(){
+        Route::group(['prefix' => 'super-admin', 'middleware' => 'can:*'], function() {
             Route::group(['prefix' => 'organization'], function(){
                 Route::post('create',               [OrganizationController::class, 'create'])
                         ->name('org.create');

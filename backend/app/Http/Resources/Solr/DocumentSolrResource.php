@@ -4,11 +4,14 @@ namespace App\Http\Resources\Solr;
 
 use App\Http\Resources\Solr\BaseSolrResource;
 use App\Enums\MediaType;
+use App\Enums\ResourceType;
 use App\Http\Resources\MediaResource;
 use App\Models\Media;
+use App\Models\MediaConversion;
+use App\Utils\Utils as AppUtils;
 use App\Utils\DamUrlUtil;
 
-class MultimediaSolrResource extends BaseSolrResource
+class DocumentSolrResource extends BaseSolrResource
 {
     protected function getPreviews()
     {

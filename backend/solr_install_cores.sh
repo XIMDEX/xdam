@@ -25,7 +25,7 @@ create_core() {
 }
 
 # Sets the array with the cores to delete/create, and iterates through it
-cores=("activity" "assessment" "book" "course" "multimedia")
+cores=("activity" "assessment" "book" "course" "document" "multimedia")
 for core in ${cores[@]}; do
 	# Deletes and creates the core
 	delete_core $core
