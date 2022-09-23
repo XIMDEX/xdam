@@ -34,18 +34,29 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
 
     Route::group(['prefix' => 'cdn'], function() {
         Route::group(['prefix' => 'admin'], function() {
-            Route::post('/create',                              [CDNController::class, 'createCDN'])
+            Route::post('/create',                                          [CDNController::class, 'createCDN'])
                     ->name('cdn.createCDN');
-            Route::post('/remove',                              [CDNController::class, 'removeCDN'])
+            Route::post('/remove',                                          [CDNController::class, 'removeCDN'])
                     ->name('cdn.removeCDN');
-            Route::post('/{cdn_code}/generate_resource_hash',   [CDNController::class, 'createCDNResourceHash'])
+
+            Route::group(['prefix' => '{cdn_code}', 'middleware' => 'cdn.validCDN'], function () {
+                Route::post('/generate_resource_hash',              [CDNController::class, 'createCDNResourceHash'])
                     ->name('cdn.createCDNResourceHash');
+                Route::post('/generate_multiple_resources_hash',    [CDNController::class, 'createMultipleCDNResourcesHash'])
+                        ->name('cdn.createMultipleCDNResourcesHash');
+                Route::post('/generate_collection_resources_hash',  [CDNController::class, 'createCDNCollectionResourcesHash'])
+                        ->name('cdn.createCDNCollectionResourcesHash');
+            });
 
             Route::group(['prefix' => 'collection'], function() {
                 Route::post('/add',     [CDNController::class, 'addCollection'])
                         ->name('cdn.addCDNCollection');
                 Route::post('/remove',  [CDNController::class, 'removeCollection'])
                         ->name('cdn.removeCDNCollection');
+                Route::post('/check',   [CDNController::class, 'checkCollection'])
+                        ->name('cdn.checkCDNCollection');
+                Route::post('/list',    [CDNController::class, 'listCollections'])
+                        ->name('cdn.listCDNCollections');
             });
 
             Route::group(['prefix' => 'access_permission'], function() {
@@ -61,8 +72,8 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
             });
         });
 
-        Route::group(['prefix' => '{cdn_code}'], function() {
-            Route::group(['prefix' => 'resource'], function() {
+        Route::group(['prefix' => '{cdn_code}', 'middleware' => 'cdn.validCDN'], function() {
+            Route::group(['prefix' => 'resource', 'middleware' => 'cdn.checkCDNAccess'], function() {
                 Route::get('/{damResourceHash}',        [ResourceController::class, 'renderCDNResource'])
                         ->name('damResource.renderCDNResource');
                 Route::get('/{damResourceHash}/{size}', [ResourceController::class, 'renderCDNResource'])
@@ -82,22 +93,23 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
     });
 
     Route::group(['middleware' => 'show.resource'], function() {
-        Route::group(['prefix' => 'resource'], function(){
-            Route::get('/render/{damUrl}/{size}',       [ResourceController::class, 'render'])
-                ->name('damResource.renderWithSize');
-            Route::get('/render/{damUrl}',              [ResourceController::class, 'render'])
-                ->name('damResource.render');
-            Route::get('/{damResource}',                [ResourceController::class, 'get'])
-                ->name('damResource.get');
-            Route::get('/lastCreated/{collection}',     [CollectionController::class, 'getLastResourceCreated'])
-                ->name('collection.get.lastCreated');
-            Route::get('/lastUpdated/{collection}',     [CollectionController::class, 'getLastResourceUpdated'])
-                ->name('collection.get.lastUpdated');
+        Route::group(['prefix' => 'resource'], function() {
+            Route::get('/render/{damUrl}/{size}',   [ResourceController::class, 'render'])
+                    ->name('damResource.renderWithSize');
+            Route::get('/render/{damUrl}',          [ResourceController::class, 'render'])
+                    ->name('damResource.render');
+            Route::get('/{damResource}',            [ResourceController::class, 'get'])
+                    ->name('damResource.get');
+            Route::get('/lastCreated/{collection}', [CollectionController::class, 'getLastResourceCreated'])
+                    ->name('collection.get.lastCreated');
+            Route::get('/lastUpdated/{collection}', [CollectionController::class, 'getLastResourceUpdated'])
+                    ->name('collection.get.lastUpdated');
         });
     });
 
-    Route::get('/exploreCourses', [ResourceController::class, 'exploreCourses'])->name('damResource.exploreCourses');
-    //Route::get('/user/{token}/resource/{damResource}/permissions', [UserController::class, 'resourceInfo'])->name('user.get.resource.info');
+    Route::get('/exploreCourses', [ResourceController::class, 'exploreCourses'])
+        ->name('damResource.exploreCourses');
+    // Route::get('/user/{token}/resource/{damResource}/permissions', [UserController::class, 'resourceInfo'])->name('user.get.resource.info');
 
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/ini_pms', function() {
@@ -107,28 +119,27 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
             ];
         })->name('ini.postMaxSize');
 
-        Route::get('resourcesSchema',   [ResourceController::class, 'resourcesSchema'])
-            ->name('resources.schemas');
-        Route::get('lomesSchema',       [ResourceController::class, 'lomesSchema'])
-            ->name('resources.lomes.schemas');
-        Route::get('lomSchema',         [ResourceController::class, 'lomSchema'])
-            ->name('resources.lom.schemas');
-
-        Route::get('workspaceOfCollection/{collection}', [WorkspaceController::class, 'workspaceOfCollection'])
-            ->name('collection.org.wsp.get');
+        Route::get('resourcesSchema',                       [ResourceController::class, 'resourcesSchema'])
+                ->name('resources.schemas');
+        Route::get('lomesSchema',                           [ResourceController::class, 'lomesSchema'])
+                ->name('resources.lomes.schemas');
+        Route::get('lomSchema',                             [ResourceController::class, 'lomSchema'])
+                ->name('resources.lom.schemas');
+        Route::get('workspaceOfCollection/{collection}',    [WorkspaceController::class, 'workspaceOfCollection'])
+                ->name('collection.org.wsp.get');
 
         Route::group(['prefix' => 'super-admin', 'middleware' => 'can:*'], function(){
             Route::group(['prefix' => 'organization'], function(){
                 Route::post('create',               [OrganizationController::class, 'create'])
-                    ->name('org.create');
+                        ->name('org.create');
                 Route::get('get/{organization_id}', [OrganizationController::class, 'get'])
-                    ->name('org.get')   ;
+                        ->name('org.get');
                 Route::get('index',                 [OrganizationController::class, 'index'])
-                    ->name('org.index') ;
+                        ->name('org.index');
                 Route::delete('/{organization_id}', [OrganizationController::class, 'delete'])
-                    ->name('org.delete');
+                        ->name('org.delete');
                 Route::post('update',               [OrganizationController::class, 'update'])
-                    ->name('org.update');
+                        ->name('org.update');
             });
         });
 

@@ -8,6 +8,7 @@ use App\Models\CDNCollection;
 use App\Models\CDN\DefaultCDNAccess;
 use App\Models\CDN\IPAddressCDNAccess;
 use App\Models\CDN\LTICDNAccess;
+use App\Models\CDN\OriginURLAccess;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,6 +22,7 @@ class CDN extends Model
 
     protected $table = "cdns";
     protected $fillable = ['uuid', 'name'];
+    private $resource_hash = null;
 
     public function getID()
     {
@@ -48,10 +50,10 @@ class CDN extends Model
         return false;
     }
 
-    public function checkAccessRequirements($ipAddress = null)
+    public function checkAccessRequirements($ipAddress = null, $originURL = null)
     {
         $accessPermission = $this->getAccessPermission();
-        return $accessPermission->areRequirementsMet($ipAddress);
+        return $accessPermission->areRequirementsMet($ipAddress, $originURL);
     }
     
     private function getAccessPermission(): DefaultCDNAccess
@@ -59,7 +61,7 @@ class CDN extends Model
         $cdnAccessPermission = $this->cdn_access_permission()->first();
         $rules = $cdnAccessPermission->getRules();
 
-        switch ($cdnAccessPermission->getType()) {
+        switch ($cdnAccessPermission->type) {
             case AccessPermission::default:
                 return new DefaultCDNAccess($rules);
 
@@ -68,8 +70,30 @@ class CDN extends Model
 
             case AccessPermission::lti:
                 return new LTICDNAccess($rules);
+            
+            case AccessPermission::originUrl:
+                return new OriginURLAccess($rules);
         }
 
         return null;
+    }
+
+    public function setHash($hash)
+    {
+        $this->resource_hash = $hash;
+    }
+
+    public function getHash()
+    {
+        return $this->resource_hash;
+    }
+
+    public function toArray()
+    {
+        return [
+            'id'    => $this->id,
+            'name'  => $this->name,
+            'hash'  => $this->resource_hash
+        ];
     }
 }

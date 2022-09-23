@@ -17,11 +17,6 @@ class CDNAccessPermission extends Model
     protected $table = 'access_permissions';
     protected $fillable = ['cdn_id', 'type'];
 
-    public function getType()
-    {
-        return $this->attributes['type'];
-    }
-
     public function cdn(): BelongsTo
     {
         return $this->belongsTo(CDN::class);
@@ -34,19 +29,13 @@ class CDNAccessPermission extends Model
 
     public function getRules()
     {
-        $rulesAux = CDNAccessPermissionRule::where('access_permission_id', $this->id)->get();
+        $rulesAux = CDNAccessPermissionRule::where('access_permission_id', $this->id)
+                        ->where('rule_type', $this->type)
+                        ->get();
         $rules = [];
 
         foreach ($rulesAux as $item) {
-            switch ($this->getType()) {
-                case AccessPermission::ipAddress:
-                    $rules[] = $item->getIPAddress();
-                    break;
-
-                case AccessPermission::lti:
-                    $rules[] = $item->getLTI();
-                    break;
-            }
+            $rules[] = $item->rule;
         }
 
         return $rules;

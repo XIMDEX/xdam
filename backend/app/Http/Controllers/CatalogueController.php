@@ -3,12 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GetCatalogueRequest;
+use App\Models\CDN;
 use App\Models\Collection;
+use App\Models\DamResource;
+use App\Services\CDNService;
 use App\Services\Catalogue\CatalogueService;
 use Symfony\Component\HttpFoundation\Response;
 
 class CatalogueController extends Controller
 {
+    /**
+     * @var CDNService
+     */
+    private CDNService $cdnService;
+
     /**
      * @var CatalogueService
      */
@@ -16,10 +24,12 @@ class CatalogueController extends Controller
 
     /**
      * CatalogueController constructor.
+     * @param CDNService $cdnService
      * @param CatalogueService $catalogueService
      */
-    public function __construct(CatalogueService $catalogueService)
+    public function __construct(CDNService $cdnService, CatalogueService $catalogueService)
     {
+        $this->cdnService = $cdnService;
         $this->catalogueService = $catalogueService;
     }
 
@@ -50,6 +60,24 @@ class CatalogueController extends Controller
             $facetsFilter,
             $collection
         );
+
+        $cdns = $this->cdnService->getCDNsAttachedToCollection($collection);
+
+        usort($cdns, function ($item1, $item2) {
+            return $item2['id'] < $item1['id'];
+        });
+
+        for ($i = 0; $i < count($response->data); $i++) {
+            $resource = DamResource::where('id', $response->data[$i]['id'])->first();
+
+            if ($resource !== null) {
+                foreach ($cdns as $currentCDN) {
+                    $auxCDN = clone $currentCDN;
+                    $auxCDN->setHash($this->cdnService->generateDamResourceHash($auxCDN, $resource, $collection->id));
+                    if ($auxCDN->getHash() !== null) $response->data[$i]['data']->cdns_attached[] = $auxCDN;
+                }
+            }
+        }
 
         return response()->json($response);
     }

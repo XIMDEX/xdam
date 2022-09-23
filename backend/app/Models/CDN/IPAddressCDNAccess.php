@@ -13,7 +13,7 @@ class IPAddressCDNAccess extends DefaultCDNAccess
         parent::__construct($rules);
     }
 
-    public function areRequirementsMet($ipAddress = null)
+    public function areRequirementsMet($ipAddress = null, $originURL = null)
     {
         return in_array($ipAddress, $this->rules);
     }

@@ -14,17 +14,7 @@ class CDNAccessPermissionRule extends Model
     use HasFactory;
 
     protected $table = 'access_permission_rules';
-    protected $fillable = ['access_permission_id', 'ip_address', 'lti'];
-
-    public function getIPAddress()
-    {
-        return $this->attributes['ip_address'];
-    }
-
-    public function getLTI()
-    {
-        return $this->attributes['lti'];
-    }
+    protected $fillable = ['access_permission_id', 'rule', 'rule_type'];
 
     public function accessPermission(): BelongsTo
     {

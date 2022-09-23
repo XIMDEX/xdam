@@ -304,6 +304,7 @@ class ResourceController extends Controller
         $media = Media::findOrFail($mediaId);
         $mediaFileName = explode('/', $media->getPath());
         $mediaFileName = $mediaFileName[count($mediaFileName) - 1];
+        $size = ($size === null ? 'default' : $size);
 
         $mimeType = $media->mime_type;
         $fileType = explode('/', $mimeType)[0];
@@ -314,7 +315,7 @@ class ResourceController extends Controller
             $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue);
 
             if ($fileType == 'image') {
-                $response = $compressed->response('jpeg', $size === 'raw' ? 100 : $size);
+                $response = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['sizes'][$size]);
                 $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
                 return $response;
             }
@@ -322,7 +323,7 @@ class ResourceController extends Controller
             return response()->file($compressed);
         }
 
-        return response()->file($this->mediaService->preview($media));
+        return response()->file($this->mediaService->preview($media, []));
     }
 
     private function getAvailableResourceSizes()
@@ -513,14 +514,17 @@ class ResourceController extends Controller
     public function renderCDNResource(CDNRequest $request)
     {
         $cdnInfo = $this->cdnService->getCDNInfo($request->cdn_code);
-        $resource = $this->cdnService->getAttachedDamResource($cdnInfo, $request->damResourceHash);
 
         if ($cdnInfo === null)
-            return response(['error' => 'This CDN doesn\'t exist!']);
+            return response(['error' => 'This CDN doesn\'t exist!'], Response::HTTP_BAD_REQUEST);
 
-        if (!$this->cdnService->isCollectionAccessible($resource, $cdnInfo)
-             || !$cdnInfo->checkAccessRequirements($_SERVER['REMOTE_ADDR']))
-            return response(['error' => 'Forbidden access!']);
+        $resource = $this->cdnService->getAttachedDamResource($cdnInfo, $request->damResourceHash);
+
+        if ($resource === null)
+            return response(['error' => 'Error! No resource found.'], Response::HTTP_BAD_REQUEST);
+
+        if (!$this->cdnService->isCollectionAccessible($resource, $cdnInfo))
+            return response(['error' => 'Forbidden access!'], Response::HTTP_BAD_REQUEST);
 
         if (!isset($request->size))
             $request->size = null;
