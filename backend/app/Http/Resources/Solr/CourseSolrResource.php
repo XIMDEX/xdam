@@ -57,6 +57,11 @@ class CourseSolrResource extends BaseSolrResource
         return $value ?? false;
     }
 
+    protected function getCoreResourceType()
+    {
+        return ResourceType::course;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -96,6 +101,7 @@ class CourseSolrResource extends BaseSolrResource
             'achievements' => $this->data->description->achievements ?? [],
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'core_resource_type' => $this->getCoreResourceType()
         ];
     }
 }

@@ -86,4 +86,9 @@ class BaseSolrResource extends JsonResource
     {
         return '';
     }
+
+    protected function getCoreResourceType()
+    {
+        return '';
+    }
 }

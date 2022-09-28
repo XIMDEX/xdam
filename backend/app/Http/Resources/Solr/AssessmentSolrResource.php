@@ -22,6 +22,11 @@ class AssessmentSolrResource extends BaseSolrResource
         return ResourceType::assessment;
     }
 
+    protected function getCoreResourceType()
+    {
+        return ResourceType::assessment;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -42,7 +47,8 @@ class AssessmentSolrResource extends BaseSolrResource
             'previews' => $this->getPreviews(),
             'collection' => $this->collection->id,
             'workspaces' => $this->getWorkspaces(),
-            'organization' => $this->getOrganization()
+            'organization' => $this->getOrganization(),
+            'core_resource_type' => $this->getCoreResourceType()
         ];
     }
 }

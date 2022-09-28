@@ -71,6 +71,11 @@ class DocumentSolrResource extends BaseSolrResource
         return $conversions;
     }
 
+    protected function getCoreResourceType()
+    {
+        return ResourceType::document;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -94,7 +99,8 @@ class DocumentSolrResource extends BaseSolrResource
             'conversions' => $this->getConversions(),
             'previews' => $this->getPreviews(),
             'workspaces' => $this->getWorkspaces(),
-            'organization' => $this->getOrganization()
+            'organization' => $this->getOrganization(),
+            'core_resource_type' => $this->getCoreResourceType()
         ];
     }
 }

@@ -20,6 +20,11 @@ class BookSolrResource extends BaseSolrResource
         return ResourceType::book;
     }
 
+    protected function getCoreResourceType()
+    {
+        return ResourceType::book;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -53,6 +58,7 @@ class BookSolrResource extends BaseSolrResource
             'units' => $this->data->description->units ?? 0,
             'isbn' => $this->data->description->isbn ?? '',
             'lang' => $this->data->description->lang ?? getenv('BOOK_DEFAULT_LANGUAGE'),
+            'core_resource_type' => $this->getCoreResourceType()
         ];
     }
 }

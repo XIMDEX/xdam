@@ -22,6 +22,11 @@ class ActivitySolrResource extends BaseSolrResource
         return ResourceType::activity;
     }
 
+    protected function getCoreResourceType()
+    {
+        return ResourceType::activity;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -42,7 +47,8 @@ class ActivitySolrResource extends BaseSolrResource
             'previews' => $this->getPreviews(),
             'collection' => $this->collection->id,
             'workspaces' => $this->getWorkspaces(),
-            'organization' => $this->getOrganization()
+            'organization' => $this->getOrganization(),
+            'core_resource_type' => $this->getCoreResourceType()
         ];
     }
 }
