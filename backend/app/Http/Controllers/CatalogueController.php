@@ -53,6 +53,7 @@ class CatalogueController extends Controller
 
         $facetsFilter = $request->get('facets', []);
         $facetsFilter['organization'] = $collection->organization_id;
+        $facetsFilter['collections'] = $collection->id;
 
         $response = $this->catalogueService->indexByCollection(
             $pageParams,
@@ -81,6 +82,4 @@ class CatalogueController extends Controller
 
         return response()->json($response);
     }
-
-
 }

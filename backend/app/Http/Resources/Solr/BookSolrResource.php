@@ -38,21 +38,22 @@ class BookSolrResource extends BaseSolrResource
         );
 
         return [
-            'id' => $this->getID(),
-            'name' => $this->getName(),
-            'data' => $this->getData(),
-            'active' => $this->getActive(),
-            'type' => $this->getType(),
-            'tags' =>  $this->formatTags($this->getTags()),
-            'categories' => $this->formatCategories($this->getCategories()),
-            'files' => $this->getFiles(),
-            'previews' => $this->getPreviews(),
-            'collection' => $this->collection->id,
-            'workspaces' => $this->getWorkspaces(),
-            'organization' => $this->getOrganization(),
-            'units' => $this->data->description->units ?? 0,
-            'isbn' => $this->data->description->isbn ?? '',
-            'lang' => $this->data->description->lang ?? getenv('BOOK_DEFAULT_LANGUAGE'),
+            'id'            => $this->getID(),
+            'name'          => $this->getName(),
+            'data'          => $this->getData(),
+            'active'        => $this->getActive(),
+            'type'          => $this->getType(),
+            'tags'          =>  $this->formatTags($this->getTags()),
+            'categories'    => $this->formatCategories($this->getCategories()),
+            'files'         => $this->getFiles(),
+            'previews'      => $this->getPreviews(),
+            'collection'    => $this->collection->id,
+            'workspaces'    => $this->getWorkspaces(),
+            'organization'  => $this->getOrganization(),
+            'units'         => $this->data->description->units ?? 0,
+            'isbn'          => $this->data->description->isbn ?? '',
+            'lang'          => $this->data->description->lang ?? getenv('BOOK_DEFAULT_LANGUAGE'),
+            'collections'   => $this->getCollections()
         ];
     }
 }

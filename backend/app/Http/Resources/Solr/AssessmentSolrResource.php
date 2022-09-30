@@ -31,18 +31,19 @@ class AssessmentSolrResource extends BaseSolrResource
     public function toArray($request)
     {
         return [
-            'id' => $this->getID(),
-            'name' => $this->getName(),
-            'data' => $this->getData(),
-            'active' => $this->getActive(),
-            'type' => $this->getType(),
-            'tags' => $this->formatTags($this->getTags()),
-            'categories' => $this->formatCategories($this->getCategories()),
-            'files' => $this->getFiles(),
-            'previews' => $this->getPreviews(),
-            'collection' => $this->collection->id,
-            'workspaces' => $this->getWorkspaces(),
-            'organization' => $this->getOrganization()
+            'id'            => $this->getID(),
+            'name'          => $this->getName(),
+            'data'          => $this->getData(),
+            'active'        => $this->getActive(),
+            'type'          => $this->getType(),
+            'tags'          => $this->formatTags($this->getTags()),
+            'categories'    => $this->formatCategories($this->getCategories()),
+            'files'         => $this->getFiles(),
+            'previews'      => $this->getPreviews(),
+            'collection'    => $this->collection->id,
+            'workspaces'    => $this->getWorkspaces(),
+            'organization'  => $this->getOrganization(),
+            'collections'   => $this->getCollections()
         ];
     }
 }

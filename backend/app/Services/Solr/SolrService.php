@@ -72,9 +72,15 @@ class SolrService
      * @return mixed
      * @throws Exception
      */
-    public function getClientFromResource(DamResource $damResource)
+    public function getClientFromResource(DamResource $damResource, $attempt = 0)
     {
-        return $this->getClientFromCollection($damResource->collection);
+        try {
+            return $this->getClientFromCollection($damResource->collection()->first());
+        } catch (\Exception $ex) {
+            if ($attempt < 10) return $this->getClientFromResource($damResource, $attempt++);
+        }
+        
+        return null;
     }
 
 

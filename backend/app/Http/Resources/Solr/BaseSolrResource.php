@@ -86,4 +86,9 @@ class BaseSolrResource extends JsonResource
     {
         return '';
     }
+
+    protected function getCollections()
+    {
+        return [$this->collection->id];
+    }
 }

@@ -79,19 +79,20 @@ class MultimediaSolrResource extends BaseSolrResource
         $files = $this->getFiles();
 
         return [
-            'id' => $this->getID(),
-            'name' => $this->getName(),
-            'data' => $this->getData(),
-            'active' => $this->getActive(),
-            'type' => $this->getType(),
-            'types' => $this->getTypes($files),
-            'tags' => $this->formatTags($this->getTags()),
-            'categories' => $this->formatCategories($this->getCategories()),
-            'files' => $files,
-            'conversions' => $this->getConversions(),
-            'previews' => $this->getPreviews(),
-            'workspaces' => $this->getWorkspaces(),
-            'organization' => $this->getOrganization()
+            'id'            => $this->getID(),
+            'name'          => $this->getName(),
+            'data'          => $this->getData(),
+            'active'        => $this->getActive(),
+            'type'          => $this->getType(),
+            'types'         => $this->getTypes($files),
+            'tags'          => $this->formatTags($this->getTags()),
+            'categories'    => $this->formatCategories($this->getCategories()),
+            'files'         => $files,
+            'conversions'   => $this->getConversions(),
+            'previews'      => $this->getPreviews(),
+            'workspaces'    => $this->getWorkspaces(),
+            'organization'  => $this->getOrganization(),
+            'collections'   => $this->getCollections()
         ];
     }
 }
