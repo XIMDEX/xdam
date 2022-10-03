@@ -259,6 +259,10 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
             });
 
             Route::group(['middleware' => 'update.resource'], function() {
+                Route::get('/{damResource}/getMaxFiles',                    [ResourceController::class, 'getMaxFiles'])
+                    ->name('damResource.getMaxFiles');
+                Route::get('/{damResource}/getFilesCount',                  [ResourceController::class, 'getFilesCount'])
+                    ->name('damResource.getFilesCount');
                 Route::post('/{damResource}/update',                        [ResourceController::class, 'update'])
                     ->name('damResource.update');
                 Route::post('/{damResource}/updateAsLastCreated',           [ResourceController::class, 'updateAsLastCreated'])

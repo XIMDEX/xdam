@@ -43,7 +43,7 @@ class BookSolrResource extends BaseSolrResource
             'data'          => $this->getData(),
             'active'        => $this->getActive(),
             'type'          => $this->getType(),
-            'tags'          =>  $this->formatTags($this->getTags()),
+            'tags'          => $this->formatTags($this->getTags()),
             'categories'    => $this->formatCategories($this->getCategories()),
             'files'         => $this->getFiles(),
             'previews'      => $this->getPreviews(),

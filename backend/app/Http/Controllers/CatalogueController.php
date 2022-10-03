@@ -72,6 +72,8 @@ class CatalogueController extends Controller
             $resource = DamResource::where('id', $response->data[$i]['id'])->first();
 
             if ($resource !== null) {
+                $response->data[$i]['data']->max_files = $resource->collection->getMaxNumberOfFiles();
+
                 foreach ($cdns as $currentCDN) {
                     $auxCDN = clone $currentCDN;
                     $auxCDN->setHash($this->cdnService->generateDamResourceHash($auxCDN, $resource, $collection->id));

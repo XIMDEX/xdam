@@ -91,4 +91,9 @@ class BaseSolrResource extends JsonResource
     {
         return [$this->collection->id];
     }
+
+    protected function getMaxFiles()
+    {
+        return $this->collection->getMaxNumberOfFiles();
+    }
 }

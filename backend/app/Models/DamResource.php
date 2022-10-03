@@ -175,7 +175,7 @@ class DamResource extends Model implements HasMedia, TaggableInterface
         return $totalFiles < $collection->getMaxNumberOfFiles();
     }
 
-    private function getNumberOfFilesAttached()
+    public function getNumberOfFilesAttached()
     {
         $media = Media::where('model_id', $this->id)
                     ->where('collection_name', MediaType::File)
