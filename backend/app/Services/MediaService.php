@@ -2,6 +2,7 @@
 
 namespace App\Services;
 use App\Enums\MediaType;
+use App\Models\DocumentRendererKey;
 use App\Models\Media;
 use App\Models\PendingVideoCompressionTask;
 use FFMpeg\Coordinate\TimeCode;
@@ -278,5 +279,43 @@ class MediaService
     public function deleteOne(Media $media): boolean
     {
         return $media->delete();
+    }
+
+    public function generateRenderKey()
+    {
+        $flag = false;
+        $key = null;
+
+        while (!$flag) {
+            try {
+                $key = DocumentRendererKey::generateKey();
+                $keyEntry = DocumentRendererKey::create(['key' => $key]);
+                $flag = true;
+            } catch(\Exception $e) {
+                // echo $e->getMessage();
+            }
+        }
+
+        return $key;
+    }
+
+    public function checkRendererKey($key, $method)
+    {
+        if ($method !== 'GET') return true;
+
+        $flag = false;
+        $keyEntry = DocumentRendererKey::where('key', $key)->first();    
+        
+        if ($keyEntry === null) return false;
+        
+        $keyEntry->update();
+        $keyEntry->increaseUsages();
+        
+        if ($keyEntry->downloadAllowed()) $flag = true;
+        if ($keyEntry->reachedUsagesLimit()) {
+            $keyEntry->delete();
+        }
+        
+        return $flag;
     }
 }
