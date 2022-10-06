@@ -29,6 +29,7 @@ use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Utils\DamUrlUtil;
 use Error;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Mimey\MimeTypes;
 use Symfony\Component\HttpFoundation\Response;
@@ -295,10 +296,11 @@ class ResourceController extends Controller
      */
     public function render($damUrl, $size = null)
     {
-        return $this->renderResource($damUrl, $size);
+        $method = request()->method();
+        return $this->renderResource($damUrl, $method, $size, $size);
     }
 
-    private function renderResource($damUrl, $size = null)
+    private function renderResource($damUrl, $method = null, $size = null, $renderKey = null)
     {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         $media = Media::findOrFail($mediaId);
@@ -309,7 +311,7 @@ class ResourceController extends Controller
         $mimeType = $media->mime_type;
         $fileType = explode('/', $mimeType)[0];
 
-        if($fileType == 'video' || $fileType == 'image') {
+        if ($fileType == 'video' || $fileType == 'image') {
             $sizeValue = $this->getResourceSize($fileType, $size);
             $availableSizes = $this->getAvailableResourceSizes();
             $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue);
@@ -321,6 +323,23 @@ class ResourceController extends Controller
             }
 
             return response()->file($compressed);
+        } else if ($mimeType == 'application/pdf' && $renderKey == null) {
+            $route = Route::getCurrentRoute();
+            $routeParams = $route->parameters();
+            $routeName = $route->getName();
+            $url = route($routeName, $routeParams);
+            $key = $this->mediaService->generateRenderKey();
+
+            return view('pdfViewer', [
+                'title' => $mediaFileName,
+                'url'   => $url . '/' . $key
+            ]);
+        } else if ($mimeType == 'application/pdf' && $renderKey != null) {
+            if ($this->mediaService->checkRendererKey($renderKey, $method)) {
+                return response()->file($this->mediaService->preview($media, []));
+            } else {
+                return response(['error' => 'Error! You don\'t have permission to view this file.'], Response::HTTP_BAD_REQUEST);
+            }
         }
 
         return response()->file($this->mediaService->preview($media, []));
