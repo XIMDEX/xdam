@@ -3,6 +3,7 @@
 use App\Http\Controllers\AbilityController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CatalogueController;
+use App\Http\Controllers\Book\BookUnitController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\TagController;
@@ -25,21 +26,32 @@ use App\Http\Controllers\WorkspaceController;
 |
 */
 
-
 Route::group(['prefix'=>'v1','as'=>'v1'], function(){
+    Route::get('temp', function() {
+        return response()->json(['prueba' => __('facets.DEFAULT.categories')]);
+    });
 
-    Route::group(['prefix' => 'auth'], function(){
-        Route::post('login',    [AuthController::class, 'login'])->name('auth.login');
-        Route::post('signup',   [AuthController::class, 'signup'])->name('auth.signup');
+    Route::group(['prefix' => 'auth'], function() {
+        Route::post('login',        [AuthController::class, 'login'])
+            ->name('auth.login');
+        Route::post('signup',       [AuthController::class, 'signup'])
+            ->name('auth.signup');
+        Route::post('kakumaLogin',  [RoleController::class, 'kakumaLogin'])
+            ->name('auth.kakumaLogin')->middleware('auth:api');
     });
 
     Route::group(['middleware' => 'show.resource'], function() {
         Route::group(['prefix' => 'resource'], function(){
-            Route::get('/render/{damUrl}/{size}',   [ResourceController::class, 'render'])->name('damResource.renderWithSize');
-            Route::get('/render/{damUrl}',          [ResourceController::class, 'render'])->name('damResource.render');
-            Route::get('/{damResource}',            [ResourceController::class, 'get'])   ->name('damResource.get');
-            Route::get('/lastCreated/{collection}', [CollectionController::class, 'getLastResourceCreated'])->name('collection.get.lastCreated');
-            Route::get('/lastUpdated/{collection}', [CollectionController::class, 'getLastResourceUpdated'])->name('collection.get.lastUpdated');
+            Route::get('/render/{damUrl}/{size}',       [ResourceController::class, 'render'])
+                ->name('damResource.renderWithSize');
+            Route::get('/render/{damUrl}',              [ResourceController::class, 'render'])
+                ->name('damResource.render');
+            Route::get('/{damResource}',                [ResourceController::class, 'get'])
+                ->name('damResource.get');
+            Route::get('/lastCreated/{collection}',     [CollectionController::class, 'getLastResourceCreated'])
+                ->name('collection.get.lastCreated');
+            Route::get('/lastUpdated/{collection}',     [CollectionController::class, 'getLastResourceUpdated'])
+                ->name('collection.get.lastUpdated');
         });
     });
 
@@ -47,7 +59,6 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
     //Route::get('/user/{token}/resource/{damResource}/permissions', [UserController::class, 'resourceInfo'])->name('user.get.resource.info');
 
     Route::group(['middleware' => 'auth:api'], function () {
-
 
         Route::get('/ini_pms', function() {
             return [
@@ -106,12 +117,16 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
             Route::get('{organization_id}/workspaces', [WorkspaceController::class, 'index'])->name('wsp.index');
         });
 
-        Route::group(['prefix' => 'workspace', 'middleware' => 'manage.workspaces'], function(){
-            Route::post('set/user',             [AdminController::class, 'setWorkspaces'])  ->name('adm.usr.set.wsp');
-            Route::post('unset/user',           [AdminController::class, 'unsetWorkspaces'])->name('adm.usr.unset.wsp');
-            Route::get('/get/{workspace_id}',   [WorkspaceController::class, 'get'])        ->name('wsp.get');
-            Route::post('update',               [WorkspaceController::class, 'update'])     ->name('wsp.update');
-            Route::delete('/{workspace_id}',    [WorkspaceController::class, 'delete'])     ->name('wsp.delete');
+        Route::group(['prefix' => 'workspace'], function(){
+            Route::get('/getMultiple',          [WorkspaceController::class, 'getMultiple'])->name('wsp.getMutliple');
+
+            Route::group(['middleware' => 'manage.workspaces'], function() {
+                Route::post('set/user',             [AdminController::class, 'setWorkspaces'])  ->name('adm.usr.set.wsp');
+                Route::post('unset/user',           [AdminController::class, 'unsetWorkspaces'])->name('adm.usr.unset.wsp');
+                Route::get('/get/{workspace_id}',   [WorkspaceController::class, 'get'])        ->name('wsp.get');
+                Route::post('update',               [WorkspaceController::class, 'update'])     ->name('wsp.update');
+                Route::delete('/{workspace_id}',    [WorkspaceController::class, 'delete'])     ->name('wsp.delete');
+            });
         });
 
         Route::group(['prefix' => 'role', 'middleware' => 'manage.roles'], function() {
@@ -195,7 +210,18 @@ Route::group(['prefix'=>'v1','as'=>'v1'], function(){
                 Route::delete('/{damResource}/associatedFile/{media}',      [ResourceController::class, 'deleteAssociatedFile']) ->name('damResource.deleteAssociatedFile');
                 Route::put('/{damResource}/deleteAssociatedFiles',          [ResourceController::class, 'deleteAssociatedFiles'])->name('damResource.deleteAssociatedFiles');
             });
+
+            Route::group(['prefix' => 'book'], function() {
+                Route::get('/{isbn}/{unit}/links',     [BookUnitController::class, 'retriveUnitLink'])     ->name('book.retriveUnitLink');
+                Route::get('/{isbn}/links',            [BookUnitController::class, 'retriveAllUnitsLink'])     ->name('book.retriveUnitsLink');
+                Route::post('/{isbn}/links',           [BookUnitController::class, 'updateLinks'])   ->name('book.updateLinks');
+                Route::delete('/{isbn}/{unit}/links',         [BookUnitController::class, 'deleteUnitLink'])  ->name('book.deleteUnitLink');
+                Route::delete('/{isbn}/links/',     [BookUnitController::class, 'deleteUnitsLink'])  ->name('book.deleteUnitsLink');
+            });
         });
+
+        Route::post('/resource/{damResource}/setWorkspace', [ResourceController::class, 'setWorkspace'])
+            ->name('damResource.setWorkspace');
 
         Route::group(['prefix' => 'category'], function() {
             Route::get('', [CategoryController::class, 'getAll'])->name('category.getAll');

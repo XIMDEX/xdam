@@ -45,7 +45,10 @@ class CoreFacetsBuilder {
                 "categories",
                 "active",
                 "tags",
-                "workspaces"
+                "workspaces",
+                "isbn",
+                "units",
+                "lang"
             ]
         ];
     }

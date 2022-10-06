@@ -11,6 +11,7 @@ class FacetManager
     private $radioValues = [];
     // "name to display" => "name faceted"
     private $facetLists;
+    const UNLIMITED_FACETS_VALUES = -1;
 
     public function __construct(CoreFacetsBuilder $coreFacetsBuilder)
     {
@@ -73,7 +74,11 @@ class FacetManager
     {
         $this->facetList = $this->facetLists[$core];
         foreach ($this->facetList as $key => $value) {
-            $facetSet->createFacetField($value['name'])->setField($value['name']);
+            $facetSet
+                ->createFacetField($value['name'])
+                ->setField($value['name'])
+                ->setLimit(self::UNLIMITED_FACETS_VALUES);
+                
             if (!empty($facetsFilter)) {
                 foreach ($facetsFilter as $keyFilter => $valueFilter) {
                     if ($keyFilter == $value['name']) {

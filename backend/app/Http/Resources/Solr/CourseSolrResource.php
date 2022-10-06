@@ -2,15 +2,61 @@
 
 namespace App\Http\Resources\Solr;
 
-use App\Enums\MediaType;
 use App\Enums\ResourceType;
-use App\Http\Resources\MediaResource;
-use App\Models\Workspace;
-use App\Utils\Utils;
-use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Solr\BaseSolrResource;
 
-class CourseSolrResource extends JsonResource
+class CourseSolrResource extends BaseSolrResource
 {
+    public static function generateQuery($searchTerm)
+    {
+        return "name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5 achievements:*$searchTerm*^3 OR preparations:*$searchTerm*^3";
+    }
+    
+    protected function getData($tags = null, $categories = null)
+    {
+        $data = $this->data;
+
+        if (!is_object($data))
+            $data = json_decode($data);
+
+        $data->id = $this->id;
+        $data->description->id = $this->id;
+        $data->description->name = $this->name;
+        $data->description->tags = $tags;
+        $data->description->categories = $categories;
+        $finalData = $data;
+        $finalData = is_object($finalData) ? json_encode($finalData) : $finalData;
+
+        return $finalData;
+    }
+
+    protected function getName()
+    {
+        return $this->data->description->name ??
+            (property_exists($this->data->description, 'course_title') ? $this->data->description->course_title : $this->name);
+    }
+
+    protected function getActive()
+    {
+        if (property_exists($this->data, 'description') && property_exists($this->data->description, 'course_source'))
+            $active = $this->data->description->active == true;
+        
+        return $active ?? $this->active;
+    }
+
+    protected function getType()
+    {
+        return ResourceType::course;
+    }
+
+    private function getBooleanDataValue($key)
+    {
+        if (property_exists($this->data, 'description') && property_exists($this->data->description, 'course_source'))
+            $value = (strpos($this->data->description->course_source, $key) !== false);
+
+        return $value ?? false;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -19,75 +65,35 @@ class CourseSolrResource extends JsonResource
      */
     public function toArray($request)
     {
-        $files = array_column(
-            json_decode(MediaResource::collection($this->getMedia(MediaType::File()->key))->toJson(), true),
-            'dam_url'
-        );
-        $previews = array_column(
-            json_decode(MediaResource::collection($this->getMedia(MediaType::Preview()->key))->toJson(), true),
-            'dam_url'
-        );
-        $workspaces = Utils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
-        $data = $this->data;
-
-        if (property_exists($data,  "description") && property_exists($data->description, 'course_source'))
-        {
-            $active = $data->description->active == true;
-            $internal = (strpos($data->description->course_source, "internal") !== false);
-            $aggregated = (strpos($data->description->course_source, "aggregated") !== false);
-            $external = (strpos($data->description->course_source, "external") !== false);
-        }
-
-        $tags = $this->tags()->pluck('name')->toArray();
-        $categories = $this->categories()->pluck('name')->toArray();
-
-        $finalData = '';
-
-        if (is_object($data)) {
-            $data->description->id = $this->id;
-            $data->description->tags = $tags;
-            $data->description->categories = $categories;
-            $data->id = $this->id;
-            $finalData = $data;
-        } else {
-            $d = json_decode($data);
-            $d->description->id = $this->id;
-            $d->id = $this->id;
-            $d->description->tags = $tags;
-            $d->description->categories = $categories;
-            $finalData = $d;
-        }
-
-        $finalData = is_object($finalData) ? json_encode($finalData) : $finalData;
-        $cost = $data->description->cost ?? 0;
-        $isFree = $cost > 0 ? false : true;
+        $tags = $this->getTags();
+        $categories = $this->getCategories();
+        $cost = $this->data->description->cost ?? 0;
 
         return [
-            'id' => $this->id,
+            'id' => $this->getID(),
             //way to get name, temporal required by frontend. Must be only $data->description->name
-            'name' => $data->description->name ??
-            (property_exists($data->description, 'course_title') ? $data->description->course_title : $this->name),
-            'data' => $finalData,
-            'active' => $active ?? $this->active,
-            'aggregated' => $aggregated ?? false,
-            'internal' => $internal ?? false,
-            'external' => $external ?? false,
-            'type' => ResourceType::course,
-            'tags' => count($tags) > 0 ? $tags : ['untagged'],
-            'categories' => count($categories) > 0 ? $categories : ['uncategorized'],
-            'files' => $files,
-            'previews' => $previews,
-            'workspaces' => $workspaces,
-            'organization' => $this->organization()->id,
+            'name' => $this->getName(),
+            'data' => $this->getData($tags, $categories),
+            'active' => $this->getActive(),
+            'aggregated' => $this->getBooleanDataValue('aggregated'),
+            'internal' => $this->getBooleanDataValue('internal'),
+            'external' => $this->getBooleanDataValue('external'),
+            'type' => $this->getType(),
+            'tags' => $this->formatTags($tags),
+            'categories' => $this->formatCategories($categories),
+            'files' => $this->getFiles(),
+            'previews' => $this->getPreviews(),
+            'workspaces' => $this->getWorkspaces(),
+            'organization' => $this->getOrganization(),
             //Cost is an integer representing the value. int 1000 = 10.00€
             'cost' => $cost,
-            'currency' => $data->description->currency ?? 'EUR',
-            'isFree' => $isFree,
+            'currency' => $this->data->description->currency ?? 'EUR',
+            'isFree' => !($cost > 0),
             //Duration is an integer representing the value. int 1000 = 1000 seconds
-            'duration' => $data->description->duration ?? 0,
-            'skills' => $data->description->skills ?? [],
-            'preparations' => $data->description->preparations ?? [],
-            'achievements' => $data->description->achievements ?? [],
+            'duration' => $this->data->description->duration ?? 0,
+            'skills' => $this->data->description->skills ?? [],
+            'preparations' => $this->data->description->preparations ?? [],
+            'achievements' => $this->data->description->achievements ?? [],
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

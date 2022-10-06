@@ -18,6 +18,7 @@ use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ResourceService
 {
@@ -38,6 +39,8 @@ class ResourceService
      * @var WorkspaceService
      */
     private WorkspaceService $workspaceService;
+
+    const PAGE_SIZE = 30;
 
     /**
      * ResourceService constructor.
@@ -133,6 +136,13 @@ class ResourceService
         }
     }
 
+    private function setDefaultLanguageIfNeeded(array $params): void 
+    {
+        if( isset($params['type']) && $params["type"] === ResourceType::book && !property_exists($params["data"]->description, "lang")) {
+            $params["data"]->description->lang = getenv('BOOK_DEFAULT_LANGUAGE');
+        }
+    }
+
 
     /**
      * @param $resource
@@ -156,9 +166,21 @@ class ResourceService
      * @param null $type
      * @return Collection
      */
-    public function getAll($type = null)
+    public function getAll($type = null, $ps = null)
     {
-        return $type ? DamResource::where('type', $type)->get() : DamResource::all();
+        if (null == $ps && null == $type) {
+            return DamResource::all();
+        }
+
+        if (null == $ps) {
+            return DamResource::where('type', $type)->get();
+        }
+
+        if (null == $type) {
+            return DamResource::paginate($ps);
+        }
+
+        return DamResource::where('type', $type)->paginate($ps);
     }
 
     /**
@@ -168,6 +190,17 @@ class ResourceService
     public function get(DamResource $resource): DamResource
     {
         return $resource;
+    }
+
+    /**
+     * @param String[] $query
+     * return Collection
+     */
+    public function queryFilter($queryFilters) 
+    {
+
+        return DamResource::whereRaw($queryFilters)->get();
+
     }
 
     /**
@@ -196,6 +229,9 @@ class ResourceService
         }
 
         if (array_key_exists("data", $params) && !empty($params["data"])) {
+
+            $this->setDefaultLanguageIfNeeded($params);
+
             $resource->update(
                 [
                     'data' => $params['data'],
@@ -249,6 +285,8 @@ class ResourceService
         if(is_array($params['data'])) {
             $params['data'] = Utils::arrayToObject($params['data']);
         }
+
+        $this->setDefaultLanguageIfNeeded($params);
 
         $resource_data = [
             'data' => $params['data'],
@@ -310,6 +348,13 @@ class ResourceService
         return $schemas;
     }
 
+    private function searchPreviewImage($data, $name): ?UploadedFile
+    {
+        $fileName = str_replace('.', '_', $name).'_preview';
+
+        return array_key_exists($fileName, $data) ? $data[$fileName] : null;
+    }
+
     public function storeBatch ($data)
     {
         $collection = ModelsCollection::find($data['collection']);
@@ -321,6 +366,10 @@ class ResourceService
             $wsp = $data['workspace'];
         }
 
+        $genericResourceDescription = array_key_exists('generic', $data) ? json_decode($data['generic'], true) : [];
+
+        $especificFilesInfoMap = array_key_exists('filesInfo', $data) ? json_decode($data['filesInfo'], true) : [];
+
         $createdResources = [];
 
         //$supported_mime_types = $this->resourcesSchema();
@@ -330,15 +379,25 @@ class ResourceService
         foreach ($data['files'] as $file) {
             $name = $file->getClientOriginalName();
             $type = explode('/', $file->getMimeType())[0];
+
+            $specificInfo = array_key_exists($name, $especificFilesInfoMap) ? $especificFilesInfoMap[$name] : [];
+
+            $description = array_merge(
+                [
+                    'name' => $name,
+                    'active' => false,
+                ],
+                $genericResourceDescription,
+                $specificInfo,
+            );
+
             $params = [
                 'data' => [
-                    'description' => [
-                        'name' => $name,
-                        'active' => false,
-                    ]
+                    'description' => $description
                 ],
                 'collection_id' => $collection->id,
                 'File' => [$file],
+                'Preview' => $this->searchPreviewImage($data, $name),
             ];
             $resource = $this->store($params, $wsp, $collection->accept === ResourceType::multimedia ? $type : $collection->accept);
             $createdResources[] = $resource;
