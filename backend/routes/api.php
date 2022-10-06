@@ -33,6 +33,9 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
     });
 
     Route::group(['prefix' => 'cdn'], function() {
+        Route::get('/workspace_test/{workspace}',   [CatalogueController::class, 'getCatalogueByWorkspace'])
+                ->name('cdn.getCatalogueByWorkspace');
+
         Route::group(['prefix' => 'admin'], function() {
             Route::post('/create',                                          [CDNController::class, 'createCDN'])
                     ->name('cdn.createCDN');

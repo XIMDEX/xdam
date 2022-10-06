@@ -5,9 +5,12 @@ namespace App\Services\Solr;
 
 use App\Models\Collection;
 use App\Models\DamResource;
+use App\Models\Workspace;
 use App\Services\Catalogue\FacetManager;
 use Exception;
 use Solarium\Client;
+use Solarium\Core\Client\Adapter\Curl;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Solarium\Core\Query\Result\ResultInterface;
 use stdClass;
 use App\Http\Resources\Solr\{ActivitySolrResource, AssessmentSolrResource, BookSolrResource, CourseSolrResource, DocumentSolrResource, MultimediaSolrResource};
@@ -131,6 +134,21 @@ class SolrService
         return $client->update($deleteQuery);
     }
 
+    private static function paginateResults($results)
+    {
+        /* Response with pagination data */
+        $response = new \stdClass();
+        $response->facets = $results['facets'];
+        $response->current_page = $results['currentPage'];
+        $response->data = $results['documentsResponse'];
+        $response->per_page = $results['limit'];
+        $response->last_page = $results['totalPages'];
+        $response->next_page = $results['nextPage'];
+        $response->prev_page = $results['prevPage'];
+        $response->total = $results['documentsFound'];
+        return $response;
+    }
+
     /**
      * Make a faceted query with parameters to Apache Solr
      * @param array $pageParams
@@ -148,19 +166,17 @@ class SolrService
     ): stdClass {
         // Gets the results
         $results = $this->executeSearchQuery($pageParams, $sortParams, $facetsFilter, $collection);
+        return $this->paginateResults($results);     
+    }
 
-        /* Response with pagination data */
-        $response = new \stdClass();
-
-        $response->facets = $results['facets'];
-        $response->current_page = $results['currentPage'];
-        $response->data = $results['documentsResponse'];
-        $response->per_page = $results['limit'];
-        $response->last_page = $results['totalPages'];
-        $response->next_page = $results['nextPage'];
-        $response->prev_page = $results['prevPage'];
-        $response->total = $results['documentsFound'];
-        return $response;
+    public function distributedPaginatedQueryByFacet(
+        $pageParams = [],
+        $sortParams = [],
+        $facetsFilter,
+        $workspace
+    ): stdClass {
+        $results = $this->executeDistributedSearchQuery($pageParams, $sortParams, $facetsFilter, $workspace);
+        return $this->paginateResults($results);
     }
 
     private static function updateFacetsFilter(&$facetsFilter)
@@ -232,9 +248,7 @@ class SolrService
 
         /* Limit query by pagination limits */
         $query->setStart($currentPageFrom)->setRows($limit);
-
         $allDocuments = $client->execute($query);
-
         $documentsResponse = [];
 
         foreach ($allDocuments as $document) {
@@ -254,13 +268,49 @@ class SolrService
             'faceSetFound'          => $faceSetFound,
             'totalPages'            => $totalPages,
             'currentPageFrom'       => $currentPageFrom,
-            'documentsResponse'    => $documentsResponse,
+            'documentsResponse'     => $documentsResponse,
             'facets'                => $facets,
             'currentPage'           => $currentPage,
             'limit'                 => $limit,
             'nextPage'              => (($currentPage + 1) > $totalPages) ? $totalPages : $currentPage + 1,
             'prevPage'              => (($currentPage - 1) > 1) ? $currentPage - 1 : 1
         ];
+    }
+
+    private function executeDistributedSearchQuery($pageParams = [], $sortParams = [], $facetsFilter, $workspace)
+    {
+        // Updates the facets filter
+        $this->updateFacetsFilter($facetsFilter);
+
+        // Gets the default core, with its client
+        $defaultCore = null;
+        foreach ($this->clients as $key => $value) if ($defaultCore === null) $defaultCore = $key;
+        $client = $this->clients[$defaultCore];
+        
+        // Creates the select query
+        $query = $client->createSelect();
+        $distributedSearch = $query->getDistributedSearch();
+        $i = 0;
+
+        foreach ($this->clients as $key => $value) {
+            if ($key !== $defaultCore) {
+                $i++;
+                $shardKey = 'shard' . $i;
+                $shardValueParams = [
+                    'host'  => $value->getEndpoints()['localhost']->getHost(),
+                    'port'  => $value->getEndpoints()['localhost']->getPort(),
+                    'path'  => $value->getEndpoints()['localhost']->getPath(),
+                    'core'  => $value->getEndpoints()['localhost']->getCore()
+                ];
+                $shardValueParams['path'] = ($shardValueParams['path'] === '' ? '/' : $shardValueParams['path']);
+                $shardValue = $shardValueParams['host'] . ':' . $shardValueParams['port'] . $shardValueParams['path'] . $shardValueParams['core'];
+                $distributedSearch->addShard($shardKey, $shardValue);
+            }
+        }
+        $resultset = $client->select($query);
+        echo 'NumFound: '.$resultset->getNumFound();
+        exit();
+        return [];
     }
 
     public static function stdToArray($std): array

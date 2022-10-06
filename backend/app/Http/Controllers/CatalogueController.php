@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GetCatalogueRequest;
-use App\Models\CDN;
 use App\Models\Collection;
 use App\Models\DamResource;
+use App\Models\Workspace;
 use App\Services\CDNService;
 use App\Services\Catalogue\CatalogueService;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Solarium\Client;
 
 class CatalogueController extends Controller
 {
@@ -81,6 +83,31 @@ class CatalogueController extends Controller
                 }
             }
         }
+
+        return response()->json($response);
+    }
+
+    public function getCatalogueByWorkspace(Request $request, Workspace $workspace)
+    {
+        $pageParams = [];
+        $pageParams['currentPage'] = $request->get('page', 1);
+        $pageParams['limit'] = $request->get('limit', 1);
+        $pageParams['search'] = $request->get('search', "");
+
+        $sortParams = [];
+        $sortParams['orderType'] = strtolower($request->get('orderType', 'ASC'));
+        $sortParams['orderBy'] = $request->get('order_by');
+        $sortParams['order'] = $request->get('order');
+
+        $facetsFilter = $request->get('facets', []);
+        $facetsFilter['workspaces'] = $workspace->id;
+
+        $response = $this->catalogueService->indexByWorkspace(
+            $pageParams,
+            $sortParams,
+            $facetsFilter,
+            $workspace
+        );
 
         return response()->json($response);
     }

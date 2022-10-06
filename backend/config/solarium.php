@@ -82,5 +82,4 @@ return [
     ],
     'solr_validators_folder' => env('SOLR_VALIDATORS_FOLDER', ''),
     'solr_schemas_folder' => env('SOLR_SCHEMAS_FOLDER', ''),
-
 ];
