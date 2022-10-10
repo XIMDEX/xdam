@@ -66,23 +66,27 @@ class ResourceService
             // If is a array of files, add a association from each item
             if (is_array($params[$type])) {
                 foreach ($params[$type] as $file) {
+                    if ($model->doesThisResourceSupportsAnAdditionalFile()) {
+                        $this->mediaService->addFromRequest(
+                            $model,
+                            null,
+                            $type,
+                            ["parent_id" => $model->id],
+                            $file
+                        );
+                    }
+                }
+            } else {
+                if ($model->doesThisResourceSupportsAnAdditionalFile()) {
+                    // If is not a array, associate file directly
                     $this->mediaService->addFromRequest(
                         $model,
                         null,
                         $type,
                         ["parent_id" => $model->id],
-                        $file
+                        $params[$type]
                     );
                 }
-            } else {
-                // If is not a array, associate file directly
-                $this->mediaService->addFromRequest(
-                    $model,
-                    null,
-                    $type,
-                    ["parent_id" => $model->id],
-                    $params[$type]
-                );
             }
         }
     }
