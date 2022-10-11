@@ -330,6 +330,7 @@ class ResourceController extends Controller
             $url = route($routeName, $routeParams);
             $key = $this->mediaService->generateRenderKey();
 
+
             return view('pdfViewer', [
                 'title' => $mediaFileName,
                 'url'   => $url . '/' . $key
@@ -533,6 +534,7 @@ class ResourceController extends Controller
     public function renderCDNResource(CDNRequest $request)
     {
         $cdnInfo = $this->cdnService->getCDNInfo($request->cdn_code);
+        $method = request()->method();
 
         if ($cdnInfo === null)
             return response(['error' => 'This CDN doesn\'t exist!'], Response::HTTP_BAD_REQUEST);
@@ -554,7 +556,7 @@ class ResourceController extends Controller
         if (count($responseJson->files) == 0)
             return response(['error' => 'No files attached!']);
         
-        return $this->renderResource($responseJson->files[0]->dam_url, $request->size);
+        return $this->renderResource($responseJson->files[0]->dam_url, $method, $request->size, $request->size);
     }
 
     public function setWorkspace(SetResourceWorkspaceRequest $request)
