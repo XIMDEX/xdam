@@ -554,4 +554,16 @@ class ResourceController extends Controller
 
         return response($result)->setStatusCode(Response::HTTP_OK);
     }
+
+    public function getMaxFiles(DamResource $damResource)
+    {
+        $collection = $damResource->collection;
+        if ($collection === null) return response(['error' => 'No collection info found.'], Response::HTTP_BAD_REQUEST);
+        return response(['max_files' => $collection->max_number_of_files], Response::HTTP_OK);
+    }
+
+    public function getFilesCount(DamResource $damResource)
+    {
+        return response(['files_count' => $damResource->getNumberOfFilesAttached()], Response::HTTP_OK);
+    }
 }

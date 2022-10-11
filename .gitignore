@@ -3,3 +3,4 @@
 .vscode
 **/vendor/*
 backend/composer.phar
+**backend/node_modules/*

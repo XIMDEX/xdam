@@ -52,7 +52,7 @@ class ReIndexSolr extends Command
         $count = 0;
         foreach ($resources as $resource) {
             $resourceCoreName = $solrService->getClientFromResource($resource)->getEndpoint()->getOptions()['core'];
-            if (!in_array($resourceCoreName, $excludedCores)) {
+            if (!in_array($resourceCoreName, $excludedCores) && $resourceCoreName !== null) {
                 $solrService->saveOrUpdateDocument($resource);
                 $count++;
             }

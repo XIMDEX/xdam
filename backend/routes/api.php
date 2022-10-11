@@ -235,37 +235,60 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
             //     Route::get('/{damResource}',          [ResourceController::class, 'get'])   ->name('damResource.get');
             // });
 
-            Route::get('/{damResource}/lomes', [ResourceController::class, 'getLomesData'])->name('resources.getLomesData');
-            Route::get('/{damResource}/lom', [ResourceController::class, 'getLomData'])->name('resources.getLomData');
+            Route::get('/{damResource}/lomes',  [ResourceController::class, 'getLomesData'])
+                ->name('resources.getLomesData');
+            Route::get('/{damResource}/lom',    [ResourceController::class, 'getLomData'])
+                ->name('resources.getLomData');
             
             Route::group(['middleware' => 'create.resource'], function() {
-                Route::post('/',                        [ResourceController::class, 'store'])->name('damResource.store');
-                Route::post('/createBatch',             [ResourceController::class, 'storeBatch'])->name('damResource.store.batch');
-                Route::post('/{collection_id}/create',  [ResourceController::class, 'store'])->name('collection.damResource.store');
-                Route::post('/{damResource}/lomes',     [ResourceController::class, 'setLomesData'])->name('resources.setLomesData');
-                Route::post('/{damResource}/lom',     [ResourceController::class, 'setLomData'])->name('resources.setLomData');
+                Route::post('/',                        [ResourceController::class, 'store'])
+                    ->name('damResource.store');
+                Route::post('/createBatch',             [ResourceController::class, 'storeBatch'])
+                    ->name('damResource.store.batch');
+                Route::post('/{collection_id}/create',  [ResourceController::class, 'store'])
+                    ->name('collection.damResource.store');
+                Route::post('/{damResource}/lomes',     [ResourceController::class, 'setLomesData'])
+                    ->name('resources.setLomesData');
+                Route::post('/{damResource}/lom',       [ResourceController::class, 'setLomData'])
+                    ->name('resources.setLomData');
 
             });
 
             Route::group(['middleware' => 'download.resource'], function() {
-                Route::get('/download/{damUrl}/{size}',    [ResourceController::class, 'download'])->name('damResource.downloadWithSize');
-                Route::get('/download/{damUrl}',           [ResourceController::class, 'download'])->name('damResource.download');
+                Route::get('/download/{damUrl}/{size}', [ResourceController::class, 'download'])
+                    ->name('damResource.downloadWithSize');
+                Route::get('/download/{damUrl}',        [ResourceController::class, 'download'])
+                    ->name('damResource.download');
             });
 
             Route::group(['middleware' => 'update.resource'], function() {
-                Route::post('/{damResource}/update',                        [ResourceController::class, 'update'])->name('damResource.update');
-                Route::post('/{damResource}/updateAsLastCreated',           [ResourceController::class, 'updateAsLastCreated'])->name('resource.updateAsLastCreated');
-                Route::post('/{damResource}/updateAsLastUpdated',           [ResourceController::class, 'updateAsLastUpdated'])->name('resource.updateAsLastUpdated');
-                Route::post('/{damResource}/updateAsOther/{otherResource}', [ResourceController::class, 'updateAsOther'])->name('resource.updateAsOther');
+                Route::get('/{damResource}/getMaxFiles',                    [ResourceController::class, 'getMaxFiles'])
+                    ->name('damResource.getMaxFiles');
+                Route::get('/{damResource}/getFilesCount',                  [ResourceController::class, 'getFilesCount'])
+                    ->name('damResource.getFilesCount');
+                Route::post('/{damResource}/update',                        [ResourceController::class, 'update'])
+                    ->name('damResource.update');
+                Route::post('/{damResource}/updateAsLastCreated',           [ResourceController::class, 'updateAsLastCreated'])
+                    ->name('resource.updateAsLastCreated');
+                Route::post('/{damResource}/updateAsLastUpdated',           [ResourceController::class, 'updateAsLastUpdated'])
+                    ->name('resource.updateAsLastUpdated');
+                Route::post('/{damResource}/updateAsOther/{otherResource}', [ResourceController::class, 'updateAsOther'])
+                    ->name('resource.updateAsOther');
             });
 
             Route::group(['middleware' => 'update.resource.card'], function() {
-                Route::post('/{damResource}/setTags',                   [ResourceController::class, 'setTags'])    ->name('damResource.setTags');
-                Route::post('/{damResource}/addPreview',                [ResourceController::class, 'addPreview']) ->name('damResource.addPreview');
-                Route::post('/{damResource}/addFile',                   [ResourceController::class, 'addFile'])    ->name('damResource.addFile');
-                Route::post('/{damResource}/addCategory/{category}',    [ResourceController::class, 'addCategory'])->name('damResource.addCategory');
-                Route::post('/{damResource}/addUse',                    [ResourceController::class, 'addUse'])     ->name('damResource.addUse');
-                Route::delete('/{damResource}',                         [ResourceController::class, 'delete'])     ->name('damResource.delete');
+                Route::post('/{damResource}/setTags',                   [ResourceController::class, 'setTags'])
+                    ->name('damResource.setTags');
+                Route::post('/{damResource}/addPreview',                [ResourceController::class, 'addPreview'])
+                    ->name('damResource.addPreview');
+                Route::post('/{damResource}/addFile',                   [ResourceController::class, 'addFile'])
+                    ->name('damResource.addFile');
+                Route::post('/{damResource}/addCategory/{category}',    [ResourceController::class, 'addCategory'])
+                    ->name('damResource.addCategory');
+                Route::post('/{damResource}/addUse',                    [ResourceController::class, 'addUse'])
+                    ->name('damResource.addUse');
+                Route::delete('/{damResource}',                         [ResourceController::class, 'delete'])
+                    ->name('damResource.delete');
             });
 
             Route::group(['middleware' => 'delete.resource.card'], function() {
