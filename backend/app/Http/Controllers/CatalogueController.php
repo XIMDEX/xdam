@@ -75,8 +75,10 @@ class CatalogueController extends Controller
 
             if ($resource !== null) {
                 $response->data[$i]['data']->max_files = $resource->collection->getMaxNumberOfFiles();
+                $response->data[$i]['data']->cdns_attached = [];
 
-                foreach ($cdns as $currentCDN) {
+                for ($j = 0; $j < count($cdns); $j++) {
+                    $currentCDN = $cdns[$j];
                     $auxCDN = clone $currentCDN;
                     $auxCDN->setHash($this->cdnService->generateDamResourceHash($auxCDN, $resource, $collection->id));
                     if ($auxCDN->getHash() !== null) $response->data[$i]['data']->cdns_attached[] = $auxCDN;
