@@ -80,7 +80,12 @@ class SolrService
         try {
             return $this->getClientFromCollection($damResource->collection()->first());
         } catch (\Exception $ex) {
-            if ($attempt < 10) return $this->getClientFromResource($damResource, $attempt++);
+            // echo $ex->getMessage();
+
+            if ($attempt < 20) {
+                sleep(5);
+                return $this->getClientFromResource($damResource, $attempt++);
+            }
         }
         
         return null;

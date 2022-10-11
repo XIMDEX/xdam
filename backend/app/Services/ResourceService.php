@@ -246,6 +246,17 @@ class ResourceService
             $this->linkCategoriesFromJson($resource, $params['data']);
             $this->linkTagsFromJson($resource, $params['data']);
         }
+
+        if (array_key_exists("FilesToRemove", $params)) {
+            foreach ($params["FilesToRemove"] as $mediaID) {
+                $mediaResult = Media::where('id', $mediaID)->first();
+                
+                if ($mediaResult !== null) {
+                    $this->deleteAssociatedFile($resource, $mediaResult);
+                }
+            }
+        }
+
         $this->saveAssociatedFiles($resource, $params);
         $resource = $resource->fresh();
         $this->solr->saveOrUpdateDocument($resource);
