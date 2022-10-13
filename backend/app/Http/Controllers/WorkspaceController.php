@@ -107,9 +107,8 @@ class WorkspaceController extends Controller
 
     public function getMultiple(GetMultipleWorkspacesRequest $request)
     {
-        $worksapcesId = $request->workspacesId;
-
-        $workspaces = $this->workspaceService->getMultpleWorkspaces($worksapcesId);
+        $workspacesId = $request->workspacesId;
+        $workspaces = $this->workspaceService->getMultpleWorkspaces($workspacesId);
 
         return (new JsonResource($workspaces))
             ->response()

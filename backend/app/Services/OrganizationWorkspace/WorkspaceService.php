@@ -4,11 +4,13 @@ namespace App\Services\OrganizationWorkspace;
 
 use App\Enums\Roles;
 use App\Enums\WorkspaceType;
+use App\Exceptions\Workspace\TooManyWorkspaces;
 use App\Models\DamResource;
 use App\Models\DamResourceWorkspace;
 use App\Models\Organization;
 use App\Models\Workspace;
 use App\Models\WorkspaceUser;
+use App\Models\WorkspaceResource;
 use App\Services\Admin\AdminService;
 use App\Services\Solr\SolrService;
 use Illuminate\Database\Eloquent\Collection;
@@ -98,8 +100,14 @@ class WorkspaceService
     public function update($id, $name)
     {
         $wsp = Workspace::find($id);
+        $default = $this->getDefaultWorkspace();
+
         if ($wsp != null) {
+            if ($wsp->id === $default->id)
+                return ['error' => 'The default workspace name can\'t be changed.'];
+
             $wsp->update(['name' => $name]);
+            $this->updateResourcesSolrDocuments($wsp->resources()->get());
             return ['updated' => $wsp];
         } else {
             return ['Workspace not exists'];
@@ -161,13 +169,23 @@ class WorkspaceService
     /**
      * @return Workspace
      */
-    private function getDefaultWorkspace()
+    public function getDefaultWorkspace()
     {
         $default = Workspace::where('name', 'Public Workspace')
                     ->where('type', WorkspaceType::public)
                     ->first();
 
         return $default;
+    }
+
+    /**
+     * @param DamResource[] $resources
+     */
+    private function updateResourcesSolrDocuments($resources)
+    {
+        foreach ($resources as $item) {
+            $this->solrService->saveOrUpdateDocument($item);
+        }
     }
 
     /**
