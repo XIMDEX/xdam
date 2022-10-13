@@ -193,6 +193,17 @@ class ResourceService
     }
 
     /**
+     * @param String[] $query
+     * return Collection
+     */
+    public function queryFilter($queryFilters) 
+    {
+
+        return DamResource::whereRaw($queryFilters)->get();
+
+    }
+
+    /**
      * @return mixed
      */
     public function exploreCourses(): Collection

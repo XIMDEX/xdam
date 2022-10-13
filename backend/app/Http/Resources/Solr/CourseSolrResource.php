@@ -7,6 +7,11 @@ use App\Http\Resources\Solr\BaseSolrResource;
 
 class CourseSolrResource extends BaseSolrResource
 {
+    public static function generateQuery($searchTerm)
+    {
+        return "name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5 achievements:*$searchTerm*^3 OR preparations:*$searchTerm*^3";
+    }
+    
     protected function getData($tags = null, $categories = null)
     {
         $data = $this->data;

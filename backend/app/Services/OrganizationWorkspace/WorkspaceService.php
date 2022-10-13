@@ -171,10 +171,12 @@ class WorkspaceService
      */
     public function getDefaultWorkspace()
     {
-        $default = Workspace::where('name', 'Public Workspace')
-                    ->where('type', WorkspaceType::public)
-                    ->first();
-
+        $default = Workspace::where(function($query) {
+            $query->where('name', 'Workspace Public')
+                ->orwhere('name', 'Public Workspace');
+        })
+            ->where('type', WorkspaceType::public)
+            ->first();
         return $default;
     }
 
@@ -188,31 +190,31 @@ class WorkspaceService
         }
     }
 
-    /**
-     * @param int $organizationId
-     * @param WorkspaceType $type
-     * @param string $workspaceName
-     * @return Workspace
-     * @throws TooManyWorkspaces
-     */
-    private function findUniqueWorkspace(int $organizationId, WorkspaceType $type, string $workspaceName): ?Workspace
-    {
-        $workpaceCollection = Workspace::select('*')
-            ->where('organization_id', '=', $organizationId)
-            ->where('type', '=', $type)
-            ->where('name', '=', $workspaceName)
-            ->get();
+    // /**
+    //  * @param int $organizationId
+    //  * @param WorkspaceType $type
+    //  * @param string $workspaceName
+    //  * @return Workspace
+    //  * @throws TooManyWorkspaces
+    //  */
+    // private function findUniqueWorkspace(int $organizationId, WorkspaceType $type, string $workspaceName): ?Workspace
+    // {
+    //     $workpaceCollection = Workspace::select('*')
+    //         ->where('organization_id', '=', $organizationId)
+    //         ->where('type', '=', $type)
+    //         ->where('name', '=', $workspaceName)
+    //         ->get();
 
-        if($workpaceCollection->count() === 0) {
-            return null;
-        }
+    //     if($workpaceCollection->count() === 0) {
+    //         return null;
+    //     }
 
-        if($workpaceCollection->count() > 1) {
-            throw new TooManyWorkspaces($workspaceName);
-        }
+    //     if($workpaceCollection->count() > 1) {
+    //         throw new TooManyWorkspaces($workspaceName);
+    //     }
 
-        return $workpaceCollection->values()->first();
-    }
+    //     return $workpaceCollection->values()->first();
+    // }
     
     /**
      * @param int[] $workspacesId

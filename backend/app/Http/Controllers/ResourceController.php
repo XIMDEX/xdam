@@ -204,7 +204,7 @@ class ResourceController extends Controller
     public function delete(DamResource $damResource)
     {
         $res = $this->resourceService->delete($damResource);
-        return response(['deleted' => $res], Response::HTTP_OK);
+        return response(['deleted' => $res, 'resource' => $damResource], Response::HTTP_OK);
     }
 
     /**

@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources\Solr;
 
+use App\Http\Resources\Solr\BaseSolrResource;
 use App\Enums\MediaType;
 use App\Http\Resources\MediaResource;
-use App\Http\Resources\Solr\BaseSolrResource;
 use App\Models\Media;
 use App\Utils\DamUrlUtil;
 

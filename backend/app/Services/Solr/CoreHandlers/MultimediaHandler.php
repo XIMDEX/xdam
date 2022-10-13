@@ -1,27 +1,13 @@
 <?php
 
-
 namespace App\Services\Solr\CoreHandlers;
 
+use App\Services\Solr\CoreHandlers\BaseHandler;
 
-class MultimediaHandler
+class MultimediaHandler extends BaseHandler
 {
-
-    private $query;
-
     public function __construct($query)
     {
-        $this->query = $query;
-
-    }
-
-    public function queryCoreSpecifics($params) {
-        $this->defaultBehaviour();
-
-        return $this->query;
-    }
-
-    public function defaultBehaviour()
-    {
+        parent::__construct($query);
     }
 }

@@ -8,6 +8,7 @@ use App\Services\Solr\SolrService;
 use App\Services\OrganizationWorkspace\WorkspaceService;
 use phpDocumentor\GraphViz\Exception;
 use stdClass;
+use App\Utils\Texts;
 
 class CatalogueService
 {
