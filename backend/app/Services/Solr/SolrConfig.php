@@ -21,10 +21,12 @@ class SolrConfig
     /** @var Client[] $clients */
     private array $clients;
     private array $solrFullConfig;
+    private array $solrClientsAlias;
 
     public function __construct(
         SolrConfigRequirements $solarConfigReq
     ) {
+        $this->solrClientsAlias = [];
         $this->solrFullConfig = $solarConfigReq->getFullConfig();
         $this->clients = $this->getSolariumClients();
     }
@@ -48,11 +50,13 @@ class SolrConfig
         $adapter->setTimeout(0);
         $eventDispatcher = new EventDispatcher();
         $clients = [];
+
         foreach ($this->solrFullConfig as $config) {
             $endpointCore = $config['endpoint']['core'];
             $solrCoreVersion = env('SOLR_CORES_VERSION', '');
             $auxCore = $endpointCore;
             $auxCore .= ($solrCoreVersion !== '' ? ('_' . $solrCoreVersion) : '');
+            $this->appendSolrConfigAlias($endpointCore, $auxCore);
 
             $solrConfig = [
                 'endpoint' => [
@@ -68,6 +72,7 @@ class SolrConfig
             $clients[$endpointCore] = new Client($adapter, $eventDispatcher, $solrConfig);
             //$clients[$config['endpoint']['core']] = new Client($adapter, $eventDispatcher, $solrConfig);
         }
+
         return $clients;
     }
 
@@ -173,8 +178,10 @@ class SolrConfig
         $currentSchema = $this->getCurrentSchema($client);
         $diffSchema = $this->getSchemaDifferences($currentSchema, (array)$configSchema);
         $this->addFieldType($client);
+
         if (!empty($diffSchema)) {
             $result = $this->updateSchema($client, $diffSchema);
+
             if (array_key_exists("error", $result)) {
                 throw new Exception(json_encode($result["error"]));
             }
@@ -188,11 +195,13 @@ class SolrConfig
     public function cleanDocuments(array $excludedCores, $action): string
     {
         $counter = 0;
+
         foreach ($this->clients as $client) {
             //exclude cores
             $clientCoreName = $client->getEndpoint()->getOptions()['core'];
+            $auxClientCoreName = $this->getClientCoreAlias($clientCoreName);
 
-            if (!array_key_exists($clientCoreName, config('solarium.connections', []))) {
+            if (!array_key_exists($auxClientCoreName, config('solarium.connections', []))) {
                 echo "Client detected not valid for xdam \n";
                 continue;
             }
@@ -204,14 +213,43 @@ class SolrConfig
 
             // get an update query instance
             $update = $client->createUpdate();
+
             // add the delete query and a commit command to the update query
             $update->addDeleteQuery('*:*');
             $update->addCommit();
+
             // this executes the query and returns the result
             $client->update($update);
             $counter++;
         }
+
         return "$counter instances has been cleared";
+    }
+
+    private function appendSolrConfigAlias($solrCore, $solrCoreAlias)
+    {
+        if (!array_key_exists($solrCore, $this->solrClientsAlias)) {
+            $this->solrClientsAlias[$solrCore] = [];
+        }
+
+        if (!in_array($solrCore, $this->solrClientsAlias)) {
+            $this->solrClientsAlias[$solrCore][] = $solrCore;
+        }
+
+        if (!in_array($solrCoreAlias, $this->solrClientsAlias)) {
+            $this->solrClientsAlias[$solrCore][] = $solrCoreAlias;
+        }
+    }
+
+    private function getClientCoreAlias($solrCore)
+    {
+        foreach ($this->solrClientsAlias as $key => $value) {
+            foreach ($value as $item) {
+                if ($item === $solrCore) return $key;
+            }
+        }
+
+        return $solrCore;
     }
 
     public function addFieldType($client): void
@@ -238,7 +276,8 @@ class SolrConfig
 
         $request->setRawData($json_field_type);
         $res = json_decode($client->executeRequest($request)->getBody(), true);
-        if(array_key_exists('error', $res)) {
+        
+        if (array_key_exists('error', $res)) {
             echo "\n Error occurred adding field type in core " . $client->getEndpoint()->getOptions()['core'] . ". Check laravel log. \n";
             Log::error(json_encode($res));
             throw new Exception(json_encode($res['error']));
