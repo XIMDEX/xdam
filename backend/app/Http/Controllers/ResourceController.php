@@ -300,7 +300,7 @@ class ResourceController extends Controller
         return $this->renderResource($damUrl, $method, $size, $size);
     }
 
-    private function renderResource($damUrl, $method = null, $size = null, $renderKey = null)
+    private function renderResource($damUrl, $method = null, $size = null, $renderKey = null, $isCDN = false)
     {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         $media = Media::findOrFail($mediaId);
@@ -323,7 +323,7 @@ class ResourceController extends Controller
             }
 
             return response()->file($compressed);
-        } else if ($mimeType == 'application/pdf' && $renderKey == null) {
+        } else if ($mimeType == 'application/pdf' && $renderKey == null && $isCDN) {
             $route = Route::getCurrentRoute();
             $routeParams = $route->parameters();
             $routeName = $route->getName();
@@ -335,7 +335,7 @@ class ResourceController extends Controller
                 'title' => $mediaFileName,
                 'url'   => $url . '/' . $key
             ]);
-        } else if ($mimeType == 'application/pdf' && $renderKey != null) {
+        } else if ($mimeType == 'application/pdf' && $renderKey != null && $isCDN) {
             if ($this->mediaService->checkRendererKey($renderKey, $method)) {
                 return response()->file($this->mediaService->preview($media, []));
             } else {
@@ -556,7 +556,7 @@ class ResourceController extends Controller
         if (count($responseJson->files) == 0)
             return response(['error' => 'No files attached!']);
         
-        return $this->renderResource($responseJson->files[0]->dam_url, $method, $request->size, $request->size);
+        return $this->renderResource($responseJson->files[0]->dam_url, $method, $request->size, $request->size, true);
     }
 
     public function setWorkspace(SetResourceWorkspaceRequest $request)
