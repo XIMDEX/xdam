@@ -49,6 +49,11 @@ class SolrConfig
         $eventDispatcher = new EventDispatcher();
         $clients = [];
         foreach ($this->solrFullConfig as $config) {
+            $endpointCore = $config['endpoint']['core'];
+            $solrCoreVersion = env('SOLR_CORES_VERSION', '');
+            $auxCore = $endpointCore;
+            $auxCore .= ($solrCoreVersion !== '' ? ('_' . $solrCoreVersion) : '');
+
             $solrConfig = [
                 'endpoint' => [
                     'localhost' => $config["endpoint"]
@@ -58,7 +63,10 @@ class SolrConfig
                 'resource' =>  "\\App\\Http\\Resources\\Solr\\" . $config['resource'],
                 'classHandler' => "\\App\\Services\\Solr\\CoreHandlers\\" . $config['classHandler']
             ];
-            $clients[$config['endpoint']['core']] = new Client($adapter, $eventDispatcher, $solrConfig);
+
+            $solrConfig['endpoint']['localhost']['core'] = $auxCore;
+            $clients[$endpointCore] = new Client($adapter, $eventDispatcher, $solrConfig);
+            //$clients[$config['endpoint']['core']] = new Client($adapter, $eventDispatcher, $solrConfig);
         }
         return $clients;
     }
