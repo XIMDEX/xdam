@@ -124,7 +124,7 @@ class CDNService
         $cdnAccessPermission = CDNAccessPermission::where('cdn_id', $cdnID)->first();
         
         if ($cdnAccessPermission === null) return false;
-        if ($accessPermissionType !== $cdnAccessPermission->getType()) {
+        if ($accessPermissionType !== $cdnAccessPermission->type) {
             $deleted = CDNAccessPermissionRule::where('access_permission_id', $cdnAccessPermission->id)
                         ->delete();
             $cdnAccessPermission->type = $accessPermissionType;
@@ -271,16 +271,30 @@ class CDNService
         return $results;
     }
 
-    public function getAttachedDamResource($cdn, $hash)
+    public function getAttachedDamResource($hash)
     {
-        $match = CDNHash::where('cdn_id', $cdn->id)
-                    ->where('resource_hash', $hash)
+        $match = CDNHash::where('resource_hash', $hash)
                     ->first();
         
         if ($match !== null) {
             $resource = DamResource::where('id', $match->resource_id)
                             ->first();
             return $resource;
+        }
+
+        return null;
+    }
+
+    public function getCDNAttachedToDamResource($hash, $resource)
+    {
+        $match = CDNHash::where('resource_hash', $hash)
+                    ->where('resource_id', $resource->id)
+                    ->first();
+
+        if ($match !== null) {
+            $cdn = CDN::where('id', $match->cdn_id)
+                        ->first();
+            return $cdn;
         }
 
         return null;

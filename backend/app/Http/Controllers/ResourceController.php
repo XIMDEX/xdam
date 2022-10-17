@@ -533,16 +533,21 @@ class ResourceController extends Controller
 
     public function renderCDNResource(CDNRequest $request)
     {
-        $cdnInfo = $this->cdnService->getCDNInfo($request->cdn_code);
         $method = request()->method();
-
-        if ($cdnInfo === null)
-            return response(['error' => 'This CDN doesn\'t exist!'], Response::HTTP_BAD_REQUEST);
-
-        $resource = $this->cdnService->getAttachedDamResource($cdnInfo, $request->damResourceHash);
+        $ipAddress = $_SERVER['REMOTE_ADDR'];
+        $originURL = $request->headers->get('referer');
+        $resource = $this->cdnService->getAttachedDamResource($request->damResourceHash);
 
         if ($resource === null)
             return response(['error' => 'Error! No resource found.'], Response::HTTP_BAD_REQUEST);
+
+        $cdnInfo = $this->cdnService->getCDNAttachedToDamResource($request->damResourceHash, $resource);
+
+        if ($cdnInfo === null)
+            return response(['error' => 'This CDN doesn\'t exist!'], Response::HTTP_BAD_REQUEST);
+        
+        if (!$cdnInfo->checkAccessRequirements($ipAddress, $originURL))
+            return response()->json(['error' => 'You can\'t access this CDN.'], Response::HTTP_UNAUTHORIZED);
 
         if (!$this->cdnService->isCollectionAccessible($resource, $cdnInfo))
             return response(['error' => 'Forbidden access!'], Response::HTTP_BAD_REQUEST);
