@@ -24,6 +24,7 @@ class SolrService
 {
 
     private FacetManager $facetManager;
+    private SolrConfig $solrConfig;
     /** @var Client[] $clients  */
     private array $clients;
 
@@ -35,6 +36,7 @@ class SolrService
     public function __construct(FacetManager $facetManager, SolrConfig $solrConfig)
     {
         $this->facetManager = $facetManager;
+        $this->solrConfig = $solrConfig;
         $this->clients = $solrConfig->getClients();
     }
 
@@ -77,18 +79,20 @@ class SolrService
      */
     public function getClientFromResource(DamResource $damResource, $attempt = 0)
     {
+        $client = null;
+
         try {
-            return $this->getClientFromCollection($damResource->collection()->first());
+            $client = $this->getClientFromCollection($damResource->collection);
         } catch (\Exception $ex) {
             // echo $ex->getMessage();
 
             if ($attempt < 20) {
                 sleep(5);
-                return $this->getClientFromResource($damResource, $attempt++);
+                $client = $this->getClientFromResource($damResource, $attempt + 1);
             }
         }
-        
-        return null;
+
+        return $client;
     }
 
 
@@ -104,11 +108,14 @@ class SolrService
     /**
      * update or save a document in solr
      * @param DamResource $damResource
+     * @param string $solrVersion
      * @return ResultInterface
      * @throws Exception
      */
-    public function saveOrUpdateDocument(DamResource $damResource): ResultInterface
+    public function saveOrUpdateDocument(DamResource $damResource, $solrVersion = null): ResultInterface
     {
+        $solrVersion = $this->getCoreVersion($solrVersion);
+        $this->clients = $this->solrConfig->updateSolariumClients($solrVersion);
         $client = $this->getClientFromResource($damResource);
         $createCommand = $client->createUpdate();
         $document = $createCommand->createDocument();
@@ -205,7 +212,7 @@ class SolrService
     {
         // Updates the facets filter
         $this->updateFacetsFilter($facetsFilter);
-        
+        $this->clients = $this->solrConfig->updateSolariumClients($this->getCoreVersion(null));
         $client = $this->getClientFromCollection($collection);
         $core = $collection->accept;
         $classCore = $client->getOptions()['classHandler'];
@@ -264,6 +271,7 @@ class SolrService
 
         // the facets returned here are a complete unfiltered list, only the one that has been selected is marked as selected
         $facets = $this->stdToArray($this->facetManager->getFacets($faceSetFound, $facetsFilter, $core));
+        
         foreach ($facets as $key => $facet) {
             ksort($facets[$key]['values']);
         }
@@ -341,5 +349,15 @@ class SolrService
         }
 
         return "";
+    }
+
+    public function getCoreVersion($coreVersion)
+    {
+        return $this->solrConfig->getCoreVersion($coreVersion);
+    }
+
+    public function getCoreNameVersioned($solrCore, $solrVersion = null)
+    {
+        return $this->solrConfig->getCoreNameVersioned($solrCore, $solrVersion);
     }
 }
