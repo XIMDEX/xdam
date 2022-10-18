@@ -42,9 +42,10 @@ class SolrConfig
 
     /**
      * Returns a list of instantiated connection clients
+     * @param string $solrVersion
      * @return Client[]
      */
-    private function getSolariumClients(): array
+    private function getSolariumClients($solrVersion = null): array
     {
         $adapter = new Curl();
         $adapter->setTimeout(0);
@@ -53,9 +54,7 @@ class SolrConfig
 
         foreach ($this->solrFullConfig as $config) {
             $endpointCore = $config['endpoint']['core'];
-            $solrCoreVersion = env('SOLR_CORES_VERSION', '');
-            $auxCore = $endpointCore;
-            $auxCore .= ($solrCoreVersion !== '' ? ('_' . $solrCoreVersion) : '');
+            $auxCore = $this->getCoreNameVersioned($endpointCore, $this->getCoreVersion($solrVersion));
             $this->appendSolrConfigAlias($endpointCore, $auxCore);
 
             $solrConfig = [
@@ -68,12 +67,17 @@ class SolrConfig
                 'classHandler' => "\\App\\Services\\Solr\\CoreHandlers\\" . $config['classHandler']
             ];
 
-            $solrConfig['endpoint']['localhost']['core'] = $auxCore;
+            if ($solrVersion !== null) $solrConfig['endpoint']['localhost']['core'] = $auxCore;
             $clients[$endpointCore] = new Client($adapter, $eventDispatcher, $solrConfig);
             //$clients[$config['endpoint']['core']] = new Client($adapter, $eventDispatcher, $solrConfig);
         }
 
         return $clients;
+    }
+
+    public function updateSolariumClients($solrVersion): array
+    {
+        return $this->getSolariumClients($solrVersion);
     }
 
     /**
@@ -192,9 +196,10 @@ class SolrConfig
      * It is in charge of going through each client and deleting all the documents
      * @return string
      */
-    public function cleanDocuments(array $excludedCores, $action): string
+    public function cleanDocuments(array $excludedCores, $action, $solrVersion): string
     {
         $counter = 0;
+        $this->clients = $this->updateSolariumClients($this->getCoreVersion($solrVersion));
 
         foreach ($this->clients as $client) {
             //exclude cores
@@ -303,4 +308,30 @@ class SolrConfig
         return 'For core ' . $opts['core'] . " execute this command to continue the installation: \n sudo cp $core_files_path/* $coreConfigDir && sudo chown -R solr:solr $coreConfigDir && sudo cp $core_config_files_path/* $coreConfigDir/conf && sudo chown -R solr:solr $coreConfigDir/conf \n";
     }
 
+    public function getSolrCores(): array
+    {
+        $cores = [];
+
+        foreach ($this->clients as $key => $value) {
+            $cores[] = $key;
+        }
+
+        return $cores;
+    }
+
+    public function getCoreVersion($coreVersion)
+    {
+        $solrVersion = env('SOLR_CORES_VERSION', '');
+        $solrVersionUsed = $solrVersion;
+        $solrVersionUsed = ($coreVersion !== NULL ? $coreVersion : $solrVersionUsed);
+        return $solrVersionUsed;
+    }
+
+    public function getCoreNameVersioned($solrCore, $solrVersion = null)
+    {
+        $solrVersion = (gettype($solrVersion) === 'array' && count($solrVersion) > 0 ? $solrVersion[0] : $solrVersion);
+        if ($solrVersion === null || $solrVersion === '') return $solrCore;
+        if (gettype($solrVersion) === 'array' && count($solrVersion) === 0) return $solrCore;
+        return $solrCore . '_' . $solrVersion;
+    }
 }
