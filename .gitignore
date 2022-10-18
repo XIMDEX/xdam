@@ -1,9 +1,6 @@
 .DS_Store
 .idea
 .vscode
-<<<<<<< HEAD
 **backend/node_modules/*
-=======
 **/vendor/*
 backend/composer.phar
->>>>>>> origin/develop

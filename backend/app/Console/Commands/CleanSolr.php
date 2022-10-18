@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\Solr\SolrConfig;
+use App\Services\Solr\SolrService;
 use Illuminate\Console\Command;
 
 class CleanSolr extends Command
@@ -12,7 +13,7 @@ class CleanSolr extends Command
      *
      * @var string
      */
-    protected $signature = 'solr:clean {--exclude=*} {--fromReindex=false}';
+    protected $signature = 'solr:clean {--exclude=*} {--fromReindex=false} {--solrVersion=}';
 
     /**
      * The console command description.
@@ -35,13 +36,15 @@ class CleanSolr extends Command
      * Execute the console command.
      *
      * @param SolrConfig $solrConfig
+     * @param SolrService $solrService
      * @return int
      */
-    public function handle(SolrConfig $solrConfig)
+    public function handle(SolrConfig $solrConfig, SolrService $solrService)
     {
         $fromReindex = $this->option('fromReindex');
         $excludedCores = $this->option('exclude');
-        $this->line($solrConfig->cleanDocuments($excludedCores, $fromReindex == 'true' ? 'reindex' : 'clean'));
+        $solrVersion = $this->option('solrVersion');
+        $this->line($solrConfig->cleanDocuments($excludedCores, $fromReindex == 'true' ? 'reindex' : 'clean', $solrVersion));
         return 0;
     }
 }
