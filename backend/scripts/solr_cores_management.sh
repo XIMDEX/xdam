@@ -9,16 +9,20 @@ create_core() {
 	local core_versioned="$2"
 
     # Creates the Solr core
-	sudo su - solr -c "/opt/solr/bin/solr create -c $core_versioned -n data_driven_schema_configs"
+	error=`sudo su - solr -c "/opt/solr/bin/solr create -c $core_versioned -n data_driven_schema_configs" 2>&1`
+	if [[ $error == *"Created new core"* ]]; then
+		echo "CORE $core_versioned CREATED"
+		# Stores the core's configuration
+		sudo cp ./storage/solr_core_conf/core_files/* /var/solr/data/$core_versioned
+		sudo chown -R solr:solr /var/solr/data/$core_versioned
+		sudo cp ./storage/solr_core_conf/core_conf_files/* /var/solr/data/$core_versioned/conf
+		sudo chown -R solr:solr /var/solr/data/$core_versioned/conf
 
-	# Stores the core's configuration
-	sudo cp ./storage/solr_core_conf/core_files/* /var/solr/data/$core_versioned
-	sudo chown -R solr:solr /var/solr/data/$core_versioned
-	sudo cp ./storage/solr_core_conf/core_conf_files/* /var/solr/data/$core_versioned/conf
-	sudo chown -R solr:solr /var/solr/data/$core_versioned/conf
-
-	# Installs the Solr core
-	echo "y" | php artisan solr:install --core=$core_versioned
+		# Installs the Solr core
+		echo "y" | php artisan solr:install --core=$core_versioned
+	else
+		echo "CORE $core_versioned CREATION SKIPPED DUE TO ERROR $error"
+	fi
 }
 
 delete_core() {

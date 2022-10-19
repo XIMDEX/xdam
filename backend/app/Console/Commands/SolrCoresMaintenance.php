@@ -35,6 +35,7 @@ class SolrCoresMaintenance extends Command
     private function printErrorMessage()
     {
         echo 'ERROR! You must provide a valid --action parameter. This can be either "CREATE", "DELETE", or "REINDEX"' . PHP_EOL;
+	echo 'SYNTAX: solrCores:maintenance {--action=} {--core=*} {--coreVersion=}' . PHP_EOL;
     }
 
     /**
@@ -79,23 +80,21 @@ class SolrCoresMaintenance extends Command
     private function manageCoresCreation(SolrService $solrService, $path, $coresToInstall, $solrCores, $coreVersion)
     {
         // Asks for a double user confirmation
-        if ($this->confirm('This action will create the specified set of cores, and will remove sensible information stored. ' . 
-                            'Do you understand the risks associated with this action?', false)) {
-            if ($this->confirm('Are you absolutely sure to continue? This may cause irreversible damage to the stored data.', false)) {
-                // Iterates through the cores...
-                foreach ($coresToInstall as $core) {
-                    // Checks if the core exists
-                    if (in_array($core, $solrCores)) {
-                        // Gets the core name versioned
-                        $coreNameVersioned = $this->getCoreNameVersioned($solrService, $core, $coreVersion);
+        if ($this->confirm('New CORES with version '.$coreVersion.' will be created. OK?', false)) {
+            // Iterates through the cores...
+            foreach ($coresToInstall as $core) {
+                // Checks if the core exists
+                if (in_array($core, $solrCores)) {
+                    // Gets the core name versioned
+                    $coreNameVersioned = $this->getCoreNameVersioned($solrService, $core, $coreVersion);
+                    echo "Creating CORE " . $coreNameVersioned . PHP_EOL;
                 
-                        // Executes the shell command
-                        shell_exec("$path create $core $coreNameVersioned");
-                    }
+                    // Executes the shell command showing error or success
+                    echo shell_exec("$path create $core $coreNameVersioned");
                 }
-
-                return true;
             }
+
+            return true;
         }
 
         return false;
@@ -113,18 +112,19 @@ class SolrCoresMaintenance extends Command
     private function manageCoresDeleting(SolrService $solrService, $path, $coresToDelete, $solrCores, $coreVersion)
     {
         // Asks for a double user confirmation
-        if ($this->confirm('This action will delete the specified set of cores, and will remove sensible information stored. ' . 
-                            'Do you understand the risks associated with this action?', false)) {
-            if ($this->confirm('Are you absolutely sure to continue? This may cause irreversible damage to the stored data.', false)) {
+        if ($this->confirm('Deletion of a set of cores will remove information. ' . 
+                            'OK to proceed?', false)) {
+            if ($this->confirm('Are you absolutely sure? This may cause irreversible damage to the stored data.', false)) {
                 // Iterates through the cores...
                 foreach ($coresToDelete as $core) {
                     // Checks if the core exists
                     if (in_array($core, $solrCores)) {
                         // Gets the core name versioned
                         $coreNameVersioned = $this->getCoreNameVersioned($solrService, $core, $coreVersion);
+                        echo "Deleting CORE " . $coreNameVersioned . PHP_EOL;
 
                         // Executes the shell command
-                        shell_exec("$path delete $core $coreNameVersioned");
+                        echo shell_exec("$path delete $core $coreNameVersioned");
                     }
                 }
 
@@ -146,9 +146,9 @@ class SolrCoresMaintenance extends Command
     private function manageCoresReindexing(SolrService $solrService, $coresToReindex, $solrCores, $coreVersion)
     {
         // Asks for a double user confirmation
-        if ($this->confirm('This action will reindex the specified set of cores, and will remove sensible information stored. ' . 
-                            'Do you understand the risks associated with this action?', false)) {
-            if ($this->confirm('Are you absolutely sure to continue? This may cause irreversible damage to the stored data.', false)) {
+        if ($this->confirm('Reindexing of a set of cores could remove stored information. ' . 
+                            'OK to proceed?', false)) {
+            if ($this->confirm('Are you absolutely sure? This may cause irreversible damage to the stored data.', false)) {
                 // Checks the excluded cores
                 $excludedCores = $this->getExcludedCores($solrCores, $coresToReindex);
 
