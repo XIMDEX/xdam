@@ -3,8 +3,11 @@
 namespace App\Models;
 
 use App\Enums\MediaType;
+use App\Enums\ResourceType;
 use App\Enums\Roles;
 use App\Enums\ThumbnailTypes;
+use App\Models\Collection;
+use App\Models\Media as MediaModel;
 use App\Traits\UsesUuid;
 use App\Models\Workspace;
 use App\Models\WorkspaceResource;
@@ -88,6 +91,11 @@ class DamResource extends Model implements HasMedia, TaggableInterface
     public function lom(): HasOne
     {
         return $this->hasOne(Lom::class);
+    }
+
+    public function associatedMedia(): BelongsToMany
+    {
+        return $this->belongsToMany(MediaModel::class);
     }
 
     // public function organizations()
@@ -198,5 +206,22 @@ class DamResource extends Model implements HasMedia, TaggableInterface
         }
 
         return $workspacesToRemove;
+    }
+
+    public function doesThisResourceSupportsAnAdditionalFile()
+    {
+        $totalFiles = $this->getNumberOfFilesAttached();
+        $collection = $this->collection()->first();
+        if ($collection === null) return false;
+        if ($collection->getMaxNumberOfFiles() === Collection::UNLIMITED_FILES) return true;
+        return $totalFiles < $collection->getMaxNumberOfFiles();
+    }
+
+    public function getNumberOfFilesAttached()
+    {
+        $media = Media::where('model_id', $this->id)
+                    ->where('collection_name', MediaType::File)
+                    ->get();
+        return count($media);
     }
 }

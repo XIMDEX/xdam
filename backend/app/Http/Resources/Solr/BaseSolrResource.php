@@ -86,4 +86,19 @@ class BaseSolrResource extends JsonResource
     {
         return '';
     }
+
+    protected function getCoreResourceType()
+    {
+        return '';
+    }
+
+    protected function getCollections()
+    {
+        return [$this->collection->id];
+    }
+
+    protected function getMaxFiles()
+    {
+        return $this->collection->getMaxNumberOfFiles();
+    }
 }

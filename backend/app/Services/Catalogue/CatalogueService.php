@@ -42,6 +42,15 @@ class CatalogueService
         );
     }
 
+    public function indexByWorkspace($pageParams, $sortParams, $facetsFilter, $workspace): stdClass
+    {
+        return $this->formatSolrResponseWithWorkspaceInformation(
+            $this->solrService->distributedPaginatedQueryByFacet(
+                $pageParams, $sortParams, $facetsFilter, $workspace
+            )
+        );
+    }
+
     private function formatSolrResponseWithWorkspaceInformation($solrResponse)
     {
         $response = $solrResponse;

@@ -57,6 +57,11 @@ class CourseSolrResource extends BaseSolrResource
         return $value ?? false;
     }
 
+    protected function getCoreResourceType()
+    {
+        return ResourceType::course;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -70,32 +75,34 @@ class CourseSolrResource extends BaseSolrResource
         $cost = $this->data->description->cost ?? 0;
 
         return [
-            'id' => $this->getID(),
-            //way to get name, temporal required by frontend. Must be only $data->description->name
-            'name' => $this->getName(),
-            'data' => $this->getData($tags, $categories),
-            'active' => $this->getActive(),
-            'aggregated' => $this->getBooleanDataValue('aggregated'),
-            'internal' => $this->getBooleanDataValue('internal'),
-            'external' => $this->getBooleanDataValue('external'),
-            'type' => $this->getType(),
-            'tags' => $this->formatTags($tags),
-            'categories' => $this->formatCategories($categories),
-            'files' => $this->getFiles(),
-            'previews' => $this->getPreviews(),
-            'workspaces' => $this->getWorkspaces(),
-            'organization' => $this->getOrganization(),
-            //Cost is an integer representing the value. int 1000 = 10.00€
-            'cost' => $cost,
-            'currency' => $this->data->description->currency ?? 'EUR',
-            'isFree' => !($cost > 0),
-            //Duration is an integer representing the value. int 1000 = 1000 seconds
-            'duration' => $this->data->description->duration ?? 0,
-            'skills' => $this->data->description->skills ?? [],
-            'preparations' => $this->data->description->preparations ?? [],
-            'achievements' => $this->data->description->achievements ?? [],
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'id'                    => $this->getID(),
+            // Way to get name, temporal required by frontend. Must be only $data->description->name
+            'name'                  => $this->getName(),
+            'data'                  => $this->getData($tags, $categories),
+            'active'                => $this->getActive(),
+            'aggregated'            => $this->getBooleanDataValue('aggregated'),
+            'internal'              => $this->getBooleanDataValue('internal'),
+            'external'              => $this->getBooleanDataValue('external'),
+            'type'                  => $this->getType(),
+            'tags'                  => $this->formatTags($tags),
+            'categories'            => $this->formatCategories($categories),
+            'files'                 => $this->getFiles(),
+            'previews'              => $this->getPreviews(),
+            'workspaces'            => $this->getWorkspaces(),
+            'organization'          => $this->getOrganization(),
+            // Cost is an integer representing the value. int 1000 = 10.00€
+            'cost'                  => $cost,
+            'currency'              => $this->data->description->currency ?? 'EUR',
+            'isFree'                => !($cost > 0),
+            // Duration is an integer representing the value. int 1000 = 1000 seconds
+            'duration'              => $this->data->description->duration ?? 0,
+            'skills'                => $this->data->description->skills ?? [],
+            'preparations'          => $this->data->description->preparations ?? [],
+            'achievements'          => $this->data->description->achievements ?? [],
+            'created_at'            => $this->created_at,
+            'updated_at'            => $this->updated_at,
+            'collections'           => $this->getCollections(),
+            'core_resource_type'    => $this->getCoreResourceType()
         ];
     }
 }
