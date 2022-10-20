@@ -7,6 +7,11 @@ use App\Http\Resources\Solr\BaseSolrResource;
 
 class CourseSolrResource extends BaseSolrResource
 {
+    public function __construct($resource, $reindexLOM = false)
+    {
+        parent::__construct($resource, $reindexLOM);
+    }
+
     public static function generateQuery($searchTerm)
     {
         return "name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5 achievements:*$searchTerm*^3 OR preparations:*$searchTerm*^3";

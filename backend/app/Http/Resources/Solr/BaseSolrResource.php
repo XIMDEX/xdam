@@ -4,11 +4,20 @@ namespace App\Http\Resources\Solr;
 
 use App\Enums\MediaType;
 use App\Http\Resources\MediaResource;
+use App\Models\Lom;
 use App\Utils\Utils;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class BaseSolrResource extends JsonResource
 {
+    private bool $reindexLOM;
+
+    public function __construct($resource, $reindexLOM = false)
+    {
+        parent::__construct($resource);
+        $this->reindexLOM = $reindexLOM;
+    }
+
     public static function generateQuery($searchTerm)
     {
         return "name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5";
@@ -100,5 +109,15 @@ class BaseSolrResource extends JsonResource
     protected function getMaxFiles()
     {
         return $this->collection->getMaxNumberOfFiles();
+    }
+
+    protected function getLOMs()
+    {
+        $loms = Lom::where('dam_resource_id', $this->id)
+                    ->get();
+
+        if (!$this->reindexLOM) {
+            
+        }
     }
 }

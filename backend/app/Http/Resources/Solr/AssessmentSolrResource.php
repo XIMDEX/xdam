@@ -7,6 +7,11 @@ use App\Http\Resources\Solr\BaseSolrResource;
 
 class AssessmentSolrResource extends BaseSolrResource
 {
+    public function __construct($resource, $reindexLOM = false)
+    {
+        parent::__construct($resource, $reindexLOM);
+    }
+
     protected function formatTags($tags)
     {
         return $tags ?? [''];

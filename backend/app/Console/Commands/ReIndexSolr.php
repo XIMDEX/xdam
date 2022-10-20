@@ -58,12 +58,13 @@ class ReIndexSolr extends Command
 
         $resources = $resourceService->getAll();
         $count = 0;
+        $reindexLOM = (!in_array('lom', $excludedCores));
 
         foreach ($resources as $resource) {
             $resourceCoreName = $solrService->getClientFromResource($resource)->getEndpoint()->getOptions()['core'];
 
             if (!in_array($resourceCoreName, $excludedCores) && $resourceCoreName !== null) {
-                $solrService->saveOrUpdateDocument($resource, $solrVersion);
+                $solrService->saveOrUpdateDocument($resource, $solrVersion, $reindexLOM);
                 $count++;
             }
         }

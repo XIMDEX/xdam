@@ -44,11 +44,13 @@ class SolrService
      * returns the document that will be finally indexed in solr
      * @param DamResource $resource
      * @param $resourceClass
+     * @param bool $reindexLOM
      * @return array
      */
-    private function getDocumentFromResource(DamResource $resource, $resourceClass): array
+    private function getDocumentFromResource(DamResource $resource, $resourceClass,
+                                                $reindexLOM = false): array
     {
-        return json_decode((new $resourceClass($resource))->toJson(), true);
+        return json_decode((new $resourceClass($resource, $reindexLOM))->toJson(), true);
     }
 
     /**
@@ -74,6 +76,7 @@ class SolrService
     /**
      * given a resource, returns the required solr client instance
      * @param DamResource $damResource
+     * @param integer $attempt
      * @return mixed
      * @throws Exception
      */
@@ -86,8 +89,8 @@ class SolrService
         } catch (\Exception $ex) {
             // echo $ex->getMessage();
 
-            if ($attempt < 20) {
-                sleep(5);
+            if ($attempt < 30) {
+                sleep(10);
                 $client = $this->getClientFromResource($damResource, $attempt + 1);
             }
         }
@@ -109,10 +112,12 @@ class SolrService
      * update or save a document in solr
      * @param DamResource $damResource
      * @param string $solrVersion
+     * @param bool $reindexLOM
      * @return ResultInterface
      * @throws Exception
      */
-    public function saveOrUpdateDocument(DamResource $damResource, $solrVersion = null): ResultInterface
+    public function saveOrUpdateDocument(DamResource $damResource, $solrVersion = null,
+                                            $reindexLOM = false): ResultInterface
     {
         $solrVersion = $this->getCoreVersion($solrVersion);
         $this->clients = $this->solrConfig->updateSolariumClients($solrVersion);
@@ -120,7 +125,8 @@ class SolrService
         $createCommand = $client->createUpdate();
         $document = $createCommand->createDocument();
 
-        $documentResource = $this->getDocumentFromResource($damResource, $client->getOption('resource'));
+        $documentResource = $this->getDocumentFromResource($damResource, $client->getOption('resource'),
+                                                            $reindexLOM);
 
         foreach ($documentResource as $key => $value) {
             $document->$key = $value;

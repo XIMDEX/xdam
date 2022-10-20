@@ -1,3 +1,18 @@
 {
-    
+    "dam_resource_id": {
+        "name": "dam_resource_id",
+        "type": "string",
+        "multiValued": false,
+        "indexed": true,
+        "required": true,
+        "stored": true
+    },
+    "id": {
+        "name": "id",
+        "type": "integer",
+        "multivalued": false,
+        "indexed": true,
+        "required": true,
+        "stored": true
+    }
 }

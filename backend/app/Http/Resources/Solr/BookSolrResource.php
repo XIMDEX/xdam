@@ -10,6 +10,11 @@ use App\Utils\Utils as AppUtils;
 
 class BookSolrResource extends BaseSolrResource
 {
+    public function __construct($resource, $reindexLOM = false)
+    {
+        parent::__construct($resource, $reindexLOM);
+    }
+
     protected function formatCategories($categories)
     {
         return $categories ?? ['uncategorized'];

@@ -13,6 +13,11 @@ use App\Utils\DamUrlUtil;
 
 class DocumentSolrResource extends BaseSolrResource
 {
+    public function __construct($resource, $reindexLOM = false)
+    {
+        parent::__construct($resource, $reindexLOM);
+    }
+
     protected function getPreviews()
     {
         $files = $this->getFiles();
