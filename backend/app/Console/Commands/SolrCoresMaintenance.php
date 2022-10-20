@@ -35,7 +35,7 @@ class SolrCoresMaintenance extends Command
     private function printErrorMessage()
     {
         echo 'ERROR! You must provide a valid --action parameter. This can be either "CREATE", "DELETE", or "REINDEX"' . PHP_EOL;
-	echo 'SYNTAX: solrCores:maintenance {--action=} {--core=*} {--coreVersion=}' . PHP_EOL;
+	    echo 'SYNTAX: solrCores:maintenance {--action=} {--core=*} {--coreVersion=}' . PHP_EOL;
     }
 
     /**

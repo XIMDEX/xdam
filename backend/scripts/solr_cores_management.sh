@@ -10,6 +10,7 @@ create_core() {
 
     # Creates the Solr core
 	error=`sudo su - solr -c "/opt/solr/bin/solr create -c $core_versioned -n data_driven_schema_configs" 2>&1`
+
 	if [[ $error == *"Created new core"* ]]; then
 		echo "CORE $core_versioned CREATED"
 		# Stores the core's configuration
