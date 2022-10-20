@@ -7,6 +7,7 @@ use App\Enums\ThumbnailTypes;
 use App\Http\Requests\addFileToResourceRequest;
 use App\Http\Requests\addPreviewToResourceRequest;
 use App\Http\Requests\addUseRequest;
+use App\Http\Requests\CDNRequest;
 use App\Http\Requests\GetDamResourceRequest;
 use App\Http\Requests\ResouceCategoriesRequest;
 use App\Http\Requests\SetTagsRequest;
@@ -17,6 +18,7 @@ use App\Http\Resources\ExploreCoursesCollection;
 use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\ResourceResource;
 use App\Models\Category;
+use App\Services\CDNService;
 use App\Models\DamResource;
 use App\Models\DamResourceUse;
 use App\Models\Media;
@@ -27,6 +29,7 @@ use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Utils\DamUrlUtil;
 use Error;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Mimey\MimeTypes;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,6 +47,11 @@ class ResourceController extends Controller
     private $mediaService;
 
     /**
+     * @var CDNService
+     */
+    private $cdnService;
+
+    /**
      * @var WorkspaceService
      */
     private $workspaceService;
@@ -57,14 +65,17 @@ class ResourceController extends Controller
      * CategoryController constructor.
      * @param ResourceService $resourceService
      * @param MediaService $mediaService
+     * @param CDNService $cdnService
      * @param WorkspaceService $workspaceService
      * @param UserService $userService
      */
     public function __construct(ResourceService $resourceService, MediaService $mediaService,
-                                WorkspaceService $workspaceService, UserService $userService)
+                                CDNService $cdnService, WorkspaceService $workspaceService,
+                                UserService $userService)
     {
         $this->resourceService = $resourceService;
         $this->mediaService = $mediaService;
+        $this->cdnService = $cdnService;
         $this->workspaceService = $workspaceService;
         $this->userService = $userService;
     }
@@ -285,39 +296,128 @@ class ResourceController extends Controller
      */
     public function render($damUrl, $size = null)
     {
-        $sizes = ['small', 'medium', 'raw'];
+        $method = request()->method();
+        return $this->renderResource($damUrl, $method, $size, $size);
+    }
 
-        if($size && !in_array($size, $sizes)) {
-            throw new Error('last url paramater must be equals to "small", "medium" or "raw"');
-        }
-
-        switch ($size) {
-            case 'small':
-                $size = 25;
-                break;
-            case 'medim':
-                $size = 50;
-                break;
-            case 'raw':
-                $size = 'raw';
-                break;
-            default:
-                $size = 90;
-                break;
-        }
-
+    private function renderResource($damUrl, $method = null, $size = null, $renderKey = null, $isCDN = false)
+    {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         $media = Media::findOrFail($mediaId);
+        $mediaFileName = explode('/', $media->getPath());
+        $mediaFileName = $mediaFileName[count($mediaFileName) - 1];
+        $size = ($size === null ? 'default' : $size);
 
         $mimeType = $media->mime_type;
         $fileType = explode('/', $mimeType)[0];
 
-        if($fileType == 'video' || $fileType == 'image') {
-            $compressed = $this->mediaService->preview($media, $size);
-            return $compressed->response('jpeg', $size === 'raw' ? 100 : $size);
+        if ($fileType == 'video' || $fileType == 'image') {
+            $sizeValue = $this->getResourceSize($fileType, $size);
+            $availableSizes = $this->getAvailableResourceSizes();
+            $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue);
+
+            if ($fileType == 'image') {
+                $response = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['sizes'][$size]);
+                $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
+                return $response;
+            }
+
+            return response()->file($compressed);
+        } else if ($mimeType == 'application/pdf' && $renderKey == null && $isCDN) {
+            $route = Route::getCurrentRoute();
+            $routeParams = $route->parameters();
+            $routeName = $route->getName();
+            $url = route($routeName, $routeParams);
+            $key = $this->mediaService->generateRenderKey();
+
+
+            return view('pdfViewer', [
+                'title' => $mediaFileName,
+                'url'   => $url . '/' . $key
+            ]);
+        } else if ($mimeType == 'application/pdf' && $renderKey != null && $isCDN) {
+            if ($this->mediaService->checkRendererKey($renderKey, $method)) {
+                return response()->file($this->mediaService->preview($media, []));
+            } else {
+                return response(['error' => 'Error! You don\'t have permission to view this file.'], Response::HTTP_BAD_REQUEST);
+            }
         }
 
-        return response()->file($this->mediaService->preview($media));
+        return response()->file($this->mediaService->preview($media, []));
+    }
+
+    private function getAvailableResourceSizes()
+    {
+        $sizes = [
+            'image' => [
+                'allowed_sizes' => ['small', 'medium', 'raw', 'default'],
+                'sizes' => [
+                    'small'     => 25,
+                    'medium'    => 50,
+                    'raw'       => 'raw',
+                    'default'   => 90
+                ],
+                'error_message' => ''
+            ],
+            'video' => [
+                'allowed_sizes' => ['very_low', 'low', 'standard', 'hd', 'raw', 'thumbnail', 'default'],
+                'sizes_scale'   => ['very_low', 'low', 'standard', 'hd'],   // Order Lowest to Greatest
+                'sizes' => [
+                    // 'lowest'        => array('width' => 256, 'height' => 144, 'name' => '144p'),
+                    'very_low'      => array('width' => 426, 'height' => 240, 'name' => '240p'),
+                    'low'           => array('width' => 640, 'height' => 360, 'name' => '360p'),
+                    'standard'      => array('width' => 854, 'height' => 480, 'name' => '480p'),
+                    'hd'            => array('width' => 1280, 'height' => 720, 'name' => '720p'),
+                    // 'full_hd'       => array('width' => 1920, 'height' => 1080, 'name' => '1080p'),
+                    'raw'           => 'raw',
+                    'thumbnail'     => 'thumbnail',
+                    'default'       => 'raw'
+                ],
+                'error_message' => ''
+            ]
+        ];
+
+        foreach ($sizes as $k => $v) {
+            $sizes[$k]['error_message'] = $this->setErrorMessage($sizes[$k]['allowed_sizes']);
+        }
+
+        return $sizes;
+    }
+
+    private function setErrorMessage($sizes)
+    {
+        $errorMessage = "Size parameter must be equals to ";
+
+        for ($i = 0; $i < count($sizes); $i++) {
+            $current = $sizes[$i];
+            if ($i < count($sizes) - 2) {
+                $errorMessage .= "'$current', ";
+            } else if ($i < count($sizes) - 1) {
+                $errorMessage .= "'$current' ";
+            } else if ($i == count($sizes) - 1) {
+                if ($i == 0) {
+                    $errorMessage .= "'$current'.";
+                } else {
+                    $errorMessage .= "or '$current'.";
+                }
+            }
+        }
+        
+        return $errorMessage;
+    }
+
+    private function getResourceSize($fileType, $size = null)
+    {
+        $sizes = $this->getAvailableResourceSizes();
+
+        if ($size === null) $size = 'default';
+
+        if (!in_array($size, $sizes[$fileType]['allowed_sizes'])) {
+            throw new Error($sizes[$fileType]['error_message']);
+            $size = 'default';
+        }
+
+        return $sizes[$fileType]['sizes'][$size];
     }
 
     /**
@@ -431,6 +531,39 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    public function renderCDNResource(CDNRequest $request)
+    {
+        $method = request()->method();
+        $ipAddress = $_SERVER['REMOTE_ADDR'];
+        $originURL = $request->headers->get('referer');
+        $resource = $this->cdnService->getAttachedDamResource($request->damResourceHash);
+
+        if ($resource === null)
+            return response(['error' => 'Error! No resource found.'], Response::HTTP_BAD_REQUEST);
+
+        $cdnInfo = $this->cdnService->getCDNAttachedToDamResource($request->damResourceHash, $resource);
+
+        if ($cdnInfo === null)
+            return response(['error' => 'This CDN doesn\'t exist!'], Response::HTTP_BAD_REQUEST);
+        
+        if (!$cdnInfo->checkAccessRequirements($ipAddress, $originURL))
+            return response()->json(['error' => 'You can\'t access this CDN.'], Response::HTTP_UNAUTHORIZED);
+
+        if (!$this->cdnService->isCollectionAccessible($resource, $cdnInfo))
+            return response(['error' => 'Forbidden access!'], Response::HTTP_BAD_REQUEST);
+
+        if (!isset($request->size))
+            $request->size = null;
+
+        $resourceResponse = new ResourceResource($resource);
+        $responseJson = json_decode($resourceResponse->toJson());
+    
+        if (count($responseJson->files) == 0)
+            return response(['error' => 'No files attached!']);
+        
+        return $this->renderResource($responseJson->files[0]->dam_url, $method, $request->size, $request->size, true);
+    }
+
     public function setWorkspace(SetResourceWorkspaceRequest $request)
     {
         if (!$request->checkResourceWorkspaceChangeData())
@@ -446,5 +579,17 @@ class ResourceController extends Controller
                                                                 $request->workspace_name);
 
         return response($result)->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function getMaxFiles(DamResource $damResource)
+    {
+        $collection = $damResource->collection;
+        if ($collection === null) return response(['error' => 'No collection info found.'], Response::HTTP_BAD_REQUEST);
+        return response(['max_files' => $collection->max_number_of_files], Response::HTTP_OK);
+    }
+
+    public function getFilesCount(DamResource $damResource)
+    {
+        return response(['files_count' => $damResource->getNumberOfFilesAttached()], Response::HTTP_OK);
     }
 }

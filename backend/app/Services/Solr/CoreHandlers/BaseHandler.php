@@ -4,7 +4,6 @@ namespace App\Services\Solr\CoreHandlers;
 
 class BaseHandler
 {
-
     protected $query;
 
     public function __construct($query)

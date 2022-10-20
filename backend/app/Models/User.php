@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Enums\Abilities;
 use App\Enums\OrganizationType;
 use App\Enums\WorkspaceType;
+use App\Models\Collection;
+use App\Models\OrganizationCDN;
 use App\Traits\SetDefaultOrganizationAndWorkspace;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -50,6 +52,41 @@ class User extends Authenticatable
     public function organizations()
     {
         return $this->belongsToMany(Organization::class);
+    }
+
+    public function organizations_cdn_collections($type = null)
+    {
+        $cdns = [];
+        $collections = [];
+        $organizations = $this->organizations()->get();
+
+        foreach ($organizations as $item) {
+            $aux = OrganizationCDN::where('organization_id', $item->id)
+                    ->get();
+
+            foreach ($aux as $subitem) {
+                $cdns[] = $subitem->cdn()->first();
+            }
+        }
+
+        foreach ($cdns as $item) {
+            $cdn_collections = $item->cdn_collections()->get();
+
+            foreach ($cdn_collections as $subitem) {
+                $collection_item = Collection::where('id', $subitem->collection_id)
+                                        ->first();
+                
+                if ($collection_item !== null) {
+                    if ($type === null) {
+                        $collections[] = $collection_item;
+                    } else if ($collection_item->solr_connection === $type) {
+                        $collections[] = $collection_item;
+                    }
+                }
+            }
+        }
+
+        echo '<pre>' . var_export($collections, true) . '</pre>';
     }
 
     public function canGetCatalogue(): bool

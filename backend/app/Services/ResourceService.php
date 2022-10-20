@@ -66,23 +66,27 @@ class ResourceService
             // If is a array of files, add a association from each item
             if (is_array($params[$type])) {
                 foreach ($params[$type] as $file) {
+                    if ($model->doesThisResourceSupportsAnAdditionalFile()) {
+                        $this->mediaService->addFromRequest(
+                            $model,
+                            null,
+                            $type,
+                            ["parent_id" => $model->id],
+                            $file
+                        );
+                    }
+                }
+            } else {
+                if ($model->doesThisResourceSupportsAnAdditionalFile()) {
+                    // If is not a array, associate file directly
                     $this->mediaService->addFromRequest(
                         $model,
                         null,
                         $type,
                         ["parent_id" => $model->id],
-                        $file
+                        $params[$type]
                     );
                 }
-            } else {
-                // If is not a array, associate file directly
-                $this->mediaService->addFromRequest(
-                    $model,
-                    null,
-                    $type,
-                    ["parent_id" => $model->id],
-                    $params[$type]
-                );
             }
         }
     }
@@ -242,6 +246,17 @@ class ResourceService
             $this->linkCategoriesFromJson($resource, $params['data']);
             $this->linkTagsFromJson($resource, $params['data']);
         }
+
+        if (array_key_exists("FilesToRemove", $params)) {
+            foreach ($params["FilesToRemove"] as $mediaID) {
+                $mediaResult = Media::where('id', $mediaID)->first();
+                
+                if ($mediaResult !== null) {
+                    $this->deleteAssociatedFile($resource, $mediaResult);
+                }
+            }
+        }
+
         $this->saveAssociatedFiles($resource, $params);
         $resource = $resource->fresh();
         $this->solr->saveOrUpdateDocument($resource);
@@ -727,5 +742,22 @@ class ResourceService
 
     public function updateAsOther($toBeCloned, $theClon) {
 
+    }
+
+    public function getResource($resourceID, $collectionID)
+    {
+        $resource = DamResource::where('id', $resourceID)
+                        ->where('collection_id', $collectionID)
+                        ->first();
+        
+        return $resource;
+    }
+
+    public function getCollection($collectionID)
+    {
+        $collection = ModelsCollection::where('id', $collectionID)
+                        ->first();
+        
+        return $collection;
     }
 }

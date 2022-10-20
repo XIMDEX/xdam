@@ -14,7 +14,7 @@ class ReIndexSolr extends Command
      *
      * @var string
      */
-    protected $signature = 'solr:reindex {--exclude=*}';
+    protected $signature = 'solr:reindex {--exclude=*} {--solrVersion=}';
 
     /**
      * The console command description.
@@ -37,26 +37,37 @@ class ReIndexSolr extends Command
     public function handle(SolrService $solrService, ResourceService $resourceService)
     {
         $excludedCores = $this->option('exclude');
+        $solrVersion = $this->option('solrVersion');
+
         if (count($excludedCores) > 0) {
             $toExclude = '';
+
             foreach ($excludedCores as $core) {
-                $toExclude .= ' --exclude='.$core ;
+                $auxCore = $solrService->getCoreNameVersioned($core, $solrService->getCoreVersion(($solrVersion)));
+                $toExclude .= ' --exclude='.$auxCore ;
             }
+
             $fullCommand = 'solr:clean' . $toExclude . ' --fromReindex=true';
+            $fullCommand .= ($solrVersion === null || $solrVersion === '' ? '' : (' --solrVersion=' . $solrVersion));
             Artisan::call($fullCommand);
         } else {
-            Artisan::call('solr:clean --fromReindex=true');
+            $command = 'solr:clean --fromReindex=true';
+            $command .= ($solrVersion === null || $solrVersion === '' ? '' : (' --solrVersion=' . $solrVersion));
+            Artisan::call($command);
         }
 
         $resources = $resourceService->getAll();
         $count = 0;
+
         foreach ($resources as $resource) {
             $resourceCoreName = $solrService->getClientFromResource($resource)->getEndpoint()->getOptions()['core'];
-            if (!in_array($resourceCoreName, $excludedCores)) {
-                $solrService->saveOrUpdateDocument($resource);
+
+            if (!in_array($resourceCoreName, $excludedCores) && $resourceCoreName !== null) {
+                $solrService->saveOrUpdateDocument($resource, $solrVersion);
                 $count++;
             }
         }
+
         $this->line("$count documents indexed");
     }
 }
