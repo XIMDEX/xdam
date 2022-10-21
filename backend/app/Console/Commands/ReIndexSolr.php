@@ -14,7 +14,7 @@ class ReIndexSolr extends Command
      *
      * @var string
      */
-    protected $signature = 'solr:reindex {--exclude=*} {--solrVersion=*}';
+    protected $signature = 'solr:reindex {--exclude=*} {--solrVersion=}';
 
     /**
      * The console command description.
