@@ -112,5 +112,10 @@
     "docValues": false,
     "indexed": false,
     "multiValued": true 
+  },
+  "lom": {
+    "name": "lom",
+    "type": "string",
+    "multiValued": true
   }
 }

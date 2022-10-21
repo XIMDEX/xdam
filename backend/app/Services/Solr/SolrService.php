@@ -50,7 +50,9 @@ class SolrService
     private function getDocumentFromResource(DamResource $resource, $resourceClass,
                                                 $reindexLOM = false): array
     {
-        return json_decode((new $resourceClass($resource, $reindexLOM))->toJson(), true);
+        $lomClient = null;
+        if (array_key_exists('lom', $this->clients)) $lomClient = $this->clients['lom'];
+        return json_decode((new $resourceClass($resource, $reindexLOM, $lomClient))->toJson(), true);
     }
 
     /**

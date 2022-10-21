@@ -10,9 +10,10 @@ use App\Utils\Utils as AppUtils;
 
 class BookSolrResource extends BaseSolrResource
 {
-    public function __construct($resource, $reindexLOM = false)
+    public function __construct($resource, $reindexLOM = false,
+                                $lomSolrClient = null)
     {
-        parent::__construct($resource, $reindexLOM);
+        parent::__construct($resource, $reindexLOM, $lomSolrClient);
     }
 
     protected function formatCategories($categories)
@@ -64,7 +65,8 @@ class BookSolrResource extends BaseSolrResource
             'isbn'                  => $this->data->description->isbn ?? '',
             'lang'                  => $this->data->description->lang ?? getenv('BOOK_DEFAULT_LANGUAGE'),
             'collections'           => $this->getCollections(),
-            'core_resource_type'    => $this->getCoreResourceType()
+            'core_resource_type'    => $this->getCoreResourceType(),
+            'lom'                   => $this->getLOMs()
         ];
     }
 }

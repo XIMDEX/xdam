@@ -129,5 +129,10 @@
   "preparations": {
     "name": "preparations",
     "type": "text_general"
+  },
+  "lom": {
+    "name": "lom",
+    "type": "string",
+    "multiValued": true
   }
 }

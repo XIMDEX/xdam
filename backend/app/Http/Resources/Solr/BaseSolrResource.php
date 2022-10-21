@@ -4,18 +4,22 @@ namespace App\Http\Resources\Solr;
 
 use App\Enums\MediaType;
 use App\Http\Resources\MediaResource;
+use App\Http\Resources\Solr\LOMSolrResource;
 use App\Models\Lom;
 use App\Utils\Utils;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Solarium\Client;
 
 class BaseSolrResource extends JsonResource
 {
     private bool $reindexLOM;
+    private $lomSolrClient;
 
-    public function __construct($resource, $reindexLOM = false)
+    public function __construct($resource, $reindexLOM = false, $lomSolrClient)
     {
         parent::__construct($resource);
         $this->reindexLOM = $reindexLOM;
+        $this->lomSolrClient = $lomSolrClient;
     }
 
     public static function generateQuery($searchTerm)
@@ -113,11 +117,36 @@ class BaseSolrResource extends JsonResource
 
     protected function getLOMs()
     {
+        $lomsInfo = [];
+
+        if ($this->reindexLOM && $this->lomSolrClient !== null) {
+            $lomsInfo = $this->reindexLOMs();
+        } else {
+            $lomsInfo = $this->getLOMsDocuments();
+        }
+
+        return $lomsInfo;
+    }
+
+    private function reindexLOMs()
+    {
+        $lomsInfo = [];
+        $createCommand = $this->lomSolrClient->createUpdate();
         $loms = Lom::where('dam_resource_id', $this->id)
                     ->get();
 
-        if (!$this->reindexLOM) {
-            
+        foreach ($loms as $lomItem) {
+            $lomDoc = json_decode((new LOMSolrResource($lomItem))->toJson(), true);
         }
+
+        return $lomsInfo;
+    }
+
+    private function getLOMsDocuments()
+    {
+        $query = $this->lomSolrClient->createSelect();
+        $query->setQuery('dam_resource_id:' . $this->id);
+        $result = $this->lomSolrClient->execute($query);
+        return $result;
     }
 }

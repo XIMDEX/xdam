@@ -13,9 +13,10 @@ use App\Utils\DamUrlUtil;
 
 class DocumentSolrResource extends BaseSolrResource
 {
-    public function __construct($resource, $reindexLOM = false)
+    public function __construct($resource, $reindexLOM = false,
+                                $lomSolrClient = null)
     {
-        parent::__construct($resource, $reindexLOM);
+        parent::__construct($resource, $reindexLOM, $lomSolrClient);
     }
 
     protected function getPreviews()
@@ -106,7 +107,8 @@ class DocumentSolrResource extends BaseSolrResource
             'workspaces'            => $this->getWorkspaces(),
             'organization'          => $this->getOrganization(),
             'collections'           => $this->getCollections(),
-            'core_resource_type'    => $this->getCoreResourceType()
+            'core_resource_type'    => $this->getCoreResourceType(),
+            'lom'                   => $this->getLOMs()
         ];
     }
 }

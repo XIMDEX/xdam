@@ -7,9 +7,10 @@ use App\Http\Resources\Solr\BaseSolrResource;
 
 class CourseSolrResource extends BaseSolrResource
 {
-    public function __construct($resource, $reindexLOM = false)
+    public function __construct($resource, $reindexLOM = false,
+                                $lomSolrClient = null)
     {
-        parent::__construct($resource, $reindexLOM);
+        parent::__construct($resource, $reindexLOM, $lomSolrClient);
     }
 
     public static function generateQuery($searchTerm)
@@ -107,7 +108,8 @@ class CourseSolrResource extends BaseSolrResource
             'created_at'            => $this->created_at,
             'updated_at'            => $this->updated_at,
             'collections'           => $this->getCollections(),
-            'core_resource_type'    => $this->getCoreResourceType()
+            'core_resource_type'    => $this->getCoreResourceType(),
+            'lom'                   => $this->getLOMs()
         ];
     }
 }

@@ -10,9 +10,16 @@
     "id": {
         "name": "id",
         "type": "integer",
-        "multivalued": false,
+        "multiValued": false,
         "indexed": true,
         "required": true,
         "stored": true
+    },
+    "lang": {
+        "name": "lang",
+        "type": "string",
+        "multiValued": false,
+        "indexed": true,
+        "required": true
     }
 }

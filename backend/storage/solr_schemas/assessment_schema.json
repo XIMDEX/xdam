@@ -87,5 +87,10 @@
     "name": "workspaces",
     "type": "string",
     "multiValued": true
+  },
+  "lom": {
+    "name": "lom",
+    "type": "string",
+    "multiValued": true
   }
 }
