@@ -1,4 +1,11 @@
 {
+    "_root_": {
+        "name": "_root_",
+        "type": "string",
+        "indexed": true,
+        "stored": false,
+        "docValues": false
+    },
     "dam_resource_id": {
         "name": "dam_resource_id",
         "type": "string",
@@ -21,5 +28,19 @@
         "multiValued": false,
         "indexed": true,
         "required": true
+    },
+    "lom_key": {
+        "name": "lom_key",
+        "type": "string",
+        "multiValued": false,
+        "indexed": true,
+        "required": true
+    },
+    "lom_value": {
+        "name": "lom_value",
+        "type": "string",
+        "multiValued": false,
+        "indexed": true,
+        "required": false
     }
 }

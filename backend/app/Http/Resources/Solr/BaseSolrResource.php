@@ -117,29 +117,42 @@ class BaseSolrResource extends JsonResource
 
     protected function getLOMs()
     {
-        $lomsInfo = [];
-
         if ($this->reindexLOM && $this->lomSolrClient !== null) {
-            $lomsInfo = $this->reindexLOMs();
-        } else {
-            $lomsInfo = $this->getLOMsDocuments();
+            $this->reindexLOMs();
         }
 
+        $lomsInfo = $this->getLOMsDocuments();
+        //$lomsInfo = json_encode($lomsInfo);
+        echo '<pre>' . var_export($lomsInfo, true) . '</pre>';
         return $lomsInfo;
     }
 
     private function reindexLOMs()
     {
         $lomsInfo = [];
-        $createCommand = $this->lomSolrClient->createUpdate();
         $loms = Lom::where('dam_resource_id', $this->id)
                     ->get();
+        $createCommand = $this->lomSolrClient->createUpdate();
 
         foreach ($loms as $lomItem) {
-            $lomDoc = json_decode((new LOMSolrResource($lomItem))->toJson(), true);
+            $lomItemAttributes = $lomItem->getResourceLOMValues();
+
+            foreach ($lomItemAttributes as $attributeKey => $attributeValue) {
+                $document = $createCommand->createDocument();
+                $lomDoc = json_decode((new LOMSolrResource($lomItem, $lomItemAttributes, $attributeKey))
+                            ->toJson(), true);
+
+                foreach ($lomDoc as $lomKey => $lomValue) {
+                    $document->$lomKey = $lomValue;
+                }
+
+                $lomsInfo[] = $document;
+            }
         }
 
-        return $lomsInfo;
+        $createCommand->addDocuments($lomsInfo);
+        $createCommand->addCommit();
+        $result = $this->lomSolrClient->update($createCommand);
     }
 
     private function getLOMsDocuments()
