@@ -108,6 +108,11 @@
   "lom": {
     "name": "lom",
     "type": "string",
-    "multiValued": true
+    "multiValued": false
+  },
+  "lomes": {
+    "name": "lomes",
+    "type": "string",
+    "multiValued": false
   }
 }

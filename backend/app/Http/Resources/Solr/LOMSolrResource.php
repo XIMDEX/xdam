@@ -2,20 +2,63 @@
 
 namespace App\Http\Resources\Solr;
 
-use App\Enums\ResourceType;
+use App\Utils\Utils;
 use Illuminate\Http\Resources\Json\JsonResource;
+
+use function Lambdish\Phunctional\instance_of;
 
 class LOMSolrResource extends JsonResource
 {
-    private array $resourceAttributes;
-    private string $attributeKey;
-
-    public function __construct($resource, $resourceAttributes, $attributeKey)
+    private function getLanguage()
     {
-        parent::__construct($resource);
-        $this->resourceAttributes = $resourceAttributes;
-        $this->attributeKey = $attributeKey;
+        switch (get_class($this->resource)) {
+            case 'App\Models\Lom':
+                $lang = 'en';
+                break;
+
+            case 'App\Models\Lomes':
+                $lang = 'es';
+                break;
+
+            default:
+                $lang = '';
+                break;
+        }
+
+        return $lang;
     }
+
+    private function getLomSchema()
+    {
+        switch (get_class($this->resource)) {
+            case 'App\Models\Lom':
+                $schema = Utils::getLomSchema(true);
+                break;
+
+            case 'App\Models\Lomes':
+                $schema = Utils::getLomesSchema(true);
+                break;
+            
+            default:
+                $schema = [];
+                break;
+        }
+
+        return $schema;
+    }
+
+    private function getLomValues()
+    {
+        $resourceAttributes = $this->resource->getResourceLOMValues();
+        $lomAttributes = [];
+
+        foreach ($resourceAttributes as $key => $value) {
+            $lomAttributes[$key] = json_decode($value, true);
+        }
+
+        return json_encode($lomAttributes);
+    }
+
     /**
      * Transform the LOM into an array.
      *
@@ -24,16 +67,11 @@ class LOMSolrResource extends JsonResource
      */
     public function toArray($request)
     {
-        if (!array_key_exists($this->attributeKey, $this->resourceAttributes)) {
-            return [];
-        }
-
         return [
-            'id'                => $this->id,
+            'lom_id'            => $this->id,
             'dam_resource_id'   => $this->dam_resource_id,
-            'lang'              => 'en',
-            'lom_key'           => $this->attributeKey,
-            'lom_value'         => $this->resourceAttributes[$this->attributeKey]
+            'lang'              => $this->getLanguage(),
+            'lom_value'         => $this->getLomValues()
         ];
     }
 }

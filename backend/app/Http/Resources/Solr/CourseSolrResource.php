@@ -8,9 +8,11 @@ use App\Http\Resources\Solr\BaseSolrResource;
 class CourseSolrResource extends BaseSolrResource
 {
     public function __construct($resource, $reindexLOM = false,
-                                $lomSolrClient = null)
+                                $lomSolrClient = null,
+                                $lomesSolrClient = null)
     {
-        parent::__construct($resource, $reindexLOM, $lomSolrClient);
+        parent::__construct($resource, $reindexLOM, $lomSolrClient,
+                            $lomesSolrClient);
     }
 
     public static function generateQuery($searchTerm)
@@ -79,6 +81,7 @@ class CourseSolrResource extends BaseSolrResource
         $tags = $this->getTags();
         $categories = $this->getCategories();
         $cost = $this->data->description->cost ?? 0;
+        $this->reindexLOMs();
 
         return [
             'id'                    => $this->getID(),
@@ -109,7 +112,8 @@ class CourseSolrResource extends BaseSolrResource
             'updated_at'            => $this->updated_at,
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),
-            'lom'                   => $this->getLOMs()
+            'lom'                   => $this->getLOMs(),
+            'lomes'                 => $this->getLOMs('lomes')
         ];
     }
 }

@@ -6,6 +6,7 @@ use App\Enums\MediaType;
 use App\Http\Resources\MediaResource;
 use App\Http\Resources\Solr\LOMSolrResource;
 use App\Models\Lom;
+use App\Models\Lomes;
 use App\Utils\Utils;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Solarium\Client;
@@ -14,12 +15,16 @@ class BaseSolrResource extends JsonResource
 {
     private bool $reindexLOM;
     private $lomSolrClient;
+    private $lomesSolrClient;
 
-    public function __construct($resource, $reindexLOM = false, $lomSolrClient)
+    public function __construct($resource, $reindexLOM = false,
+                                $lomSolrClient = null,
+                                $lomesSolrClient = null)
     {
         parent::__construct($resource);
         $this->reindexLOM = $reindexLOM;
         $this->lomSolrClient = $lomSolrClient;
+        $this->lomesSolrClient = $lomesSolrClient;
     }
 
     public static function generateQuery($searchTerm)
@@ -115,51 +120,59 @@ class BaseSolrResource extends JsonResource
         return $this->collection->getMaxNumberOfFiles();
     }
 
-    protected function getLOMs()
+    private function reindexLOM($lomItem, $client)
     {
-        if ($this->reindexLOM && $this->lomSolrClient !== null) {
-            $this->reindexLOMs();
+        $createCommand = $client->createUpdate();
+        $lomDoc = json_decode((new LOMSolrResource($lomItem))->toJson(), true);
+        $document = $createCommand->createDocument();
+
+        foreach ($lomDoc as $lomKey => $lomValue) {
+            $document->$lomKey = $lomValue;
         }
 
-        $lomsInfo = $this->getLOMsDocuments();
-        //$lomsInfo = json_encode($lomsInfo);
-        echo '<pre>' . var_export($lomsInfo, true) . '</pre>';
-        return $lomsInfo;
-    }
-
-    private function reindexLOMs()
-    {
-        $lomsInfo = [];
-        $loms = Lom::where('dam_resource_id', $this->id)
-                    ->get();
-        $createCommand = $this->lomSolrClient->createUpdate();
-
-        foreach ($loms as $lomItem) {
-            $lomItemAttributes = $lomItem->getResourceLOMValues();
-
-            foreach ($lomItemAttributes as $attributeKey => $attributeValue) {
-                $document = $createCommand->createDocument();
-                $lomDoc = json_decode((new LOMSolrResource($lomItem, $lomItemAttributes, $attributeKey))
-                            ->toJson(), true);
-
-                foreach ($lomDoc as $lomKey => $lomValue) {
-                    $document->$lomKey = $lomValue;
-                }
-
-                $lomsInfo[] = $document;
-            }
-        }
-
-        $createCommand->addDocuments($lomsInfo);
+        $createCommand->addDocument($document);
         $createCommand->addCommit();
-        $result = $this->lomSolrClient->update($createCommand);
+        $result = $client->update($createCommand);
     }
 
-    private function getLOMsDocuments()
+    protected function reindexLOMs()
     {
-        $query = $this->lomSolrClient->createSelect();
-        $query->setQuery('dam_resource_id:' . $this->id);
-        $result = $this->lomSolrClient->execute($query);
-        return $result;
+        if ($this->reindexLOM && $this->lomSolrClient !== null
+                && $this->lomesSolrClient !== null) {
+            $lom = Lom::where('dam_resource_id', $this->id)->first();
+            if ($lom !== null) $this->reindexLOM($lom, $this->lomSolrClient);
+    
+            $lomes = Lomes::where('dam_resource_id', $this->id)->first();
+            if ($lomes !== null) $this->reindexLOM($lomes, $this->lomesSolrClient);
+        }
+    }
+
+    private function getLOM($client)
+    {
+        $documentFound = null;
+
+        try {
+            $query = $client->createSelect();
+            $query->setQuery('dam_resource_id:' . $this->id);
+            $result = $client->execute($query);
+
+            foreach ($result as $item) {
+                $fields = $item->getFields();
+                $aux = @json_decode($fields['data']);
+                $documentFound = $aux;
+            }
+        } catch (\Exception $ex) {
+            // echo $ex->getMessage();
+            $documentFound = null;
+        }
+
+        return $documentFound;
+    }
+
+    protected function getLOMs($lomType = 'lom')
+    {
+        $client = $this->lomSolrClient;
+        $client = ($lomType == 'lomes' ? $this->lomesSolrClient : $client);
+        return $this->getLOM($client);
     }
 }

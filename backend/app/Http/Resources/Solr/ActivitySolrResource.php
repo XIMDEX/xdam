@@ -8,9 +8,11 @@ use App\Http\Resources\Solr\BaseSolrResource;
 class ActivitySolrResource extends BaseSolrResource
 {
     public function __construct($resource, $reindexLOM = false,
-                                $lomSolrClient = null)
+                                $lomSolrClient = null,
+                                $lomesSolrClient = null)
     {
-        parent::__construct($resource, $reindexLOM, $lomSolrClient);
+        parent::__construct($resource, $reindexLOM, $lomSolrClient,
+                            $lomesSolrClient);
     }
 
     protected function formatTags($tags)
@@ -41,6 +43,8 @@ class ActivitySolrResource extends BaseSolrResource
      */
     public function toArray($request)
     {
+        $this->reindexLOMs();
+
         return [
             'id'                    => $this->getID(),
             'name'                  => $this->getName(),
@@ -56,7 +60,8 @@ class ActivitySolrResource extends BaseSolrResource
             'organization'          => $this->getOrganization(),
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),
-            'lom'                   => $this->getLOMs()
+            'lom'                   => $this->getLOMs(),
+            'lomes'                 => $this->getLOMs('lomes')
         ];
     }
 }

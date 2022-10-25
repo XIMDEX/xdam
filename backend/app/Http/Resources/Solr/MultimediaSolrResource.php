@@ -12,9 +12,11 @@ use App\Utils\DamUrlUtil;
 class MultimediaSolrResource extends BaseSolrResource
 {
     public function __construct($resource, $reindexLOM = false,
-                                $lomSolrClient = null)
+                                $lomSolrClient = null,
+                                $lomesSolrClient = null)
     {
-        parent::__construct($resource, $reindexLOM, $lomSolrClient);
+        parent::__construct($resource, $reindexLOM, $lomSolrClient,
+                            $lomesSolrClient);
     }
 
     protected function getPreviews()
@@ -89,6 +91,7 @@ class MultimediaSolrResource extends BaseSolrResource
     public function toArray($request)
     {
         $files = $this->getFiles();
+        $this->reindexLOMs();
 
         return [
             'id'                    => $this->getID(),
@@ -106,7 +109,8 @@ class MultimediaSolrResource extends BaseSolrResource
             'organization'          => $this->getOrganization(),
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),
-            'lom'                   => $this->getLOMs()
+            'lom'                   => $this->getLOMs(),
+            'lomes'                 => $this->getLOMs('lomes')
         ];
     }
 }

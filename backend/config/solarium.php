@@ -87,6 +87,17 @@ return [
             ],
             'resource'      => 'LOMSolrResource',
             'classHandler'  => 'LOMHandler'
+        ],
+        'lomes' => [
+            'endpoint'      => [
+                'scheme'    => 'http', # or https
+                'host'      => env('SOLR_HOST', 'localhost'),
+                'port'      => env('SOLR_PORT', '8983'),
+                'path'      => env('SOLR_PATH', '/'),
+                'core'      => 'lomes',
+            ],
+            'resource'      => 'LOMSolrResource',
+            'classHandler'  => 'LOMHandler'
         ]
     ],
     'solr_validators_folder'    => env('SOLR_VALIDATORS_FOLDER', ''),

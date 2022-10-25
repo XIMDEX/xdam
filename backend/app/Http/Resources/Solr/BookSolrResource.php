@@ -11,9 +11,11 @@ use App\Utils\Utils as AppUtils;
 class BookSolrResource extends BaseSolrResource
 {
     public function __construct($resource, $reindexLOM = false,
-                                $lomSolrClient = null)
+                                $lomSolrClient = null,
+                                $lomesSolrClient = null)
     {
-        parent::__construct($resource, $reindexLOM, $lomSolrClient);
+        parent::__construct($resource, $reindexLOM, $lomSolrClient,
+                            $lomesSolrClient);
     }
 
     protected function formatCategories($categories)
@@ -39,14 +41,7 @@ class BookSolrResource extends BaseSolrResource
      */
     public function toArray($request)
     {
-        $files = array_column(
-            json_decode(MediaResource::collection($this->getMedia(MediaType::File()->key))->toJson(), true),
-            'dam_url'
-        );
-        $previews = array_column(
-            json_decode(MediaResource::collection($this->getMedia(MediaType::Preview()->key))->toJson(), true),
-            'dam_url'
-        );
+        $this->reindexLOMs();
 
         return [
             'id'                    => $this->getID(),
@@ -66,7 +61,8 @@ class BookSolrResource extends BaseSolrResource
             'lang'                  => $this->data->description->lang ?? getenv('BOOK_DEFAULT_LANGUAGE'),
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),
-            'lom'                   => $this->getLOMs()
+            'lom'                   => $this->getLOMs(),
+            'lomes'                 => $this->getLOMs('lomes')
         ];
     }
 }

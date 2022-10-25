@@ -421,18 +421,20 @@ class ResourceService
         return $createdResources;
     }
 
-    public function lomesSchema ($asArray = false)
+    public function lomesSchema($asArray = false)
     {
-        $json_file = file_get_contents(storage_path('/lomes') .'/lomesSchema.json');
+        /*$json_file = file_get_contents(storage_path('/lomes') .'/lomesSchema.json');
         $schema = json_decode($json_file, $asArray);
-        return $schema;
+        return $schema;*/
+        return Utils::getLomesSchema($asArray);
     }
 
-    public function lomSchema ($asArray = false)
+    public function lomSchema($asArray = false)
     {
-        $json_file = file_get_contents(storage_path('/lom') . '/lomSchema.json');
+        /*$json_file = file_get_contents(storage_path('/lom') . '/lomSchema.json');
         $schema = json_decode($json_file, $asArray);
-        return $schema;
+        return $schema;*/
+        return Utils::getLomSchema($asArray);
     }
 
     public function searchForAssociativeKey($key, $tabKey, $array )

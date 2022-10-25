@@ -52,7 +52,9 @@ class SolrService
     {
         $lomClient = null;
         if (array_key_exists('lom', $this->clients)) $lomClient = $this->clients['lom'];
-        return json_decode((new $resourceClass($resource, $reindexLOM, $lomClient))->toJson(), true);
+        $lomesClient = null;
+        if (array_key_exists('lomes', $this->clients)) $lomesClient = $this->clients['lomes'];
+        return json_decode((new $resourceClass($resource, $reindexLOM, $lomClient, $lomesClient))->toJson(), true);
     }
 
     /**
@@ -103,7 +105,7 @@ class SolrService
 
     public function getClient(string $client)
     {
-        if(!array_key_exists($client, $this->clients)) {
+        if (!array_key_exists($client, $this->clients)) {
             throw new Exception("There is no client ${client}");
         }
 
