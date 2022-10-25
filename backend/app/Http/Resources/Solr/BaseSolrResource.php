@@ -149,7 +149,7 @@ class BaseSolrResource extends JsonResource
 
     private function getLOM($client)
     {
-        $documentFound = null;
+        $documentFound = '';
 
         try {
             $query = $client->createSelect();
@@ -158,12 +158,11 @@ class BaseSolrResource extends JsonResource
 
             foreach ($result as $item) {
                 $fields = $item->getFields();
-                $aux = @json_decode($fields['data']);
-                $documentFound = $aux;
+                $documentFound = json_encode($fields);
             }
         } catch (\Exception $ex) {
             // echo $ex->getMessage();
-            $documentFound = null;
+            $documentFound = '';
         }
 
         return $documentFound;
