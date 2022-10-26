@@ -27,7 +27,7 @@ class BaseSolrResource extends JsonResource
         $this->lomesSolrClient = $lomesSolrClient;
     }
 
-    public static function generateQuery($searchTerm)
+    public static function generateQuery($searchTerm, $searchPhrase)
     {
         return "name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5";
     }

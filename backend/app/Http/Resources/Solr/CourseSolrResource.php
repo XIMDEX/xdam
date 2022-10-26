@@ -15,7 +15,7 @@ class CourseSolrResource extends BaseSolrResource
                             $lomesSolrClient);
     }
 
-    public static function generateQuery($searchTerm)
+    public static function generateQuery($searchTerm, $searchPhrase)
     {
         return "name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5 achievements:*$searchTerm*^3 OR preparations:*$searchTerm*^3";
     }

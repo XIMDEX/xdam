@@ -233,9 +233,10 @@ class SolrService
         $query = $client->createSelect();
         $facetSet = $query->getFacetSet();
 
-        /* the facets to be applied to the query  */
+        // The facets to be applied to the query
         $this->facetManager->setFacets($facetSet, [], $core);
-        /*  limit the query to facets that the user has marked us */
+
+        // Limit the query to facets that the user has marked us
         $this->facetManager->setQueryByFacets($query, [], $core);
 
         /* if we have a search param, restrict the query */
@@ -243,18 +244,8 @@ class SolrService
             $helper = $query->getHelper();
             $searchTerm = $helper->escapeTerm($search);
             $searchPhrase = $helper->escapePhrase($search);
-            $query->setQuery($this->generateQuery($collection, $core, $searchTerm));
-            //$query->setQuery("name:$searchTerm OR data:*$searchPhrase* OR achievements:*$searchPhrase* OR preparations:*$searchPhrase*");
-            /*if ('document' === $core) {
-                $query->setQuery("title:$searchTerm^10 title:*$searchTerm*^7 OR body:*$searchTerm*^5");
-            } else {
-                $query->setQuery("name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5 achievements:*$searchTerm*^3 OR preparations:*$searchTerm*^3");
-            }*/
+            $query->setQuery($this->generateQuery($collection, $core, $searchTerm, $searchPhrase));
         }
-
-        // the query is done without the facet filter, so that it returns the complete list of facets and the counter present in the entire index
-        // $allDocuments = $client->select($query);
-        // $faceSetFound = $allDocuments->getFacetSet();
 
         // make a new request, filtering for each facet
         $this->facetManager->setQueryByFacets($query, $facetsFilter, $core);
@@ -341,21 +332,20 @@ class SolrService
         return json_decode(json_encode($std), true);
     }
 
-    private function generateQuery($collection, $core, $searchTerm): string
+    private function generateQuery($collection, $core, $searchTerm, $searchPhrase): string
     {
         if ('document' === $core) {
-            // return "title:$searchTerm^10 title:*$searchTerm*^7 OR body:*$searchTerm*^5";
-            return DocumentSolrResource::generateQuery($searchTerm);
+            return DocumentSolrResource::generateQuery($searchTerm, $searchPhrase);
         } else if ('activity' === $core) {
-            return ActivitySolrResource::generateQuery($searchTerm);
+            return ActivitySolrResource::generateQuery($searchTerm, $searchPhrase);
         } else if ('assessment' === $core) {
-            return AssessmentSolrResource::generateQuery($searchTerm);
+            return AssessmentSolrResource::generateQuery($searchTerm, $searchPhrase);
         } else if ('book' === $core) {
-            return BookSolrResource::generateQuery($searchTerm);
+            return BookSolrResource::generateQuery($searchTerm, $searchPhrase);
         } else if ('course' === $core) {
-            return CourseSolrResource::generateQuery($searchTerm);
+            return CourseSolrResource::generateQuery($searchTerm, $searchPhrase);
         } else if ('multimedia' === $core) {
-            return MultimediaSolrResource::generateQuery($searchTerm);
+            return MultimediaSolrResource::generateQuery($searchTerm, $searchPhrase);
         }
 
         return "";
