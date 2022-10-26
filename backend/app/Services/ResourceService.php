@@ -456,6 +456,7 @@ class ResourceService
         $tabKey = $formData['_tab_key'];
         $lomesSchema = $this->lomesSchema(true);
         $tabSchema = $this->searchForAssociativeKey('key', $tabKey, $lomesSchema['tabs']);
+        
         foreach ($tabSchema['properties'] as $label => $props) {
             foreach ($formData as $f_key => $f_value) {
                 if($f_key === $label && $f_value !== null) {
@@ -463,8 +464,10 @@ class ResourceService
                 }
             }
         }
+
         $dam_lomes->update($updateArray);
         $dam_lomes->save();
+        $this->solr->saveOrUpdateDocument($damResource, $this->solr->getCoreVersion(null), true);
     }
 
     public function setLomData($damResource, $params)
@@ -475,6 +478,7 @@ class ResourceService
         $tabKey = $formData['_tab_key'];
         $lomSchema = $this->lomSchema(true);
         $tabSchema = $this->searchForAssociativeKey('key', $tabKey, $lomSchema['tabs']);
+        
         foreach ($tabSchema['properties'] as $label => $props) {
             foreach ($formData as $f_key => $f_value) {
                 if($f_key === $label && $f_value !== null) {
@@ -482,8 +486,10 @@ class ResourceService
                 }
             }
         }
+        
         $dam_lom->update($updateArray);
         $dam_lom->save();
+        $this->solr->saveOrUpdateDocument($damResource, $this->solr->getCoreVersion(null), true);
     }
 
     public function getLomesData($damResource)
