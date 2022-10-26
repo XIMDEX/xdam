@@ -115,12 +115,16 @@
   },
   "lom": {
     "name": "lom",
-    "type": "string",
+    "type": "text_general",
+    "indexed": true,
+    "stored": true,
     "multiValued": false
   },
   "lomes": {
     "name": "lomes",
-    "type": "string",
+    "type": "text_general",
+    "indexed": true,
+    "stored": true,
     "multiValued": false
   }
 }

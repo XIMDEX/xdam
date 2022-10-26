@@ -1,11 +1,4 @@
 {
-    "_root_": {
-        "name": "_root_",
-        "type": "string",
-        "indexed": true,
-        "stored": false,
-        "docValues": false
-    },
     "dam_resource_id": {
         "name": "dam_resource_id",
         "type": "string",
