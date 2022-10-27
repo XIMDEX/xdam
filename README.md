@@ -137,6 +137,13 @@ sudo apt install jpegoptim optipng pngquant gifsicle
 npm install -g svgo
 ```
 
+También es necesario instalar el modulo ImageMagick para la versión de php que tengamos y activarlo en el php.ini añadiendo o descomentando `extension=imagick.so`
+
+Ejemplo si es php 7.4.3
+```shel
+sudo apt install php7.4-imagick
+```
+
 ###### En MACOS:
 
 ```shell
