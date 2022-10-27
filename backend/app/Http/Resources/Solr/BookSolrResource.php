@@ -10,12 +10,9 @@ use App\Utils\Utils as AppUtils;
 
 class BookSolrResource extends BaseSolrResource
 {
-    public function __construct($resource, $reindexLOM = false,
-                                $lomSolrClient = null,
-                                $lomesSolrClient = null)
+    public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null)
     {
-        parent::__construct($resource, $reindexLOM, $lomSolrClient,
-                            $lomesSolrClient);
+        parent::__construct($resource, $lomSolrClient, $lomesSolrClient);
     }
 
     protected function formatCategories($categories)
@@ -41,8 +38,6 @@ class BookSolrResource extends BaseSolrResource
      */
     public function toArray($request)
     {
-        $this->reindexLOMs();
-
         return [
             'id'                    => $this->getID(),
             'name'                  => $this->getName(),

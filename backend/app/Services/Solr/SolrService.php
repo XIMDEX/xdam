@@ -5,7 +5,10 @@ namespace App\Services\Solr;
 
 use App\Models\Collection;
 use App\Models\DamResource;
+use App\Models\Lom;
+use App\Models\Lomes;
 use App\Models\Workspace;
+use App\Http\Resources\Solr\LOMSolrResource;
 use App\Services\Catalogue\FacetManager;
 use Exception;
 use Solarium\Client;
@@ -44,17 +47,26 @@ class SolrService
      * returns the document that will be finally indexed in solr
      * @param DamResource $resource
      * @param $resourceClass
-     * @param bool $reindexLOM
+     * @param string $lomCoreName
+     * @param string $lomesCoreName
      * @return array
      */
-    private function getDocumentFromResource(DamResource $resource, $resourceClass,
-                                                $reindexLOM = false): array
+    private function getDocumentFromResource(
+        DamResource $resource,
+        $resourceClass,
+        string $lomCoreName,
+        string $lomesCoreName): array
     {
-        $lomClient = null;
-        if (array_key_exists('lom', $this->clients)) $lomClient = $this->clients['lom'];
-        $lomesClient = null;
-        if (array_key_exists('lomes', $this->clients)) $lomesClient = $this->clients['lomes'];
-        return json_decode((new $resourceClass($resource, $reindexLOM, $lomClient, $lomesClient))->toJson(), true);
+        try {
+            $lomClient = $this->getClient('lom');
+            $lomesClient = $this->getClient('lomes');
+        } catch (\Exception $ex) {
+            // echo $ex->getMessage();
+            $lomClient = null;
+            $lomesClient = null;
+        }
+
+        return json_decode((new $resourceClass($resource, $lomClient, $lomesClient))->toJson(), true);
     }
 
     /**
@@ -66,6 +78,7 @@ class SolrService
     private function getClientFromCollection(Collection $collection)
     {
         $connection = $collection->solr_connection;
+
         if ($connection) {
             if (array_key_exists($connection, $this->clients)) {
                 return $this->clients[$connection];
@@ -102,7 +115,12 @@ class SolrService
         return $client;
     }
 
-
+    /**
+     * Gets a Solr client
+     * @param string $client
+     * @return Client
+     * @throws Exception
+     */
     public function getClient(string $client)
     {
         if (!array_key_exists($client, $this->clients)) {
@@ -113,6 +131,29 @@ class SolrService
     }
 
     /**
+     * Updates or saves a document in Solr
+     * @param Client $client
+     * @param array $documentFound
+     * @return ResultInterface
+     * @throws Exception
+     */
+    private function saverOrUpdateSolrDocument(
+        Client $client,
+        array $documentFound
+    ): ResultInterface {
+        $createCommand = $client->createUpdate();
+        $newDocument = $createCommand->createDocument();
+
+        foreach ($documentFound as $key => $value) {
+            $newDocument->$key = $value;
+        }
+
+        $createCommand->addDocument($newDocument);
+        $createCommand->addCommit();
+        return $client->update($createCommand);
+    }
+
+    /**
      * update or save a document in solr
      * @param DamResource $damResource
      * @param string $solrVersion
@@ -120,25 +161,77 @@ class SolrService
      * @return ResultInterface
      * @throws Exception
      */
-    public function saveOrUpdateDocument(DamResource $damResource, $solrVersion = null,
-                                            $reindexLOM = false): ResultInterface
-    {
+    public function saveOrUpdateDocument(
+        DamResource $damResource,
+        $solrVersion = null,
+        $reindexLOM = false
+    ): ResultInterface {
+        // Gets the current core version used, and updates the clients
         $solrVersion = $this->getCoreVersion($solrVersion);
         $this->clients = $this->solrConfig->updateSolariumClients($solrVersion);
-        $client = $this->getClientFromResource($damResource);
-        $createCommand = $client->createUpdate();
-        $document = $createCommand->createDocument();
 
-        $documentResource = $this->getDocumentFromResource($damResource, $client->getOption('resource'),
-                                                            $reindexLOM);
+        // Gets the LOM and LOMES core names versioned
+        $lomCoreName = $this->getCoreNameVersioned('lom', $solrVersion);
+        $lomesCoreName = $this->getCoreNameVersioned('lomes', $solrVersion);
 
-        foreach ($documentResource as $key => $value) {
-            $document->$key = $value;
+        // Updates the LOM and the LOMES document
+        try {
+            // Checks if the LOM and the LOMES must be updated
+            if ($reindexLOM) {
+                // Gets the LOM and the LOMES client
+                $lomClient = $this->getClient($lomCoreName);
+                $lomesClient = $this->getClient($lomesCoreName);
+
+                // Gets the LOM and the LOMES items
+                $lomItem = Lom::where('dam_resource_id', $damResource->id)->first();
+                $lomesItem = Lomes::where('dam_resource_id', $damResource->id)->first();
+
+                // Checks if the LOM item exists
+                if ($lomItem !== null) {
+                    // Deletes the current Solr document, and creates the new one
+                    $this->deleteSolrDocument($lomClient, 'dam_resource_id:' . $damResource->id);
+                    $lomDocument = json_decode((new LOMSolrResource($lomItem))->toJson(),
+                                                true);
+                }
+
+                // Checks if the LOMES item exists
+                if ($lomesItem !== null) {
+                    // Deletes the current Solr document, and creates the new one
+                    $this->deleteSolrDocument($lomesClient, 'dam_resource_id:' . $damResource->id);
+                    $lomesDocument = json_decode((new LOMSolrResource($lomesItem))->toJson(),
+                                                    true);
+                }
+
+                // Updates the Solr documents
+                $this->saverOrUpdateSolrDocument($lomClient, $lomDocument);
+                $this->saverOrUpdateSolrDocument($lomesClient, $lomesDocument);
+            }
+        } catch (\Exception $ex) {
+            // echo $ex->getMessage();
         }
 
-        $createCommand->addDocument($document);
-        $createCommand->addCommit();
-        return $client->update($createCommand);
+        // Gets the client attached to the current resource
+        $client = $this->getClientFromResource($damResource);
+
+        // Gets the current resource document, and updates it
+        $documentResource = $this->getDocumentFromResource($damResource, $client->getOption('resource'),
+                                                            $lomCoreName, $lomesCoreName);
+        return $this->saverOrUpdateSolrDocument($client, $documentResource);
+    }
+
+    /**
+     * Deletes a document in Solr
+     * @param Client $client
+     * @param string $query
+     * @return ResultInterface
+     * @throws Exception
+     */
+    private function deleteSolrDocument(Client $client, string $query): ResultInterface
+    {
+        $deleteQuery = $client->createUpdate();
+        $deleteQuery->addDeleteQuery($query);
+        $deleteQuery->addCommit();
+        return $client->update($deleteQuery);
     }
 
     /**
@@ -149,11 +242,24 @@ class SolrService
      */
     public function deleteDocument(DamResource $damResource): ResultInterface
     {
+        $this->clients = $this->solrConfig->updateSolariumClients($this->getCoreVersion(null));
+
+        try {
+            $lomClient = $this->getClient('lom');
+            $lomesClient = $this->getClient('lomes');
+        } catch (\Exception $ex) {
+            // echo $ex->getMessage();
+            $lomClient = null;
+            $lomesClient = null;
+        }
+
+        if ($lomClient !== null && $lomesClient !== null) {
+            $this->deleteSolrDocument($lomClient, 'dam_resource_id:' . $damResource->id);
+            $this->deleteSolrDocument($lomesClient, 'dam_resource_id:' . $damResource->id);
+        }
+    
         $client = $this->getClientFromResource($damResource);
-        $deleteQuery = $client->createUpdate();
-        $deleteQuery->addDeleteQuery('id:' . $damResource->id);
-        $deleteQuery->addCommit();
-        return $client->update($deleteQuery);
+        return $this->deleteSolrDocument($client, 'id:' . $damResource->id);
     }
 
     private static function paginateResults($results)
@@ -205,12 +311,13 @@ class SolrService
     {
         //we need to replace all strings with spaces to  "\ " otherwise, Solr don't recognize it.
         foreach ($facetsFilter as $key => $value) {
-            if(is_string($value)) {
+            if (is_string($value)) {
                 $facetsFilter[$key] = str_replace(" ", "\ ", $value);
             }
-            if(is_array($value)) {
+
+            if (is_array($value)) {
                 foreach ($value as $k => $v) {
-                    if(is_string($v)) {
+                    if (is_string($v)) {
                         $facetsFilter[$key][$k] = str_replace(" ", "\ ", $v);
                     }
                 }

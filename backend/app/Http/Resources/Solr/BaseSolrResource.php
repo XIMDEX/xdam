@@ -13,23 +13,21 @@ use Solarium\Client;
 
 class BaseSolrResource extends JsonResource
 {
-    private bool $reindexLOM;
     private $lomSolrClient;
     private $lomesSolrClient;
 
-    public function __construct($resource, $reindexLOM = false,
-                                $lomSolrClient = null,
-                                $lomesSolrClient = null)
+    public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null)
     {
         parent::__construct($resource);
-        $this->reindexLOM = $reindexLOM;
         $this->lomSolrClient = $lomSolrClient;
         $this->lomesSolrClient = $lomesSolrClient;
     }
 
     public static function generateQuery($searchTerm, $searchPhrase)
     {
-        return "name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5";
+        $query = "name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5 ";
+        $query .= "lom:*$searchTerm*^4 OR lomes:*$searchTerm*^3";
+        return $query;
     }
     
     protected function getFiles()
@@ -118,33 +116,6 @@ class BaseSolrResource extends JsonResource
     protected function getMaxFiles()
     {
         return $this->collection->getMaxNumberOfFiles();
-    }
-
-    private function reindexLOM($lomItem, $client)
-    {
-        $createCommand = $client->createUpdate();
-        $lomDoc = json_decode((new LOMSolrResource($lomItem))->toJson(), true);
-        $document = $createCommand->createDocument();
-
-        foreach ($lomDoc as $lomKey => $lomValue) {
-            $document->$lomKey = $lomValue;
-        }
-
-        $createCommand->addDocument($document);
-        $createCommand->addCommit();
-        $result = $client->update($createCommand);
-    }
-
-    protected function reindexLOMs()
-    {
-        if ($this->reindexLOM && $this->lomSolrClient !== null
-                && $this->lomesSolrClient !== null) {
-            $lom = Lom::where('dam_resource_id', $this->id)->first();
-            if ($lom !== null) $this->reindexLOM($lom, $this->lomSolrClient);
-    
-            $lomes = Lomes::where('dam_resource_id', $this->id)->first();
-            if ($lomes !== null) $this->reindexLOM($lomes, $this->lomesSolrClient);
-        }
     }
 
     private function getLOM($client)

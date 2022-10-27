@@ -7,17 +7,16 @@ use App\Http\Resources\Solr\BaseSolrResource;
 
 class CourseSolrResource extends BaseSolrResource
 {
-    public function __construct($resource, $reindexLOM = false,
-                                $lomSolrClient = null,
-                                $lomesSolrClient = null)
+    public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null)
     {
-        parent::__construct($resource, $reindexLOM, $lomSolrClient,
-                            $lomesSolrClient);
+        parent::__construct($resource, $lomSolrClient, $lomesSolrClient);
     }
 
     public static function generateQuery($searchTerm, $searchPhrase)
     {
-        return "name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5 achievements:*$searchTerm*^3 OR preparations:*$searchTerm*^3";
+        $query = "name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5 ";
+        $query .= "lom:*$searchTerm*^4 OR lomes:*$searchTerm*^4 achievements:*$searchTerm*^3 OR preparations:*$searchTerm*^3";
+        return $query;
     }
     
     protected function getData($tags = null, $categories = null)
@@ -81,7 +80,6 @@ class CourseSolrResource extends BaseSolrResource
         $tags = $this->getTags();
         $categories = $this->getCategories();
         $cost = $this->data->description->cost ?? 0;
-        $this->reindexLOMs();
 
         return [
             'id'                    => $this->getID(),

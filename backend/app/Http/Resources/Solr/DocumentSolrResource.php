@@ -13,12 +13,9 @@ use App\Utils\DamUrlUtil;
 
 class DocumentSolrResource extends BaseSolrResource
 {
-    public function __construct($resource, $reindexLOM = false,
-                                $lomSolrClient = null,
-                                $lomesSolrClient = null)
+    public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null)
     {
-        parent::__construct($resource, $reindexLOM, $lomSolrClient,
-                            $lomesSolrClient);
+        parent::__construct($resource, $lomSolrClient, $lomesSolrClient);
     }
 
     protected function getPreviews()
@@ -93,7 +90,6 @@ class DocumentSolrResource extends BaseSolrResource
     public function toArray($request)
     {
         $files = $this->getFiles();
-        $this->reindexLOMs();
 
         return [
             'id'                    => $this->getID(),

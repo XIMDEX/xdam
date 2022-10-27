@@ -467,7 +467,7 @@ class ResourceService
 
         $dam_lomes->update($updateArray);
         $dam_lomes->save();
-        $this->solr->saveOrUpdateDocument($damResource, $this->solr->getCoreVersion(null), true);
+        $this->solr->saveOrUpdateDocument($damResource, null, true);
     }
 
     public function setLomData($damResource, $params)
@@ -489,7 +489,7 @@ class ResourceService
         
         $dam_lom->update($updateArray);
         $dam_lom->save();
-        $this->solr->saveOrUpdateDocument($damResource, $this->solr->getCoreVersion(null), true);
+        $this->solr->saveOrUpdateDocument($damResource, null, true);
     }
 
     public function getLomesData($damResource)
