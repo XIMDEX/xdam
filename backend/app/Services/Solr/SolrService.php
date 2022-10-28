@@ -10,11 +10,13 @@ use App\Models\Lomes;
 use App\Models\Workspace;
 use App\Http\Resources\Solr\LOMSolrResource;
 use App\Services\Catalogue\FacetManager;
+use App\Utils\Utils;
 use Exception;
 use Solarium\Client;
 use Solarium\Core\Client\Adapter\Curl;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Solarium\Core\Query\Result\ResultInterface;
+use Illuminate\Database\Eloquent\Model;
 use stdClass;
 use App\Http\Resources\Solr\{ActivitySolrResource, AssessmentSolrResource, BookSolrResource, CourseSolrResource, DocumentSolrResource, MultimediaSolrResource};
 
@@ -153,6 +155,39 @@ class SolrService
         return $client->update($createCommand);
     }
 
+    private function saveLOMDocuments(
+        Client $client,
+        $element,
+        array $schema,
+        DamResource $damResource
+    ) {
+        // Checks if the element is null
+        if ($element !== null) {
+            // Deletes the current Solr documents
+            $this->deleteSolrDocument($client, 'dam_resource_id:' . $damResource->id);
+
+            // Gets the LOM attributes
+            $attributes = $element->getResourceLOMValues();
+
+            // Iterates through the attributes
+            foreach ($attributes as $key => $value) {
+                if ($value !== null) {
+                    if (gettype($value) === 'array') {
+                        foreach ($value as $subValue) {
+                            $resource = new LOMSolrResource($element, $damResource, $key, $subValue);
+                            $documentFound = json_decode($resource->toJson(), true);
+                            $this->saverOrUpdateSolrDocument($client, $documentFound);
+                        }
+                    } else {
+                        $resource = new LOMSolrResource($element, $damResource, $key, $value);
+                        $documentFound = json_decode($resource->toJson(), true);
+                        $this->saverOrUpdateSolrDocument($client, $documentFound);
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * update or save a document in solr
      * @param DamResource $damResource
@@ -186,28 +221,12 @@ class SolrService
                 $lomItem = Lom::where('dam_resource_id', $damResource->id)->first();
                 $lomesItem = Lomes::where('dam_resource_id', $damResource->id)->first();
 
-                // Checks if the LOM item exists
-                if ($lomItem !== null) {
-                    // Deletes the current Solr document, and creates the new one
-                    $this->deleteSolrDocument($lomClient, 'dam_resource_id:' . $damResource->id);
-                    $lomDocument = json_decode((new LOMSolrResource($lomItem))->toJson(),
-                                                true);
-                }
-
-                // Checks if the LOMES item exists
-                if ($lomesItem !== null) {
-                    // Deletes the current Solr document, and creates the new one
-                    $this->deleteSolrDocument($lomesClient, 'dam_resource_id:' . $damResource->id);
-                    $lomesDocument = json_decode((new LOMSolrResource($lomesItem))->toJson(),
-                                                    true);
-                }
-
-                // Updates the Solr documents
-                $this->saverOrUpdateSolrDocument($lomClient, $lomDocument);
-                $this->saverOrUpdateSolrDocument($lomesClient, $lomesDocument);
+                // Manages the LOM and LOMES documents
+                $this->saveLOMDocuments($lomClient, $lomItem, Utils::getLomSchema(true), $damResource);
+                $this->saveLOMDocuments($lomesClient, $lomesItem, Utils::getLomesSchema(true), $damResource);
             }
         } catch (\Exception $ex) {
-            // echo $ex->getMessage();
+            echo $ex->getMessage();
         }
 
         // Gets the client attached to the current resource

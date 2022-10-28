@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Solr;
 
+use App\Models\DamResource;
 use App\Utils\Utils;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -9,6 +10,29 @@ use function Lambdish\Phunctional\instance_of;
 
 class LOMSolrResource extends JsonResource
 {
+    private DamResource $damResource;
+    private string $lomKey;
+    private $lomValue;
+
+    /**
+     * Constructor
+     * @param $element
+     * @param DamResource $damResource
+     * @param string $lomKey
+     * @param $lomValue
+     */
+    public function __construct($element, $damResource, $lomKey, $lomValue)
+    {
+        parent::__construct($element);
+        $this->damResource = $damResource;
+        $this->lomKey = $lomKey;
+        $this->lomValue = $lomValue;
+    }
+
+    /**
+     * Gets the LOM language
+     * @return string
+     */
     private function getLanguage()
     {
         switch (get_class($this->resource)) {
@@ -28,6 +52,10 @@ class LOMSolrResource extends JsonResource
         return $lang;
     }
 
+    /**
+     * Returns the LOM schema
+     * @return array
+     */
     private function getLomSchema()
     {
         switch (get_class($this->resource)) {
@@ -47,18 +75,6 @@ class LOMSolrResource extends JsonResource
         return $schema;
     }
 
-    private function getLomValues()
-    {
-        $resourceAttributes = $this->resource->getResourceLOMValues();
-        $lomAttributes = [];
-
-        foreach ($resourceAttributes as $key => $value) {
-            $lomAttributes[$key] = json_decode($value, true);
-        }
-
-        return json_encode($lomAttributes);
-    }
-
     /**
      * Transform the LOM into an array.
      *
@@ -68,10 +84,12 @@ class LOMSolrResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'lom_id'            => $this->id,
+            'id'                => $this->id,
             'dam_resource_id'   => $this->dam_resource_id,
+            'dam_collection_id' => $this->damResource->collection->id,
             'lang'              => $this->getLanguage(),
-            'lom_value'         => $this->getLomValues()
+            'lom_key'           => $this->lomKey,
+            'lom_value'         => $this->lomValue
         ];
     }
 }

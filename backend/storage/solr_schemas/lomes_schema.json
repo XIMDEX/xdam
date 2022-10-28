@@ -1,4 +1,12 @@
 {
+    "dam_collection_id": {
+        "name": "dam_collection_id",
+        "type": "string",
+        "multiValued": false,
+        "indexed": true,
+        "required": true,
+        "stored": true
+    },
     "dam_resource_id": {
         "name": "dam_resource_id",
         "type": "string",
@@ -20,13 +28,23 @@
         "type": "string",
         "multiValued": false,
         "indexed": true,
-        "required": true
+        "required": true,
+        "stored": true
+    },
+    "lom_key": {
+        "name": "lom_key",
+        "type": "string",
+        "multiValued": false,
+        "indexed": true,
+        "required": true,
+        "stored": true
     },
     "lom_value": {
         "name": "lom_value",
         "type": "string",
         "multiValued": false,
         "indexed": true,
-        "required": true
+        "required": true,
+        "stored": true
     }
 }
