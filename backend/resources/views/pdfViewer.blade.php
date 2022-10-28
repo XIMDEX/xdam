@@ -29,7 +29,7 @@
         </style>
     </head>
     <body>
-        <iframe id="viewer-frame" src="/ViewerJS/?title={{ $title }}#{{ $url }}"></iframe>
+        <iframe id="viewer-frame" src="/ViewerJS/index.html?title={{ $title }}#{{ $url }}"></iframe>
         <script>
             document.getElementById('viewer-frame').onload = function() {
                 function delay(time) {

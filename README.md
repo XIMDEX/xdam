@@ -117,6 +117,7 @@ sudo su - solr -c "/opt/solr/bin/solr create -c book -n data_driven_schema_confi
 y nos dirigimos a la carpeta backend, en su interior ejecutamos:
 ```shell
 composer install
+npm install
 ```
 
 Copiamos el fichero de ejemplo .env.example a .env
