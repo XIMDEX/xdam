@@ -264,7 +264,15 @@ Hay también un comando especial, php artisan solr:clean que borra todos los doc
 
 ### New
 Se ha añadido un nuevo comando `php artisan solr:update --query=""` que permite actualizar recursos presentes en la base de datos a partir de una query SQL.
-Se ha añadido un nuevo comando de gestión de Cores: php artisan solrCoresMaintenace. Para crear los cores en su versión número 10 ejecutaríamos `sudo php artisan solrCores:maintenance --action=CREATE --coreVersion=10$`. En el .env del backend hay que añadir el parámetro con la versión a la que apuntamos: 
+Se ha añadido un nuevo comando de gestión de Cores: php artisan solrCoresMaintenace, este comando accepta los parámetros:
+* `--action=` -> `DELETE`, `CREATE`, `REINDEX` y `ALL`
+* `--core=` -> cores separados por comas de los que se quiere realizar la acción
+* `--exclude=` -> contrario del parámetro core, excluirá los cores indicados
+* `--y` -> no pedirá confirmación en las acciones
+
+**_Ejemplo_**: 
+	
+		para crear los cores en su versión número 10 ejecutaríamos `sudo php artisan solrCores:maintenance --action=CREATE --coreVersion=10$`. En el .env del backend hay que añadir el parámetro con la versión a la que apuntamos: 
 SOLR_CORES_VERSION="10".
 
 ## ¿COMO MOVER RECURSOS DE UN SOLR/CORE A OTRO?
