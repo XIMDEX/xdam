@@ -13,7 +13,7 @@ class SolrCoresMaintenance extends Command
      *
      * @var string
      */
-    protected $signature = 'solrCores:maintenance {--action=} {--core=*} {--coreVersion=}';
+    protected $signature = 'solrCores:maintenance {--action=} {--core=*} {--coreVersion=} {--y}';
 
     /**
      * The console command description.
@@ -77,10 +77,10 @@ class SolrCoresMaintenance extends Command
      * @param string $coreVersion
      * @return bool
      */
-    private function manageCoresCreation(SolrService $solrService, $path, $coresToInstall, $solrCores, $coreVersion)
+    private function manageCoresCreation(SolrService $solrService, $path, $coresToInstall, $solrCores, $coreVersion, $confirmation)
     {
         // Asks for a double user confirmation
-        if ($this->confirm('New CORES with version '.$coreVersion.' will be created. OK?', false)) {
+        if ($confirmation || $this->confirm('New CORES with version '.$coreVersion.' will be created. OK?', false)) {
             // Iterates through the cores...
             foreach ($coresToInstall as $core) {
                 // Checks if the core exists
@@ -88,7 +88,7 @@ class SolrCoresMaintenance extends Command
                     // Gets the core name versioned
                     $coreNameVersioned = $this->getCoreNameVersioned($solrService, $core, $coreVersion);
                     echo "Creating CORE " . $coreNameVersioned . PHP_EOL;
-                
+
                     // Executes the shell command showing error or success
                     echo shell_exec("$path create $core $coreNameVersioned");
                 }
@@ -109,12 +109,12 @@ class SolrCoresMaintenance extends Command
      * @param string $coreVersion
      * @return bool
      */
-    private function manageCoresDeleting(SolrService $solrService, $path, $coresToDelete, $solrCores, $coreVersion)
+    private function manageCoresDeleting(SolrService $solrService, $path, $coresToDelete, $solrCores, $coreVersion, $confirmation)
     {
         // Asks for a double user confirmation
-        if ($this->confirm('Deletion of a set of cores will remove information. ' . 
+        if ($confirmation || $this->confirm('Deletion of a set of cores will remove information. ' .
                             'OK to proceed?', false)) {
-            if ($this->confirm('Are you absolutely sure? This may cause irreversible damage to the stored data.', false)) {
+            if ($confirmation || $this->confirm('Are you absolutely sure? This may cause irreversible damage to the stored data.', false)) {
                 // Iterates through the cores...
                 foreach ($coresToDelete as $core) {
                     // Checks if the core exists
@@ -143,12 +143,12 @@ class SolrCoresMaintenance extends Command
      * @param string $coreVersion
      * @return bool
      */
-    private function manageCoresReindexing(SolrService $solrService, $coresToReindex, $solrCores, $coreVersion)
+    private function manageCoresReindexing(SolrService $solrService, $coresToReindex, $solrCores, $coreVersion, $confirmation)
     {
         // Asks for a double user confirmation
-        if ($this->confirm('Reindexing of a set of cores could remove stored information. ' . 
+        if ($confirmation || $this->confirm('Reindexing of a set of cores could remove stored information. ' .
                             'OK to proceed?', false)) {
-            if ($this->confirm('Are you absolutely sure? This may cause irreversible damage to the stored data.', false)) {
+            if ($confirmation || $this->confirm('Are you absolutely sure? This may cause irreversible damage to the stored data.', false)) {
                 // Checks the excluded cores
                 $excludedCores = $this->getExcludedCores($solrCores, $coresToReindex);
 
@@ -175,9 +175,10 @@ class SolrCoresMaintenance extends Command
         $action = $this->option('action');
         $coresToManage = $this->option('core');
         $coreVersion = $this->option('coreVersion');
+        $confirmation = $this->hasOption('y');
 
         // Checks if the action is correct
-        if ($action === null || ($action !== 'CREATE' && $action !== 'DELETE' && $action !== 'REINDEX')) {
+        if ($action === null || ($action !== 'CREATE' && $action !== 'DELETE' && $action !== 'REINDEX' && $action !== 'ALL')) {
             $this->printErrorMessage();
             return false;
         }
@@ -188,20 +189,24 @@ class SolrCoresMaintenance extends Command
         // Checks the cores to manage
         $allCores = (count($coresToManage) == 0);
         $coresToManage = ($allCores ? $solrCores : $coresToManage);
+        // Gets the script path
+        $path = getcwd() . '/scripts/solr_cores_management.sh';
 
         // Checks the action to execute
         if ($action === 'CREATE' || $action === 'DELETE') {
-            // Gets the script path
-            $path = getcwd() . '/scripts/solr_cores_management.sh';
 
             // Checks the action to execute
             if ($action === 'CREATE') {
-                return $this->manageCoresCreation($solrService, $path, $coresToManage, $solrCores, $coreVersion);
+                return $this->manageCoresCreation($solrService, $path, $coresToManage, $solrCores, $coreVersion, $confirmation);
             } else if ($action === 'DELETE') {
-                return $this->manageCoresDeleting($solrService, $path, $coresToManage, $solrCores, $coreVersion);
+                return $this->manageCoresDeleting($solrService, $path, $coresToManage, $solrCores, $coreVersion, $confirmation);
             }
         } else if ($action === 'REINDEX') {
-            return $this->manageCoresReindexing($solrService, $coresToManage, $solrCores, $coreVersion);
+            return $this->manageCoresReindexing($solrService, $coresToManage, $solrCores, $coreVersion, $confirmation);
+        } else if ($action === 'ALL') {
+            $this->manageCoresDeleting($solrService, $path, $coresToManage, $solrCores, $coreVersion, $confirmation);
+            $this->manageCoresCreation($solrService, $path, $coresToManage, $solrCores, $coreVersion, $confirmation);
+            $this->manageCoresReindexing($solrService, $coresToManage, $solrCores, $coreVersion, $confirmation);
         }
 
         return false;
