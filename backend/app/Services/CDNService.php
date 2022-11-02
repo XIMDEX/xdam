@@ -134,6 +134,13 @@ class CDNService
         return true;
     }
 
+    public function checkAccessPermissionType($cdnID)
+    {
+        $cdnAccessPermission = CDNAccessPermission::where('cdn_id', $cdnID)->first();
+        if (($cdnAccessPermission === null)) return 'Undefined';
+        return $cdnAccessPermission->type;
+    }
+
     public function manageAccessPermissionRule($cdnID, $permissionType, $rule, $key,  bool $toRemove)
     {
         $cdnAccessPermission = CDNAccessPermission::where('cdn_id', $cdnID)

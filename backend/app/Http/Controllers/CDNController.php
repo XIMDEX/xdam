@@ -195,6 +195,15 @@ class CDNController extends Controller
         return response(['access_permission_updated' => $res], Response::HTTP_OK);
     }
 
+    public function checkAccessPermission(CDNRequest $request)
+    {
+        if (!isset($request->cdn_id))
+            return response(['error' => 'The CDN ID must be provided.']);
+
+        $res = $this->cdnService->checkAccessPermissionType($request->cdn_id);
+        return response(['access_permission_type' => $res], Response::HTTP_OK);
+    }
+
     public function addAccessPermissionRule(CDNRequest $request)
     {
         return $this->manageAccessPermissionRule($request, false);

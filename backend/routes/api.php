@@ -33,13 +33,13 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
     });
 
     Route::group(['prefix' => 'cdn'], function() {
-        Route::get('/workspace_test/{workspace}',   [CatalogueController::class, 'getCatalogueByWorkspace'])
-                ->name('cdn.getCatalogueByWorkspace');
+        // Route::get('/workspace_test/{workspace}',   [CatalogueController::class, 'getCatalogueByWorkspace'])
+        //         ->name('cdn.getCatalogueByWorkspace');
 
         Route::group(['prefix' => 'admin'], function() {
-            Route::post('/create',                                          [CDNController::class, 'createCDN'])
+            Route::post('/create',  [CDNController::class, 'createCDN'])
                     ->name('cdn.createCDN');
-            Route::post('/remove',                                          [CDNController::class, 'removeCDN'])
+            Route::post('/remove',  [CDNController::class, 'removeCDN'])
                     ->name('cdn.removeCDN');
 
             Route::group(['prefix' => '{cdn_code}', 'middleware' => 'cdn.validCDN'], function () {
@@ -63,9 +63,11 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
             });
 
             Route::group(['prefix' => 'access_permission'], function() {
-                Route::post('/update',      [CDNController::class, 'updateAccessPermission'])
+                Route::post('/update',  [CDNController::class, 'updateAccessPermission'])
                         ->name('cdn.updateCDNAccessPermission');
-    
+                Route::post('/check',   [CDNController::class, 'checkAccessPermission'])
+                        ->name('cdn.checkCDNAccessPermission');
+
                 Route::group(['prefix' => 'rule'], function() {
                     Route::post('/add',     [CDNController::class, 'addAccessPermissionRule'])
                             ->name('cdn.addCDNAccessPermissionRule');
