@@ -360,7 +360,7 @@ class ResourceController extends Controller
                 'error_message' => ''
             ],
             'video' => [
-                'allowed_sizes' => ['very_low', 'low', 'standard', 'hd', 'raw', 'thumbnail', 'default'],
+                'allowed_sizes' => ['very_low', 'low', 'standard', 'hd', 'raw', 'thumbnail', 'default', 'small', 'medium'],
                 'sizes_scale'   => ['very_low', 'low', 'standard', 'hd'],   // Order Lowest to Greatest
                 'sizes' => [
                     // 'lowest'        => array('width' => 256, 'height' => 144, 'name' => '144p'),
@@ -370,6 +370,8 @@ class ResourceController extends Controller
                     'hd'            => array('width' => 1280, 'height' => 720, 'name' => '720p'),
                     // 'full_hd'       => array('width' => 1920, 'height' => 1080, 'name' => '1080p'),
                     'raw'           => 'raw',
+                    'small'         => 'small',
+                    'medium'        => 'medium',
                     'thumbnail'     => 'thumbnail',
                     'default'       => 'raw'
                 ],
@@ -402,7 +404,7 @@ class ResourceController extends Controller
                 }
             }
         }
-        
+
         return $errorMessage;
     }
 
@@ -545,7 +547,7 @@ class ResourceController extends Controller
 
         if ($cdnInfo === null)
             return response(['error' => 'This CDN doesn\'t exist!'], Response::HTTP_BAD_REQUEST);
-        
+
         if (!$cdnInfo->checkAccessRequirements($ipAddress, $originURL))
             return response()->json(['error' => 'You can\'t access this CDN.'], Response::HTTP_UNAUTHORIZED);
 
@@ -557,10 +559,10 @@ class ResourceController extends Controller
 
         $resourceResponse = new ResourceResource($resource);
         $responseJson = json_decode($resourceResponse->toJson());
-    
+
         if (count($responseJson->files) == 0)
             return response(['error' => 'No files attached!']);
-        
+
         return $this->renderResource($responseJson->files[0]->dam_url, $method, $request->size, $request->size, true);
     }
 
@@ -576,7 +578,7 @@ class ResourceController extends Controller
 
         $resource = DamResource::where('id', $request->damResource)
                         ->first();
-        
+
         if ($resource === null)
             return response(['error' => 'Resource doesn\'t exist.']);
 
