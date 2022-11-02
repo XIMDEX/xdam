@@ -53,9 +53,17 @@ class DocumentRendererKey extends Model
 
     public function storeKeyExpirationDate()
     {
-        $t = time() + 2 * 60;
+        $time = env('DOCUMENT_RENDERER_KEY_TIME_ALIVE', 120);
+        $t = time() + $time;
         $this->expiration_date = $t;
         $this->update();
+    }
+
+    public function mustBeRemoved()
+    {
+        $time = env('DOCUMENT_RENDERER_KEY_TIME_STORED', 480);
+        $t = $this->expiration_date + $time;
+        return time() >= $t;
     }
 
     public static function generateKey()

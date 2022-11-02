@@ -313,10 +313,19 @@ class MediaService
         $keyEntry->increaseUsages();
         
         if ($keyEntry->downloadAllowed()) $flag = true;
-        if ($keyEntry->reachedUsagesLimit()) {
-            $keyEntry->delete();
-        }
+
+        $this->removeStoredKeys();
         
         return $flag;
+    }
+
+    private function removeStoredKeys()
+    {
+        $existingKeys = DocumentRendererKey::get();
+        foreach ($existingKeys as $key) {
+            if ($key->mustBeRemoved()) {
+                $key->delete();
+            }
+        }
     }
 }
