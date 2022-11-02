@@ -63,7 +63,7 @@ class DocumentRendererKey extends Model
     {
         $time = env('DOCUMENT_RENDERER_KEY_TIME_STORED', 480);
         $t = $this->expiration_date + $time;
-        return time() >= $t;
+        return time() > $t;
     }
 
     public static function generateKey()
