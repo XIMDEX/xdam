@@ -21,12 +21,12 @@ class DocumentRendererKey extends Model
 
     public function downloadAllowed()
     {
-        return $this->usages <= 1;
+        return $this->usages <= 5;
     }
 
     public function reachedUsagesLimit()
     {
-        return $this->usages >= 1;
+        return $this->usages >= 5;
     }
 
     public static function generateKey()
