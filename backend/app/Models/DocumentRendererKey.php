@@ -4,7 +4,6 @@ namespace App\Models;
 
 use DateInterval;
 use DateTimeImmutable;
-use Faker\Provider\cs_CZ\DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,9 +28,7 @@ class DocumentRendererKey extends Model
 
     private function downloadAllowed_v2()
     {
-        $now = new DateTimeImmutable();
-        $expirationDate = new DateTimeImmutable($this->expiration_date);
-        return $now <= $expirationDate;
+        return time() <= $this->expiration_date;
     }
 
     public function downloadAllowed()
@@ -46,9 +43,7 @@ class DocumentRendererKey extends Model
 
     private function reachedUsagesLimit_v2()
     {
-        $now = new DateTimeImmutable();
-        $expirationDate = new DateTimeImmutable($this->expiration_date);
-        return $now > $expirationDate;
+        return time() > $this->expiration_date;
     }
 
     public function reachedUsagesLimit()
@@ -58,9 +53,8 @@ class DocumentRendererKey extends Model
 
     public function storeKeyExpirationDate()
     {
-        $now = new DateTimeImmutable();
-        $now = $now->add(DateInterval::createFromDateString('2 minutes'));
-        $this->expiration_date = $now;
+        $t = time() + 2 * 60;
+        $this->expiration_date = $t;
         $this->update();
     }
 

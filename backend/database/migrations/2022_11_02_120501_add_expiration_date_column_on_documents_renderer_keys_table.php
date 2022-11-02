@@ -14,7 +14,7 @@ class AddExpirationDateColumnOnDocumentsRendererKeysTable extends Migration
     public function up()
     {
         Schema::table('documents_renderer_keys', function($table) {
-            $table->timestamp('expiration_date')->nullable(true)->default(null);
+            $table->bigInteger('expiration_date')->nullable(true)->default(null);
         });
     }
 
