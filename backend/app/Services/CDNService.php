@@ -178,6 +178,25 @@ class CDNService
         return [$key => true];
     }
 
+    public function getAccessPermissionRules($cdnID)
+    {
+        $rules = ['type' => 'Undefined', 'rules' => []];
+        $cdnAccessPermission = CDNAccessPermission::where('cdn_id', $cdnID)->first();
+        
+        if ($cdnAccessPermission !== null) {
+            $rules['type'] = $cdnAccessPermission->type;
+            $foundRules = CDNAccessPermissionRule::where('access_permission_id', $cdnAccessPermission->id)
+                            ->where('rule_type', $rules['type'])
+                            ->get();
+            
+            foreach ($foundRules as $item) {
+                $rules['rules'][] = $item->rule;
+            }
+        }
+
+        return $rules;
+    }
+
     public function getCDNInfo($cdnCode)
     {
         return CDN::where('id', $cdnCode)->first();

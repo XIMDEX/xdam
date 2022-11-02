@@ -73,6 +73,8 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
                             ->name('cdn.addCDNAccessPermissionRule');
                     Route::post('/remove',  [CDNController::class, 'removeAccessPermissionRule'])
                             ->name('cdn.removeCDNAccessPermissionRule');
+                    Route::post('/list',    [CDNController::class, 'listAccessPermissionRules'])
+                            ->name('cdn.listCDNAccessPermissionRules');
                 });
             });
         });

@@ -232,4 +232,18 @@ class CDNController extends Controller
 
         return response($result, Response::HTTP_OK);
     }
+
+    public function listAccessPermissionRules(CDNRequest $request)
+    {
+        $key = 'access_permission_rules_list';
+
+        if (!isset($request->cdn_id))
+            return response([$key => false, 'error' => 'The CDN ID must be provided.']);
+
+        if (!$this->cdnService->existsCDN($request->cdn_id))
+            return response([$key => false, 'error' => 'The CDN ID doesn\'t exist.']);
+
+        $res = $this->cdnService->getAccessPermissionRules($request->cdn_id);
+        return response([$key => true, 'data' => $res]);
+    }
 }
