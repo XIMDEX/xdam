@@ -290,6 +290,7 @@ class MediaService
             try {
                 $key = DocumentRendererKey::generateKey();
                 $keyEntry = DocumentRendererKey::create(['key' => $key]);
+                $keyEntry->storeKeyExpirationDate();
                 $flag = true;
             } catch(\Exception $e) {
                 // echo $e->getMessage();

@@ -330,7 +330,6 @@ class ResourceController extends Controller
             $url = route($routeName, $routeParams);
             $key = $this->mediaService->generateRenderKey();
 
-
             return view('pdfViewer', [
                 'title' => $mediaFileName,
                 'url'   => $url . '/' . $key
