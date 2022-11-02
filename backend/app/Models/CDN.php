@@ -90,10 +90,13 @@ class CDN extends Model
 
     public function toArray()
     {
+        $permissionType = $this->cdn_access_permission()->first();
+
         return [
-            'id'    => $this->id,
-            'name'  => $this->name,
-            'hash'  => $this->resource_hash
+            'id'                => $this->id,
+            'name'              => $this->name,
+            'permission_type'   => $permissionType->type,
+            'hash'              => $this->resource_hash
         ];
     }
 }
