@@ -530,6 +530,16 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    private function getFileType($damUrl)
+    {
+        $mediaId = DamUrlUtil::decodeUrl($damUrl);
+        $media = Media::findOrFail($mediaId);
+        $mediaFileName = explode('/', $media->getPath());
+        $mediaFileName = $mediaFileName[count($mediaFileName) - 1];
+        $mimeType = $media->mime_type;
+        return $mimeType;
+    }
+
     public function renderCDNResource(CDNRequest $request)
     {
         $method = request()->method();
@@ -544,8 +554,18 @@ class ResourceController extends Controller
 
         if ($cdnInfo === null)
             return response(['error' => 'This CDN doesn\'t exist!'], Response::HTTP_BAD_REQUEST);
+
+        $accessCheck = false;
+        $resourceResponse = new ResourceResource($resource);
+        $responseJson = json_decode($resourceResponse->toJson());
+
+        if (isset($request->size) && $this->getFileType($responseJson->files[0]->dam_url) === 'application/pdf')
+            $accessCheck = true;
         
-        if (!$cdnInfo->checkAccessRequirements($ipAddress, $originURL))
+        if ($cdnInfo->checkAccessRequirements($ipAddress, $originURL))
+            $accessCheck = true;
+
+        if (!$accessCheck)
             return response()->json(['error' => 'You can\'t access this CDN.'], Response::HTTP_UNAUTHORIZED);
 
         if (!$this->cdnService->isCollectionAccessible($resource, $cdnInfo))
@@ -553,9 +573,6 @@ class ResourceController extends Controller
 
         if (!isset($request->size))
             $request->size = null;
-
-        $resourceResponse = new ResourceResource($resource);
-        $responseJson = json_decode($resourceResponse->toJson());
     
         if (count($responseJson->files) == 0)
             return response(['error' => 'No files attached!']);
