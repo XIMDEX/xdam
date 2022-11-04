@@ -56,8 +56,8 @@ class BookSolrResource extends BaseSolrResource
             'lang'                  => $this->data->description->lang ?? getenv('BOOK_DEFAULT_LANGUAGE'),
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),
-            'lom'                   => $this->getLOMs(),
-            'lomes'                 => $this->getLOMs('lomes')
+            'lom'                   => $this->getLOMValues(),
+            'lomes'                 => $this->getLOMESValues()
         ];
     }
 }

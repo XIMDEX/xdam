@@ -135,13 +135,13 @@
     "type": "text_general",
     "indexed": true,
     "stored": true,
-    "multiValued": false
+    "multiValued": true
   },
   "lomes": {
     "name": "lomes",
     "type": "text_general",
     "indexed": true,
     "stored": true,
-    "multiValued": false
+    "multiValued": true
   }
 }

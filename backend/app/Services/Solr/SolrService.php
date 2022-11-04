@@ -175,56 +175,15 @@ class SolrService
             $this->deleteSolrDocument($client, 'dam_resource_id:' . $damResource->id);
 
             // Gets the LOM attributes
-            $attributes = $element->getResourceLOMValues();
+            $lomValues = $element->getResourceLOMValues();
 
             // Iterates through the attributes
-            foreach ($attributes as $key => $value) {
-                if ($value !== null) {
-                    $value = json_decode($value, true);
-
-                    if (gettype($value) === 'array') {
-                        foreach ($value as $subValue) {
-                            $this->saveSingleLOMDocument($client, $element, $damResource, $key, $subValue);
-                        }
-                    } else {
-                        $this->saveSingleLOMDocument($client, $element, $damResource, $key, $value);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Saves a single LOM document
-     * @param Client $client
-     * @param $element
-     * @param DamResource $damResource
-     * @param string $key
-     * @param $value
-     * @param $subkey
-     * @throws Exception
-     */
-    private function saveSingleLOMDocument(
-        Client $client,
-        $element,
-        DamResource $damResource,
-        string $key,
-        $value,
-        $subkey = null
-    ) {
-        try {
-            if (gettype($value) === 'array') {
-                foreach ($value as $k => $v) {
-                    $this->saveSingleLOMDocument($client, $element, $damResource, $key, $v, $k);
-                }
-            } else {
-                $value = json_encode($value);
-                $resource = new LOMSolrResource($element, $damResource, $key, $value, $subkey);
+            foreach ($lomValues as $lomItem) {
+                $resource = new LOMSolrResource($element, $damResource, $lomItem['key'],
+                                                $lomItem['value'], $lomItem['subkey']);
                 $documentFound = json_decode($resource->toJson(), true);
                 $this->saverOrUpdateSolrDocument($client, $documentFound);
-            }    
-        } catch (\Exception $ex) {
-            echo $ex->getMessage();
+            }
         }
     }
 

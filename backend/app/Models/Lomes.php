@@ -13,7 +13,7 @@ class Lomes extends Model
     protected $table = "resource_lomes";
     protected $guarded = ['id'];
 
-    public function getResourceLOMValues()
+    private function getLOMAttributes()
     {
         $exceptions = ['id', 'dam_resource_id', 'created_at', 'updated_at'];
         $attributesValues = $this->attributesToArray();
@@ -26,5 +26,56 @@ class Lomes extends Model
         }
 
         return $resourceInfo;
+    }
+
+    private function isValueValid($value)
+    {
+        if (gettype($value) === 'string') return strtolower($value) !== 'null';
+        return $value !== null;
+    }
+
+    private function decodeResourceLOMValue(
+        array &$values,
+        string $key,
+        $value,
+        $subkey = null
+    ) {
+        if ($this->isValueValid($value)) {
+            if (gettype($value) === 'string') {
+                $auxValue = json_decode($value, true);
+                $value = (!$this->isValueValid($auxValue) ? $value : $auxValue);
+            }
+
+            switch (gettype($value)) {
+                case 'array':
+                    foreach ($value as $subkey => $subvalue) {
+                        $this->decodeResourceLOMValue($values, $key, $subvalue, $subkey);
+                    }
+                    break;
+
+                default:
+                    if ($this->isValueValid($value)) {
+                        $entry = [
+                            'key'       => $key,
+                            'subkey'    => $subkey,
+                            'value'     => $value
+                        ];
+                        $values[] = $entry;
+                    }
+                    break;
+            }
+        }
+    }
+
+    public function getResourceLOMValues()
+    {
+        $attributes = $this->getLOMAttributes();
+        $values = [];
+
+        foreach ($attributes as $k => $v) {
+            $this->decodeResourceLOMValue($values, $k, $v);
+        }
+
+        return $values;
     }
 }

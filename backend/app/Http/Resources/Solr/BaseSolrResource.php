@@ -118,31 +118,35 @@ class BaseSolrResource extends JsonResource
         return $this->collection->getMaxNumberOfFiles();
     }
 
-    private function getLOM($client)
+    protected function getLOMValues()
     {
-        $documentFound = '{}';
+        $values = [];
+        $lom = Lom::where('dam_resource_id', $this->id)->first();
 
-        try {
-            $query = $client->createSelect();
-            $query->setQuery('dam_resource_id:' . $this->id);
-            $result = $client->execute($query);
+        if ($lom !== null) {
+            $auxValues = $lom->getResourceLOMValues();
 
-            foreach ($result as $item) {
-                $fields = $item->getFields();
-                $documentFound = json_encode($fields);
+            foreach ($auxValues as $item) {
+                $values[] = json_encode($item);
             }
-        } catch (\Exception $ex) {
-            // echo $ex->getMessage();
-            $documentFound = '{}';
         }
 
-        return $documentFound;
+        return $values;
     }
 
-    protected function getLOMs($lomType = 'lom')
+    protected function getLOMESValues()
     {
-        $client = $this->lomSolrClient;
-        $client = ($lomType == 'lomes' ? $this->lomesSolrClient : $client);
-        return $this->getLOM($client);
+        $values = [];
+        $lomes = Lomes::where('dam_resource_id', $this->id)->first();
+
+        if ($lomes !== null) {
+            $auxValues = $lomes->getResourceLOMValues();
+
+            foreach ($auxValues as $item) {
+                $values[] = json_encode($item);
+            }
+        }
+
+        return $values;
     }
 }

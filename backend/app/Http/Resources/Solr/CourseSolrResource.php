@@ -110,8 +110,8 @@ class CourseSolrResource extends BaseSolrResource
             'updated_at'            => $this->updated_at,
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),
-            'lom'                   => $this->getLOMs(),
-            'lomes'                 => $this->getLOMs('lomes')
+            'lom'                   => $this->getLOMValues(),
+            'lomes'                 => $this->getLOMESValues()
         ];
     }
 }

@@ -107,8 +107,8 @@ class DocumentSolrResource extends BaseSolrResource
             'organization'          => $this->getOrganization(),
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),
-            'lom'                   => $this->getLOMs(),
-            'lomes'                 => $this->getLOMs('lomes')
+            'lom'                   => $this->getLOMValues(),
+            'lomes'                 => $this->getLOMESValues()
         ];
     }
 }
