@@ -155,6 +155,14 @@ class SolrService
         return $client->update($createCommand);
     }
 
+    /**
+     * Saves LOM documents
+     * @param Client $client
+     * @param $element
+     * @param array $schema
+     * @param DamResource $damResource
+     * @throws Exception
+     */
     private function saveLOMDocuments(
         Client $client,
         $element,
@@ -172,19 +180,51 @@ class SolrService
             // Iterates through the attributes
             foreach ($attributes as $key => $value) {
                 if ($value !== null) {
+                    $value = json_decode($value, true);
+
                     if (gettype($value) === 'array') {
                         foreach ($value as $subValue) {
-                            $resource = new LOMSolrResource($element, $damResource, $key, $subValue);
-                            $documentFound = json_decode($resource->toJson(), true);
-                            $this->saverOrUpdateSolrDocument($client, $documentFound);
+                            $this->saveSingleLOMDocument($client, $element, $damResource, $key, $subValue);
                         }
                     } else {
-                        $resource = new LOMSolrResource($element, $damResource, $key, $value);
-                        $documentFound = json_decode($resource->toJson(), true);
-                        $this->saverOrUpdateSolrDocument($client, $documentFound);
+                        $this->saveSingleLOMDocument($client, $element, $damResource, $key, $value);
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Saves a single LOM document
+     * @param Client $client
+     * @param $element
+     * @param DamResource $damResource
+     * @param string $key
+     * @param $value
+     * @param $subkey
+     * @throws Exception
+     */
+    private function saveSingleLOMDocument(
+        Client $client,
+        $element,
+        DamResource $damResource,
+        string $key,
+        $value,
+        $subkey = null
+    ) {
+        try {
+            if (gettype($value) === 'array') {
+                foreach ($value as $k => $v) {
+                    $this->saveSingleLOMDocument($client, $element, $damResource, $key, $v, $k);
+                }
+            } else {
+                $value = json_encode($value);
+                $resource = new LOMSolrResource($element, $damResource, $key, $value, $subkey);
+                $documentFound = json_decode($resource->toJson(), true);
+                $this->saverOrUpdateSolrDocument($client, $documentFound);
+            }    
+        } catch (\Exception $ex) {
+            echo $ex->getMessage();
         }
     }
 
@@ -209,24 +249,19 @@ class SolrService
         $lomCoreName = $this->getCoreNameVersioned('lom', $solrVersion);
         $lomesCoreName = $this->getCoreNameVersioned('lomes', $solrVersion);
 
-        // Updates the LOM and the LOMES document
-        try {
-            // Checks if the LOM and the LOMES must be updated
-            if ($reindexLOM) {
-                // Gets the LOM and the LOMES client
-                $lomClient = $this->getClient($lomCoreName);
-                $lomesClient = $this->getClient($lomesCoreName);
+        // Checks if the LOM and the LOMES must be updated
+        if ($reindexLOM) {
+            // Gets the LOM and the LOMES client
+            $lomClient = $this->getClient($lomCoreName);
+            $lomesClient = $this->getClient($lomesCoreName);
 
-                // Gets the LOM and the LOMES items
-                $lomItem = Lom::where('dam_resource_id', $damResource->id)->first();
-                $lomesItem = Lomes::where('dam_resource_id', $damResource->id)->first();
+            // Gets the LOM and the LOMES items
+            $lomItem = Lom::where('dam_resource_id', $damResource->id)->first();
+            $lomesItem = Lomes::where('dam_resource_id', $damResource->id)->first();
 
-                // Manages the LOM and LOMES documents
-                $this->saveLOMDocuments($lomClient, $lomItem, Utils::getLomSchema(true), $damResource);
-                $this->saveLOMDocuments($lomesClient, $lomesItem, Utils::getLomesSchema(true), $damResource);
-            }
-        } catch (\Exception $ex) {
-            echo $ex->getMessage();
+            // Manages the LOM and LOMES documents
+            $this->saveLOMDocuments($lomClient, $lomItem, Utils::getLomSchema(true), $damResource);
+            $this->saveLOMDocuments($lomesClient, $lomesItem, Utils::getLomesSchema(true), $damResource);
         }
 
         // Gets the client attached to the current resource

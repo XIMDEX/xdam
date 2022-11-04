@@ -15,14 +15,6 @@
         "required": true,
         "stored": true
     },
-    "id": {
-        "name": "id",
-        "type": "string",
-        "multiValued": false,
-        "indexed": true,
-        "required": true,
-        "stored": true
-    },
     "lang": {
         "name": "lang",
         "type": "string",
@@ -37,6 +29,14 @@
         "multiValued": false,
         "indexed": true,
         "required": true,
+        "stored": true
+    },
+    "lom_subkey": {
+        "name": "lom_subkey",
+        "type": "string",
+        "multiValued": false,
+        "indexed": true,
+        "required": false,
         "stored": true
     },
     "lom_value": {

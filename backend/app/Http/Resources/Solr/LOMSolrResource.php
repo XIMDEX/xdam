@@ -13,6 +13,7 @@ class LOMSolrResource extends JsonResource
     private DamResource $damResource;
     private string $lomKey;
     private $lomValue;
+    private $lomSubkey;
 
     /**
      * Constructor
@@ -21,12 +22,14 @@ class LOMSolrResource extends JsonResource
      * @param string $lomKey
      * @param $lomValue
      */
-    public function __construct($element, $damResource, $lomKey, $lomValue)
+    public function __construct($element, $damResource, $lomKey, $lomValue,
+                                $lomSubkey = null)
     {
         parent::__construct($element);
         $this->damResource = $damResource;
         $this->lomKey = $lomKey;
         $this->lomValue = $lomValue;
+        $this->lomSubkey = $lomSubkey;
     }
 
     /**
@@ -84,11 +87,11 @@ class LOMSolrResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'                => $this->id,
             'dam_resource_id'   => $this->dam_resource_id,
             'dam_collection_id' => $this->damResource->collection->id,
             'lang'              => $this->getLanguage(),
             'lom_key'           => $this->lomKey,
+            'lom_subkey'        => $this->lomSubkey,
             'lom_value'         => $this->lomValue
         ];
     }
