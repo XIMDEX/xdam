@@ -297,6 +297,11 @@ class CDNController extends Controller
         return response($result, Response::HTTP_OK);
     }
 
+    /**
+     * Lists the access permission rules of a CDN
+     * @param CDNRequest $request
+     * @return ResponseFactory
+     */
     public function listAccessPermissionRules(CDNRequest $request)
     {
         $key = 'access_permission_rules_list';
