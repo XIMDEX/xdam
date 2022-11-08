@@ -115,14 +115,14 @@
   },
   "lom": {
     "name": "lom",
-    "type": "text_general",
+    "type": "text_es_custom",
     "indexed": true,
     "stored": true,
     "multiValued": true
   },
   "lomes": {
     "name": "lomes",
-    "type": "text_general",
+    "type": "text_es_custom",
     "indexed": true,
     "stored": true,
     "multiValued": true

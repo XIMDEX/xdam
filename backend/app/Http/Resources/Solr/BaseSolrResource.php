@@ -118,35 +118,38 @@ class BaseSolrResource extends JsonResource
         return $this->collection->getMaxNumberOfFiles();
     }
 
-    protected function getLOMValues()
+    private function formatLOMValues($element)
     {
         $values = [];
-        $lom = Lom::where('dam_resource_id', $this->id)->first();
+        $keySeparator = '---';
+        $valueSeparator = '===';
 
-        if ($lom !== null) {
-            $auxValues = $lom->getResourceLOMValues();
+        if ($element !== null) {
+            $auxValues = $element->getResourceLOMValues();
 
             foreach ($auxValues as $item) {
-                $values[] = json_encode($item);
+                $key = $item['key'];
+                $subkey = $item['subkey'];
+                $value = $item['value'];
+                $auxItem = $key;
+                $auxItem .= ($subkey !== null ? ($keySeparator . $subkey) : '');
+                $auxItem .= ($valueSeparator . $value);
+                $values[] = $auxItem;
             }
         }
 
         return $values;
     }
 
+    protected function getLOMValues()
+    {
+        $lom = Lom::where('dam_resource_id', $this->id)->first();
+        return $this->formatLOMValues($lom);
+    }
+
     protected function getLOMESValues()
     {
-        $values = [];
         $lomes = Lomes::where('dam_resource_id', $this->id)->first();
-
-        if ($lomes !== null) {
-            $auxValues = $lomes->getResourceLOMValues();
-
-            foreach ($auxValues as $item) {
-                $values[] = json_encode($item);
-            }
-        }
-
-        return $values;
+        return $this->formatLOMValues($lomes);
     }
 }

@@ -392,7 +392,7 @@ class SolrService
 
         // the facets returned here are a complete unfiltered list, only the one that has been selected is marked as selected
         $facets = $this->stdToArray($this->facetManager->getFacets($faceSetFound, $facetsFilter, $core));
-        
+
         foreach ($facets as $key => $facet) {
             ksort($facets[$key]['values']);
         }
