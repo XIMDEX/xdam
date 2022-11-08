@@ -15,7 +15,7 @@ class CDNAccessPermission extends Model
     use HasFactory;
 
     protected $table = 'access_permissions';
-    protected $fillable = ['cdn_id', 'type'];
+    protected $fillable = ['cdn_id', 'type', 'priority'];
 
     public function cdn(): BelongsTo
     {

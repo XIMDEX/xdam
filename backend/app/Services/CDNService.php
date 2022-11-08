@@ -17,12 +17,20 @@ class CDNService
 {
     private $cdnInfo;
 
+    /**
+     * CDNService constructor.
+     */
     public function __construct()
     {
         $this->cdnInfo = config('cdn.cdns');
     }
 
-    public function createCDN($name)
+    /**
+     * Creates a CDN
+     * @param string $name
+     * @return boolean
+     */
+    public function createCDN(string $name)
     {
         $cdn = CDN::create([
             'uuid' => Str::uuid(),
@@ -46,25 +54,46 @@ class CDNService
         return false;
     }
 
-    public function removeCDN($cdnID)
+    /**
+     * Removes a CDN
+     * @param int $cdnID
+     * @return boolean
+     */
+    public function removeCDN(int $cdnID)
     {
         $cdn = CDN::where('id', $cdnID)->delete();
         return true;
     }
 
-    public function existsCDN($cdnID)
+    /**
+     * Checks if a CDN exists
+     * @param int $cdnID
+     * @return boolean
+     */
+    public function existsCDN(int $cdnID)
     {
         $cdn = CDN::where('id', $cdnID)->first();
         return $cdn !== null;
     }
 
-    public function existsCollection($collectionID)
+    /**
+     * Check if a collection exists
+     * @param int $collectionID
+     * @return boolean
+     */
+    public function existsCollection(int $collectionID)
     {
         $collection = Collection::where('id', $collectionID)->first();
         return $collection !== null;
     }
 
-    public function addCDNCollection($cdnID, $collectionID)
+    /**
+     * Attaches a collection to a CDN
+     * @param int $cdnID
+     * @param int $collectionID
+     * @return boolean
+     */
+    public function addCDNCollection(int $cdnID, int $collectionID)
     {
         $cdnCollection = CDNCollection::where('cdn_id', $cdnID)
                             ->where('collection_id', $collectionID)
@@ -77,7 +106,13 @@ class CDNService
         return true;
     }
 
-    public function removeCDNCollection($cdnID, $collectionID)
+    /**
+     * Deattaches a collection from a CDN
+     * @param int $cdnID
+     * @param int $collectionID
+     * @return boolean
+     */
+    public function removeCDNCollection(int $cdnID, int $collectionID)
     {
         $cdnCollection = CDNCollection::where('cdn_id', $cdnID)
                             ->where('collection_id', $collectionID)
@@ -91,7 +126,13 @@ class CDNService
         return false;
     }
 
-    public function checkCDNCollection($cdnID, $collectionID)
+    /**
+     * Checks if a collection is attached to a CDN
+     * @param int $cdnID
+     * @param int $collectionID
+     * @return boolean
+     */
+    public function checkCDNCollection(int $cdnID, int $collectionID)
     {
         $cdnCollection = CDNCollection::where('cdn_id', $cdnID)
                             ->where('collection_id', $collectionID)
@@ -99,10 +140,16 @@ class CDNService
         return $cdnCollection !== null;
     }
 
-    public function getCDNCollections($cdnID)
+    /**
+     * Gets the collections attached to a CDN
+     * @param int $cdnID
+     * @return array
+     */
+    public function getCDNCollections(int $cdnID)
     {
         $collections = [];
         $cdnCollections = CDNCollection::where('cdn_id', $cdnID)
+                            ->orderBy('collection_id')
                             ->get();
 
         foreach ($cdnCollections as $item) {
@@ -112,37 +159,55 @@ class CDNService
         return $collections;
     }
 
-    public function existsAccessPermissionType($accessPermissionType)
+    /**
+     * Checks if the access permission type exists
+     * @param string $accessPermissionType
+     * @return boolean
+     */
+    public function existsAccessPermissionType(string $accessPermissionType)
     {
-        // $type = AccessPermission::coerce($accessPermissionType);
-        // return $type !== null;
         return AccessPermission::existsAccessPermissionType($accessPermissionType);
     }
 
-    public function updateAccessPermissionType($cdnID, $accessPermissionType)
+    /**
+     * Updates the access permission type
+     * @param int $cdnID
+     * @param array $accessPermissionTypes
+     * @return boolean
+     */
+    public function updateAccessPermissionType(int $cdnID, array $accessPermissionTypes)
     {
-        $cdnAccessPermission = CDNAccessPermission::where('cdn_id', $cdnID)->first();
-        
-        if ($cdnAccessPermission === null) return false;
-        if ($accessPermissionType !== $cdnAccessPermission->type) {
-            $deleted = CDNAccessPermissionRule::where('access_permission_id', $cdnAccessPermission->id)
-                        ->delete();
-            $cdnAccessPermission->type = $accessPermissionType;
-            $cdnAccessPermission->save();
+        CDNAccessPermission::where('cdn_id', $cdnID)->delete();
+        $priority = 1;
+
+        foreach ($accessPermissionTypes as $type) {
+            $entry = CDNAccessPermission::create([
+                'cdn_id' => $cdnID,
+                'type' => $type,
+                'priority' => $priority
+            ]);
+            $priority++;
         }
 
         return true;
     }
 
-    public function checkAccessPermissionType($cdnID)
-    {
-        $cdnAccessPermission = CDNAccessPermission::where('cdn_id', $cdnID)->first();
-        if (($cdnAccessPermission === null)) return 'Undefined';
-        return $cdnAccessPermission->type;
-    }
-
-    public function manageAccessPermissionRule($cdnID, $permissionType, $rule, $key,  bool $toRemove)
-    {
+    /**
+     * Manages access permission rules
+     * @param int $cdnID
+     * @param string $permissionType
+     * @param string $rule
+     * @param string $key
+     * @param boolean $toRemove
+     * @return array
+     */
+    public function manageAccessPermissionRule(
+        int $cdnID,
+        string $permissionType,
+        string $rule,
+        string $key,
+        bool $toRemove
+    ) {
         $cdnAccessPermission = CDNAccessPermission::where('cdn_id', $cdnID)
                                 ->where('type', $permissionType)
                                 ->first();
@@ -163,40 +228,59 @@ class CDNService
         } elseif ($ruleMatch !== null && !$toRemove) {
             return [$key => false, 'status' => 'The rule already exists.'];
         } elseif ($toRemove) {
-            $oldRule = CDNAccessPermissionRule::where('access_permission_id', $cdnAccessPermission->id)
-                        ->where('rule', $rule)
-                        ->where('rule_type', $permissionType)
-                        ->delete();
+            CDNAccessPermissionRule::where('access_permission_id', $cdnAccessPermission->id)
+                ->where('rule', $rule)
+                ->where('rule_type', $permissionType)
+                ->delete();
         } else  {
-            $newRule = CDNAccessPermissionRule::create([
-                            'access_permission_id'  => $cdnAccessPermission->id,
-                            'rule'                  => $rule,
-                            'rule_type'             => $permissionType
-                        ]);
+            CDNAccessPermissionRule::create([
+                'access_permission_id'  => $cdnAccessPermission->id,
+                'rule'                  => $rule,
+                'rule_type'             => $permissionType
+            ]);
         }
 
         return [$key => true];
     }
 
-    public function getAccessPermissionRules($cdnID)
+    /**
+     * Returns the access permission rules
+     * @param int $cdnID
+     * @return array
+     */
+    public function getAccessPermissionRules(int $cdnID)
     {
-        $rules = ['type' => 'Undefined', 'rules' => []];
-        $cdnAccessPermission = CDNAccessPermission::where('cdn_id', $cdnID)->first();
-        
-        if ($cdnAccessPermission !== null) {
-            $rules['type'] = $cdnAccessPermission->type;
-            $foundRules = CDNAccessPermissionRule::where('access_permission_id', $cdnAccessPermission->id)
-                            ->where('rule_type', $rules['type'])
-                            ->get();
-            
-            foreach ($foundRules as $item) {
-                $rules['rules'][] = $item->rule;
+        $rules = [];
+        $permissions = CDNAccessPermission::where('cdn_id', $cdnID)
+                        ->orderBy('priority')
+                        ->get();
+
+        foreach ($permissions as $permission) {
+            $auxItem = [
+                'priority' => $permission->priority,
+                'type' => $permission->type,
+                'rules' => []
+            ];
+
+            $pRules = CDNAccessPermissionRule::where('access_permission_id', $permission->id)
+                        ->where('rule_type', $permission->type)
+                        ->get();
+
+            foreach ($pRules as $pRule) {
+                $auxItem['rules'][] = $pRule->rule;
             }
+
+            $rules[] = $auxItem;
         }
 
         return $rules;
     }
 
+    /**
+     * Returns the CDN by its ID
+     * @param $cdnCode
+     * @return CDN
+     */
     public function getCDNInfo($cdnCode)
     {
         return CDN::where('id', $cdnCode)->first();

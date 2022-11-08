@@ -65,8 +65,6 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
             Route::group(['prefix' => 'access_permission'], function() {
                 Route::post('/update',  [CDNController::class, 'updateAccessPermission'])
                         ->name('cdn.updateCDNAccessPermission');
-                Route::post('/check',   [CDNController::class, 'checkAccessPermission'])
-                        ->name('cdn.checkCDNAccessPermission');
 
                 Route::group(['prefix' => 'rule'], function() {
                     Route::post('/add',     [CDNController::class, 'addAccessPermissionRule'])
