@@ -66,15 +66,35 @@ class Lom extends Model
         }
     }
 
-    public function getResourceLOMValues()
+    public function getResourceLOMValues(bool $allFields = true)
     {
+        $facetFields = config('solr_facets', []);
         $attributes = $this->getLOMAttributes();
         $values = [];
+        $defValues = [];
 
         foreach ($attributes as $k => $v) {
             $this->decodeResourceLOMValue($values, $k, $v);
         }
 
-        return $values;
+        if (!$allFields && array_key_exists('lom', $facetFields)) {
+            foreach ($values as $item) {
+                $selected = false;
+    
+                foreach ($facetFields['lom'] as $rItem) {
+                    $check = ($rItem['key'] === $item['key']);
+    
+                    if ($rItem['subkey'] !== null) {
+                        $check = $check && ($rItem['subkey'] === $item['subkey']);
+                    }
+
+                    if ($check) $selected = true;
+                }
+    
+                if ($selected) $defValues[] = $item;
+            }
+        }
+
+        return ($allFields ? $values : $defValues);
     }
 }

@@ -46,24 +46,6 @@ class BaseSolrResource extends JsonResource
         );
     }
 
-    protected function getLOMRawValues(string $type)
-    {
-        $element = null;
-        $values = null;
-
-        if ($type == 'lom') {
-            $element = $this->lom()->first();
-        } else if ($type == 'lomes') {
-            $element = $this->lomes()->first();
-        }
-
-        if ($element !== null) {
-            $values = $element->getResourceLOMValues();
-        }
-
-        return $values;
-    }
-
     protected function getData($tags = null, $categories = null)
     {
         $data = $this->data;
@@ -140,12 +122,31 @@ class BaseSolrResource extends JsonResource
         return $this->collection->getMaxNumberOfFiles();
     }
 
+    protected function getLOMRawValues(string $type, bool $allFields = true)
+    {
+        $element = null;
+        $values = null;
+
+        if ($type == 'lom') {
+            $element = $this->lom()->first();
+        } else if ($type == 'lomes') {
+            $element = $this->lomes()->first();
+        }
+
+        if ($element !== null) {
+            $values = $element->getResourceLOMValues($allFields);
+        }
+
+        return $values;
+    }
+
     protected function getLOMValues(string $type = 'lom')
     {
-        $rawValues = $this->getLOMRawValues($type);
-        $keySeparator = '___';
-        $valueSeparator = '____';
-        $space = '_____';
+        $solrFacetsConfig = config('solr_facets', [])['constants'];
+        $rawValues = $this->getLOMRawValues($type, false);
+        $keySeparator = $solrFacetsConfig['key_separator'];
+        $valueSeparator = $solrFacetsConfig['value_separator'];
+        $space = $solrFacetsConfig['space'];
         $values = [];
 
         if ($rawValues !== null) {
