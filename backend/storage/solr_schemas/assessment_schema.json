@@ -90,16 +90,10 @@
   },
   "lom": {
     "name": "lom",
-    "type": "text_es_custom",
-    "indexed": true,
-    "stored": true,
-    "multiValued": true
+    "type": "text_general"
   },
   "lomes": {
     "name": "lomes",
-    "type": "text_es_custom",
-    "indexed": true,
-    "stored": true,
-    "multiValued": true
+    "type": "text_general"
   }
 }

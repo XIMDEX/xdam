@@ -46,15 +46,37 @@ class BaseSolrResource extends JsonResource
         );
     }
 
+    protected function getLOMRawValues(string $type)
+    {
+        $element = null;
+        $values = null;
+
+        if ($type == 'lom') {
+            $element = $this->lom()->first();
+        } else if ($type == 'lomes') {
+            $element = $this->lomes()->first();
+        }
+
+        if ($element !== null) {
+            $values = $element->getResourceLOMValues();
+        }
+
+        return $values;
+    }
+
     protected function getData($tags = null, $categories = null)
     {
-        return is_object($this->data) ? json_encode($this->data) : $this->data;
+        $data = $this->data;
+        $data = (!is_object($data) ? json_decode($data) : $data);
+        $data->lom = $this->getLOMRawValues('lom');
+        $data->lomes = $this->getLOMRawValues('lomes');
+        $finalData = $data;
+        $finalData = is_object($finalData) ? json_encode($finalData) : $finalData;
+        return $finalData;
     }
     
     protected function getWorkspaces()
     {
-        // return Utils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
-        // return Utils::formatWorkspaces($this->resource->workspaces->pluck('id')->toArray());
         return $this->resource->workspaces->pluck('id')->toArray();
     }
 
@@ -118,38 +140,27 @@ class BaseSolrResource extends JsonResource
         return $this->collection->getMaxNumberOfFiles();
     }
 
-    private function formatLOMValues($element)
+    protected function getLOMValues(string $type = 'lom')
     {
+        $rawValues = $this->getLOMRawValues($type);
+        $keySeparator = '___';
+        $valueSeparator = '____';
+        $space = '_____';
         $values = [];
-        $keySeparator = '---';
-        $valueSeparator = '===';
 
-        if ($element !== null) {
-            $auxValues = $element->getResourceLOMValues();
-
-            foreach ($auxValues as $item) {
+        if ($rawValues !== null) {
+            foreach ($rawValues as $item) {
                 $key = $item['key'];
                 $subkey = $item['subkey'];
                 $value = $item['value'];
                 $auxItem = $key;
                 $auxItem .= ($subkey !== null ? ($keySeparator . $subkey) : '');
                 $auxItem .= ($valueSeparator . $value);
+                $auxItem = str_replace(' ', $space, $auxItem);
                 $values[] = $auxItem;
             }
         }
 
         return $values;
-    }
-
-    protected function getLOMValues()
-    {
-        $lom = Lom::where('dam_resource_id', $this->id)->first();
-        return $this->formatLOMValues($lom);
-    }
-
-    protected function getLOMESValues()
-    {
-        $lomes = Lomes::where('dam_resource_id', $this->id)->first();
-        return $this->formatLOMValues($lomes);
     }
 }

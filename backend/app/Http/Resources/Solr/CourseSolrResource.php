@@ -22,18 +22,16 @@ class CourseSolrResource extends BaseSolrResource
     protected function getData($tags = null, $categories = null)
     {
         $data = $this->data;
-
-        if (!is_object($data))
-            $data = json_decode($data);
-
+        $data = (!is_object($data) ? json_decode($data) : $data);
         $data->id = $this->id;
         $data->description->id = $this->id;
         $data->description->name = $this->name;
         $data->description->tags = $tags;
         $data->description->categories = $categories;
+        $data->lom = $this->getLOMRawValues('lom');
+        $data->lomes = $this->getLOMRawValues('lomes');
         $finalData = $data;
         $finalData = is_object($finalData) ? json_encode($finalData) : $finalData;
-
         return $finalData;
     }
 
@@ -111,7 +109,7 @@ class CourseSolrResource extends BaseSolrResource
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),
             'lom'                   => $this->getLOMValues(),
-            'lomes'                 => $this->getLOMESValues()
+            'lomes'                 => $this->getLOMValues('lomes')
         ];
     }
 }
