@@ -89,7 +89,11 @@ class Lomes extends Model
                         $check = $check && ($rItem['subkey'] === $item['subkey']);
                     }
 
-                    if ($check) $selected = true;
+                    if ($check) {
+                        if ($rItem['key_alias'] !== null) $item['key'] = $rItem['key_alias'];
+                        if ($rItem['subkey_alias'] !== null) $item['subkey'] = $rItem['subkey_alias'];
+                        $selected = true;
+                    }
                 }
     
                 if ($selected) $defValues[] = $item;

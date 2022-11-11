@@ -142,23 +142,33 @@ class BaseSolrResource extends JsonResource
 
     protected function getLOMValues(string $type = 'lom')
     {
-        $solrFacetsConfig = config('solr_facets', [])['constants'];
-        $rawValues = $this->getLOMRawValues($type, false);
-        $keySeparator = $solrFacetsConfig['key_separator'];
-        $valueSeparator = $solrFacetsConfig['value_separator'];
-        $space = $solrFacetsConfig['space'];
         $values = [];
+        $solrFacetsConfig = config('solr_facets', []);
 
-        if ($rawValues !== null) {
-            foreach ($rawValues as $item) {
-                $key = $item['key'];
-                $subkey = $item['subkey'];
-                $value = $item['value'];
-                $auxItem = $key;
-                $auxItem .= ($subkey !== null ? ($keySeparator . $subkey) : '');
-                $auxItem .= ($valueSeparator . $value);
-                $auxItem = str_replace(' ', $space, $auxItem);
-                $values[] = $auxItem;
+        if (array_key_exists('constants', $solrFacetsConfig)) {
+            $solrFacetsConfig = $solrFacetsConfig['constants'];
+            $rawValues = $this->getLOMRawValues($type, false);
+            $specialCharacter = $solrFacetsConfig['special_character'];
+            $keySeparator = Utils::getRepetitiveString($specialCharacter, $solrFacetsConfig['key_separator']);
+            $valueSeparator = Utils::getRepetitiveString($specialCharacter, $solrFacetsConfig['value_separator']);
+            $charactersMap = $solrFacetsConfig['characters_map'];
+
+            if ($rawValues !== null) {
+                foreach ($rawValues as $item) {
+                    $key = $item['key'];
+                    $subkey = $item['subkey'];
+                    $value = $item['value'];
+                    $auxItem = $key;
+                    $auxItem .= ($subkey !== null ? ($keySeparator . $subkey) : '');
+                    $auxItem .= ($valueSeparator . $value);
+
+                    foreach ($charactersMap as $characterItem) {
+                        $replace = Utils::getRepetitiveString($specialCharacter, $characterItem['to']);
+                        $auxItem = str_replace($characterItem['from'], $replace, $auxItem);
+                    }
+
+                    $values[] = $auxItem;
+                }
             }
         }
 

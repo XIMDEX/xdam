@@ -75,4 +75,11 @@ class Utils
         $schema = json_decode($json_file, $asArray);
         return $schema;
     }
+
+    public static function getRepetitiveString($character, $times)
+    {
+        $string = '';
+        for ($i = 0; $i < $times; $i++) $string .= $character;
+        return $string;
+    }
 }
