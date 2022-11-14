@@ -151,6 +151,7 @@ class CatalogueController extends Controller
         foreach ($facet['values'] as $key => $value) {
             $auxKey = $key;
             $keyObject = [
+                'o_key'     => $key,
                 'key'       => null,
                 'key_title' => null,
                 'subkey'    => null,
