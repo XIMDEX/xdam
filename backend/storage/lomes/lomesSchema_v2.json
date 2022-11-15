@@ -1,0 +1,477 @@
+{
+  "name": "lomes",
+  "title": "LOMES",
+  "api": false,
+  "tabs": [
+    {
+      "title": "General",
+      "key": "1",
+      "properties": {
+        "Identificador": {
+          "type": "string",
+          "title": "Identificador",
+          "default": "",
+          "data_field": "general_1_identificador"
+        },
+        "Catálogo": {
+          "type": "string",
+          "title": "Catálogo",
+          "default": "",
+          "data_field": "general_1_catalogo"
+        },
+        "Entrada": {
+          "type": "string",
+          "title": "Entrada",
+          "data_field": "general_1_entrada"
+        },
+        "Título": {
+          "type": "string",
+          "title": "Título",
+          "data_field": "general_1_titulo"
+        },
+        "Idioma": {
+          "type": "string",
+          "title": "Idioma",
+          "enum": [
+            "es",
+            "gl",
+            "ca",
+            "eu",
+            "va"
+          ],
+          "data_field": "general_1_idioma"
+        },
+        "Descripción": {
+          "type": "string",
+          "title": "Descripción",
+          "data_field": "general_1_descripcion"
+        },
+        "Palabras Clave": {
+          "type": "string",
+          "title": "Palabras Clave",
+          "data_field": "general_1_palabras_clave"
+        },
+        "Ámbito": {
+          "type": "string",
+          "title": "Ámbito",
+          "data_field": "general_1_Ambito"
+        },
+        "Estructura": {
+          "type": "string",
+          "title": "Estructura",
+          "data_field": "general_1_estructura"
+        },
+        "Nivel de agregación": {
+          "type": "string",
+          "title": "Nivel de agregación",
+          "data_field": "general_1_nivel_de_agregacion"
+        }
+      }
+    },
+    {
+      "title": "Ciclo de Vida",
+      "key": "2",
+      "properties": {
+        "Versión": {
+          "type": "string",
+          "title": "Versión",
+          "data_field": "ciclo_de_vida_2_version"
+        },
+        "Estado": {
+          "type": "string",
+          "title": "Estado",
+          "data_field": "ciclo_de_vida_2_estado"
+        },
+        "Contribución": {
+          "type": "string",
+          "title": "Contribución",
+          "data_field": "ciclo_de_vida_2_contribucion"
+        },
+        "Tipo": {
+          "type": "string",
+          "title": "Tipo",
+          "data_field": "ciclo_de_vida_2_tipo"
+        },
+        "Entidad": {
+          "type": "string",
+          "title": "Entidad",
+          "data_field": "ciclo_de_vida_2_entidad"
+        },
+        "Fecha": {
+          "type": "string",
+          "title": "Fecha",
+          "data_field": "ciclo_de_vida_2_fecha"
+        }
+      }
+    },
+    {
+      "title": "Meta-metadatos",
+      "key": "3",
+      "properties": {
+        "Identificador": {
+          "type": "string",
+          "title": "Identificador",
+          "data_field": "meta-metadatos_3_identificador"
+        },
+        "Catálogo": {
+          "type": "string",
+          "title": "Catálogo",
+          "data_field": "meta-metadatos_3_catalogo"
+        },
+        "Entrada": {
+          "type": "string",
+          "title": "Entrada",
+          "data_field": "meta-metadatos_3_entrada"
+        },
+        "Contribución": {
+          "type": "string",
+          "title": "Contribución",
+          "data_field": "meta-metadatos_3_contribucion"
+        },
+        "Tipo": {
+          "type": "string",
+          "title": "Tipo",
+          "data_field": "meta-metadatos_3_tipo"
+        },
+        "Entidad": {
+          "type": "string",
+          "title": "Entidad",
+          "data_field": "meta-metadatos_3_entidad"
+        },
+        "Fecha": {
+          "type": "string",
+          "title": "Fecha",
+          "data_field": "meta-metadatos_3_fecha"
+        },
+        "Esquema de Metadatos": {
+          "type": "string",
+          "title": "Esquema de Metadatos",
+          "data_field": "meta-metadatos_3_esquema_de_metadatos"
+        },
+        "Idioma": {
+          "type": "string",
+          "title": "Idioma",
+          "enum": [
+            "es",
+            "gl",
+            "ca",
+            "eu",
+            "va"
+          ],
+          "data_field": "meta-metadatos_3_idioma"
+        }
+      }
+    },
+    {
+      "title": "Técnica",
+      "key": "4",
+      "properties": {
+        "Formato": {
+          "type": "string",
+          "title": "Formato",
+          "data_field": "tecnica_4_formato"
+        },
+        "Tamaño": {
+          "type": "string",
+          "title": "Tamaño",
+          "data_field": "tecnica_4_tamano"
+        },
+        "Localización": {
+          "type": "string",
+          "title": "Localización",
+          "data_field": "tecnica_4_localizacion"
+        },
+        "Requisitos de Instalación": {
+          "type": "string",
+          "title": "Requisitos de Instalación",
+          "data_field": "tecnica_4_requisitos_de_instalacion"
+        },
+        "Agregador": {
+          "type": "string",
+          "title": "Agregador",
+          "data_field": "tecnica_4_agregador"
+        },
+        "Tipo": {
+          "type": "string",
+          "title": "Tipo",
+          "data_field": "tecnica_4_tipo"
+        },
+        "Nombre": {
+          "type": "string",
+          "title": "Nombre",
+          "data_field": "tecnica_4_nombre"
+        },
+        "Versión Mínima": {
+          "type": "string",
+          "title": "Versión Mínima",
+          "data_field": "tecnica_4_version_minima"
+        },
+        "Versión Máxima": {
+          "type": "string",
+          "title": "Versión Máxima",
+          "data_field": "tecnica_4_version_maxima"
+        },
+        "Pautas de Instalación": {
+          "type": "string",
+          "title": "Pautas de Instalación",
+          "data_field": "tecnica_4_pautas_de_instalacion"
+        },
+        "Otros Requisitos de Plataforma": {
+          "type": "string",
+          "title": "Otros Requisitos de Plataforma",
+          "data_field": "tecnica_4_otros_requisitos_de_plataforma"
+        },
+        "Duración": {
+          "type": "string",
+          "title": "Duración",
+          "data_field": "tecnica_4_duracion"
+        }
+      }
+    },
+    {
+      "title": "Uso Educativo",
+      "key": "5",
+      "properties": {
+        "Tipo de Interactividad": {
+          "type": "string",
+          "title": "Tipo de Interactividad",
+          "enum": [
+            "activo",
+            "explosivo",
+            "combinado"
+          ],
+          "data_field": "uso_educativo_5_tipo_de_interactividad"
+        },
+        "Tipo de Recurso Educativo": {
+          "type": "string",
+          "title": "Tipo de Recurso Educativo",
+          "enum": [
+            "no values set"
+          ],
+          "data_field": "uso_educativo_5_tipo_de_recurso_educativo"
+        },
+        "Nivel de Interactividad": {
+          "type": "string",
+          "title": "Nivel de Interactividad",
+          "enum": [
+            "muy bajo",
+            "bajo",
+            "medio",
+            "alto",
+            "muy alto"
+          ],
+          "data_field": "uso_educativo_5_nivel_de_interactividad"
+        },
+        "Densidad Semántica": {
+          "type": "string",
+          "title": "Densidad Semántica",
+          "data_field": "uso_educativo_5_densidad_semantica"
+        },
+        "Destinatario": {
+          "type": "string",
+          "title": "Destinatario",
+          "enum": [
+            "no values set"
+          ],
+          "data_field": "uso_educativo_5_destinatario"
+        },
+        "Contexto": {
+          "type": "string",
+          "title": "Contexto",
+          "enum": [
+            "no values set"
+          ],
+          "data_field": "uso_educativo_5_contexto"
+        },
+        "Rango Típico de Edad": {
+          "type": "string",
+          "title": "Rango Típico de Edad",
+          "data_field": "uso_educativo_5_rango_tipico_de_edad"
+        },
+        "Dificultad": {
+          "type": "string",
+          "title": "Dificultad",
+          "enum": [
+            "muy difícil",
+            "difícil",
+            "medio",
+            "fácil",
+            "muy fácil"
+          ],
+          "data_field": "uso_educativo_5_dificultad"
+        },
+        "Tiempo Típico de Aprendizaje": {
+          "type": "string",
+          "title": "Tiempo Típico de Aprendizaje",
+          "data_field": "uso_educativo_5_tiempo_tipico_de_aprendizaje"
+        },
+        "Descripción": {
+          "type": "string",
+          "title": "Descripción",
+          "data_field": "uso_educativo_5_descripcion"
+        },
+        "Idioma": {
+          "type": "string",
+          "title": "Idioma",
+          "enum": [
+            "es",
+            "gl",
+            "ca",
+            "eu",
+            "va"
+          ],
+          "data_field": "uso_educativo_5_idioma"
+        },
+        "Proceso Cognitivo": {
+          "type": "string",
+          "title": "Proceso Cognitivo",
+          "enum": [
+            "no values set"
+          ],
+          "data_field": "uso_educativo_5_proceso_cognitivo"
+        }
+      }
+    },
+    {
+      "title": "Derechos",
+      "key": "6",
+      "properties": {
+        "Coste": {
+          "type": "string",
+          "title": "Coste",
+          "enum": [
+            "sí",
+            "no"
+          ],
+          "data_field": "derechos_6_coste"
+        },
+        "Derechos de Autor y otras Restricciones": {
+          "type": "string",
+          "title": "Derechos de Autor y otras Restricciones",
+          "enum": [
+            "no values set"
+          ],
+          "data_field": "derechos_6_derechos_de_autor_y_otras_restricciones"
+        },
+        "Descripción": {
+          "type": "string",
+          "title": "Descripción",
+          "data_field": "derechos_6_descripcion"
+        },
+        "Acceso": {
+          "type": "string",
+          "title": "Acceso",
+          "data_field": "derechos_6_acceso"
+        },
+        "Tipo de Acceso": {
+          "type": "string",
+          "title": "Tipo de Acceso",
+          "data_field": "derechos_6_tipo_de_acceso"
+        }
+      }
+    },
+    {
+      "title": "Relación",
+      "key": "7",
+      "properties": {
+        "Tipo": {
+          "type": "string",
+          "title": "Tipo",
+          "data_field": "relacion_7_tipo"
+        },
+        "Recurso": {
+          "type": "string",
+          "title": "Recurso",
+          "data_field": "relacion_7_recurso"
+        },
+        "Identificador": {
+          "type": "string",
+          "title": "Identificador",
+          "data_field": "relacion_7_identificador"
+        },
+        "Catálogo": {
+          "type": "string",
+          "title": "Catálogo",
+          "data_field": "relacion_7_catalogo"
+        },
+        "Entrada": {
+          "type": "string",
+          "title": "Entrada",
+          "data_field": "relacion_7_entrada"
+        },
+        "Descripción": {
+          "type": "string",
+          "title": "Descripción",
+          "data_field": "relacion_7_descripcion"
+        }
+      }
+    },
+    {
+      "title": "Anotación",
+      "key": "8",
+      "properties": {
+        "Entidad": {
+          "type": "string",
+          "title": "Entidad",
+          "data_field": "anotacion_8_entidad"
+        },
+        "Fecha": {
+          "type": "string",
+          "title": "Fecha",
+          "data_field": "anotacion_8_fecha"
+        },
+        "Descripción": {
+          "type": "string",
+          "title": "Descripción",
+          "data_field": "anotacion_8_descripcion"
+        }
+      }
+    },
+    {
+      "title": "Clasificación",
+      "key": "9",
+      "properties": {
+        "Propósito": {
+          "type": "string",
+          "title": "Propósito",
+          "data_field": "clasificacion_9_proposito"
+        },
+        "Ruta Taxonómica": {
+          "type": "string",
+          "title": "Ruta Taxonómica",
+          "data_field": "clasificacion_9_ruta_taxonomica"
+        },
+        "Fuente": {
+          "type": "string",
+          "title": "Fuente",
+          "data_field": "clasificacion_9_fuente"
+        },
+        "Taxón": {
+          "type": "string",
+          "title": "Taxón",
+          "data_field": "clasificacion_9_taxon"
+        },
+        "Identificador": {
+          "type": "string",
+          "title": "Identificador",
+          "data_field": "clasificacion_9_identificador"
+        },
+        "Entrada": {
+          "type": "string",
+          "title": "Entrada",
+          "data_field": "clasificacion_9_entrada"
+        },
+        "Descripción": {
+          "type": "string",
+          "title": "Descripción",
+          "data_field": "clasificacion_9_descripcion"
+        },
+        "Palabras Clave": {
+          "type": "string",
+          "title": "Palabras Clave",
+          "data_field": "clasificacion_9_palabras_clave"
+        }
+      }
+    }
+  ]
+}

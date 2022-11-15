@@ -104,5 +104,13 @@
     "name": "workspaces",
     "type": "string",
     "multiValued": true
+  },
+  "lom": {
+    "name": "lom",
+    "type": "text_general"
+  },
+  "lomes": {
+    "name": "lomes",
+    "type": "text_general"
   }
 }

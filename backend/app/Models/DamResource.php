@@ -41,7 +41,6 @@ class DamResource extends Model implements HasMedia, TaggableInterface
 
     public function registerMediaConversions(\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
-
         $this->addMediaConversion(ThumbnailTypes::thumb_64x64)
             ->width(64)
             ->height(64)

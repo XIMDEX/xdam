@@ -7,6 +7,11 @@ use App\Http\Resources\Solr\BaseSolrResource;
 
 class ActivitySolrResource extends BaseSolrResource
 {
+    public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null)
+    {
+        parent::__construct($resource, $lomSolrClient, $lomesSolrClient);
+    }
+
     protected function formatTags($tags)
     {
         return $tags ?? [''];
@@ -49,7 +54,9 @@ class ActivitySolrResource extends BaseSolrResource
             'workspaces'            => $this->getWorkspaces(),
             'organization'          => $this->getOrganization(),
             'collections'           => $this->getCollections(),
-            'core_resource_type'    => $this->getCoreResourceType()
+            'core_resource_type'    => $this->getCoreResourceType(),
+            'lom'                   => $this->getLOMValues(),
+            'lomes'                 => $this->getLOMValues('lomes')
         ];
     }
 }
