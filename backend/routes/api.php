@@ -320,6 +320,11 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
             Route::delete('/{category}', [CategoryController::class, 'delete'])->name('category.delete');
         });
 
+        Route::group(['prefix' => 'semantic', 'middleware' => 'collection.automatic'], function() {
+            Route::post('enhance', [SemanticController::class, 'enhance'])->name('semantic.enhance');
+            Route::get('enhance/automatic', [SemanticController::class, 'enhanceAutomatic'])->name('semantic.enhanceAutomatic');
+        });
+
         Route::group(['prefix' => 'catalogue'], function() {
             Route::get('/{collection}', [CatalogueController::class, 'index'])->name('catalogue.index');
         });

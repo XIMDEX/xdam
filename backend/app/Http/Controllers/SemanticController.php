@@ -1,0 +1,84 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\DamResource;
+use App\Services\SemanticService;
+use App\Services\ResourceService;
+use App\Http\Resources\ResourceResource;
+use App\Http\Resources\ResourceCollection;
+use App\Http\Requests\StoreResourceRequest;
+use App\Http\Requests\UpdateResourceRequest;
+use App\Http\Requests\PatchResourceRequest;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+
+class SemanticController extends Controller
+{
+    /**
+     * @var SemanticService
+     */
+    private $semanticService;
+
+    /**
+     * @var ResourceService
+     */
+    private $resourceService;
+
+    /**
+     * SemanticController constructor
+     * @param SemanticService $semanticService
+     * @param ResourceService $resourceService
+     */
+    public function __construct(SemanticService $semanticService, ResourceService $resourceService)
+    {
+        $this->semanticService = $semanticService;
+        $this->resourceService = $resourceService;
+    }
+
+    /**
+     * @param Request $request
+     * @return String
+     */
+    public function enhance(Request $request)
+    {
+        $response = $this->semanticService->enhance($request->all());
+        $resource = false;
+
+        if (count($response['resources']) == 1){
+            $resource = $this->resourceService->store($response['resources'][0]);
+        }
+
+        return new JsonResponse(
+            [
+                'data' => $resource ? $resource->toArray() : [],
+                'errors' => $response['errors']
+            ],
+            Response::HTTP_OK
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @return String
+     */
+    public function enhanceAutomatic(Request $request)
+    {
+        $data = $this->semanticService->automaticEnhance($request->all());
+        $arrayResources = [];
+
+        foreach ($data['resources'] as $resource) {
+            $new_resource = $this->resourceService->store($resource, null, null, false);
+            if ($new_resource) $arrayResources[] = $new_resource->toArray();
+        }
+
+        return new JsonResponse(
+            [
+                'data' => $arrayResources,
+                'errors' => $data['errors']
+            ],
+            Response::HTTP_OK
+        );
+    }
+}
