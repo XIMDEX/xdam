@@ -10,8 +10,12 @@ use App\Models\DamResource;
 use App\Models\DamResourceUse;
 use App\Models\Media;
 use App\Models\Workspace;
+use App\Http\Resources\ResourceResource;
+use App\Http\Resources\Tika\TikaResource;
+use App\Services\TikaService;
 use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Services\Solr\SolrService;
+use App\Utils\DamUrlUtil;
 use App\Utils\Utils;
 use DirectoryIterator;
 use Exception;
@@ -40,6 +44,11 @@ class ResourceService
      */
     private WorkspaceService $workspaceService;
 
+    /**
+     * @var TikaService
+     */
+    private TikaService $tikaService;
+
     const PAGE_SIZE = 30;
 
     /**
@@ -47,13 +56,21 @@ class ResourceService
      * @param MediaService $mediaService
      * @param SolrService $solr
      * @param CategoryService $categoryService
+     * @param WorkspaceService $workspaceService
+     * @param TikaService $tikaService
      */
-    public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService)
-    {
+    public function __construct(
+        MediaService $mediaService,
+        SolrService $solr,
+        CategoryService $categoryService,
+        WorkspaceService $workspaceService,
+        TikaService $tikaService
+    ) {
         $this->mediaService = $mediaService;
         $this->categoryService = $categoryService;
         $this->solr = $solr;
         $this->workspaceService = $workspaceService;
+        $this->tikaService = $tikaService;
     }
 
     private function saveAssociateFile($type, $params, $model)
@@ -194,6 +211,22 @@ class ResourceService
     public function get(DamResource $resource): DamResource
     {
         return $resource;
+    }
+
+    /**
+     * @param ResourceType $type
+     * @return array
+     */
+    public function getByType(ResourceType $type)
+    {
+        return DamResource::where('type', $type)->get();
+    }
+
+    public function getByTypeAndCollection(ResourceType $type, Collection $collection)
+    {
+        return DamResource::where('type', $type)
+                    ->where('collection_id', $collection->id)
+                    ->get();
     }
 
     /**
@@ -763,9 +796,74 @@ class ResourceService
 
     public function getCollection($collectionID)
     {
-        $collection = ModelsCollection::where('id', $collectionID)
-                        ->first();
-        
-        return $collection;
+        return ModelsCollection::where('id', $collectionID)->first();
+    }
+
+    private function getMediaInfo(string $damURL)
+    {
+        $mediaID = -1000;
+        $media = null;
+        $mediaPath = '';
+        $mediaFileName = '';
+        $mimeType = '';
+        $fileType = '';
+
+        try {
+            $mediaID = DamUrlUtil::decodeUrl($damURL);
+            $media = Media::findOrFail($mediaID);
+            $mediaPath = $media->getPath();
+            $mediaFileName = explode('/', $mediaPath);
+            $mediaFileName = $mediaFileName[count($mediaFileName) - 1];
+            $mimeType = $media->mime_type;
+            $fileType = explode('/', $mimeType)[0];
+        } catch (\Exception $ex) {
+            // echo $ex->getMessage();
+        }
+
+        return [
+            'dam_url'           => $damURL,
+            'media_id'          => $mediaID,
+            'media'             => $media,
+            'media_path'        => $mediaPath,
+            'media_file_name'   => $mediaFileName,
+            'media_mime_type'   => $mimeType,
+            'media_file_type'   => $fileType
+        ];
+    }
+
+    private function writeTikaData($tikaJSONData, TikaResource $tikaData)
+    {
+        $file = fopen($tikaData->getTikaMetaFilePath(), 'w');
+        fwrite($file, $tikaJSONData);
+        fclose($file);
+    }
+
+    private function getMediaFileInfo(
+        DamResource $damResource,
+        $resourceResource,
+        array $mediaInfo
+    ) {
+        $tikaResource = new TikaResource($damResource, $resourceResource, $this->tikaService, $mediaInfo);
+        $tikaResourceJSON = json_encode(json_decode($tikaResource->toJson()), JSON_PRETTY_PRINT);
+        $this->writeTikaData($tikaResourceJSON, $tikaResource);
+        return $tikaResource;
+    }
+
+    public function getMediaAttached(DamResource $damResource)
+    {
+        $resourceResource = new ResourceResource($damResource);
+        $resourceJSON = json_decode($resourceResource->toJson());
+        $auxFiles = $resourceJSON->files;
+        $files = [];
+
+        foreach ($auxFiles as $item) {
+            $mediaInfo = $this->getMediaInfo($item->dam_url);
+
+            if ($mediaInfo['media'] !== null) {
+                $files[] = $this->getMediaFileInfo($damResource, $resourceResource, $mediaInfo);
+            }
+        }
+
+        return $files;
     }
 }

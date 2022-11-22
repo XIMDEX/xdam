@@ -13,6 +13,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SemanticController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkspaceController;
 
@@ -321,8 +322,19 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
         });
 
         Route::group(['prefix' => 'semantic', 'middleware' => 'collection.automatic'], function() {
-            Route::post('enhance', [SemanticController::class, 'enhance'])->name('semantic.enhance');
-            Route::get('enhance/automatic', [SemanticController::class, 'enhanceAutomatic'])->name('semantic.enhanceAutomatic');
+            Route::group(['prefix'  => 'enhance'], function () {
+                Route::post('/',        [SemanticController::class, 'enhance'])
+                    ->name('semantic.enhance');
+                Route::get('automatic', [SemanticController::class, 'enhanceAutomatic'])
+                    ->name('semantic.enhanceAutomatic');
+                
+                Route::group(['prefix' => 'resources'], function () {
+                    Route::get('/',             [SemanticController::class, 'enhanceResources'])
+                        ->name('semantic.enhanceResources');
+                    Route::get('/documents',    [SemanticController::class, 'enhanceDocuments'])
+                        ->name('semantic.enhanceDocuments');
+                });
+            });
         });
 
         Route::group(['prefix' => 'catalogue'], function() {

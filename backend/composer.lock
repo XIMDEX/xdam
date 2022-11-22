@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "721285971be26243c7c6aa460d18aac7",
+    "content-hash": "9fb9a217f5284af3117f8d0a525c0caf",
     "packages": [
         {
             "name": "alchemy/binary-driver",
@@ -157,6 +157,39 @@
                 "source": "https://github.com/aminyazdanpanah/PHP-FFmpeg-video-streaming/tree/v1.2.15"
             },
             "time": "2022-01-14T17:19:59+00:00"
+        },
+        {
+            "name": "asika/pdf2text",
+            "version": "1.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/asika32764/php-pdf-2-text.git",
+                "reference": "a14ea95695a277e385dbc03caeddb91c5e10319f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/asika32764/php-pdf-2-text/zipball/a14ea95695a277e385dbc03caeddb91c5e10319f",
+                "reference": "a14ea95695a277e385dbc03caeddb91c5e10319f",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Asika\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL v2"
+            ],
+            "authors": [
+                {
+                    "name": "Simon Asika",
+                    "email": "asika32764@gmail.com"
+                }
+            ],
+            "description": "Simple PHP PDF to text class.",
+            "time": "2016-11-02T03:47:29+00:00"
         },
         {
             "name": "asm89/stack-cors",
@@ -5139,6 +5172,7 @@
                     "type": "tidelift"
                 }
             ],
+            "abandoned": "symfony/mailer",
             "time": "2020-12-08T18:02:06+00:00"
         },
         {
@@ -7506,6 +7540,93 @@
                 "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/2.2.3"
             },
             "time": "2020-07-13T06:12:54+00:00"
+        },
+        {
+            "name": "vaites/php-apache-tika",
+            "version": "v1.2.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vaites/php-apache-tika.git",
+                "reference": "dd145e4e8d4595d3bde883b7b4bd0edecaa4df22"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vaites/php-apache-tika/zipball/dd145e4e8d4595d3bde883b7b4bd0edecaa4df22",
+                "reference": "dd145e4e8d4595d3bde883b7b4bd0edecaa4df22",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=7.3.0"
+            },
+            "require-dev": {
+                "filp/whoops": "^2.7",
+                "nunomaduro/collision": "^5.11",
+                "nunomaduro/phpinsights": "^1.14",
+                "phpstan/phpstan": "^0.12.26",
+                "phpunit/phpunit": "^9.0",
+                "psy/psysh": "^0.10.8",
+                "symfony/var-dumper": "^5.1"
+            },
+            "type": "library",
+            "extra": {
+                "supported-versions": [
+                    "1.15",
+                    "1.16",
+                    "1.17",
+                    "1.18",
+                    "1.19",
+                    "1.19.1",
+                    "1.20",
+                    "1.21",
+                    "1.22",
+                    "1.23",
+                    "1.24",
+                    "1.24.1",
+                    "1.25",
+                    "1.26",
+                    "1.27",
+                    "1.28",
+                    "1.28.1",
+                    "1.28.2",
+                    "2.0.0",
+                    "2.1.0",
+                    "2.2.0",
+                    "2.2.1",
+                    "2.3.0",
+                    "2.4.0"
+                ]
+            },
+            "autoload": {
+                "psr-4": {
+                    "Vaites\\ApacheTika\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Martínez",
+                    "email": "contacto@davidmartinez.net"
+                }
+            ],
+            "description": "Apache Tika bindings for PHP: extracts text from documents and images (with OCR), metadata and more...",
+            "keywords": [
+                "OCR",
+                "apache",
+                "doc",
+                "documents",
+                "docx",
+                "odt",
+                "office",
+                "pdf",
+                "ppt",
+                "pptx",
+                "tika"
+            ],
+            "time": "2022-05-04T20:12:52+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -10460,5 +10581,5 @@
         "php": "^7.4|^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "1.1.0"
 }

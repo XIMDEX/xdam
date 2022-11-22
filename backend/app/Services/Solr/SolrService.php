@@ -9,6 +9,7 @@ use App\Models\Lom;
 use App\Models\Lomes;
 use App\Models\Workspace;
 use App\Http\Resources\Solr\LOMSolrResource;
+use App\Services\ResourceService;
 use App\Services\Catalogue\FacetManager;
 use App\Utils\Utils;
 use Exception;
@@ -27,21 +28,40 @@ use App\Http\Resources\Solr\{ActivitySolrResource, AssessmentSolrResource, BookS
  */
 class SolrService
 {
-
+    /**
+     * @var FacetManager $facetManager
+     */
     private FacetManager $facetManager;
+
+    /**
+     * @var SolrConfig $solrConfig
+     */
     private SolrConfig $solrConfig;
-    /** @var Client[] $clients  */
+
+    /**
+     * @var ResourceService $resourceService
+     */
+    private ResourceService $resourceService;
+
+    /** 
+     * @var Client[] $clients  
+     */
     private array $clients;
 
     /**
      * SolrService constructor.
      * @param FacetManager $facetManager
      * @param SolrConfig $solrConfig
+     * @param ResourceService $resourceService
      */
-    public function __construct(FacetManager $facetManager, SolrConfig $solrConfig)
-    {
+    public function __construct(
+        FacetManager $facetManager,
+        SolrConfig $solrConfig,
+        ResourceService $resourceService
+    ) {
         $this->facetManager = $facetManager;
         $this->solrConfig = $solrConfig;
+        $this->resourceService = $resourceService;
         $this->clients = $solrConfig->getClients();
     }
 
@@ -57,8 +77,8 @@ class SolrService
         DamResource $resource,
         $resourceClass,
         string $lomCoreName,
-        string $lomesCoreName): array
-    {
+        string $lomesCoreName
+    ): array {
         try {
             $lomClient = $this->getClient('lom');
             $lomesClient = $this->getClient('lomes');
@@ -225,6 +245,9 @@ class SolrService
 
         // Gets the client attached to the current resource
         $client = $this->getClientFromResource($damResource);
+
+        // Gets the media attached
+        $files = $this->resourceService->getMediaAttached($damResource);
 
         // Gets the current resource document, and updates it
         $documentResource = $this->getDocumentFromResource($damResource, $client->getOption('resource'),

@@ -84,7 +84,7 @@ class SemanticService
     public function automaticEnhance($semanticRequest)
     {
         $countDocuments = DamResource::where('type', 'document')->get();
-        if($countDocuments) $countDocuments = count($countDocuments);
+        if ($countDocuments) $countDocuments = count($countDocuments);
 
         $isEnhanceResource = !key_exists('only-text', $semanticRequest);
 
@@ -107,7 +107,7 @@ class SemanticService
 
         return [
             'resources' => $resources,
-            'errors' => $errors
+            'errors'    => $errors
         ];
     }
 
@@ -253,7 +253,7 @@ class SemanticService
 
         if (isset($categories[$type])) $categories = [$categories[$type]];
 
-        foreach ($categories as $category=>$data) {
+        foreach ($categories as $category => $data) {
             $uri = config('inesja.base_url');
 
             $uri .= $category . '.json';                            // dataset and format

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ResourceType;
 use App\Models\DamResource;
 use App\Services\SemanticService;
 use App\Services\ResourceService;
@@ -80,5 +81,26 @@ class SemanticController extends Controller
             ],
             Response::HTTP_OK
         );
+    }
+
+    public function enhanceResources(Request $request)
+    {
+        $resources = DamResource::get();
+        $this->manageResourcesEnhancement($resources);
+        return new JsonResponse([], Response::HTTP_OK);
+    }
+
+    public function enhanceDocuments(Request $request)
+    {
+        $documents = $this->resourceService->getByType(ResourceType::document());
+        $this->manageResourcesEnhancement($documents);
+        return new JsonResponse([], Response::HTTP_OK);
+    }
+
+    private function manageResourcesEnhancement($resources)
+    {
+        foreach ($resources as $resource) {
+            $this->resourceService->getMediaAttached($resource);
+        }
     }
 }

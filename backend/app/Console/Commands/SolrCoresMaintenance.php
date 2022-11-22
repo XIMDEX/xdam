@@ -194,7 +194,6 @@ class SolrCoresMaintenance extends Command
 
         // Checks the action to execute
         if ($action === 'CREATE' || $action === 'DELETE') {
-
             // Checks the action to execute
             if ($action === 'CREATE') {
                 return $this->manageCoresCreation($solrService, $path, $coresToManage, $solrCores, $coreVersion, $confirmation);
