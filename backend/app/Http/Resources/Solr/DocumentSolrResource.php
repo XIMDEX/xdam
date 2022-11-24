@@ -13,9 +13,9 @@ use App\Utils\DamUrlUtil;
 
 class DocumentSolrResource extends BaseSolrResource
 {
-    public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null)
+    public function __construct($resource, array $mediaResources, $lomSolrClient = null, $lomesSolrClient = null)
     {
-        parent::__construct($resource, $lomSolrClient, $lomesSolrClient);
+        parent::__construct($resource, $mediaResources, $lomSolrClient, $lomesSolrClient);
     }
 
     protected function getPreviews()
@@ -108,7 +108,8 @@ class DocumentSolrResource extends BaseSolrResource
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),
             'lom'                   => $this->getLOMValues(),
-            'lomes'                 => $this->getLOMValues('lomes')
+            'lomes'                 => $this->getLOMValues('lomes'),
+            'tika_metadata'         => $this->getTikaMetadata()
         ];
     }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\ResourceType;
 use App\Models\DamResource;
 use App\Services\SemanticService;
-use App\Services\ResourceService;
+use App\Services\Tika\TikaResourceService;
 use App\Http\Resources\ResourceResource;
 use App\Http\Resources\ResourceCollection;
 use App\Http\Requests\StoreResourceRequest;
@@ -20,19 +20,19 @@ class SemanticController extends Controller
     /**
      * @var SemanticService
      */
-    private $semanticService;
+    private SemanticService $semanticService;
 
     /**
-     * @var ResourceService
+     * @var TikaResourceService
      */
-    private $resourceService;
+    private TikaResourceService $resourceService;
 
     /**
      * SemanticController constructor
      * @param SemanticService $semanticService
-     * @param ResourceService $resourceService
+     * @param TikaResourceService $resourceService
      */
-    public function __construct(SemanticService $semanticService, ResourceService $resourceService)
+    public function __construct(SemanticService $semanticService, TikaResourceService $resourceService)
     {
         $this->semanticService = $semanticService;
         $this->resourceService = $resourceService;

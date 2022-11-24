@@ -2,7 +2,8 @@
 
 namespace App\Http\Resources\Tika;
 
-use App\Services\TikaService;
+use App\Http\Resources\Tika\{TikaMetadataResource};
+use App\Services\Tika\TikaService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TikaResource extends JsonResource
@@ -16,6 +17,16 @@ class TikaResource extends JsonResource
      * @var TikaService $tikaService
      */
     private TikaService $tikaService;
+
+    /**
+     * @var bool $forceFiles
+     */
+    private bool $forceFiles;
+
+    /**
+     * @var bool $avoidDuplicates
+     */
+    private bool $avoidDuplicates;
 
     /**
      * @var string $damURL
@@ -53,7 +64,47 @@ class TikaResource extends JsonResource
     private string $mediaFileType;
 
     /**
-     * Constructor
+     * @var $tikaMetadata
+     */
+    private $tikaMetadata;
+
+    /**
+     * @var $tikaRecursiveMetadata
+     */
+    private $tikaRecursiveMetadata;
+
+    /**
+     * @var $tikaLanguage
+     */
+    private $tikaLanguage;
+
+    /**
+     * @var $tikaMIME
+     */
+    private $tikaMIME;
+
+    /**
+     * @var $tikaHTML
+     */
+    private $tikaHTML;
+
+    /**
+     * @var $tikaXHTML
+     */
+    private $tikaXHTML;
+
+    /**
+     * @var $tikaText
+     */
+    private $tikaText;
+
+    /**
+     * @var $tikaMainText
+     */
+    private $tikaMainText;
+
+    /**
+     * Class constructor
      * @param $element
      * @param $elementResource
      * @param TikaService $tikaService
@@ -63,11 +114,16 @@ class TikaResource extends JsonResource
         $element,
         $elementResource,
         TikaService $tikaService,
-        array $mediaInfo
+        array $mediaInfo,
+        bool $forceFiles,
+        bool $avoidDuplicates
     ) {
         parent::__construct($element);
+
         $this->elementResource = $elementResource;
         $this->tikaService = $tikaService;
+        $this->forceFiles = $forceFiles;
+        $this->avoidDuplicates = $avoidDuplicates;
 
         $this->damURL = $mediaInfo['dam_url'];
         $this->mediaID = $mediaInfo['media_id'];
@@ -76,6 +132,15 @@ class TikaResource extends JsonResource
         $this->mediaFileName = $mediaInfo['media_file_name'];
         $this->mediaMIMEType = $mediaInfo['media_mime_type'];
         $this->mediaFileType = $mediaInfo['media_file_type'];
+
+        $this->tikaMetadata = null;
+        $this->tikaRecursiveMetadata = null;
+        $this->tikaLanguage = null;
+        $this->tikaMIME = null;
+        $this->tikaHTML = null;
+        $this->tikaXHTML = null;
+        $this->tikaText = null;
+        $this->tikaMainText = null;
     }
 
     private function getResourceID()
@@ -94,11 +159,25 @@ class TikaResource extends JsonResource
 
     /**
      * Returns the file metadata
+     * @param bool $allFields
      * @return array
      */
-    private function getFileMetadata()
+    public function getFileMetadata(bool $allFields = true)
     {
-        return $this->tikaService->getFileMetadata($this->mediaPath);
+        $metadataResource = null;
+
+        if ($this->tikaMetadata === null) {
+            $this->tikaMetadata = $this->tikaService->getFileMetadata($this->mediaPath);
+        }
+
+        if ($this->tikaMetadata !== null) {
+            $tikaMetadataResource = new TikaMetadataResource($this->tikaMetadata, $this->mediaPath, $allFields);
+            $metadataResource = json_encode(
+                json_decode($tikaMetadataResource->toJson()), JSON_PRETTY_PRINT
+            );
+        }
+
+        return $metadataResource;
     }
 
     /**
@@ -107,7 +186,11 @@ class TikaResource extends JsonResource
      */
     private function getFileRecursiveMetadata()
     {
-        return $this->tikaService->getFileRecursiveMetadata($this->mediaPath);
+        if ($this->tikaRecursiveMetadata === null) {
+            $this->tikaRecursiveMetadata = $this->tikaService->getFileRecursiveMetadata($this->mediaPath);
+        }
+
+        return $this->tikaRecursiveMetadata;
     }
 
     /**
@@ -116,7 +199,11 @@ class TikaResource extends JsonResource
      */
     private function getFileLanguage()
     {
-        return $this->tikaService->getFileLanguage($this->mediaPath);
+        if ($this->tikaLanguage === null) {
+            $this->tikaLanguage = $this->tikaService->getFileLanguage($this->mediaPath);
+        }
+
+        return $this->tikaLanguage;
     }
 
     /**
@@ -125,7 +212,11 @@ class TikaResource extends JsonResource
      */
     private function getFileMIME()
     {
-        return $this->tikaService->getFileMIME($this->mediaPath);
+        if ($this->tikaMIME === null) {
+            $this->tikaMIME = $this->tikaService->getFileMIME($this->mediaPath);
+        }
+
+        return $this->tikaMIME;
     }
 
     /**
@@ -134,7 +225,11 @@ class TikaResource extends JsonResource
      */
     public function getFileHTML()
     {
-        return $this->tikaService->getFileHTML($this->mediaPath);
+        if ($this->tikaHTML === null) {
+            $this->tikaHTML = $this->tikaService->getFileHTML($this->mediaPath);
+        }
+
+        return $this->tikaHTML;
     }
 
     /**
@@ -143,7 +238,11 @@ class TikaResource extends JsonResource
      */
     public function getFileXHTML()
     {
-        return $this->tikaService->getFileXHTML($this->mediaPath);
+        if ($this->tikaXHTML === null) {
+            $this->tikaXHTML = $this->tikaService->getFileXHTML($this->mediaPath);
+        }
+
+        return $this->tikaXHTTML;
     }
 
     /**
@@ -152,7 +251,24 @@ class TikaResource extends JsonResource
      */
     public function getFileText()
     {
-        return $this->tikaService->getFileText($this->mediaPath);
+        if ($this->tikaText === null) {
+            $this->tikaText = $this->tikaService->getFileText($this->mediaPath);
+        }
+
+        return $this->tikaText;
+    }
+
+    /**
+     * Returns the file main text
+     * @return string
+     */
+    public function getFileMainText()
+    {
+        if ($this->tikaMainText === null) {
+            $this->tikaMainText = $this->tikaService->getFileMainText($this->mediaPath);
+        }
+
+        return $this->tikaMainText;
     }
 
     /**
@@ -163,8 +279,19 @@ class TikaResource extends JsonResource
     {
         $filePath = $this->mediaPath;
         $filePath = str_replace($this->mediaFileName, '', $filePath);
-        $filePath .= ('tika_' . $this->getMediaId() . '.json');
+        $filePath .= ('tika_' . $this->mediaID . '.json');
         return $filePath;
+    }
+
+    /**
+     * Checks if Tika is available for this file
+     * @return boolean
+     */
+    public function isTikaAvailableForThisFile()
+    {
+        $mimeType = $this->getFileMIME();
+        if ($mimeType === null) return false;
+        return $this->tikaService->isMIMETypeSupported($mimeType);
     }
 
     /**
@@ -174,12 +301,15 @@ class TikaResource extends JsonResource
      */
     public function toArray($request)
     {
+        if (!$this->isTikaAvailableForThisFile()) return [];
         return [
             'resource_id'               => $this->getResourceID(),
             'resource_type'             => $this->getResourceType(),
             'media_dam_url'             => $this->damURL,
             'media_id'                  => $this->mediaID,
             'media_file_name'           => $this->mediaFileName,
+            'media_MIME_type'           => $this->mediaMIMEType,
+            'media_file_type'           => $this->mediaFileType,
             'file_metadata'             => $this->getFileMetadata(),
             'file_recursive_metadata'   => $this->getFileRecursiveMetadata(),
             'file_language'             => $this->getFileLanguage(),

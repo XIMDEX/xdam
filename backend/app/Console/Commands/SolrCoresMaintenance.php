@@ -13,7 +13,7 @@ class SolrCoresMaintenance extends Command
      *
      * @var string
      */
-    protected $signature = 'solrCores:maintenance {--action=} {--core=*} {--coreVersion=} {--y}';
+    protected $signature = 'solrCores:maintenance {--action=} {--core=*} {--coreVersion=} {--y} {--force} {--f} {--avoidDuplicates}';
 
     /**
      * The console command description.
@@ -141,22 +141,39 @@ class SolrCoresMaintenance extends Command
      * @param array $coresToReindex
      * @param array $solrCores
      * @param string $coreVersion
+     * @param bool $confirmation
+     * @param bool $force
+     * @param bool $avoidDuplicates
      * @return bool
      */
-    private function manageCoresReindexing(SolrService $solrService, $coresToReindex, $solrCores, $coreVersion, $confirmation)
-    {
+    private function manageCoresReindexing(
+        SolrService $solrService,
+        $coresToReindex,
+        $solrCores,
+        $coreVersion,
+        $confirmation,
+        $force,
+        $avoidDuplicates
+    ) {
         // Asks for a double user confirmation
         if ($confirmation || $this->confirm('Reindexing of a set of cores could remove stored information. ' .
                             'OK to proceed?', false)) {
             if ($confirmation || $this->confirm('Are you absolutely sure? This may cause irreversible damage to the stored data.', false)) {
                 // Checks the excluded cores
                 $excludedCores = $this->getExcludedCores($solrCores, $coresToReindex);
+    
+                // Sets the array for the arguments
+                $args = [
+                    '--exclude'     => $excludedCores,
+                    '--solrVersion' => $solrService->getCoreVersion($coreVersion)
+                ];
+
+                // Adds, or not, the Tika arguments
+                if ($force) $args['--force'] = true;
+                if ($avoidDuplicates) $args['--avoidDuplicates'] = true;
 
                 // Calls to the proper command to execute the action
-                $this->call("solr:reindex", [
-                    "--exclude"     => $excludedCores,
-                    "--solrVersion" => $solrService->getCoreVersion($coreVersion)
-                ]);
+                $this->call("solr:reindex", $args);
             }
         }
 
@@ -175,7 +192,9 @@ class SolrCoresMaintenance extends Command
         $action = $this->option('action');
         $coresToManage = $this->option('core');
         $coreVersion = $this->option('coreVersion');
-        $confirmation = $this->hasOption('y');
+        $confirmation = $this->option('y');
+        $force = $this->option('f') || $this->option('force');
+        $avoidDuplicates = $this->option('avoidDuplicates');
 
         // Checks if the action is correct
         if ($action === null || ($action !== 'CREATE' && $action !== 'DELETE' && $action !== 'REINDEX' && $action !== 'ALL')) {
@@ -201,11 +220,13 @@ class SolrCoresMaintenance extends Command
                 return $this->manageCoresDeleting($solrService, $path, $coresToManage, $solrCores, $coreVersion, $confirmation);
             }
         } else if ($action === 'REINDEX') {
-            return $this->manageCoresReindexing($solrService, $coresToManage, $solrCores, $coreVersion, $confirmation);
+            return $this->manageCoresReindexing($solrService, $coresToManage, $solrCores, $coreVersion, $confirmation,
+                                                $force, $avoidDuplicates);
         } else if ($action === 'ALL') {
             $this->manageCoresDeleting($solrService, $path, $coresToManage, $solrCores, $coreVersion, $confirmation);
             $this->manageCoresCreation($solrService, $path, $coresToManage, $solrCores, $coreVersion, $confirmation);
-            $this->manageCoresReindexing($solrService, $coresToManage, $solrCores, $coreVersion, $confirmation);
+            $this->manageCoresReindexing($solrService, $coresToManage, $solrCores, $coreVersion, $confirmation,
+                                            $force, $avoidDuplicates);
         }
 
         return false;

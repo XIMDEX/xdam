@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Services\Solr;
 
 use App\Models\Collection;
@@ -9,7 +8,7 @@ use App\Models\Lom;
 use App\Models\Lomes;
 use App\Models\Workspace;
 use App\Http\Resources\Solr\LOMSolrResource;
-use App\Services\ResourceService;
+use App\Services\Tika\TikaResourceService;
 use App\Services\Catalogue\FacetManager;
 use App\Utils\Utils;
 use Exception;
@@ -39,9 +38,9 @@ class SolrService
     private SolrConfig $solrConfig;
 
     /**
-     * @var ResourceService $resourceService
+     * @var TikaResourceService $tikaResourceService
      */
-    private ResourceService $resourceService;
+    private TikaResourceService $tikaResourceService;
 
     /** 
      * @var Client[] $clients  
@@ -53,15 +52,16 @@ class SolrService
      * @param FacetManager $facetManager
      * @param SolrConfig $solrConfig
      * @param ResourceService $resourceService
+     * @param TikaResourceService $tikaResourceService
      */
     public function __construct(
         FacetManager $facetManager,
         SolrConfig $solrConfig,
-        ResourceService $resourceService
+        TikaResourceService $tikaResourceService
     ) {
         $this->facetManager = $facetManager;
         $this->solrConfig = $solrConfig;
-        $this->resourceService = $resourceService;
+        $this->tikaResourceService = $tikaResourceService;
         $this->clients = $solrConfig->getClients();
     }
 
@@ -71,13 +71,15 @@ class SolrService
      * @param $resourceClass
      * @param string $lomCoreName
      * @param string $lomesCoreName
+     * @param array $mediaResources
      * @return array
      */
     private function getDocumentFromResource(
         DamResource $resource,
         $resourceClass,
         string $lomCoreName,
-        string $lomesCoreName
+        string $lomesCoreName,
+        array $mediaResources
     ): array {
         try {
             $lomClient = $this->getClient('lom');
@@ -88,7 +90,10 @@ class SolrService
             $lomesClient = null;
         }
 
-        return json_decode((new $resourceClass($resource, $lomClient, $lomesClient))->toJson(), true);
+        return json_decode(
+            (new $resourceClass($resource, $mediaResources, $lomClient, $lomesClient))->toJson(),
+            true
+        );
     }
 
     /**
@@ -218,7 +223,9 @@ class SolrService
     public function saveOrUpdateDocument(
         DamResource $damResource,
         $solrVersion = null,
-        $reindexLOM = false
+        $reindexLOM = false,
+        $forceTikaFiles = true,
+        $avoidTikaDuplicates = false
     ): ResultInterface {
         // Gets the current core version used, and updates the clients
         $solrVersion = $this->getCoreVersion($solrVersion);
@@ -247,11 +254,12 @@ class SolrService
         $client = $this->getClientFromResource($damResource);
 
         // Gets the media attached
-        $files = $this->resourceService->getMediaAttached($damResource);
+        $files = $this->tikaResourceService->getMediaAttached($damResource, $forceTikaFiles,
+                                                                $avoidTikaDuplicates);
 
         // Gets the current resource document, and updates it
         $documentResource = $this->getDocumentFromResource($damResource, $client->getOption('resource'),
-                                                            $lomCoreName, $lomesCoreName);
+                                                            $lomCoreName, $lomesCoreName, $files);
         return $this->saverOrUpdateSolrDocument($client, $documentResource);
     }
 

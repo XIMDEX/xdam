@@ -14,7 +14,7 @@ class ReIndexSolr extends Command
      *
      * @var string
      */
-    protected $signature = 'solr:reindex {--exclude=*} {--solrVersion=}';
+    protected $signature = 'solr:reindex {--exclude=*} {--solrVersion=} {--force} {--avoidDuplicates}';
 
     /**
      * The console command description.
@@ -33,18 +33,19 @@ class ReIndexSolr extends Command
         parent::__construct();
     }
 
-
     public function handle(SolrService $solrService, ResourceService $resourceService)
     {
         $excludedCores = $this->option('exclude');
         $solrVersion = $this->option('solrVersion');
+        $force = $this->option('force');
+        $avoidDuplicates = $this->option('avoidDuplicates');
 
         if (count($excludedCores) > 0) {
             $toExclude = '';
 
             foreach ($excludedCores as $core) {
                 $auxCore = $solrService->getCoreNameVersioned($core, $solrService->getCoreVersion(($solrVersion)));
-                $toExclude .= ' --exclude='.$auxCore ;
+                $toExclude .= ' --exclude=' . $auxCore ;
             }
 
             $fullCommand = 'solr:clean' . $toExclude . ' --fromReindex=true';
@@ -57,18 +58,22 @@ class ReIndexSolr extends Command
         }
 
         $resources = $resourceService->getAll();
+        $total = count($resources);
         $count = 0;
         $reindexLOM = (!in_array('lom', $excludedCores));
+        $this->output->progressStart($total);
 
         foreach ($resources as $resource) {
+            $this->output->progressAdvance();
             $resourceCoreName = $solrService->getClientFromResource($resource)->getEndpoint()->getOptions()['core'];
 
             if (!in_array($resourceCoreName, $excludedCores) && $resourceCoreName !== null) {
-                $solrService->saveOrUpdateDocument($resource, $solrVersion, $reindexLOM);
+                $solrService->saveOrUpdateDocument($resource, $solrVersion, $reindexLOM, $force, $avoidDuplicates);
                 $count++;
             }
         }
 
+        $this->output->progressFinish();
         $this->line("$count documents indexed");
     }
 }

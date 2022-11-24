@@ -95,5 +95,9 @@
   "lomes": {
     "name": "lomes",
     "type": "text_general"
+  },
+  "tika_metadata": {
+    "name": "tika_metadata",
+    "type": "text_general"
   }
 }

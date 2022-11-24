@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'lom'       => [
+    'lom'           => [
         [
             'key'           => 'general_1_description',
             'subkey'        => 'Language',
@@ -57,8 +57,18 @@ return [
             'subkey_alias'  => null
         ]
     ],
-    'lomes'     => [],
-    'constants' => [
+    'lomes'         => [],
+    'tika_metadata' => [
+        'keywords',
+        'language',
+        'pages',
+        'words',
+        'width',
+        'height',
+        'lossless',
+        'mime'
+    ],
+    'constants'     => [
         'special_character' => '_',
         'key_separator'     => 3,
         'value_separator'   => 4,

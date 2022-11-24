@@ -13,14 +13,66 @@ use Solarium\Client;
 
 class BaseSolrResource extends JsonResource
 {
+    /**
+     * @var array $mediaResources
+     */
+    private array $mediaResources;
+
+    /**
+     * @var Client $lomSolrClient
+     */
     private $lomSolrClient;
+
+    /**
+     * @var Client $lomesSolrClient
+     */
     private $lomesSolrClient;
 
-    public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null)
+    /**
+     * @var string $specialCharacter
+     */
+    private string $specialCharacter;
+
+    /**
+     * @var string $keySeparator
+     */
+    private string $keySeparator;
+
+    /**
+     * @var string $valueSeparator
+     */
+    private string $valueSeparator;
+
+    /**
+     * @var array $charactersMap
+     */
+    private array $charactersMap;
+
+    public function __construct($resource, array $mediaResources, $lomSolrClient = null, $lomesSolrClient = null)
     {
         parent::__construct($resource);
+
+        $this->mediaResources = $mediaResources;
         $this->lomSolrClient = $lomSolrClient;
         $this->lomesSolrClient = $lomesSolrClient;
+        $this->manageSolrFacetsConfig();
+    }
+
+    private function manageSolrFacetsConfig()
+    {
+        $config = config('solr_facets', []);
+        $this->specialCharacter = '';
+        $this->keySeparator = '';
+        $this->valueSeparator = '';
+        $this->charactersMap = [];
+
+        if (array_key_exists('constants', $config)) {
+            $config = $config['constants'];
+            $this->specialCharacter = $config['special_character'];
+            $this->keySeparator = Utils::getRepetitiveString($this->specialCharacter, $config['key_separator']);
+            $this->valueSeparator = Utils::getRepetitiveString($this->specialCharacter, $config['value_separator']);
+            $this->charactersMap = $config['characters_map'];
+        }
     }
 
     public static function generateQuery($searchTerm, $searchPhrase)
@@ -122,52 +174,81 @@ class BaseSolrResource extends JsonResource
         return $this->collection->getMaxNumberOfFiles();
     }
 
-    protected function getLOMRawValues(string $type, bool $allFields = true)
+    protected function getLOMRawValues(string $type, bool $allFields = true, $attempt = 0)
     {
         $element = null;
         $values = null;
-
-        if ($type == 'lom') {
-            $element = $this->lom()->first();
-        } else if ($type == 'lomes') {
-            $element = $this->lomes()->first();
-        }
-
-        if ($element !== null) {
-            $values = $element->getResourceLOMValues($allFields);
+        
+        try {
+            if ($type == 'lom') {
+                $element = $this->lom()->first();
+            } else if ($type == 'lomes') {
+                $element = $this->lomes()->first();
+            }
+    
+            if ($element !== null) {
+                $values = $element->getResourceLOMValues($allFields);
+            }
+        } catch (\Exception $ex) {
+            // echo $ex->getMessage();
+            if ($attempt < 15) {
+                sleep(1);
+                $values = $this->getLOMRawValues($type, $allFields, $attempt + 1);
+            }
         }
 
         return $values;
     }
 
+    private function formatValueString($value)
+    {
+        $defValue = $value;
+
+        if ($value !== null) {
+            foreach ($this->charactersMap as $characterItem) {
+                $replace = Utils::getRepetitiveString($this->specialCharacter, $characterItem['to']);
+                $defValue = str_replace($characterItem['from'], $replace, $defValue);
+            }
+        }
+
+        return $defValue;
+    }
+
     protected function getLOMValues(string $type = 'lom')
     {
         $values = [];
-        $solrFacetsConfig = config('solr_facets', []);
+        $rawValues = $this->getLOMRawValues($type, false);
 
-        if (array_key_exists('constants', $solrFacetsConfig)) {
-            $solrFacetsConfig = $solrFacetsConfig['constants'];
-            $rawValues = $this->getLOMRawValues($type, false);
-            $specialCharacter = $solrFacetsConfig['special_character'];
-            $keySeparator = Utils::getRepetitiveString($specialCharacter, $solrFacetsConfig['key_separator']);
-            $valueSeparator = Utils::getRepetitiveString($specialCharacter, $solrFacetsConfig['value_separator']);
-            $charactersMap = $solrFacetsConfig['characters_map'];
+        if ($rawValues !== null) {
+            foreach ($rawValues as $item) {
+                $key = $item['key'];
+                $subkey = $item['subkey'];
+                $value = $item['value'];
+                $auxItem = $key;
+                $auxItem .= ($subkey !== null ? ($this->keySeparator . $subkey) : '');
+                $auxItem .= ($this->valueSeparator . $value);
+                $auxItem = $this->formatValueString($auxItem);
+                $values[] = $auxItem;
+            }
+        }
 
-            if ($rawValues !== null) {
-                foreach ($rawValues as $item) {
-                    $key = $item['key'];
-                    $subkey = $item['subkey'];
-                    $value = $item['value'];
-                    $auxItem = $key;
-                    $auxItem .= ($subkey !== null ? ($keySeparator . $subkey) : '');
-                    $auxItem .= ($valueSeparator . $value);
+        return $values;
+    }
 
-                    foreach ($charactersMap as $characterItem) {
-                        $replace = Utils::getRepetitiveString($specialCharacter, $characterItem['to']);
-                        $auxItem = str_replace($characterItem['from'], $replace, $auxItem);
-                    }
+    protected function getTikaMetadata()
+    {
+        $values = [];
 
-                    $values[] = $auxItem;
+        foreach ($this->mediaResources as $item) {
+            $rawValues = $item->getFileMetadata(false);
+            if ($rawValues !== null) $rawValues = json_decode($rawValues);
+
+            foreach ($rawValues as $rKey => $rValue) {
+                if ($rValue !== null) {
+                    if (gettype($rValue) === 'array') $rValue = json_encode($rValue);
+                    $auxValue = $rKey . $this->valueSeparator . $rValue;
+                    $auxValue = $this->formatValueString($auxValue);
+                    if (!in_array($auxValue, $values)) $values[] = $auxValue;
                 }
             }
         }
