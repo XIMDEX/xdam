@@ -3,8 +3,11 @@
 namespace App\Models;
 
 use App\Enums\MediaType;
+use App\Enums\ResourceType;
 use App\Enums\Roles;
 use App\Enums\ThumbnailTypes;
+use App\Models\Collection;
+use App\Models\Media as MediaModel;
 use App\Traits\UsesUuid;
 use App\Models\Workspace;
 use App\Models\WorkspaceResource;
@@ -90,6 +93,11 @@ class DamResource extends Model implements HasMedia, TaggableInterface
         return $this->hasOne(Lom::class);
     }
 
+    public function associatedMedia(): BelongsToMany
+    {
+        return $this->belongsToMany(MediaModel::class);
+    }
+
     // public function organizations()
     // {
     //     $orgs = [];
@@ -156,5 +164,64 @@ class DamResource extends Model implements HasMedia, TaggableInterface
                     ->where('workspace_id', $oldWorkspace->id)
                     ->update(['workspace_id' => $newWorkspace->id]);
         return true;
+    }
+
+    public function getWorkspacesToAdd(array $workspaces)
+    {
+        $workspacesToAdd = [];
+
+        foreach ($workspaces as $nWorkspace) {
+            $found = false;
+
+            foreach ($this->workspaces()->get() as $cWorkspace) {
+                if ($nWorkspace->id == $cWorkspace->id) {
+                    $found = true;
+                }
+            }
+
+            if (!$found) {
+                $workspacesToAdd[] = $nWorkspace;
+            }
+        }
+
+        return $workspacesToAdd;
+    }
+
+    public function getWorkspacesToRemove(array $workspaces)
+    {
+        $workspacesToRemove = [];
+
+        foreach ($this->workspaces()->get() as $cWorkspace) {
+            $found = false;
+
+            foreach ($workspaces as $nWorkspace) {
+                if ($cWorkspace->id == $nWorkspace->id) {
+                    $found = true;
+                }
+            }
+
+            if (!$found) {
+                $workspacesToRemove[] = $cWorkspace;
+            }
+        }
+
+        return $workspacesToRemove;
+    }
+
+    public function doesThisResourceSupportsAnAdditionalFile()
+    {
+        $totalFiles = $this->getNumberOfFilesAttached();
+        $collection = $this->collection()->first();
+        if ($collection === null) return false;
+        if ($collection->getMaxNumberOfFiles() === Collection::UNLIMITED_FILES) return true;
+        return $totalFiles < $collection->getMaxNumberOfFiles();
+    }
+
+    public function getNumberOfFilesAttached()
+    {
+        $media = Media::where('model_id', $this->id)
+                    ->where('collection_name', MediaType::File)
+                    ->get();
+        return count($media);
     }
 }

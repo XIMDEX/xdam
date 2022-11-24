@@ -30,23 +30,7 @@ Para añadir más rutas donde se copiará esta copia de seguridad o bien para ca
 
 
 ## FRONTEND:
-
-#### 	DESCRIPCIÓN:
-
-Es el frontend de galería de XDAM, escrito en Angular, que consume la API de backend.
-
-#### 	INSTALACIÓN:
-
-Ejecutamos la instalación de las dependencias de npm, con `npm install`.
-
-Podemos leventar un servidor de desarrollo para ver la app en funcionamiento con:
-```shell
-npm run start
-```
-
-Las rutas hacia la api de DAM se encuentran bajo el fichero
-`/src/app/mappers/endpoints.config.json`
-
+El FRONTEND de XDAM está ahora en un repositorio separado. Mirar su documentación.
 
 ## BACKEND:
 
@@ -133,11 +117,17 @@ sudo su - solr -c "/opt/solr/bin/solr create -c book -n data_driven_schema_confi
 y nos dirigimos a la carpeta backend, en su interior ejecutamos:
 ```shell
 composer install
+npm install
 ```
 
 Copiamos el fichero de ejemplo .env.example a .env
 
 Modificamos el fichero .env para añadir los parámetros de conexión a nuestra base de datos Mysql o MariaDB.
+
+Configuramos sistema de tokens con:
+```shell
+php artisan passport:install
+```
 
 Instalamos los optimizadores de imagen que requiere la librería media-library, con la que se gestionan los ficheros.
 
@@ -146,6 +136,13 @@ Instalamos los optimizadores de imagen que requiere la librería media-library, 
 ```shell
 sudo apt install jpegoptim optipng pngquant gifsicle
 npm install -g svgo
+```
+
+También es necesario instalar el modulo ImageMagick para la versión de php que tengamos y activarlo en el php.ini añadiendo o descomentando `extension=imagick.so`
+
+Ejemplo si es php 7.4.3
+```shel
+sudo apt install php7.4-imagick
 ```
 
 ###### En MACOS:
@@ -268,6 +265,16 @@ Hay también un comando especial, php artisan solr:clean que borra todos los doc
 
 ### New
 Se ha añadido un nuevo comando `php artisan solr:update --query=""` que permite actualizar recursos presentes en la base de datos a partir de una query SQL.
+Se ha añadido un nuevo comando de gestión de Cores: php artisan solrCoresMaintenace, este comando accepta los parámetros:
+* `--action=` -> `DELETE`, `CREATE`, `REINDEX` y `ALL`
+* `--core=` -> cores separados por comas de los que se quiere realizar la acción
+* `--exclude=` -> contrario del parámetro core, excluirá los cores indicados
+* `--y` -> no pedirá confirmación en las acciones
+
+**_Ejemplo_**: 
+	
+		para crear los cores en su versión número 10 ejecutaríamos `sudo php artisan solrCores:maintenance --action=CREATE --coreVersion=10$`. En el .env del backend hay que añadir el parámetro con la versión a la que apuntamos: 
+SOLR_CORES_VERSION="10".
 
 ## ¿COMO MOVER RECURSOS DE UN SOLR/CORE A OTRO?
 

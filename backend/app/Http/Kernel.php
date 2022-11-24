@@ -60,6 +60,9 @@ class Kernel extends HttpKernel
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
 
+        'cdn.validCDN' => \App\Http\Middleware\CDN\CDNIsValid::class,
+        'cdn.checkCDNAccess' => \App\Http\Middleware\CDN\CheckCDNAccess::class,
+
         'manage.organizations' => \App\Http\Middleware\CanManageOrganization::class,
         'manage.roles' => \App\Http\Middleware\CanManageRoles::class,
         'manage.workspaces' => \App\Http\Middleware\CanManageWorkspace::class,

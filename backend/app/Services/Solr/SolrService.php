@@ -5,16 +5,15 @@ namespace App\Services\Solr;
 
 use App\Models\Collection;
 use App\Models\DamResource;
+use App\Models\Workspace;
 use App\Services\Catalogue\FacetManager;
 use Exception;
 use Solarium\Client;
+use Solarium\Core\Client\Adapter\Curl;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Solarium\Core\Query\Result\ResultInterface;
 use stdClass;
-use App\Http\Resources\Solr\ActivitySolrResource;
-use App\Http\Resources\Solr\AssessmentSolrResource;
-use App\Http\Resources\Solr\BookSolrResource;
-use App\Http\Resources\Solr\CourseSolrResource;
-use App\Http\Resources\Solr\MultimediaSolrResource;
+use App\Http\Resources\Solr\{ActivitySolrResource, AssessmentSolrResource, BookSolrResource, CourseSolrResource, DocumentSolrResource, MultimediaSolrResource};
 
 /**
  * Class that is responsible for making crud with Apache Solr and each of its instances
@@ -25,6 +24,7 @@ class SolrService
 {
 
     private FacetManager $facetManager;
+    private SolrConfig $solrConfig;
     /** @var Client[] $clients  */
     private array $clients;
 
@@ -36,6 +36,7 @@ class SolrService
     public function __construct(FacetManager $facetManager, SolrConfig $solrConfig)
     {
         $this->facetManager = $facetManager;
+        $this->solrConfig = $solrConfig;
         $this->clients = $solrConfig->getClients();
     }
 
@@ -76,9 +77,21 @@ class SolrService
      * @return mixed
      * @throws Exception
      */
-    public function getClientFromResource(DamResource $damResource)
+    public function getClientFromResource(DamResource $damResource, $attempt = 0)
     {
-        return $this->getClientFromCollection($damResource->collection);
+        $client = null;
+
+        try {
+            $client = $this->getClientFromCollection($damResource->collection);
+        } catch (\Exception $ex) {
+            // echo $ex->getMessage();
+            if ($attempt < 20) {
+                sleep(5);
+                $client = $this->getClientFromResource($damResource, $attempt + 1);
+            }
+        }
+
+        return $client;
     }
 
 
@@ -94,11 +107,14 @@ class SolrService
     /**
      * update or save a document in solr
      * @param DamResource $damResource
+     * @param string $solrVersion
      * @return ResultInterface
      * @throws Exception
      */
-    public function saveOrUpdateDocument(DamResource $damResource): ResultInterface
+    public function saveOrUpdateDocument(DamResource $damResource, $solrVersion = null): ResultInterface
     {
+        $solrVersion = $this->getCoreVersion($solrVersion);
+        $this->clients = $this->solrConfig->updateSolariumClients($solrVersion);
         $client = $this->getClientFromResource($damResource);
         $createCommand = $client->createUpdate();
         $document = $createCommand->createDocument();
@@ -129,6 +145,21 @@ class SolrService
         return $client->update($deleteQuery);
     }
 
+    private static function paginateResults($results)
+    {
+        /* Response with pagination data */
+        $response = new \stdClass();
+        $response->facets = $results['facets'];
+        $response->current_page = $results['currentPage'];
+        $response->data = $results['documentsResponse'];
+        $response->per_page = $results['limit'];
+        $response->last_page = $results['totalPages'];
+        $response->next_page = $results['nextPage'];
+        $response->prev_page = $results['prevPage'];
+        $response->total = $results['documentsFound'];
+        return $response;
+    }
+
     /**
      * Make a faceted query with parameters to Apache Solr
      * @param array $pageParams
@@ -146,19 +177,17 @@ class SolrService
     ): stdClass {
         // Gets the results
         $results = $this->executeSearchQuery($pageParams, $sortParams, $facetsFilter, $collection);
+        return $this->paginateResults($results);     
+    }
 
-        /* Response with pagination data */
-        $response = new \stdClass();
-
-        $response->facets = $results['facets'];
-        $response->current_page = $results['currentPage'];
-        $response->data = $results['documentsResponse'];
-        $response->per_page = $results['limit'];
-        $response->last_page = $results['totalPages'];
-        $response->next_page = $results['nextPage'];
-        $response->prev_page = $results['prevPage'];
-        $response->total = $results['documentsFound'];
-        return $response;
+    public function distributedPaginatedQueryByFacet(
+        $pageParams = [],
+        $sortParams = [],
+        $facetsFilter,
+        $workspace
+    ): stdClass {
+        $results = $this->executeDistributedSearchQuery($pageParams, $sortParams, $facetsFilter, $workspace);
+        return $this->paginateResults($results);
     }
 
     private static function updateFacetsFilter(&$facetsFilter)
@@ -182,7 +211,7 @@ class SolrService
     {
         // Updates the facets filter
         $this->updateFacetsFilter($facetsFilter);
-        
+        $this->clients = $this->solrConfig->updateSolariumClients($this->getCoreVersion(null));
         $client = $this->getClientFromCollection($collection);
         $core = $collection->accept;
         $classCore = $client->getOptions()['classHandler'];
@@ -230,9 +259,7 @@ class SolrService
 
         /* Limit query by pagination limits */
         $query->setStart($currentPageFrom)->setRows($limit);
-
         $allDocuments = $client->execute($query);
-
         $documentsResponse = [];
 
         foreach ($allDocuments as $document) {
@@ -243,6 +270,7 @@ class SolrService
 
         // the facets returned here are a complete unfiltered list, only the one that has been selected is marked as selected
         $facets = $this->stdToArray($this->facetManager->getFacets($faceSetFound, $facetsFilter, $core));
+        
         foreach ($facets as $key => $facet) {
             ksort($facets[$key]['values']);
         }
@@ -252,13 +280,49 @@ class SolrService
             'faceSetFound'          => $faceSetFound,
             'totalPages'            => $totalPages,
             'currentPageFrom'       => $currentPageFrom,
-            'documentsResponse'    => $documentsResponse,
+            'documentsResponse'     => $documentsResponse,
             'facets'                => $facets,
             'currentPage'           => $currentPage,
             'limit'                 => $limit,
             'nextPage'              => (($currentPage + 1) > $totalPages) ? $totalPages : $currentPage + 1,
             'prevPage'              => (($currentPage - 1) > 1) ? $currentPage - 1 : 1
         ];
+    }
+
+    private function executeDistributedSearchQuery($pageParams = [], $sortParams = [], $facetsFilter, $workspace)
+    {
+        // Updates the facets filter
+        $this->updateFacetsFilter($facetsFilter);
+
+        // Gets the default core, with its client
+        $defaultCore = null;
+        foreach ($this->clients as $key => $value) if ($defaultCore === null) $defaultCore = $key;
+        $client = $this->clients[$defaultCore];
+        
+        // Creates the select query
+        $query = $client->createSelect();
+        $distributedSearch = $query->getDistributedSearch();
+        $i = 0;
+
+        foreach ($this->clients as $key => $value) {
+            if ($key !== $defaultCore) {
+                $i++;
+                $shardKey = 'shard' . $i;
+                $shardValueParams = [
+                    'host'  => $value->getEndpoints()['localhost']->getHost(),
+                    'port'  => $value->getEndpoints()['localhost']->getPort(),
+                    'path'  => $value->getEndpoints()['localhost']->getPath(),
+                    'core'  => $value->getEndpoints()['localhost']->getCore()
+                ];
+                $shardValueParams['path'] = ($shardValueParams['path'] === '' ? '/' : $shardValueParams['path']);
+                $shardValue = $shardValueParams['host'] . ':' . $shardValueParams['port'] . $shardValueParams['path'] . $shardValueParams['core'];
+                $distributedSearch->addShard($shardKey, $shardValue);
+            }
+        }
+        $resultset = $client->select($query);
+        echo 'NumFound: '.$resultset->getNumFound();
+        exit();
+        return [];
     }
 
     public static function stdToArray($std): array
@@ -269,7 +333,8 @@ class SolrService
     private function generateQuery($collection, $core, $searchTerm): string
     {
         if ('document' === $core) {
-            return "title:$searchTerm^10 title:*$searchTerm*^7 OR body:*$searchTerm*^5";
+            // return "title:$searchTerm^10 title:*$searchTerm*^7 OR body:*$searchTerm*^5";
+            return DocumentSolrResource::generateQuery($searchTerm);
         } else if ('activity' === $core) {
             return ActivitySolrResource::generateQuery($searchTerm);
         } else if ('assessment' === $core) {
@@ -283,5 +348,15 @@ class SolrService
         }
 
         return "";
+    }
+
+    public function getCoreVersion($coreVersion)
+    {
+        return $this->solrConfig->getCoreVersion($coreVersion);
+    }
+
+    public function getCoreNameVersioned($solrCore, $solrVersion = null)
+    {
+        return $this->solrConfig->getCoreNameVersioned($solrCore, $solrVersion);
     }
 }
