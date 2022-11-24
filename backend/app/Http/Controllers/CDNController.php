@@ -42,6 +42,11 @@ class CDNController extends Controller
         $this->userService = $userService;
     }
 
+    /**
+     * Creates a CDN
+     * @param CDNRequest $request
+     * @return ResponseFactory
+     */
     public function createCDN(CDNRequest $request)
     {
         if (!isset($request->name))
@@ -53,6 +58,11 @@ class CDNController extends Controller
         return response(['cdn_created' => false], Response::HTTP_OK);
     }
 
+    /**
+     * Removes a CDN
+     * @param CDNRequest $request
+     * @return ResponseFactory
+     */
     public function removeCDN(CDNRequest $request)
     {
         if (!isset($request->cdn_id))
@@ -121,26 +131,52 @@ class CDNController extends Controller
         return response(['resources' => $result], Response::HTTP_OK);
     }
 
+    /**
+     * Attaches a collection to a CDN
+     * @param CDNRequest $request
+     * @return ResponseFactory
+     */
     public function addCollection(CDNRequest $request)
     {
         return $this->manageCDNCollection($request, CDNControllerAction::ADD_COLLECTION);
     }
 
+    /**
+     * Deattaches a collection from a CDN
+     * @param CDNRequest $request
+     * @return ResponseFactory
+     */
     public function removeCollection(CDNRequest $request)
     {
         return $this->manageCDNCollection($request, CDNControllerAction::REMOVE_COLLECTION);
     }
 
+    /**
+     * Checks if a collection is attached to a CDN
+     * @param CDNRequest $request
+     * @return ResponseFactory
+     */
     public function checkCollection(CDNRequest $request)
     {
         return $this->manageCDNCollection($request, CDNControllerAction::CHECK_COLLECTION);
     }
 
+    /**
+     * Lists the attached collections to a CDN
+     * @param CDNRequest $request
+     * @return ResponseFactory
+     */
     public function listCollections(CDNRequest $request)
     {
         return $this->manageCDNCollection($request, CDNControllerAction::LIST_COLLECTIONS);
     }
 
+    /**
+     * Manages the CDN collections
+     * @param CDNRequest $request
+     * @param string $action
+     * @return ResponseFactory
+     */
     private function manageCDNCollection(CDNRequest $request, string $action)
     {
         if ($action !== CDNControllerAction::LIST_COLLECTIONS) {
@@ -183,37 +219,65 @@ class CDNController extends Controller
         return response($result, Response::HTTP_OK);
     }
 
+    /**
+     * Updates the access permissions of a CDN
+     * @param CDNRequest $request
+     * @return ResponseFactory
+     */
     public function updateAccessPermission(CDNRequest $request)
     {
-        if (!isset($request->cdn_id) || !isset($request->access_permission))
-            return response(['error' => 'The CDN ID and the access permission type must be provided.']);
+        // Checks if the required data is provided
+        if (!isset($request->cdn_id) || !isset($request->access_permissions))
+            return response(['error' => 'The CDN ID and the access permission types must be provided.']);
 
-        if (!$this->cdnService->existsAccessPermissionType($request->access_permission))
-            return response(['error' => 'The access permission type must be valid.']);
+        // Checks if the provided data format is correct
+        if (gettype($request->access_permissions) !== 'array')
+            return response(['error' => 'The access permission types must be provided as an array.']);
 
-        $res = $this->cdnService->updateAccessPermissionType($request->cdn_id, $request->access_permission);
+        // Sets an empty array, to avoid duplicate entries
+        $permissions = [];
+
+        // Iterates through the permission types, to make checkings
+        foreach ($request->access_permissions as $permission) {
+            // Checks if the permission type is duplicated
+            if (!in_array($permission, $permissions))
+                $permissions[] = $permission;
+
+            // Checks that each permission type passed is correct
+            if (!$this->cdnService->existsAccessPermissionType($permission))
+                return response(['error' => 'The access permission types must be valid.']);
+        }
+
+        $res = $this->cdnService->updateAccessPermissionType($request->cdn_id, $permissions);
         return response(['access_permission_updated' => $res], Response::HTTP_OK);
     }
 
-    public function checkAccessPermission(CDNRequest $request)
-    {
-        if (!isset($request->cdn_id))
-            return response(['error' => 'The CDN ID must be provided.']);
-
-        $res = $this->cdnService->checkAccessPermissionType($request->cdn_id);
-        return response(['access_permission_type' => $res], Response::HTTP_OK);
-    }
-
+    /**
+     * Adds an access permission rule
+     * @param CDNRequest $request
+     * @return ResponseFactory
+     */
     public function addAccessPermissionRule(CDNRequest $request)
     {
         return $this->manageAccessPermissionRule($request, false);
     }
 
+    /**
+     * Removes an access permission rule
+     * @param CDNRequest $request
+     * @return ResponseFactory
+     */
     public function removeAccessPermissionRule(CDNRequest $request)
     {
         return $this->manageAccessPermissionRule($request, true);
     }
 
+    /**
+     * Manages the access permission rules
+     * @param CDNRequest $request
+     * @param boolean $toRemove
+     * @return ResponseFactory
+     */
     private function manageAccessPermissionRule(CDNRequest $request, bool $toRemove)
     {
         $key = $toRemove ? 'access_permission_rule_removal' : 'access_permission_rule_addition';
@@ -233,6 +297,11 @@ class CDNController extends Controller
         return response($result, Response::HTTP_OK);
     }
 
+    /**
+     * Lists the access permission rules of a CDN
+     * @param CDNRequest $request
+     * @return ResponseFactory
+     */
     public function listAccessPermissionRules(CDNRequest $request)
     {
         $key = 'access_permission_rules_list';

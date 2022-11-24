@@ -10,6 +10,11 @@ use App\Utils\Utils as AppUtils;
 
 class BookSolrResource extends BaseSolrResource
 {
+    public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null)
+    {
+        parent::__construct($resource, $lomSolrClient, $lomesSolrClient);
+    }
+
     protected function formatCategories($categories)
     {
         return $categories ?? ['uncategorized'];
@@ -33,15 +38,6 @@ class BookSolrResource extends BaseSolrResource
      */
     public function toArray($request)
     {
-        $files = array_column(
-            json_decode(MediaResource::collection($this->getMedia(MediaType::File()->key))->toJson(), true),
-            'dam_url'
-        );
-        $previews = array_column(
-            json_decode(MediaResource::collection($this->getMedia(MediaType::Preview()->key))->toJson(), true),
-            'dam_url'
-        );
-
         return [
             'id'                    => $this->getID(),
             'name'                  => $this->getName(),
@@ -59,7 +55,9 @@ class BookSolrResource extends BaseSolrResource
             'isbn'                  => $this->data->description->isbn ?? '',
             'lang'                  => $this->data->description->lang ?? getenv('BOOK_DEFAULT_LANGUAGE'),
             'collections'           => $this->getCollections(),
-            'core_resource_type'    => $this->getCoreResourceType()
+            'core_resource_type'    => $this->getCoreResourceType(),
+            'lom'                   => $this->getLOMValues(),
+            'lomes'                 => $this->getLOMValues('lomes')
         ];
     }
 }

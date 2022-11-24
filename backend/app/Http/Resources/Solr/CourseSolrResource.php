@@ -7,26 +7,31 @@ use App\Http\Resources\Solr\BaseSolrResource;
 
 class CourseSolrResource extends BaseSolrResource
 {
-    public static function generateQuery($searchTerm)
+    public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null)
     {
-        return "name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5 achievements:*$searchTerm*^3 OR preparations:*$searchTerm*^3";
+        parent::__construct($resource, $lomSolrClient, $lomesSolrClient);
+    }
+
+    public static function generateQuery($searchTerm, $searchPhrase)
+    {
+        $query = "name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5 ";
+        $query .= "lom:*$searchTerm*^4 OR lomes:*$searchTerm*^4 achievements:*$searchTerm*^3 OR preparations:*$searchTerm*^3";
+        return $query;
     }
     
     protected function getData($tags = null, $categories = null)
     {
         $data = $this->data;
-
-        if (!is_object($data))
-            $data = json_decode($data);
-
+        $data = (!is_object($data) ? json_decode($data) : $data);
         $data->id = $this->id;
         $data->description->id = $this->id;
         $data->description->name = $this->name;
         $data->description->tags = $tags;
         $data->description->categories = $categories;
+        $data->lom = $this->getLOMRawValues('lom');
+        $data->lomes = $this->getLOMRawValues('lomes');
         $finalData = $data;
         $finalData = is_object($finalData) ? json_encode($finalData) : $finalData;
-
         return $finalData;
     }
 
@@ -102,7 +107,9 @@ class CourseSolrResource extends BaseSolrResource
             'created_at'            => $this->created_at,
             'updated_at'            => $this->updated_at,
             'collections'           => $this->getCollections(),
-            'core_resource_type'    => $this->getCoreResourceType()
+            'core_resource_type'    => $this->getCoreResourceType(),
+            'lom'                   => $this->getLOMValues(),
+            'lomes'                 => $this->getLOMValues('lomes')
         ];
     }
 }

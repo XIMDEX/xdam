@@ -421,18 +421,20 @@ class ResourceService
         return $createdResources;
     }
 
-    public function lomesSchema ($asArray = false)
+    public function lomesSchema($asArray = false)
     {
-        $json_file = file_get_contents(storage_path('/lomes') .'/lomesSchema.json');
+        /*$json_file = file_get_contents(storage_path('/lomes') .'/lomesSchema.json');
         $schema = json_decode($json_file, $asArray);
-        return $schema;
+        return $schema;*/
+        return Utils::getLomesSchema($asArray);
     }
 
-    public function lomSchema ($asArray = false)
+    public function lomSchema($asArray = false)
     {
-        $json_file = file_get_contents(storage_path('/lom') . '/lomSchema.json');
+        /*$json_file = file_get_contents(storage_path('/lom') . '/lomSchema.json');
         $schema = json_decode($json_file, $asArray);
-        return $schema;
+        return $schema;*/
+        return Utils::getLomSchema($asArray);
     }
 
     public function searchForAssociativeKey($key, $tabKey, $array )
@@ -454,6 +456,7 @@ class ResourceService
         $tabKey = $formData['_tab_key'];
         $lomesSchema = $this->lomesSchema(true);
         $tabSchema = $this->searchForAssociativeKey('key', $tabKey, $lomesSchema['tabs']);
+        
         foreach ($tabSchema['properties'] as $label => $props) {
             foreach ($formData as $f_key => $f_value) {
                 if($f_key === $label && $f_value !== null) {
@@ -461,8 +464,10 @@ class ResourceService
                 }
             }
         }
+
         $dam_lomes->update($updateArray);
         $dam_lomes->save();
+        $this->solr->saveOrUpdateDocument($damResource, null, true);
     }
 
     public function setLomData($damResource, $params)
@@ -473,6 +478,7 @@ class ResourceService
         $tabKey = $formData['_tab_key'];
         $lomSchema = $this->lomSchema(true);
         $tabSchema = $this->searchForAssociativeKey('key', $tabKey, $lomSchema['tabs']);
+        
         foreach ($tabSchema['properties'] as $label => $props) {
             foreach ($formData as $f_key => $f_value) {
                 if($f_key === $label && $f_value !== null) {
@@ -480,8 +486,10 @@ class ResourceService
                 }
             }
         }
+        
         $dam_lom->update($updateArray);
         $dam_lom->save();
+        $this->solr->saveOrUpdateDocument($damResource, null, true);
     }
 
     public function getLomesData($damResource)

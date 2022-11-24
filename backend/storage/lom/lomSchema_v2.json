@@ -1,0 +1,1121 @@
+{
+  "name": "lom",
+  "title": "LOM",
+  "api": false,
+  "tabs": [
+    {
+      "title": "General",
+      "key": "1",
+      "definitions": {
+        "Identifier": {
+          "type": "object",
+          "title": "Identifier",
+          "properties": {
+            "Catalog": {
+              "type": "string",
+              "title": "Catalog",
+              "default": ""
+            },
+            "Entry": {
+              "type": "string",
+              "title": "Entry",
+              "default": ""
+            }
+          }
+        },
+        "Title": {
+          "type": "object",
+          "isUnique": true,
+          "properties": {
+            "Text": {
+              "type": "string"
+            },
+            "Languge": {
+              "type": "string"
+            }
+          }
+        },
+        "Structure": {
+          "type": "object",
+          "isUnique": true,
+          "properties": {
+            "Source": {
+              "type": "string"
+            },
+            "Value": {
+              "type": "string"
+            }
+          }
+        },
+        "Aggregation Level": {
+          "type": "object",
+          "isUnique": true,
+          "properties": {
+            "Source": {
+              "type": "string"
+            },
+            "Value": {
+              "type": "string"
+            }
+          }
+        },
+        "Description": {
+          "type": "object",
+          "title": "Descriptions",
+          "properties": {
+            "Description": {
+              "type": "string",
+              "title": "Description",
+              "default": ""
+            },
+            "Language": {
+              "type": "string",
+              "title": "Language",
+              "default": ""
+            }
+          }
+        },
+        "Keyword": {
+          "type": "object",
+          "title": "Keywords",
+          "properties": {
+            "Description": {
+              "type": "string",
+              "title": "Keyword",
+              "default": ""
+            },
+            "Language": {
+              "type": "string",
+              "title": "Language",
+              "default": ""
+            }
+          }
+        },
+        "Coverage": {
+          "type": "object",
+          "title": "Coverages",
+          "properties": {
+            "Coverage": {
+              "type": "string",
+              "title": "Coverage",
+              "default": ""
+            },
+            "Language": {
+              "type": "string",
+              "title": "Language",
+              "default": ""
+            }
+          }
+        }
+      },
+      "properties": {
+        "Identifier": {
+          "title": "Identifier",
+          "type": "array",
+          "default": [
+            {
+              "Catalog": "",
+              "Entry": ""
+            }
+          ],
+          "items": {
+            "$ref": "#/definitions/Identifier"
+          },
+          "data_field": "general_1_identifier"
+        },
+        "Title": {
+          "title": "Title",
+          "type": "array",
+          "default": [
+            {
+              "Text": "",
+              "Language": ""
+            }
+          ],
+          "items": {
+            "$ref": "#/definitions/Title"
+          },
+          "data_field": "general_1_title"
+        },
+        "Description": {
+          "type": "array",
+          "title": "Descriptions",
+          "items": {
+            "$ref": "#/definitions/Description"
+          },
+          "data_field": "general_1_description"
+        },
+        "Keyword": {
+          "type": "array",
+          "title": "Keywords",
+          "items": {
+            "$ref": "#/definitions/Keyword"
+          },
+          "data_field": "general_1_keyword"
+        },
+        "Coverage": {
+          "type": "array",
+          "title": "Coverages",
+          "items": {
+            "$ref": "#/definitions/Coverage"
+          },
+          "data_field": "general_1_coverage"
+        },
+        "Structure": {
+          "type": "array",
+          "default": [
+            {
+              "Source": "",
+              "Value": ""
+            }
+          ],
+          "items": {
+            "$ref": "#/definitions/Structure"
+          },
+          "title": "Structure",
+          "data_field": "general_1_structure"
+        },
+        "Aggregation Level": {
+          "type": "array",
+          "default": [
+            {
+              "Source": "",
+              "Value": ""
+            }
+          ],
+          "items": {
+            "$ref": "#/definitions/Aggregation Level"
+          },
+          "title": "Aggregation Level",
+          "data_field": "general_1_aggregation_level"
+        }
+      }
+    },
+    {
+      "title": "Life Cycle",
+      "key": "2",
+      "definitions": {
+        "Contribute": {
+          "type": "object",
+          "title": "Contribute",
+          "properties": {
+            "Source": {
+              "type": "string",
+              "title": "Source",
+              "default": ""
+            },
+            "Value": {
+              "type": "string",
+              "title": "Value",
+              "default": ""
+            },
+            "Entity": {
+              "type": "string",
+              "title": "Entity"
+            },
+            "Date": {
+              "type": "object",
+              "title": "Date",
+              "properties": {
+                "Datetime": {
+                  "title": "Date",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "Description": {
+                  "type": "object",
+                  "title": "Description",
+                  "properties": {
+                    "Text": {
+                      "type": "string",
+                      "title": "Text"
+                    },
+                    "Language": {
+                      "title": "Language",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "Version": {
+          "type": "object",
+          "isUnique": true,
+          "properties": {
+            "Text": {
+              "type": "string"
+            },
+            "Languge": {
+              "type": "string"
+            }
+          }
+        },
+        "Status": {
+          "type": "object",
+          "isUnique": true,
+          "properties": {
+            "Source": {
+              "type": "string"
+            },
+            "Value": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "properties": {
+        "Description": {
+          "type": "string",
+          "title": "Description",
+          "data_field": "life_cycle_2_description"
+        },
+        "Version": {
+          "title": "Version",
+          "type": "array",
+          "default": [
+            {
+              "Text": "",
+              "Language": ""
+            }
+          ],
+          "items": {
+            "$ref": "#/definitions/Version"
+          },
+          "data_field": "life_cycle_2_version"
+        },
+        "Status": {
+          "title": "Status",
+          "type": "array",
+          "default": [
+            {
+              "Source": "",
+              "Value": ""
+            }
+          ],
+          "items": {
+            "$ref": "#/definitions/Status"
+          },
+          "data_field": "life_cycle_2_status"
+        },
+        "Contribute": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Contribute"
+          },
+          "title": "Contribute",
+          "data_field": "life_cycle_2_contribute"
+        }
+      }
+    },
+    {
+      "title": "Meta-Metadata",
+      "key": "3",
+      "definitions": {
+        "Identifier": {
+          "type": "object",
+          "title": "Identifier",
+          "properties": {
+            "Catalog": {
+              "type": "string",
+              "title": "Catalog",
+              "default": ""
+            },
+            "Entry": {
+              "type": "string",
+              "title": "Entry",
+              "default": ""
+            }
+          }
+        },
+        "Contribute": {
+          "type": "object",
+          "title": "Contribute",
+          "properties": {
+            "Source": {
+              "type": "string",
+              "title": "Source",
+              "default": ""
+            },
+            "Value": {
+              "type": "string",
+              "title": "Value",
+              "default": ""
+            },
+            "Entity": {
+              "type": "string",
+              "title": "Entity"
+            },
+            "Date": {
+              "type": "object",
+              "title": "Date",
+              "properties": {
+                "Datetime": {
+                  "title": "Date",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "Description": {
+                  "type": "object",
+                  "title": "Description",
+                  "properties": {
+                    "Text": {
+                      "type": "string",
+                      "title": "Text"
+                    },
+                    "Language": {
+                      "title": "Language",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "properties": {
+        "Identifier": {
+          "type": "array",
+          "title": "Identifier",
+          "items": {
+            "$ref": "#/definitions/Identifier"
+          },
+          "data_field": "meta-metadata_3_identifier"
+        },
+        "Contribute": {
+          "type": "array",
+          "title": "Contribute",
+          "items": {
+            "$ref": "#/definitions/Contribute"
+          },
+          "data_field": "meta-metadata_3_contribute"
+        },
+        "Metadata Schema": {
+          "type": "string",
+          "title": "Metadata Schema",
+          "data_field": "meta-metadata_3_metadata_schema"
+        },
+        "Language": {
+          "type": "string",
+          "title": "Language",
+          "data_field": "meta-metadata_3_language"
+        }
+      }
+    },
+    {
+      "title": "Technical",
+      "key": "4",
+      "definitions": {
+        "Location": {
+          "type": "object",
+          "properties": {
+            "Text": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            }
+          }
+        },
+        "OrComposite": {
+          "type": "object",
+          "title": "Or Composite",
+          "properties": {
+            "Type": {
+              "type": "object",
+              "properties": {
+                "Source": {
+                  "type": "string",
+                  "title": "Type source"
+                },
+                "Value": {
+                  "title": "Type value",
+                  "type": "string"
+                }
+              }
+            },
+            "Name": {
+              "type": "object",
+              "properties": {
+                "Source": {
+                  "type": "string",
+                  "title": "Name source"
+                },
+                "Value": {
+                  "title": "Name value",
+                  "type": "string"
+                }
+              }
+            },
+            "Minimum Version": {
+              "type": "string",
+              "title": "Minimum Version"
+            },
+            "Maximum Version": {
+              "type": "string",
+              "title": "Maximum Version"
+            }
+          }
+        },
+        "Requirement": {
+          "type": "object",
+          "properties": {
+            "OrComposite": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OrComposite"
+              },
+              "title": "Or Composite"
+            }
+          }
+        },
+        "Installation Remarks": {
+          "type": "object",
+          "isUnique": true,
+          "properties": {
+            "Text": {
+              "type": "string"
+            },
+            "Language": {
+              "type": "string"
+            }
+          }
+        },
+        "Other Platform Requeriments": {
+          "type": "object",
+          "isUnique": true,
+          "properties": {
+            "Text": {
+              "type": "string"
+            },
+            "Language": {
+              "type": "string"
+            }
+          }
+        },
+        "Duration": {
+          "type": "object",
+          "isUnique": true,
+          "properties": {
+            "Duration": {
+              "type": "string"
+            },
+            "Description": {
+              "type": "object",
+              "properties": {
+                "Description": {
+                  "type": "string"
+                },
+                "Language": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "properties": {
+        "Format": {
+          "type": "string",
+          "title": "Format",
+          "data_field": "technical_4_format"
+        },
+        "Size": {
+          "type": "string",
+          "title": "Size",
+          "data_field": "technical_4_size"
+        },
+        "Location": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Location"
+          },
+          "title": "Location",
+          "data_field": "technical_4_location"
+        },
+        "Requirement": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Requirement"
+          },
+          "title": "Requirement",
+          "data_field": "technical_4_requirement"
+        },
+        "Installation Remarks": {
+          "type": "array",
+          "default": [
+            {
+              "Text": "",
+              "Language": ""
+            }
+          ],
+          "items": {
+            "$ref": "#/definitions/Installation Remarks"
+          },
+          "title": "Installation Remarks",
+          "data_field": "technical_4_installation_remarks"
+        },
+        "Other Platform Requirements": {
+          "type": "array",
+          "default": [
+            {
+              "Text": "",
+              "Language": ""
+            }
+          ],
+          "items": {
+            "$ref": "#/definitions/Other Platform Requeriments"
+          },
+          "title": "Other Platform Requirements",
+          "data_field": "technical_4_other_platform_requirements"
+        },
+        "Duration": {
+          "type": "array",
+          "default": [
+            {
+              "Duration": "",
+              "Description": {
+                "Description": "",
+                "Language": ""
+              }
+            }
+          ],
+          "items": {
+            "$ref": "#/definitions/Duration"
+          },
+          "title": "Duration",
+          "data_field": "technical_4_duration"
+        }
+      }
+    },
+    {
+      "title": "Educational",
+      "key": "5",
+      "definitions": {
+        "Learning Resource Type": {
+          "type": "string",
+          "title": " ",
+          "enum": [
+            "Exercise",
+            "Simulation",
+            "Questionnaire",
+            "Diagram",
+            "Figure",
+            "Graph",
+            "Index",
+            "Slide",
+            "Table",
+            "Narrative text",
+            "Exam",
+            "Experiment",
+            "Problem statement",
+            "Self assessment",
+            "Lecture"
+          ]
+        },
+        "Intented End User Role": {
+          "type": "string",
+          "title": " ",
+          "enum": [
+            "Teacher",
+            "Author",
+            "Learner",
+            "Manager"
+          ]
+        },
+        "Context": {
+          "type": "string",
+          "title": " ",
+          "enum": [
+            "School",
+            "Higher education",
+            "Training",
+            "Other"
+          ]
+        },
+        "Semantic Density": {
+          "type": "object",
+          "isUnique": true,
+          "properties": {
+            "Source": {
+              "type": "string"
+            },
+            "Value": {
+              "type": "string"
+            }
+          }
+        },
+        "Typical Age Range": {
+          "type": "object",
+          "properties": {
+            "Text": {
+              "type": "string"
+            },
+            "Language": {
+              "type": "string"
+            }
+          }
+        },
+        "Typical Learning Time": {
+          "type": "object",
+          "isUnique": true,
+          "title": "Typical Learning Time",
+          "properties": {
+            "Duration": {
+              "type": "string"
+            },
+            "Description": {
+              "type": "object",
+              "title": "Description",
+              "properties": {
+                "Description": {
+                  "type": "string"
+                },
+                "Language": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "Description": {
+          "type": "object",
+          "isUnique": true,
+          "title": " ",
+          "properties": {
+            "Description": {
+              "type": "string"
+            },
+            "Language": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "properties": {
+        "Interactivity Type": {
+          "type": "string",
+          "title": "Interactivity Type",
+          "enum": [
+            "Active",
+            "Explositive",
+            "Mixed"
+          ],
+          "data_field": "educational_5_interactivity_type"
+        },
+        "Learning Resource Type": {
+          "type": "array",
+          "title": "Learning Resource Type",
+          "items": {
+            "$ref": "#/definitions/Learning Resource Type"
+          },
+          "data_field": "educational_5_learning_resource_type"
+        },
+        "Interactivity Level": {
+          "type": "string",
+          "title": "Interactivity Level",
+          "enum": [
+            "Very low",
+            "Low",
+            "Medium",
+            "High",
+            "Very High"
+          ],
+          "data_field": "educational_5_interactivity_level"
+        },
+        "Semantic Density": {
+          "type": "array",
+          "default": [
+            {
+              "Source": "",
+              "Value": ""
+            }
+          ],
+          "items": {
+            "$ref": "#/definitions/Semantic Density"
+          },
+          "title": "Semantic Density",
+          "data_field": "educational_5_semantic_density"
+        },
+        "Intented End User Role": {
+          "type": "array",
+          "title": "Intented End User Role",
+          "items": {
+            "$ref": "#/definitions/Intented End User Role"
+          },
+          "data_field": "educational_5_intented_end_user_role"
+        },
+        "Context": {
+          "type": "array",
+          "title": "Context",
+          "items": {
+            "$ref": "#/definitions/Context"
+          },
+          "data_field": "educational_5_context"
+        },
+        "Typical Age Range": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Typical Age Range"
+          },
+          "title": "Typical Age Range",
+          "data_field": "educational_5_typical_age_range"
+        },
+        "Difficulty": {
+          "type": "string",
+          "title": "Difficulty",
+          "enum": [
+            "Very difficult",
+            "Difficult",
+            "Medium",
+            "Easy",
+            "Very easy"
+          ],
+          "data_field": "educational_5_difficulty"
+        },
+        "Typical Learning Time": {
+          "type": "array",
+          "title": "Typical Learning Time",
+          "items": {
+            "$ref": "#/definitions/Typical Learning Time"
+          },
+          "default": [
+            {
+              "Duration": "",
+              "Description": [
+                {
+                  "Description": "",
+                  "Language": ""
+                }
+              ]
+            }
+          ],
+          "data_field": "educational_5_typical_learning_time"
+        },
+        "Description": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Description"
+          },
+          "default": [
+            {
+              "Description": "",
+              "Language": ""
+            }
+          ],
+          "data_field": "educational_5_description"
+        }
+      }
+    },
+    {
+      "title": "Rights",
+      "key": "6",
+      "definitions": {
+        "Description": {
+          "type": "object",
+          "isUnique": true,
+          "properties": {
+            "Text": {
+              "type": "string"
+            },
+            "Language": {
+              "type": "string"
+            }
+          },
+          "title": "Description"
+        }
+      },
+      "properties": {
+        "Cost": {
+          "type": "string",
+          "title": "Cost",
+          "enum": [
+            "Yes",
+            "No"
+          ],
+          "data_field": "rights_6_cost"
+        },
+        "Copyright and Other Restrictions": {
+          "type": "string",
+          "title": "Copyright and Other Restrictions",
+          "enum": [
+            "Yes",
+            "No"
+          ],
+          "data_field": "rights_6_copyright_and_other_restrictions"
+        },
+        "Description": {
+          "type": "array",
+          "title": "Description",
+          "items": {
+            "$ref": "#/definitions/Description"
+          },
+          "default": [
+            {
+              "Text": "",
+              "Language": ""
+            }
+          ],
+          "data_field": "rights_6_description"
+        }
+      }
+    },
+    {
+      "title": "Relation",
+      "key": "7",
+      "definitions": {
+        "Identifier": {
+          "type": "object",
+          "title": "Identifier",
+          "properties": {
+            "Catalog": {
+              "type": "string",
+              "title": "Catalog",
+              "default": ""
+            },
+            "Entry": {
+              "type": "string",
+              "title": "Entry",
+              "default": ""
+            }
+          }
+        },
+        "Kind": {
+          "type": "object",
+          "isUnique": true,
+          "properties": {
+            "Source": {
+              "type": "string"
+            },
+            "Value": {
+              "type": "string"
+            }
+          }
+        },
+        "Description": {
+          "type": "object",
+          "properties": {
+            "Text": {
+              "type": "string"
+            },
+            "Language": {
+              "type": "string"
+            }
+          }
+        },
+        "Resource": {
+          "type": "object",
+          "isUnique": true,
+          "properties": {
+            "Identifier": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Identifier"
+              },
+              "title": "Identifier",
+              "data_field": "relation_7_identifier"
+            },
+            "Description": {
+              "type": "object",
+              "title": "Description",
+              "properties": {
+                "Text": {
+                  "title": "Description",
+                  "type": "string"
+                },
+                "Language": {
+                  "title": "Language",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "properties": {
+        "Kind": {
+          "type": "array",
+          "default": [
+            {
+              "Source": "",
+              "Value": ""
+            }
+          ],
+          "items": {
+            "$ref": "#/definitions/Kind"
+          },
+          "title": "Kind",
+          "data_field": "relation_7_kind"
+        },
+        "Resource": {
+          "type": "array",
+          "default": [
+            {
+              "Identifier": [],
+              "Description": {
+                "Text": "",
+                "Language": ""
+              }
+            }
+          ],
+          "items": {
+            "$ref": "#/definitions/Resource"
+          },
+          "title": "Resource",
+          "data_field": "relation_7_resource"
+        }
+      }
+    },
+    {
+      "title": "Annotation",
+      "key": "8",
+      "definitions": {
+        "Date": {
+          "type": "object",
+          "isUnique": true,
+          "properties": {
+            "Datetime": {
+              "title": "Date",
+              "type": "string",
+              "format": "date-time"
+            },
+            "Description": {
+              "type": "object",
+              "properties": {
+                "Description": {
+                  "type": "string"
+                },
+                "Language": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "Description": {
+          "type": "object",
+          "isUnique": true,
+          "properties": {
+            "Text": {
+              "type": "string"
+            },
+            "Language": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "properties": {
+        "Entity": {
+          "type": "string",
+          "title": "Entity",
+          "data_field": "annotation_8_entity"
+        },
+        "Date": {
+          "type": "array",
+          "title": "Date",
+          "default": [
+            {
+              "Datetime": "",
+              "Description": {
+                "Text": "",
+                "Language": ""
+              }
+            }
+          ],
+          "items": {
+            "$ref": "#/definitions/Date"
+          },
+          "data_field": "annotation_8_date"
+        },
+        "Description": {
+          "type": "array",
+          "title": "Description",
+          "items": {
+            "$ref": "#/definitions/Description"
+          },
+          "default": [
+            {
+              "Text": "",
+              "Language": ""
+            }
+          ],
+          "data_field": "annotation_8_description"
+        }
+      }
+    },
+    {
+      "title": "Classification",
+      "key": "9",
+      "definitions": {
+        "Taxon": {
+          "type": "object",
+          "title": "Taxon Path",
+          "properties": {
+            "Id": {
+              "type": "string",
+              "title": "ID",
+              "default": ""
+            },
+            "Entry": {
+              "type": "string",
+              "title": "Entry",
+              "default": ""
+            }
+          }
+        },
+        "Keyword": {
+          "type": "object",
+          "title": "Keywords",
+          "properties": {
+            "Description": {
+              "type": "string",
+              "title": "Keyword",
+              "default": ""
+            },
+            "Language": {
+              "type": "string",
+              "title": "Language",
+              "default": ""
+            }
+          }
+        }
+      },
+      "properties": {
+        "Purpose": {
+          "type": "string",
+          "title": "Purpose",
+          "data_field": "classification_9_purpose"
+        },
+        "Source": {
+          "type": "string",
+          "title": "Source",
+          "data_field": "classification_9_source"
+        },
+        "Description": {
+          "type": "string",
+          "title": "Description",
+          "data_field": "classification_9_description"
+        },
+        "Keyword": {
+          "type": "array",
+          "title": "Keywords",
+          "items": {
+            "$ref": "#/definitions/Keyword"
+          },
+          "data_field": "classification_9_keyword"
+        },
+        "Taxon Path": {
+          "type": "array",
+          "title": "Taxon Path",
+          "items": {
+            "$ref": "#/definitions/Taxon"
+          },
+          "data_field": "classification_9_taxon_path"
+        }
+      }
+    }
+  ]
+}

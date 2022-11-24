@@ -52,30 +52,48 @@ class CDN extends Model
 
     public function checkAccessRequirements($ipAddress = null, $originURL = null)
     {
-        $accessPermission = $this->getAccessPermission();
-        return $accessPermission->areRequirementsMet($ipAddress, $originURL);
-    }
-    
-    private function getAccessPermission(): DefaultCDNAccess
-    {
-        $cdnAccessPermission = $this->cdn_access_permission()->first();
-        $rules = $cdnAccessPermission->getRules();
+        $permissions = $this->getAccessPermission();
 
-        switch ($cdnAccessPermission->type) {
-            case AccessPermission::default:
-                return new DefaultCDNAccess($rules);
-
-            case AccessPermission::ipAddress:
-                return new IPAddressCDNAccess($rules);
-
-            case AccessPermission::lti:
-                return new LTICDNAccess($rules);
-            
-            case AccessPermission::originUrl:
-                return new OriginURLAccess($rules);
+        foreach ($permissions as $permission) {
+            if ($permission->areRequirementsMet($ipAddress, $originURL)) {
+                return true;
+            }
         }
 
-        return null;
+        return false;
+    }
+    
+    private function getAccessPermission(): array
+    {
+        $accessPermissions = [];
+        $permissions = $this->cdn_access_permission()->get();
+
+        foreach ($permissions as $permission) {
+            $pAux = null;
+            $pRules = $permission->getRules();
+
+            switch ($permission->type) {
+                case AccessPermission::default:
+                    $pAux = new DefaultCDNAccess($pRules);
+                    break;
+
+                case AccessPermission::ipAddress:
+                    $pAux = new IPAddressCDNAccess($pRules);
+                    break;
+
+                case AccessPermission::lti:
+                    $pAux = new LTICDNAccess($pRules);
+                    break;
+
+                case AccessPermission::originUrl:
+                    $pAux = new OriginURLAccess($pRules);
+                    break;
+            }
+
+            $accessPermissions[] = $pAux;
+        }
+
+        return $accessPermissions;
     }
 
     public function setHash($hash)

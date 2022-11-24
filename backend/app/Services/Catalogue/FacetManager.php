@@ -113,6 +113,7 @@ class FacetManager
                         $facetItem->key = $facetKey['name'];
                         $facetItem->label = $facetLabel;
                         $isSelected = false;
+
                         // if it exists in the parameter filter, mark it as selected
                         if (array_key_exists($facetKey['name'], $facetsFilter)) {
                             if (is_array($facetsFilter[$facetKey['name']])) {
@@ -139,6 +140,7 @@ class FacetManager
                 }
             }
         }
+
         return $facetsArray;
     }
 }

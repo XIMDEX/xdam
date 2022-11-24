@@ -129,5 +129,13 @@
   "preparations": {
     "name": "preparations",
     "type": "text_general"
+  },
+  "lom": {
+    "name": "lom",
+    "type": "text_general"
+  },
+  "lomes": {
+    "name": "lomes",
+    "type": "text_general"
   }
 }

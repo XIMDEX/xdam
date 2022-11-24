@@ -13,6 +13,11 @@ use App\Utils\DamUrlUtil;
 
 class DocumentSolrResource extends BaseSolrResource
 {
+    public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null)
+    {
+        parent::__construct($resource, $lomSolrClient, $lomesSolrClient);
+    }
+
     protected function getPreviews()
     {
         $files = $this->getFiles();
@@ -101,7 +106,9 @@ class DocumentSolrResource extends BaseSolrResource
             'workspaces'            => $this->getWorkspaces(),
             'organization'          => $this->getOrganization(),
             'collections'           => $this->getCollections(),
-            'core_resource_type'    => $this->getCoreResourceType()
+            'core_resource_type'    => $this->getCoreResourceType(),
+            'lom'                   => $this->getLOMValues(),
+            'lomes'                 => $this->getLOMValues('lomes')
         ];
     }
 }
