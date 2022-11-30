@@ -9,6 +9,7 @@ use App\Models\Lom;
 use App\Models\Lomes;
 use App\Models\Workspace;
 use App\Http\Resources\Solr\LOMSolrResource;
+use App\Jobs\TikaProcess;
 use App\Services\Catalogue\FacetManager;
 use App\Utils\Utils;
 use Exception;
@@ -17,6 +18,7 @@ use Solarium\Core\Client\Adapter\Curl;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Solarium\Core\Query\Result\ResultInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Bus\Dispatcher;
 use stdClass;
 use App\Http\Resources\Solr\{ActivitySolrResource, AssessmentSolrResource, BookSolrResource, CourseSolrResource, DocumentSolrResource, MultimediaSolrResource};
 
@@ -229,7 +231,12 @@ class SolrService
         // Gets the current resource document, and updates it
         $documentResource = $this->getDocumentFromResource($damResource, $client->getOption('resource'),
                                                             $lomCoreName, $lomesCoreName);
-        return $this->saverOrUpdateSolrDocument($client, $documentResource);
+        $status = $this->saverOrUpdateSolrDocument($client, $documentResource);
+
+        // Manages the files Tika execution
+        $this->manageResourceFilesTikaExecution($damResource);
+
+        return $status;
     }
 
     /**
@@ -479,5 +486,15 @@ class SolrService
     public function getCoreNameVersioned($solrCore, $solrVersion = null)
     {
         return $this->solrConfig->getCoreNameVersioned($solrCore, $solrVersion);
+    }
+
+    private function manageResourceFilesTikaExecution(DamResource $damResource)
+    {
+        $files = $damResource->getResourceMedia();
+
+        foreach ($files as $file) {
+            $job = (new TikaProcess($damResource, $file))->onQueue('default');
+            $id = app(Dispatcher::class)->dispatch($job);
+        }
     }
 }

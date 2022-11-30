@@ -97,6 +97,11 @@ class DamResource extends Model implements HasMedia, TaggableInterface
         return $this->belongsToMany(MediaModel::class);
     }
 
+    public function getResourceMedia()
+    {
+        return MediaModel::where('model_id', $this->id)->get();
+    }
+
     // public function organizations()
     // {
     //     $orgs = [];
