@@ -134,7 +134,7 @@ Instalamos los optimizadores de imagen que requiere la librería media-library, 
 ###### En Linux:
 
 ```shell
-sudo apt install jpegoptim optipng pngquant gifsicle
+sudo apt install jpegoptim optipng pngquant gifsicle ffmpeg
 npm install -g svgo
 ```
 

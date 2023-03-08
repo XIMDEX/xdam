@@ -84,9 +84,9 @@ class MediaService
 
     private function getVideoDimensions($path)
     {
-        $command = "ffmpeg -i $path 2>&1 | grep Video: | grep -Po '\d{3,5}x\d{3,5}'";
+        $command = "ffmpeg -i \"$path\" 2>&1 | grep Video: | grep -Po '\d{3,5}x\d{3,5}'";
         $output = explode('x', exec($command));
-        $resolution = array("path" => $path, "width" => $output[0], "height" => $output[1], "aspect_ratio" => $output[1] / $output[0],
+        $resolution = array("path" => $path, "width" => $output[0], "height" => $output[1], "aspect_ratio" => $output[0] / $output[1],
                             "name" => $output[1] . "p");
         return $resolution;
     }
@@ -128,13 +128,13 @@ class MediaService
         // Gets the available sizes, with the valid range for this current file
         $validSizes = $this->getValidSizesRange($availableSizes, $originalRes);
 
-        if ($size == 'thumbnail') {
+        if ($size == 'thumbnail' || in_array($sizeKey, $availableSizes['screenshot_sizes'])) {
             $thumb_exists = File::exists($thumbnail);
 
             if (!$thumb_exists) {
                 $this->saveVideoSnapshot($thumbnail, $mediaPath);
             } else {
-                return Image::make($thumbnail);
+                return $this->previewImage($thumbnail, $size);
             }
         } else if ($size == 'raw') {
             return VideoStreamer::streamFile($mediaPath);
@@ -187,17 +187,17 @@ class MediaService
             $height = $image->height();
             $aspectRatio = $width / $height;
 
-            if ($size >= $height) return $image;
+            if ($size['height'] >= $height && $size['width'] >= $width) return $image;
 
             if ($aspectRatio >= 1.0) {
-                $newHeight = $height * $size / 100;
-                $newWidth = $newHeight / $aspectRatio;
+                $newWidth = $size['width'];
+                $newHeight = $newWidth / $aspectRatio;
             } else {
-                $newWidth = $width * $size / 100;
-                $newHeight = $newWidth * $aspectRatio;
+                $newHeight = $size['height'];
+                $newWidth = $newHeight * $aspectRatio;
             }
     
-            $image->resize($newHeight, $newWidth);
+            $image->resize($newWidth, $newHeight);
         }
 
         return $image;

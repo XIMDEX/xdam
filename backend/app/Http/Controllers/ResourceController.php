@@ -316,8 +316,8 @@ class ResourceController extends Controller
             $availableSizes = $this->getAvailableResourceSizes();
             $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue);
 
-            if ($fileType == 'image') {
-                $response = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['sizes'][$size]);
+            if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small']))) {
+                $response = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
                 $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
                 return $response;
             }
@@ -351,6 +351,12 @@ class ResourceController extends Controller
             'image' => [
                 'allowed_sizes' => ['small', 'medium', 'raw', 'default'],
                 'sizes' => [
+                    'small'     => array('width' => 426, 'height' => 240),
+                    'medium'    => array('width' => 854, 'height' => 480),
+                    'raw'       => 'raw',
+                    'default'   => array('width' => 1280, 'height' => 720)
+                ],
+                'qualities' => [
                     'small'     => 25,
                     'medium'    => 50,
                     'raw'       => 'raw',
@@ -359,8 +365,9 @@ class ResourceController extends Controller
                 'error_message' => ''
             ],
             'video' => [
-                'allowed_sizes' => ['very_low', 'low', 'standard', 'hd', 'raw', 'thumbnail', 'default'],
+                'allowed_sizes' => ['very_low', 'low', 'standard', 'hd', 'raw', 'thumbnail', 'small', 'medium', 'default'],
                 'sizes_scale'   => ['very_low', 'low', 'standard', 'hd'],   // Order Lowest to Greatest
+                'screenshot_sizes'  => ['thumbnail', 'small', 'medium'],
                 'sizes' => [
                     // 'lowest'        => array('width' => 256, 'height' => 144, 'name' => '144p'),
                     'very_low'      => array('width' => 426, 'height' => 240, 'name' => '240p'),
@@ -370,7 +377,15 @@ class ResourceController extends Controller
                     // 'full_hd'       => array('width' => 1920, 'height' => 1080, 'name' => '1080p'),
                     'raw'           => 'raw',
                     'thumbnail'     => 'thumbnail',
+                    'small'         => array('width' => 426, 'height' => 240, 'name' => '240p'),
+                    'medium'        => array('width' => 854, 'height' => 480, 'name' => '480p'),
                     'default'       => 'raw'
+                ],
+                'qualities' => [
+                    'small'     => 25,
+                    'medium'    => 50,
+                    'raw'       => 'raw',
+                    'default'   => 90
                 ],
                 'error_message' => ''
             ]

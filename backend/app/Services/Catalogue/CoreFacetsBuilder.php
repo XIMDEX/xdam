@@ -29,7 +29,6 @@ class CoreFacetsBuilder {
                 "categories",
                 "active",
                 "type",
-                "types",
                 "tags",
                 "workspaces",
                 "lom",
