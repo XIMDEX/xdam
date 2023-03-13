@@ -12,6 +12,7 @@ use App\Models\Media;
 use App\Models\Workspace;
 use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Services\Solr\SolrService;
+use App\Services\ExternalApis\KakumaService;
 use App\Utils\Utils;
 use DirectoryIterator;
 use Exception;
@@ -40,6 +41,11 @@ class ResourceService
      */
     private WorkspaceService $workspaceService;
 
+    /**
+     * @var KakumaService
+     */
+    private KakumaService $kakumaService;
+
     const PAGE_SIZE = 30;
 
     /**
@@ -48,12 +54,14 @@ class ResourceService
      * @param SolrService $solr
      * @param CategoryService $categoryService
      */
-    public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService)
+    public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService,
+                                KakumaService $kakumaService)
     {
         $this->mediaService = $mediaService;
         $this->categoryService = $categoryService;
         $this->solr = $solr;
         $this->workspaceService = $workspaceService;
+        $this->kakumaService = $kakumaService;
     }
 
     private function saveAssociateFile($type, $params, $model)
@@ -210,10 +218,31 @@ class ResourceService
     /**
      * @return mixed
      */
-    public function exploreCourses(): Collection
+    public function exploreCourses($user_id = null): Collection
     {
+        $recommendedCategory = $this->getRecommendedCategory($user_id);
         $course = ResourceType::course;
-        return Category::where('type', $course)->orWhere('type', "=", strval($course))->get();
+
+        $categories = Category::where('type', $course)->orWhere('type', "=", strval($course))->get();
+        
+        $categories[3] = $recommendedCategory;
+
+        return $categories;
+    }
+
+    public function getRecommendedCategory($user_id): array
+    {
+        if (!$user_id) {
+            throw new Exception ("User id must be sent to get recommendations");
+        }
+
+        $courses = $this->kakumaService->getRequest("recommendations/" . $user_id);
+
+        return [
+            'id' => "",
+            'name' => 'Recommended for you',
+            'resources' => DamResource::where('type', 'course')->whereIn('id', $courses)->get()
+        ];
     }
 
     /**

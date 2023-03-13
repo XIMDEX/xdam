@@ -28,4 +28,16 @@ class KakumaService extends BaseApi
 
         return $loginData['access_token'];
     }
+
+    public function getRequest($endpoint, $params = [], $headers = [])
+    {
+        return $this->call(
+            $this->BASE_URL . $this->VERSION . $endpoint,
+            $params,
+            "get",
+            "",
+            true,
+            $headers
+        );
+    }
 }
