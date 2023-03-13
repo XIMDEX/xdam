@@ -225,7 +225,7 @@ class ResourceService
 
         $categories = Category::where('type', $course)->orWhere('type', "=", strval($course))->get();
         
-        $categories[3] = $recommendedCategory;
+        $categories->prepend($recommendedCategory);
 
         return $categories;
     }
