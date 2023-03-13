@@ -241,8 +241,22 @@ class ResourceService
         return [
             'id' => "",
             'name' => 'Recommended for you',
-            'resources' => DamResource::where('type', 'course')->whereIn('id', $courses)->get()
+            'resources' => $this->getRecommendedCourses($courses)
         ];
+    }
+
+    public function getRecommendedCourses($courses)
+    {
+        $resources = [];
+        foreach ($courses as $course) {
+            try {
+                $damResource = DamResource::findOrFail($course);
+                array_push($resources, $damResource);
+            } catch (Exception $e) {
+                continue;
+            }
+        }
+        return $resources;
     }
 
     /**
