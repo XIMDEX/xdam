@@ -236,7 +236,7 @@ class ResourceService
             throw new Exception ("User id must be sent to get recommendations");
         }
 
-        $courses = $this->kakumaService->getRequest("recommendations/" . $user_id);
+        $courses = $this->kakumaService->getRequest("/recommendations/" . $user_id);
 
         return [
             'id' => "",

@@ -31,6 +31,12 @@ class KakumaService extends BaseApi
 
     public function getRequest($endpoint, $params = [], $headers = [])
     {
+        if ($this->TOKEN == "") {
+            $this->TOKEN = $this->loginAsSuperAdmin();
+        }
+
+        $headers['Authorization'] = 'Bearer ' . $this->TOKEN;
+
         return $this->call(
             $this->BASE_URL . $this->VERSION . $endpoint,
             $params,
