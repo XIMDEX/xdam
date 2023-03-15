@@ -18,16 +18,18 @@ class ExploreCoursesResource extends JsonResource
     {
         // $res = CoursePreviewResource::collection();
         return [
-            "categoryId" => $this->id,
-            "categorytitle" => $this->name,
+            "categoryId" => $this['id'],
+            "categorytitle" => $this['name'],
             "courses" => $this->courses(),
         ];
+    
+        
     }
 
     public function courses(): array
     {
         $courses = [];
-        foreach ($this->resources as $r) {
+        foreach ($this['resources'] as $r) {
             $name = "";
             $image = "";
             $introduction = "";

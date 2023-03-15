@@ -140,7 +140,7 @@ class ResourceController extends Controller
      */
     public function exploreCourses(ResouceCategoriesRequest $request)
     {
-        return (new ExploreCoursesCollection($this->resourceService->exploreCourses()))
+        return (new ExploreCoursesCollection($this->resourceService->exploreCourses($request->user_id)))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
