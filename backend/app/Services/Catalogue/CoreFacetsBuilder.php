@@ -19,6 +19,7 @@ class CoreFacetsBuilder {
                 "aggregated",
                 "duration",
                 "isFree",
+                "is_deleted",
                 "currency",
                 "cost",
                 "skills",

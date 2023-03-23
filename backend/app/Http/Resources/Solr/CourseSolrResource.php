@@ -107,6 +107,7 @@ class CourseSolrResource extends BaseSolrResource
             'created_at'            => $this->created_at,
             'updated_at'            => $this->updated_at,
             'deleted_at'            => $this->deleted_at,
+            'is_deleted'            => $this->deleted_at == null ? false : true,
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),
             'lom'                   => $this->getLOMValues(),
