@@ -220,6 +220,16 @@ class ResourceController extends Controller
 
     /**
      * @param DamResource $damResource
+     * @return \Illuminate\Http\Response
+     */
+    public function softDelete(Request $request, DamResource $damResource)
+    {
+        $res = $this->resourceService->softDelete($damResource, $request->boolean('force'), $request->boolean('only_local'));
+        return response(['soft_deleted' => $res, 'resource' => $damResource], Response::HTTP_OK);
+    }
+
+    /**
+     * @param DamResource $damResource
      * @param addPreviewToResourceRequest $request
      * @return \Illuminate\Http\JsonResponse|object
      */

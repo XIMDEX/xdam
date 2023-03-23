@@ -106,6 +106,7 @@ class CourseSolrResource extends BaseSolrResource
             'achievements'          => $this->data->description->achievements ?? [],
             'created_at'            => $this->created_at,
             'updated_at'            => $this->updated_at,
+            'deleted_at'            => $this->deleted_at,
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),
             'lom'                   => $this->getLOMValues(),
