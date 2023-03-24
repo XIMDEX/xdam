@@ -270,7 +270,7 @@ class SolrService
             $this->deleteSolrDocument($lomClient, 'dam_resource_id:' . $damResource->id);
             $this->deleteSolrDocument($lomesClient, 'dam_resource_id:' . $damResource->id);
         }
-    
+
         $client = $this->getClientFromResource($damResource);
         return $this->deleteSolrDocument($client, 'id:' . $damResource->id);
     }
@@ -307,7 +307,7 @@ class SolrService
     ): stdClass {
         // Gets the results
         $results = $this->executeSearchQuery($pageParams, $sortParams, $facetsFilter, $collection);
-        return $this->paginateResults($results);     
+        return $this->paginateResults($results);
     }
 
     public function distributedPaginatedQueryByFacet(
@@ -361,15 +361,42 @@ class SolrService
 
         /* if we have a search param, restrict the query */
         if (!empty($search)) {
+            $search = urldecode($search);
+            $term = '';
+            $phrase = '';
+            $terms = explode('"', $search);
+
+            if (count($terms) < 2) {
+                $term = $search;
+            } else {
+                $startWithPhrase = $terms[0] === '';
+                foreach ($terms as $idx => $element) {
+                    if (!$startWithPhrase && $idx == 0) {
+                        $term .= $element . ' ';
+                        continue;
+                    }
+                    $isPar = $idx % 2 == 0;
+                    if ($isPar) {
+                        $term .= $element . ' ';
+                    } else {
+                        $phrase .= '"' . $element . '" ';
+                    }
+                }
+            }
+
+            $term = trim($term);
+            $phrase = trim($phrase);
+
             $helper = $query->getHelper();
-            $searchTerm = $helper->escapeTerm($search);
-            $searchPhrase = $helper->escapePhrase($search);
+            $searchTerm = $helper->escapeTerm($term);
+            $searchPhrase = $helper->escapePhrase($phrase);
+            $searchPhrase = str_replace('"', '', $searchPhrase);
             $query->setQuery($this->generateQuery($collection, $core, $searchTerm, $searchPhrase));
         }
 
         // make a new request, filtering for each facet
         $this->facetManager->setQueryByFacets($query, $facetsFilter, $core);
-        
+
         //overwrite current fq to core specifics
         $coreHandler = new $classCore($query);
         $query = $coreHandler->queryCoreSpecifics($facetsFilter);
@@ -420,7 +447,7 @@ class SolrService
         $defaultCore = null;
         foreach ($this->clients as $key => $value) if ($defaultCore === null) $defaultCore = $key;
         $client = $this->clients[$defaultCore];
-        
+
         // Creates the select query
         $query = $client->createSelect();
         $distributedSearch = $query->getDistributedSearch();

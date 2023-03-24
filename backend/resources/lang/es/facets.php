@@ -18,6 +18,9 @@ return [
         'types' => 'Tipos',
         'units' => 'Unidades',
         'workspaces' => 'Espacios de trabajo',
+        'true' => 'Sí',
+        'false' => 'No',
+        'all' => 'Todos'
     ],
     'MHE' => [],
     'SEK' => [],

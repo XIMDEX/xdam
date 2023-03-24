@@ -22,8 +22,8 @@ class CoreFacetsBuilder {
                 "currency",
                 "cost",
                 "skills",
-                "lom",
-                "lomes"
+                // "lom",
+                // "lomes"
             ],
             "multimedia" => [
                 "categories",
@@ -31,8 +31,8 @@ class CoreFacetsBuilder {
                 "type",
                 "tags",
                 "workspaces",
-                "lom",
-                "lomes"
+                // "lom",
+                // "lomes"
             ],
             "document" => [
                 "categories",
@@ -41,22 +41,22 @@ class CoreFacetsBuilder {
                 "types",
                 "tags",
                 "workspaces",
-                "lom",
-                "lomes"
+                // "lom",
+                // "lomes"
             ],
             "activity" => [
                 "categories",
                 "active",
                 "workspaces",
-                "lom",
-                "lomes"
+                // "lom",
+                // "lomes"
             ],
             "assessment" => [
                 "categories",
                 "active",
                 "workspaces",
-                "lom",
-                "lomes"
+                // "lom",
+                // "lomes"
             ],
             "book" => [
                 "categories",
@@ -66,8 +66,8 @@ class CoreFacetsBuilder {
                 "isbn",
                 "units",
                 "lang",
-                "lom",
-                "lomes"
+                // "lom",
+                // "lomes"
             ]
         ];
     }

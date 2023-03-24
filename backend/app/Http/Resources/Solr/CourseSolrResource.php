@@ -4,9 +4,11 @@ namespace App\Http\Resources\Solr;
 
 use App\Enums\ResourceType;
 use App\Http\Resources\Solr\BaseSolrResource;
+use App\Utils\Texts;
 
 class CourseSolrResource extends BaseSolrResource
 {
+
     public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null)
     {
         parent::__construct($resource, $lomSolrClient, $lomesSolrClient);
@@ -14,11 +16,11 @@ class CourseSolrResource extends BaseSolrResource
 
     public static function generateQuery($searchTerm, $searchPhrase)
     {
-        $query = "name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5 ";
-        $query .= "lom:*$searchTerm*^4 OR lomes:*$searchTerm*^4 achievements:*$searchTerm*^3 OR preparations:*$searchTerm*^3";
+        $query = parent::generateQuery($searchTerm, $searchPhrase);
+        $query .= " achievements:*$searchTerm*^3 OR preparations:*$searchTerm*^3";
         return $query;
     }
-    
+
     protected function getData($tags = null, $categories = null)
     {
         $data = $this->data;
@@ -28,8 +30,8 @@ class CourseSolrResource extends BaseSolrResource
         $data->description->name = $this->name;
         $data->description->tags = $tags;
         $data->description->categories = $categories;
-        $data->lom = $this->getLOMRawValues('lom');
-        $data->lomes = $this->getLOMRawValues('lomes');
+        // $data->lom = $this->getLOMRawValues('lom');
+        // $data->lomes = $this->getLOMRawValues('lomes');
         $finalData = $data;
         $finalData = is_object($finalData) ? json_encode($finalData) : $finalData;
         return $finalData;
@@ -45,7 +47,7 @@ class CourseSolrResource extends BaseSolrResource
     {
         if (property_exists($this->data, 'description') && property_exists($this->data->description, 'course_source'))
             $active = $this->data->description->active == true;
-        
+
         return $active ?? $this->active;
     }
 
@@ -82,34 +84,34 @@ class CourseSolrResource extends BaseSolrResource
         return [
             'id'                    => $this->getID(),
             // Way to get name, temporal required by frontend. Must be only $data->description->name
-            'name'                  => $this->getName(),
-            'data'                  => $this->getData($tags, $categories),
-            'active'                => $this->getActive(),
-            'aggregated'            => $this->getBooleanDataValue('aggregated'),
-            'internal'              => $this->getBooleanDataValue('internal'),
-            'external'              => $this->getBooleanDataValue('external'),
-            'type'                  => $this->getType(),
-            'tags'                  => $this->formatTags($tags),
-            'categories'            => $this->formatCategories($categories),
-            'files'                 => $this->getFiles(),
-            'previews'              => $this->getPreviews(),
-            'workspaces'            => $this->getWorkspaces(),
-            'organization'          => $this->getOrganization(),
+            Texts::web('name')                  => $this->getName(),
+            Texts::web('data')                  => $this->getData($tags, $categories),
+            Texts::web('active')                => $this->getActive(),
+            Texts::web('aggregated')            => $this->getBooleanDataValue('aggregated'),
+            Texts::web('internal')              => $this->getBooleanDataValue('internal'),
+            Texts::web('external')              => $this->getBooleanDataValue('external'),
+            Texts::web('type')                  => $this->getType(),
+            Texts::web('tags')                  => $this->formatTags($tags),
+            Texts::web('categories')            => $this->formatCategories($categories),
+            Texts::web('files')                 => $this->getFiles(),
+            Texts::web('previews')              => $this->getPreviews(),
+            Texts::web('workspaces')            => $this->getWorkspaces(),
+            Texts::web('organization')          => $this->getOrganization(),
             // Cost is an integer representing the value. int 1000 = 10.00€
-            'cost'                  => $cost,
-            'currency'              => $this->data->description->currency ?? 'EUR',
-            'isFree'                => !($cost > 0),
+            Texts::web('cost')                  => $cost,
+            Texts::web('currency')              => $this->data->description->currency ?? 'EUR',
+            Texts::web('isFree')                => !($cost > 0),
             // Duration is an integer representing the value. int 1000 = 1000 seconds
-            'duration'              => $this->data->description->duration ?? 0,
-            'skills'                => $this->data->description->skills ?? [],
-            'preparations'          => $this->data->description->preparations ?? [],
-            'achievements'          => $this->data->description->achievements ?? [],
-            'created_at'            => $this->created_at,
-            'updated_at'            => $this->updated_at,
-            'collections'           => $this->getCollections(),
-            'core_resource_type'    => $this->getCoreResourceType(),
-            'lom'                   => $this->getLOMValues(),
-            'lomes'                 => $this->getLOMValues('lomes')
+            Texts::web('duration')              => $this->data->description->duration ?? 0,
+            Texts::web('skills')                => $this->data->description->skills ?? [],
+            Texts::web('preparations')          => $this->data->description->preparations ?? [],
+            Texts::web('achievements')          => $this->data->description->achievements ?? [],
+            Texts::web('created_at')            => $this->created_at,
+            Texts::web('updated_at')            => $this->updated_at,
+            Texts::web('collections')           => $this->getCollections(),
+            Texts::web('core_resource_type')    => $this->getCoreResourceType(),
+            // 'lom'                   => $this->getLOMValues(),
+            // 'lomes'                 => $this->getLOMValues('lomes')
         ];
     }
 }

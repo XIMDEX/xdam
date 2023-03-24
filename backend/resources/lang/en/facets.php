@@ -18,6 +18,9 @@ return [
         'types' => 'Types',
         'units' => 'Units',
         'workspaces' => 'Workspaces',
+        'true' => 'Yes',
+        'false' => 'No',
+        'all' => 'All'
     ],
     'MHE' => [],
     'SEK' => []
