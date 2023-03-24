@@ -638,6 +638,25 @@ class ResourceService
     }
 
     /**
+     * @param $resourceId
+     * @param bool $onlyLocal -> if true, only deletes in dam and not in external services
+     * @throws Exception
+     */
+    public function restore($resourceId, bool $onlyLocal)
+    {
+        $resource = DamResource::withTrashed()->findOrFail($resourceId);
+        if ($resource->type == ResourceType::course && !$onlyLocal) {
+            $this->kakumaService->restoreCourse($resource->id);
+        }
+
+        $resource->restore();
+        $this->solr->saveOrUpdateDocument($resource);
+
+        return true;
+
+    }
+
+    /**
      * @param DamResource $resource
      * @param array $params
      * @return DamResource
