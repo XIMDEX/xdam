@@ -236,7 +236,7 @@ class ResourceService
             throw new Exception ("User id must be sent to get recommendations");
         }
 
-        $courses = $this->kakumaService->getRequest("/recommendations/" . $user_id);
+        $courses = $this->kakumaService->getRecommendedCourses($user_id);
 
         return [
             'id' => "",
@@ -372,7 +372,7 @@ class ResourceService
             return $newResource;
         } catch (\Exception $th) {
             $this->solr->deleteDocument($newResource);
-            $newResource->delete();
+            $newResource->forceDelete();
             throw $th;
         }
     }
@@ -610,11 +610,30 @@ class ResourceService
     {
         try {
             $this->solr->deleteDocument($resource);
-            $resource->delete();
+            $resource->forceDelete();
             return true;
         } catch (\Throwable $th) {
             throw $th;
         }
+
+    }
+
+    /**
+     * @param DamResource $resource
+     * @param bool $force
+     * @param bool $onlyLocal -> if true, only deletes in dam and not in external services
+     * @throws Exception
+     */
+    public function softDelete(DamResource $resource, bool $force, bool $onlyLocal)
+    {
+        if ($resource->type == ResourceType::course && !$onlyLocal) {
+            $this->kakumaService->softDeleteCourse($resource->id, $force);
+        }
+
+        $resource->delete();
+        $this->solr->saveOrUpdateDocument($resource);
+
+        return true;
 
     }
 

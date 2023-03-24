@@ -108,6 +108,8 @@ class CourseSolrResource extends BaseSolrResource
             Texts::web('achievements')          => $this->data->description->achievements ?? [],
             Texts::web('created_at')            => $this->created_at,
             Texts::web('updated_at')            => $this->updated_at,
+            Texts::web('deleted_at')            => $this->deleted_at,
+            Texts::web('is_deleted')            => $this->deleted_at == null ? false : true,
             Texts::web('collections')           => $this->getCollections(),
             Texts::web('core_resource_type')    => $this->getCoreResourceType(),
             // 'lom'                   => $this->getLOMValues(),

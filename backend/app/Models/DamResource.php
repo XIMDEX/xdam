@@ -22,11 +22,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Silber\Bouncer\Database\Role;
 use Spatie\MediaLibrary\HasMedia;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 class DamResource extends Model implements HasMedia, TaggableInterface
 {
-    use HasFactory, TaggableTrait, InteractsWithMedia;
+    use HasFactory, TaggableTrait, InteractsWithMedia, SoftDeletes;
 
     protected $fillable = ['id', 'type', 'data', 'name', 'active', 'user_owner_id', 'collection_id'];
 

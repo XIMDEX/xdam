@@ -287,8 +287,11 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
                     ->name('damResource.addCategory');
                 Route::post('/{damResource}/addUse',                    [ResourceController::class, 'addUse'])
                     ->name('damResource.addUse');
+                Route::delete('/{damResource}/soft',                    [ResourceController::class, 'softDelete'])
+                    ->name('damResource.softDelete');
                 Route::delete('/{damResource}',                         [ResourceController::class, 'delete'])
                     ->name('damResource.delete');
+                
             });
 
             Route::group(['middleware' => 'delete.resource.card'], function() {
