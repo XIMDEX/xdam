@@ -239,6 +239,9 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
                 ->name('resources.getLomesData');
             Route::get('/{damResource}/lom',    [ResourceController::class, 'getLomData'])
                 ->name('resources.getLomData');
+
+            Route::get('/{damResource}/restore', [ResourceController::class, 'restore'])
+                ->name('resources.restore');
             
             Route::group(['middleware' => 'create.resource'], function() {
                 Route::post('/',                        [ResourceController::class, 'store'])

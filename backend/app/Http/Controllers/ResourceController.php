@@ -229,6 +229,16 @@ class ResourceController extends Controller
     }
 
     /**
+     * @param $damResourceId -> can't use DamResource class as it represents a soft deleted resource
+     * @return \Illuminate\Http\Response
+     */
+    public function restore(Request $request, $damResourceId)
+    {
+        $res = $this->resourceService->restore($damResourceId, $request->boolean('only_local'));
+        return response(['restored' => $res, 'resource_id' => $damResourceId], Response::HTTP_OK);
+    }
+
+    /**
      * @param DamResource $damResource
      * @param addPreviewToResourceRequest $request
      * @return \Illuminate\Http\JsonResponse|object
