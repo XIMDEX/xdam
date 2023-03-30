@@ -141,7 +141,7 @@ npm install -g svgo
 También es necesario instalar el modulo ImageMagick para la versión de php que tengamos y activarlo en el php.ini añadiendo o descomentando `extension=imagick.so`
 
 Ejemplo si es php 7.4.3
-```shel
+```shell
 sudo apt install php7.4-imagick
 ```
 
@@ -265,7 +265,7 @@ Hay también un comando especial, php artisan solr:clean que borra todos los doc
 
 ### New
 Se ha añadido un nuevo comando `php artisan solr:update --query=""` que permite actualizar recursos presentes en la base de datos a partir de una query SQL.
-Se ha añadido un nuevo comando de gestión de Cores: php artisan solrCoresMaintenace, este comando accepta los parámetros:
+Se ha añadido un nuevo comando de gestión de Cores: `php artisan solrCoresMaintenace`, este comando accepta los parámetros:
 * `--action=` -> `DELETE`, `CREATE`, `REINDEX` y `ALL`
 * `--core=` -> cores separados por comas de los que se quiere realizar la acción
 * `--exclude=` -> contrario del parámetro core, excluirá los cores indicados

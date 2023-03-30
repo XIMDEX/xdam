@@ -95,7 +95,7 @@ class MediaService
     {
         foreach ($availableSizes['sizes_scale'] as $k) {
             $availableSizes['sizes'][$k]['width'] = ceil($availableSizes['sizes'][$k]['height'] / $aspectRatio);
-            
+
             if ($availableSizes['sizes'][$k]['width'] % 2 !== 0) $availableSizes['sizes'][$k]['width'] -= 1;
 
             $availableSizes['sizes'][$k]['path'] = implode('/', array_slice(explode('/', $mediaPath), 0, -1))
@@ -124,7 +124,7 @@ class MediaService
         // Gets the real resolution of the video, and updates the available resolutions, according the computed aspect ratio
         $originalRes = $this->getVideoDimensions($mediaPath);
         $this->updateAvailableSizes($availableSizes, $originalRes['aspect_ratio'], $mediaPath, $mediaFileName);
-        
+
         // Gets the available sizes, with the valid range for this current file
         $validSizes = $this->getValidSizesRange($availableSizes, $originalRes);
 
@@ -162,12 +162,12 @@ class MediaService
                 }
 
                 $validSizesKeys = array_keys($validSizes);
-                
+
                 for ($i = count($validSizesKeys) - 1; $i >= 0; $i--) {
                     $item = $validSizes[$validSizesKeys[$i]];
                     if (file_exists($item['path'])) return VideoStreamer::streamFile($item['path']);
                 }
-                
+
                 return $this->previewVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey, 'raw', $thumbnail);
             }
 
@@ -196,7 +196,7 @@ class MediaService
                 $newHeight = $size['height'];
                 $newWidth = $newHeight * $aspectRatio;
             }
-    
+
             $image->resize($newWidth, $newHeight);
         }
 
@@ -276,7 +276,7 @@ class MediaService
      * @param Media $media
      * @return bool
      */
-    public function deleteOne(Media $media): boolean
+    public function deleteOne(Media $media): bool
     {
         return $media->delete();
     }
@@ -305,17 +305,17 @@ class MediaService
         if ($method !== 'GET') return true;
 
         $flag = false;
-        $keyEntry = DocumentRendererKey::where('key', $key)->first();    
-        
+        $keyEntry = DocumentRendererKey::where('key', $key)->first();
+
         if ($keyEntry === null) return false;
-        
+
         $keyEntry->update();
         $keyEntry->increaseUsages();
-        
+
         if ($keyEntry->downloadAllowed()) $flag = true;
 
         $this->removeStoredKeys();
-        
+
         return $flag;
     }
 

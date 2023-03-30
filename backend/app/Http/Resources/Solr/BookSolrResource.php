@@ -3,14 +3,11 @@
 namespace App\Http\Resources\Solr;
 
 use App\Http\Resources\Solr\BaseSolrResource;
-use App\Enums\MediaType;
 use App\Enums\ResourceType;
-use App\Http\Resources\MediaResource;
-use App\Utils\Utils as AppUtils;
 
 class BookSolrResource extends BaseSolrResource
 {
-    public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null)
+    public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null, $toSolr = false)
     {
         parent::__construct($resource, $lomSolrClient, $lomesSolrClient);
     }
@@ -57,6 +54,8 @@ class BookSolrResource extends BaseSolrResource
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),
             'lom'                   => $this->getLOMValues(),
+            'created_at'            => $this->created_at,
+            'updated_at'            => $this->updated_at,
             'lomes'                 => $this->getLOMValues('lomes')
         ];
     }

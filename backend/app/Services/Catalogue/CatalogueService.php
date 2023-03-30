@@ -3,6 +3,7 @@
 
 namespace App\Services\Catalogue;
 
+use App\Models\Collection;
 use App\Models\Workspace;
 use App\Services\Solr\SolrService;
 use App\Services\OrganizationWorkspace\WorkspaceService;
@@ -35,20 +36,35 @@ class CatalogueService
 
     public function indexByCollection($pageParams, $sortParams, $facetsFilter, $collection): stdClass
     {
-        return $this->formatSolrResponseWithWorkspaceInformation(
-            $this->solrService->paginatedQueryByFacet(
-                $pageParams, $sortParams, $facetsFilter, $collection
-            )
-        );
+        $solrResponse = $this->solrService->paginatedQueryByFacet($pageParams, $sortParams, $facetsFilter, $collection);
+        $formatSolrResponse = $this->formatSolrResponseWithWorkspaceInformation($solrResponse);
+        $response = $this->handleFacetCards($formatSolrResponse, $collection);
+        return $response;
     }
 
     public function indexByWorkspace($pageParams, $sortParams, $facetsFilter, $workspace): stdClass
     {
-        return $this->formatSolrResponseWithWorkspaceInformation(
-            $this->solrService->distributedPaginatedQueryByFacet(
-                $pageParams, $sortParams, $facetsFilter, $workspace
-            )
-        );
+        $collection = false;
+        if (isset($facetsFilter['collections'])) {
+            $collection = Collection::find($facetsFilter['collections']);
+        }
+        $solrResponse = $this->solrService->distributedPaginatedQueryByFacet($pageParams, $sortParams, $facetsFilter, $workspace);
+        $formatSolrResponse = $this->formatSolrResponseWithWorkspaceInformation($solrResponse);
+        $response = $this->handleFacetCards($formatSolrResponse, $collection);
+        return $response;
+    }
+
+    private function handleFacetCards($data, $collection = false)
+    {
+        if (!$collection instanceof Collection) return $data;
+
+        $type = ucfirst($collection->solr_connection);
+
+        if (class_exists("App\\Services\\{$type}Service")) {
+            $resource_service = app("App\\Services\\{$type}Service");
+            $data->facets = $resource_service::handleFacetCard($data->facets);
+        }
+        return $data;
     }
 
     private function formatSolrResponseWithWorkspaceInformation($solrResponse)

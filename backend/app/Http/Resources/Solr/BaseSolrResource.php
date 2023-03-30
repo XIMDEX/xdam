@@ -25,11 +25,15 @@ class BaseSolrResource extends JsonResource
 
     public static function generateQuery($searchTerm, $searchPhrase)
     {
-        $query = "name:$searchTerm^10 name:*$searchTerm*^7 OR data:*$searchTerm*^5 ";
-        $query .= "lom:*$searchTerm*^4 OR lomes:*$searchTerm*^3";
+        $query = '';
+        if ($searchPhrase !== "") {
+            $query .= "name:*$searchPhrase*^10 ";
+        }
+        $query .= "name:$searchTerm^9  OR data:*$searchTerm*^5 ";
+        $query .= "lom:*$searchTerm*^4 OR lomes:*$searchTerm*^3 ";
         return $query;
     }
-    
+
     protected function getFiles()
     {
         return array_column(
@@ -56,7 +60,7 @@ class BaseSolrResource extends JsonResource
         $finalData = is_object($finalData) ? json_encode($finalData) : $finalData;
         return $finalData;
     }
-    
+
     protected function getWorkspaces()
     {
         return $this->resource->workspaces->pluck('id')->toArray();
@@ -69,7 +73,17 @@ class BaseSolrResource extends JsonResource
 
     protected function formatTags($tags)
     {
-        return count($tags) > 0 ? $tags : ['untagged'];
+        if (count($tags) < 0) return ['untagged'];
+        $output = [];
+        foreach ($tags as $tag) {
+            if (is_array($tag)) {
+                // search on languages
+                $output[] = $tag;
+            } else {
+                $output[] = $tag;
+            }
+        }
+        return $output;
     }
 
     protected function getCategories()

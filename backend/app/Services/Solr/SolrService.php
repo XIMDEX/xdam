@@ -68,7 +68,7 @@ class SolrService
             $lomesClient = null;
         }
 
-        return json_decode((new $resourceClass($resource, $lomClient, $lomesClient))->toJson(), true);
+        return json_decode((new $resourceClass($resource, $lomClient, $lomesClient, true))->toJson(), true);
     }
 
     /**
@@ -270,7 +270,7 @@ class SolrService
             $this->deleteSolrDocument($lomClient, 'dam_resource_id:' . $damResource->id);
             $this->deleteSolrDocument($lomesClient, 'dam_resource_id:' . $damResource->id);
         }
-    
+
         $client = $this->getClientFromResource($damResource);
         return $this->deleteSolrDocument($client, 'id:' . $damResource->id);
     }
@@ -307,7 +307,7 @@ class SolrService
     ): stdClass {
         // Gets the results
         $results = $this->executeSearchQuery($pageParams, $sortParams, $facetsFilter, $collection);
-        return $this->paginateResults($results);     
+        return $this->paginateResults($results);
     }
 
     public function distributedPaginatedQueryByFacet(
@@ -369,7 +369,7 @@ class SolrService
 
         // make a new request, filtering for each facet
         $this->facetManager->setQueryByFacets($query, $facetsFilter, $core);
-        
+
         //overwrite current fq to core specifics
         $coreHandler = new $classCore($query);
         $query = $coreHandler->queryCoreSpecifics($facetsFilter);
@@ -420,7 +420,7 @@ class SolrService
         $defaultCore = null;
         foreach ($this->clients as $key => $value) if ($defaultCore === null) $defaultCore = $key;
         $client = $this->clients[$defaultCore];
-        
+
         // Creates the select query
         $query = $client->createSelect();
         $distributedSearch = $query->getDistributedSearch();

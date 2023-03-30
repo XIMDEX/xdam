@@ -75,6 +75,10 @@ To use the Mux API, you'll need an access token and a secret. [Details on obtain
 
 Its up to you to manage your token and secret. In our examples, we read them from `MUX_TOKEN_ID` and `MUX_TOKEN_SECRET` in your environment.
 
+### Documentation note
+
+Please note that our SDK and the API documentation are generated from our OpenAPI specification. Many of the examples in our specification have JSON strings representing the sample values.  Because of this, many of the API documentation examples use the `json_encode()` function to convert that JSON string into a PHP associative array. In your own code, you can skip that step and use an associative array directly, or create a new object using the appropriate model as shown in the example below.
+
 ### Example Usage
 
 Below is a quick example of using mux-php to ingest a new Video in your Mux account.
@@ -93,13 +97,13 @@ Below is a quick example of using mux-php to ingest a new Video in your Mux acco
 
     // Create Asset Request
     $input = new MuxPhp\Models\InputSettings(["url" => "https://storage.googleapis.com/muxdemofiles/mux-video-intro.mp4"]);
-    $createAssetRequest = new MuxPhp\Models\CreateAssetRequest(["input" => $input, "playback_policy" => [MuxPhp\Models\PlaybackPolicy::PUBLIC_PLAYBACK_POLICY] ]);
+    $createAssetRequest = new MuxPhp\Models\CreateAssetRequest(["input" => $input, "playback_policy" => [MuxPhp\Models\PlaybackPolicy::_PUBLIC] ]);
 
     // Ingest
     $result = $assetsApi->createAsset($createAssetRequest);
 
     // Print URL
-    print "Playback URL: https://stream.mux.com/" . $result->getData()->getPlaybackIds()[0]->getId() . ".m3u8\n"
+    print "Playback URL: https://stream.mux.com/" . $result->getData()->getPlaybackIds()[0]->getId() . ".m3u8\n";
 ```
 
 Be sure to also checkout the [examples directory](examples/):
@@ -190,6 +194,11 @@ Class | Method | HTTP request | Description
 *MetricsApi* | [**listAllMetricValues**](docs/Api/MetricsApi.md#listallmetricvalues) | **GET** /data/v1/metrics/comparison | List all metric values
 *MetricsApi* | [**listBreakdownValues**](docs/Api/MetricsApi.md#listbreakdownvalues) | **GET** /data/v1/metrics/{METRIC_ID}/breakdown | List breakdown values
 *MetricsApi* | [**listInsights**](docs/Api/MetricsApi.md#listinsights) | **GET** /data/v1/metrics/{METRIC_ID}/insights | List Insights
+*MonitoringApi* | [**getMonitoringBreakdown**](docs/Api/MonitoringApi.md#getmonitoringbreakdown) | **GET** /data/v1/monitoring/metrics/{MONITORING_METRIC_ID}/breakdown | Get Monitoring Breakdown
+*MonitoringApi* | [**getMonitoringHistogramTimeseries**](docs/Api/MonitoringApi.md#getmonitoringhistogramtimeseries) | **GET** /data/v1/monitoring/metrics/{MONITORING_HISTOGRAM_METRIC_ID}/histogram-timeseries | Get Monitoring Histogram Timeseries
+*MonitoringApi* | [**getMonitoringTimeseries**](docs/Api/MonitoringApi.md#getmonitoringtimeseries) | **GET** /data/v1/monitoring/metrics/{MONITORING_METRIC_ID}/timeseries | Get Monitoring Timeseries
+*MonitoringApi* | [**listMonitoringDimensions**](docs/Api/MonitoringApi.md#listmonitoringdimensions) | **GET** /data/v1/monitoring/dimensions | List Monitoring Dimensions
+*MonitoringApi* | [**listMonitoringMetrics**](docs/Api/MonitoringApi.md#listmonitoringmetrics) | **GET** /data/v1/monitoring/metrics | List Monitoring Metrics
 *PlaybackIDApi* | [**getAssetOrLivestreamId**](docs/Api/PlaybackIDApi.md#getassetorlivestreamid) | **GET** /video/v1/playback-ids/{PLAYBACK_ID} | Retrieve an Asset or Live Stream ID
 *PlaybackRestrictionsApi* | [**createPlaybackRestriction**](docs/Api/PlaybackRestrictionsApi.md#createplaybackrestriction) | **POST** /video/v1/playback-restrictions | Create a Playback Restriction
 *PlaybackRestrictionsApi* | [**deletePlaybackRestriction**](docs/Api/PlaybackRestrictionsApi.md#deleteplaybackrestriction) | **DELETE** /video/v1/playback-restrictions/{PLAYBACK_RESTRICTION_ID} | Delete a Playback Restriction
@@ -252,6 +261,7 @@ Class | Method | HTTP request | Description
 - [CreateTranscriptionVocabularyRequest](docs/Model/CreateTranscriptionVocabularyRequest.md)
 - [CreateUploadRequest](docs/Model/CreateUploadRequest.md)
 - [DeliveryReport](docs/Model/DeliveryReport.md)
+- [DeliveryReportDeliveredSecondsByResolution](docs/Model/DeliveryReportDeliveredSecondsByResolution.md)
 - [DimensionValue](docs/Model/DimensionValue.md)
 - [DisableLiveStreamResponse](docs/Model/DisableLiveStreamResponse.md)
 - [EnableLiveStreamResponse](docs/Model/EnableLiveStreamResponse.md)
@@ -266,6 +276,10 @@ Class | Method | HTTP request | Description
 - [GetAssetPlaybackIDResponse](docs/Model/GetAssetPlaybackIDResponse.md)
 - [GetLiveStreamPlaybackIDResponse](docs/Model/GetLiveStreamPlaybackIDResponse.md)
 - [GetMetricTimeseriesDataResponse](docs/Model/GetMetricTimeseriesDataResponse.md)
+- [GetMonitoringBreakdownResponse](docs/Model/GetMonitoringBreakdownResponse.md)
+- [GetMonitoringHistogramTimeseriesResponse](docs/Model/GetMonitoringHistogramTimeseriesResponse.md)
+- [GetMonitoringHistogramTimeseriesResponseMeta](docs/Model/GetMonitoringHistogramTimeseriesResponseMeta.md)
+- [GetMonitoringTimeseriesResponse](docs/Model/GetMonitoringTimeseriesResponse.md)
 - [GetOverallValuesResponse](docs/Model/GetOverallValuesResponse.md)
 - [GetRealTimeBreakdownResponse](docs/Model/GetRealTimeBreakdownResponse.md)
 - [GetRealTimeHistogramTimeseriesResponse](docs/Model/GetRealTimeHistogramTimeseriesResponse.md)
@@ -296,9 +310,11 @@ Class | Method | HTTP request | Description
 - [ListIncidentsResponse](docs/Model/ListIncidentsResponse.md)
 - [ListInsightsResponse](docs/Model/ListInsightsResponse.md)
 - [ListLiveStreamsResponse](docs/Model/ListLiveStreamsResponse.md)
+- [ListMonitoringDimensionsResponse](docs/Model/ListMonitoringDimensionsResponse.md)
+- [ListMonitoringDimensionsResponseData](docs/Model/ListMonitoringDimensionsResponseData.md)
+- [ListMonitoringMetricsResponse](docs/Model/ListMonitoringMetricsResponse.md)
 - [ListPlaybackRestrictionsResponse](docs/Model/ListPlaybackRestrictionsResponse.md)
 - [ListRealTimeDimensionsResponse](docs/Model/ListRealTimeDimensionsResponse.md)
-- [ListRealTimeDimensionsResponseData](docs/Model/ListRealTimeDimensionsResponseData.md)
 - [ListRealTimeMetricsResponse](docs/Model/ListRealTimeMetricsResponse.md)
 - [ListRelatedIncidentsResponse](docs/Model/ListRelatedIncidentsResponse.md)
 - [ListSigningKeysResponse](docs/Model/ListSigningKeysResponse.md)
@@ -313,6 +329,11 @@ Class | Method | HTTP request | Description
 - [LiveStreamResponse](docs/Model/LiveStreamResponse.md)
 - [LiveStreamStatus](docs/Model/LiveStreamStatus.md)
 - [Metric](docs/Model/Metric.md)
+- [MonitoringBreakdownValue](docs/Model/MonitoringBreakdownValue.md)
+- [MonitoringHistogramTimeseriesBucket](docs/Model/MonitoringHistogramTimeseriesBucket.md)
+- [MonitoringHistogramTimeseriesBucketValues](docs/Model/MonitoringHistogramTimeseriesBucketValues.md)
+- [MonitoringHistogramTimeseriesDatapoint](docs/Model/MonitoringHistogramTimeseriesDatapoint.md)
+- [MonitoringTimeseriesDatapoint](docs/Model/MonitoringTimeseriesDatapoint.md)
 - [NotificationRule](docs/Model/NotificationRule.md)
 - [OverallValues](docs/Model/OverallValues.md)
 - [PlaybackID](docs/Model/PlaybackID.md)
@@ -379,5 +400,5 @@ devex@mux.com
 This PHP package is automatically generated by the [OpenAPI Generator](https://openapi-generator.tech) project:
 
 - API version: `v1`
-    - Package version: `3.6.0`
+    - Package version: `3.10.0`
 - Build package: `org.openapitools.codegen.languages.PhpClientCodegen`

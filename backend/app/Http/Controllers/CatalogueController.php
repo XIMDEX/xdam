@@ -179,7 +179,7 @@ class CatalogueController extends Controller
                     $cItem['key_alias'] === $keyObject['key']
                         || $cItem['key'] === $keyObject['key']
                 );
-                
+
                 if ($cItem['subkey'] !== null) {
                     $found = (
                         $found
