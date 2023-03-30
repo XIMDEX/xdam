@@ -116,35 +116,34 @@ class FacetManager
                 $property = new \stdClass();
                 // iterates through each faceted collection
                 foreach ($facet as $valueFaceSet => $count) {
-                    $facetItem = new \stdClass();
-                    $facetItem->key = $facetKey['name'];
-                    $facetItem->label = Texts::web($facetLabel);
-                    $isSelected = false;
+                        $facetItem = new \stdClass();
+                        $facetItem->key = $facetKey['name'];
+                        $facetItem->label = Texts::web($facetLabel);
+                        $isSelected = false;
 
-                    // if it exists in the parameter filter, mark it as selected
-                    if (array_key_exists($facetKey['name'], $facetsFilter)) {
-                        if (is_array($facetsFilter[$facetKey['name']])) {
-                            foreach ($facetsFilter[$facetKey['name']] as $filterValue) {
-                                if ($filterValue === $valueFaceSet) {
+                        // if it exists in the parameter filter, mark it as selected
+                        if (array_key_exists($facetKey['name'], $facetsFilter)) {
+                            if (is_array($facetsFilter[$facetKey['name']])) {
+                                foreach ($facetsFilter[$facetKey['name']] as $filterValue) {
+                                    if ($filterValue === $valueFaceSet) {
+                                        $isSelected = true;
+                                    }
+                                }
+                            } else {
+                                if ($facetsFilter[$facetKey['name']] === $valueFaceSet) {
                                     $isSelected = true;
                                 }
                             }
-                        } else {
-                            if ($facetsFilter[$facetKey['name']] === $valueFaceSet) {
-                                $isSelected = true;
-                            }
                         }
-                    }
 
-                    if ($isBoolean) {
-                        $valueFaceSet = Texts::web($valueFaceSet);
-                    }
+                        if ($isBoolean) {
+                            $valueFaceSet = Texts::web($valueFaceSet);
+                        }
 
-                    // return the occurrence count and if it is selected or not
-                    $property->$valueFaceSet = ["count" => $count, "selected" => $isSelected, "radio" => in_array($facetKey['name'], self::RADIO_FACETS)];
-                    //$property->$valueFaceSet = ["count" => $count, "selected" => $isSelected];
-                    $facetItem->values = $property;
-                    
+                        // return the occurrence count and if it is selected or not
+                        $property->$valueFaceSet = ["count" => $count, "selected" => $isSelected, "radio" => in_array($facetKey['name'], self::RADIO_FACETS)];
+                        //$property->$valueFaceSet = ["count" => $count, "selected" => $isSelected];
+                        $facetItem->values = $property;
                     if ($isBoolean && count($values) == 2) {
                         $facetItem->values->{Texts::web('all')} = ['count' => 48, 'selected' => true, 'radio' => true];
                     }
@@ -155,9 +154,9 @@ class FacetManager
                         $service = app("App\\Services\\{$type}Service");
                         $facetItem->values = $service::handleFacetValues($facetItem->values, $facetItem->key);
                     }
-                    if ($facetItem != null) {
-                        $facetsArray[] = $facetItem;
-                    }
+                }
+                if ($facetItem != null) {
+                    $facetsArray[] = $facetItem;
                 }
             }
         }
