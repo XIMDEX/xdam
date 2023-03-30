@@ -2,6 +2,7 @@
 
 namespace App\Services\Catalogue;
 
+use App\Models\Collection;
 use App\Utils\Texts;
 use Solarium\QueryType\Select\Query\Query;
 
@@ -12,7 +13,7 @@ class FacetManager
     // "name to display" => "name faceted"
     private $facetLists;
     const UNLIMITED_FACETS_VALUES = -1;
-    const RADIO_FACETS = ['active', 'aggregated', 'internal', 'internal', 'external', 'isFree'];
+    const RADIO_FACETS = ['active', 'aggregated', 'internal', 'internal', 'external', 'isFree', 'is_deleted'];
 
     public function __construct(CoreFacetsBuilder $coreFacetsBuilder)
     {
@@ -105,6 +106,7 @@ class FacetManager
             $facet = $facetSet->getFacet($facetKey['name']);
             $values = $facet->getValues();
             $isBoolean = false;
+            $collection = Collection::find($facetsFilter['collections']);
 
             if (in_array($facetKey['name'], self::RADIO_FACETS) && (key_exists('true', $values) || key_exists('false', $values))) {
                 $isBoolean = true;
@@ -147,6 +149,13 @@ class FacetManager
                 }
                 if ($isBoolean && count($values) == 2) {
                     $facetItem->values->{Texts::web('all')} = ['count' => 48, 'selected' => true, 'radio' => true];
+                }
+
+                if ($collection) {
+                    $type = ucfirst($collection->solr_connection);
+                    if (class_exists("App\\Services\\{$type}Service"))
+                    $service = app("App\\Services\\{$type}Service");
+                    $facetItem->values = $service::handleFacetValues($facetItem->values, $facetItem->key);
                 }
                 if ($facetItem != null) {
                     $facetsArray[] = $facetItem;

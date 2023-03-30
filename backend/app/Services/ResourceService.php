@@ -13,9 +13,11 @@ use App\Models\Workspace;
 use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Services\Solr\SolrService;
 use App\Services\ExternalApis\KakumaService;
+use App\Utils\Texts;
 use App\Utils\Utils;
 use DirectoryIterator;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -148,7 +150,7 @@ class ResourceService
         }
     }
 
-    private function setDefaultLanguageIfNeeded(array $params): void 
+    private function setDefaultLanguageIfNeeded(array $params): void
     {
         if( isset($params['type']) && $params["type"] === ResourceType::book && !property_exists($params["data"]->description, "lang")) {
             $params["data"]->description->lang = getenv('BOOK_DEFAULT_LANGUAGE');
@@ -208,7 +210,7 @@ class ResourceService
      * @param String[] $query
      * return Collection
      */
-    public function queryFilter($queryFilters) 
+    public function queryFilter($queryFilters)
     {
 
         return DamResource::whereRaw($queryFilters)->get();
@@ -224,7 +226,7 @@ class ResourceService
         $course = ResourceType::course;
 
         $categories = Category::where('type', $course)->orWhere('type', "=", strval($course))->get();
-        
+
         $categories->prepend($recommendedCategory);
 
         return $categories;
@@ -293,11 +295,27 @@ class ResourceService
         if (array_key_exists("FilesToRemove", $params)) {
             foreach ($params["FilesToRemove"] as $mediaID) {
                 $mediaResult = Media::where('id', $mediaID)->first();
-                
+
                 if ($mediaResult !== null) {
                     $this->deleteAssociatedFile($resource, $mediaResult);
                 }
             }
+        }
+
+        // TODO save all languages label on taxon path
+        if (isset($params['data']->description->semantic_tags)) {
+            $semantic_tags = $params['data']->description->semantic_tags;
+            $lom_params = [
+                'Taxon Path'=> [],
+                '_tab_key' => "9"
+            ];
+            foreach ($semantic_tags as $semantic_tag) {
+                $lom_params['Taxon Path'][] = [
+                    'Id' => $semantic_tag->id,
+                    'Entry' => $semantic_tag->label
+                ];
+            }
+            $this->setLomData($resource, $lom_params);
         }
 
         $this->saveAssociatedFiles($resource, $params);
@@ -388,9 +406,22 @@ class ResourceService
                 $fileName = $fileinfo->getFilename();
                 $json_file = file_get_contents($path .'/'. $fileName);
                 $key = str_replace('.json', '', $fileName);
-                $schemas[$key] = json_decode($json_file);
+                $resourceName = ucfirst(str_replace('_validator', '', $key));
+                $json = json_decode($json_file);
+
+                if (class_exists("App\\Services\\{$resourceName}Service")) {
+                    $resource_service = app("App\\Services\\{$resourceName}Service");
+                    $json = $resource_service::handleSchema($json);
+                }
+                $schemas[$key] = $json;
+                if (isset($schemas[$key]->properties->description->properties)) {
+                    foreach ($schemas[$key]->properties->description->properties as $key_prop => $prop) {
+                        $schemas[$key]->properties->description->properties->$key_prop->title = Texts::web($key_prop, null, [], $prop->title ?? $key_prop);
+                    }
+                }
             }
         }
+
 
         $path = storage_path('collection_config');
         $dir = new DirectoryIterator($path);
@@ -499,7 +530,7 @@ class ResourceService
         $tabKey = $formData['_tab_key'];
         $lomesSchema = $this->lomesSchema(true);
         $tabSchema = $this->searchForAssociativeKey('key', $tabKey, $lomesSchema['tabs']);
-        
+
         foreach ($tabSchema['properties'] as $label => $props) {
             foreach ($formData as $f_key => $f_value) {
                 if($f_key === $label && $f_value !== null) {
@@ -517,11 +548,15 @@ class ResourceService
     {
         $dam_lom = $damResource->lom()->firstOrCreate();
         $updateArray = [];
-        $formData = $params->all();
+        if ($params instanceof Request) {
+            $formData = $params->all();
+        } else {
+            $formData = $params;
+        }
         $tabKey = $formData['_tab_key'];
         $lomSchema = $this->lomSchema(true);
         $tabSchema = $this->searchForAssociativeKey('key', $tabKey, $lomSchema['tabs']);
-        
+
         foreach ($tabSchema['properties'] as $label => $props) {
             foreach ($formData as $f_key => $f_value) {
                 if($f_key === $label && $f_value !== null) {
@@ -529,7 +564,7 @@ class ResourceService
                 }
             }
         }
-        
+
         $dam_lom->update($updateArray);
         $dam_lom->save();
         $this->solr->saveOrUpdateDocument($damResource, null, true);
@@ -819,7 +854,7 @@ class ResourceService
         $resource = DamResource::where('id', $resourceID)
                         ->where('collection_id', $collectionID)
                         ->first();
-        
+
         return $resource;
     }
 
@@ -827,7 +862,7 @@ class ResourceService
     {
         $collection = ModelsCollection::where('id', $collectionID)
                         ->first();
-        
+
         return $collection;
     }
 }

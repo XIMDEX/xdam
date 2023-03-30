@@ -7,7 +7,7 @@ use App\Enums\ResourceType;
 
 class BookSolrResource extends BaseSolrResource
 {
-    public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null)
+    public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null, $toSolr = false)
     {
         parent::__construct($resource, $lomSolrClient, $lomesSolrClient);
     }
@@ -54,6 +54,8 @@ class BookSolrResource extends BaseSolrResource
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),
             'lom'                   => $this->getLOMValues(),
+            'created_at'            => $this->created_at,
+            'updated_at'            => $this->updated_at,
             'lomes'                 => $this->getLOMValues('lomes')
         ];
     }

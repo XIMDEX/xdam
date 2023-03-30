@@ -20,7 +20,7 @@ class CategoryService
     /**
      * @return Category[]
      */
-    public function getAll()
+    public static function getAll()
     {
         return Category::all();
     }
@@ -78,5 +78,10 @@ class CategoryService
     public function delete(Category $category)
     {
         $category->delete();
+    }
+
+    public static function where($column, $value, $operator = '=')
+    {
+        return Category::where($column, $value, $operator)->get();
     }
 }

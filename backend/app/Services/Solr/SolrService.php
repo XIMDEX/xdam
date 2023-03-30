@@ -68,7 +68,7 @@ class SolrService
             $lomesClient = null;
         }
 
-        return json_decode((new $resourceClass($resource, $lomClient, $lomesClient))->toJson(), true);
+        return json_decode((new $resourceClass($resource, $lomClient, $lomesClient, true))->toJson(), true);
     }
 
     /**
@@ -361,36 +361,9 @@ class SolrService
 
         /* if we have a search param, restrict the query */
         if (!empty($search)) {
-            $search = urldecode($search);
-            $term = '';
-            $phrase = '';
-            $terms = explode('"', $search);
-
-            if (count($terms) < 2) {
-                $term = $search;
-            } else {
-                $startWithPhrase = $terms[0] === '';
-                foreach ($terms as $idx => $element) {
-                    if (!$startWithPhrase && $idx == 0) {
-                        $term .= $element . ' ';
-                        continue;
-                    }
-                    $isPar = $idx % 2 == 0;
-                    if ($isPar) {
-                        $term .= $element . ' ';
-                    } else {
-                        $phrase .= '"' . $element . '" ';
-                    }
-                }
-            }
-
-            $term = trim($term);
-            $phrase = trim($phrase);
-
             $helper = $query->getHelper();
-            $searchTerm = $helper->escapeTerm($term);
-            $searchPhrase = $helper->escapePhrase($phrase);
-            $searchPhrase = str_replace('"', '', $searchPhrase);
+            $searchTerm = $helper->escapeTerm($search);
+            $searchPhrase = $helper->escapePhrase($search);
             $query->setQuery($this->generateQuery($collection, $core, $searchTerm, $searchPhrase));
         }
 

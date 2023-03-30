@@ -97,6 +97,20 @@
     "name": "tags",
     "type": "text_general"
   },
+  "semantic_tags": {
+    "name": "semantic_tags",
+    "type": "text_general"
+  },
+  "language": {
+    "name": "language",
+    "type": "string",
+    "indexed": true,
+    "multiValued": false
+  },
+  "corporations": {
+    "name": "corporations",
+    "type": "text_general"
+  },
   "organization": {
     "name": "organization",
     "type": "strings"

@@ -11,18 +11,21 @@ class CoreFacetsBuilder {
     {
         $this->coreList = [
             "course" => [
-                "categories",
                 "active",
-                "workspaces",
+                "is_deleted",
+                "language",
+                "categories",
+                "semantic_tags",
                 "tags",
+                "skills",
+                "corporations",
+                "workspaces",
                 "internal",
                 "aggregated",
                 "duration",
                 "isFree",
-                "is_deleted",
                 "currency",
                 "cost",
-                "skills",
                 // "lom",
                 // "lomes"
             ],
