@@ -74,7 +74,13 @@ class CourseSolrResource extends BaseSolrResource
 
     private function getSemanticTags()
     {
-        return ['prueba', 'otro'];
+        $semantic_tags = $this->data->description->semantic_tags ?? [];
+        $toSolr = [];
+        foreach ($semantic_tags as $tag) {
+            echo $tag;
+            $toSolr[] = $tag->label;
+        }
+        return $toSolr;
     }
 
     /**
