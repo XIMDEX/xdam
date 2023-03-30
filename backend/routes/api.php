@@ -194,9 +194,9 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
             Route::get('/listTypes', [ResourceController::class, 'listTypes'])->name('damResource.listTypes');
             Route::get('/',          [ResourceController::class, 'getAll'])->name('damResource.getAll');
 
-
-            Route::get('/{damResource}/lomes',  [ResourceController::class, 'getLomesData'])->name('resources.getLomesData');
-            Route::get('/{damResource}/lom',    [ResourceController::class, 'getLomData'])->name('resources.getLomData');
+            Route::get('/{damResource}/lomes',   [ResourceController::class, 'getLomesData'])->name('resources.getLomesData');
+            Route::get('/{damResource}/lom',     [ResourceController::class, 'getLomData'])->name('resources.getLomData');
+            Route::get('/{damResource}/restore', [ResourceController::class, 'restore'])->name('resources.restore');
 
             Route::group(['middleware' => 'create.resource'], function() {
                 Route::post('/',                        [ResourceController::class, 'store'])->name('damResource.store');
