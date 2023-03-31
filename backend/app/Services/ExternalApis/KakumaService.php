@@ -66,8 +66,8 @@ class KakumaService extends BaseApi
         $headers['Authorization'] = 'Bearer ' . $this->TOKEN;
 
         return $this->call(
-            $this->BASE_URL . $this->VERSION . "/course/$courseId/restore?only_local=true",
-            [], "get", "", true, $headers
+            $this->BASE_URL . $this->VERSION . "/course/$courseId/restore",
+            ["only_local" => true], "get", "", true, $headers
         );
     }
 }
