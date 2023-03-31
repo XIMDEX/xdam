@@ -77,7 +77,6 @@ class CourseSolrResource extends BaseSolrResource
         $semantic_tags = $this->data->description->semantic_tags ?? [];
         $toSolr = [];
         foreach ($semantic_tags as $tag) {
-            echo $tag;
             $toSolr[] = $tag->label;
         }
         return $toSolr;
