@@ -20,16 +20,22 @@ class ExploreCoursesResource extends JsonResource
         return [
             "categoryId" => $this['id'],
             "categorytitle" => $this['name'],
-            "courses" => $this->courses(),
+            "courses" => $this->courses(explode(',',$request->lang)),
         ];
     
         
     }
 
-    public function courses(): array
+    public function courses($lang): array
     {
         $courses = [];
-        foreach ($this['resources'] as $r) {
+        try {
+            $resources = $this->resources()->whereIn('data->description->language', $lang)->get();
+        } catch (\Throwable $th) {
+            $resources = $this['resources'];
+        }
+            
+        foreach ($resources as $r) {
             $name = "";
             $image = "";
             $introduction = "";
