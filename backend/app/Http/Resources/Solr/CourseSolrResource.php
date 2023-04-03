@@ -32,11 +32,11 @@ class CourseSolrResource extends BaseSolrResource
         $data->id = $this->id;
         $data->description->id = $this->id;
         $data->description->name = $this->name;
-        $data->description->semantic_tags = $semanticTags;
+        $data->description->semantic_tags = $this->getSemanticTags();
         $data->description->tags = $tags;
         $data->description->categories = $categories;
-        // $data->lom = $this->getLOMRawValues('lom');
-        // $data->lomes = $this->getLOMRawValues('lomes');
+        $data->lom = $this->getLOMRawValues('lom');
+        $data->lomes = $this->getLOMRawValues('lomes');
         $finalData = $data;
         $finalData = is_object($finalData) ? json_encode($finalData) : $finalData;
         return $finalData;
@@ -77,9 +77,16 @@ class CourseSolrResource extends BaseSolrResource
     private function getSemanticTags()
     {
         $semantic_tags = $this->data->description->semantic_tags ?? [];
+        return $semantic_tags;
+    }
+
+    protected function formatSemanticTags($tags)
+    {
         $toSolr = [];
-        foreach ($semantic_tags as $tag) {
-            $toSolr[] = $tag->label;
+        foreach ($tags as $tag) {
+            try {
+                $toSolr[] = $tag->label;
+            } catch (\Throwable $th) {}
         }
         return $toSolr;
     }
@@ -105,14 +112,14 @@ class CourseSolrResource extends BaseSolrResource
             'id'                    => $this->getID(),
             // Way to get name, temporal required by frontend. Must be only $data->description->name
             Texts::web('name')                  => $this->getName(),
-            Texts::web('data')                  => $this->getData($tags, $categories),
+            Texts::web('data')                  => $this->getData($tags, $categories, $semanticTags),
             Texts::web('active')                => $this->getActive(),
             Texts::web('aggregated')            => $this->getBooleanDataValue('aggregated'),
             Texts::web('internal')              => $this->getBooleanDataValue('internal'),
             Texts::web('external')              => $this->getBooleanDataValue('external'),
             Texts::web('type')                  => $this->getType(),
             Texts::web('tags')                  => $this->formatTags($tags),
-            Texts::web('semantic_tags')         => $this->formatTags($semanticTags),
+            Texts::web('semantic_tags')         => $this->formatSemanticTags($semanticTags),
             Texts::web('categories')            => $this->formatCategories($categories),
             Texts::web('files')                 => $this->getFiles(),
             Texts::web('previews')              => $this->getPreviews(),
@@ -132,7 +139,7 @@ class CourseSolrResource extends BaseSolrResource
             Texts::web('deleted_at')            => $this->deleted_at,
             Texts::web('is_deleted')            => $this->deleted_at == null ? false : true,
             Texts::web('language')              => $this->data->description->language ?? 'en-EN',
-            Texts::web('corporations')          => $this->data->description->corporations ?? 'Public',
+            Texts::web('corporations')          => $this->data->description->corporations ?? 'unassigned',
             Texts::web('collections')           => $this->getCollections(),
             Texts::web('core_resource_type')    => $this->getCoreResourceType(),
             // 'lom'                   => $this->getLOMValues(),
@@ -164,7 +171,7 @@ class CourseSolrResource extends BaseSolrResource
             'external'              => $this->getBooleanDataValue('external'),
             'type'                  => $this->getType(),
             'tags'                  => $this->formatTags($tags),
-            'semantic_tags'         => $this->formatTags($semanticTags),
+            'semantic_tags'         => $this->formatSemanticTags($semanticTags),
             'categories'            => $this->formatCategories($categories),
             'files'                 => $this->getFiles(),
             'previews'              => $this->getPreviews(),
@@ -184,7 +191,7 @@ class CourseSolrResource extends BaseSolrResource
             'deleted_at'            => $this->deleted_at,
             'is_deleted'            => $this->deleted_at == null ? false : true,
             'language'              => $this->data->description->language ?? 'en-EN',
-            'corporations'          => $this->data->description->corporations ?? 'Public',
+            'corporations'          => $this->data->description->corporations ?? 'Unassigned',
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),
             // 'lom'                   => $this->getLOMValues(),

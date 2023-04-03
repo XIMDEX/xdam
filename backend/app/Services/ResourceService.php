@@ -13,12 +13,14 @@ use App\Models\Workspace;
 use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Services\Solr\SolrService;
 use App\Services\ExternalApis\KakumaService;
+use App\Services\ExternalApis\XTagsService;
 use App\Utils\Texts;
 use App\Utils\Utils;
 use DirectoryIterator;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -48,6 +50,11 @@ class ResourceService
      */
     private KakumaService $kakumaService;
 
+    /**
+     * @var XTagService
+     */
+    private XTagsService $xtagService;
+
     const PAGE_SIZE = 30;
 
     /**
@@ -57,13 +64,14 @@ class ResourceService
      * @param CategoryService $categoryService
      */
     public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService,
-                                KakumaService $kakumaService)
+                                KakumaService $kakumaService, XTagsService $xtagService)
     {
         $this->mediaService = $mediaService;
         $this->categoryService = $categoryService;
         $this->solr = $solr;
         $this->workspaceService = $workspaceService;
         $this->kakumaService = $kakumaService;
+        $this->xtagService = $xtagService;
     }
 
     private function saveAssociateFile($type, $params, $model)
@@ -314,6 +322,17 @@ class ResourceService
                     'Id' => $semantic_tag->id,
                     'Entry' => $semantic_tag->label
                 ];
+            }
+
+            // TODO save on xTags
+            $lang = App::getLocale();
+            if (false && isset($resource->data->description->semantic_tags)) {
+                $this->xtagService->saveXTagsResource(
+                    $resource->id,
+                    'semantic_tags',
+                    $lang,
+                    $resource->data->description->semantic_tags
+                );
             }
             $this->setLomData($resource, $lom_params);
         }

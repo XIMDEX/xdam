@@ -27,4 +27,37 @@ class XTagsService extends BaseApi
         );
         return $response;
     }
+
+    public function saveXTagsResource($id, $context, $lang, $data)
+    {
+        $bodies = [];
+        foreach ($data as $tag) {
+            if (!isset($body[$tag->vocabulary])) {
+                $bodies[$tag->vocabulary] = [
+                    'resourceId' => $id,
+                    'tags' => [],
+                    'vocabulary' => $tag->vocabulary,
+                ];
+            }
+            $bodies[$tag->vocabulary]['tags'][] = [
+                'context' => $context,
+                'definitionId' => $tag->id,
+                'langId' => 1,
+                'lang' => $lang,
+                'name' => $tag->label,
+                'typeId' => 1,
+                'context' => $context
+            ];
+        }
+        $response = [];
+        foreach ($bodies as $body) {
+
+            $response[] = $this->call(
+                "$this->BASE_URL/$this->VERSION/resource-tags/$id",
+                $body,
+                "post"
+            );
+        }
+        return $response;
+    }
 }
