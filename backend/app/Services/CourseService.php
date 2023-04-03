@@ -79,6 +79,17 @@ class CourseService extends BaseService
             }
             $items = $model::where('type', 'course')->get();
             $values_names = array_keys(get_object_vars($values));
+            $fillables = $model_instance->getFillable();
+            $required = defined("{$resourceName}::REQUIRED_FILLABLES") ? $model::REQUIRED_FILLABLES : $fillables;
+
+            foreach ($required as $key) {
+                $type = $model_instance->getConnection()->getSchemaBuilder()->getColumnType($model_instance->getTable(), $key);
+                $fields[] = [
+                    'key' => $key,
+                    'label' => str_replace('_', ' ', ucfirst($key)),
+                    'type' => in_array($type, self::TYPES_ALLOWS) ? self::parseTypeBBDD($type) : false
+                ];
+            }
             foreach ($items as $item) {
                 $name = strtolower($item->name);
                 if (!in_array($name, $values_names)) {
@@ -92,25 +103,17 @@ class CourseService extends BaseService
                 $values->$name['canDelete'] = true;
                 $values->$name['values'] = $item->toArray();
 
+                $values->$name['fields'] = $fields;
 
-                $fillables = $model_instance->getFillable();
-                $required = defined("{$resourceName}::REQUIRED_FILLABLES") ? $model::REQUIRED_FILLABLES : $fillables;
+                // $required = defined("{$resourceName}::REQUIRED_FILLABLES") ? $model::REQUIRED_FILLABLES : $fillables;
 
-                foreach ($required as $key) {
-                    $type = $model_instance->getConnection()->getSchemaBuilder()->getColumnType($model_instance->getTable(), $key);
-                    $values->$name['fields'][] = [
-                        'key' => $key,
-                        'label' => str_replace('_', ' ', ucfirst($key)),
-                        'type' => in_array($type, self::TYPES_ALLOWS) ? self::parseTypeBBDD($type) : false
-                    ];
-                }
                 if ($facet === 'categories') {
-                    $route = 'v1category.store';
+                    $route = 'v1category.update';
                     $route_delete = 'v1category.delete';
                     $opt = ['category' => $item->id];
                 }
                 if ($facet === 'corporations') {
-                    $route = 'v1corporation.store';
+                    $route = 'v1corporation.update';
                     $route_delete = 'v1corporation.delete';
                     $opt = ['corporation' => $item->id];
                 }

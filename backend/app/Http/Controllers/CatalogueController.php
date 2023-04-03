@@ -8,6 +8,9 @@ use App\Models\DamResource;
 use App\Models\Workspace;
 use App\Services\CDNService;
 use App\Services\Catalogue\CatalogueService;
+use App\Services\Catalogue\FacetManager;
+use App\Services\CategoryService;
+use App\Utils\Texts;
 use App\Utils\Utils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,14 +29,20 @@ class CatalogueController extends Controller
     private CatalogueService $catalogueService;
 
     /**
+     * @var CategoryService
+     */
+    private CategoryService $categoryService;
+
+    /**
      * CatalogueController constructor.
      * @param CDNService $cdnService
      * @param CatalogueService $catalogueService
      */
-    public function __construct(CDNService $cdnService, CatalogueService $catalogueService)
+    public function __construct(CDNService $cdnService, CatalogueService $catalogueService, CategoryService $categoryService)
     {
         $this->cdnService = $cdnService;
         $this->catalogueService = $catalogueService;
+        $this->categoryService = $categoryService;
     }
 
 
@@ -55,7 +64,20 @@ class CatalogueController extends Controller
         $sortParams['order'] = $request->get('order');
 
         $facetsFilter = $request->get('facets', []);
+        $language = $request->get('lang', env('DEFAULT_LANGUAGE'));
+
+        foreach ($facetsFilter as $facet_key => $values) {
+            if (in_array($facet_key, FacetManager::RADIO_FACETS)) {
+                foreach ($values as $idx_value => $value) {
+                    if ($value !== 'false' &&  $value !== 'true') {
+                        unset($facetsFilter[$facet_key][$idx_value]);
+                    }
+                    $facetsFilter[$facet_key][$idx_value] = $value == Texts::web('true', $language) ? 'true' : 'false';
+                }
+            }
+        }
         $facetsFilter['organization'] = $collection->organization_id;
+
         $facetsFilter['collections'] = $collection->id;
 
         $response = $this->catalogueService->indexByCollection(
@@ -67,6 +89,7 @@ class CatalogueController extends Controller
 
         $response = $this->formatLOMFacetsResponse($response);
         $response = $this->appendCDNDataToCatalogueResponse($response, $collection);
+        $response = $this->appendAllCategories($response, $collection);
         return response()->json($response);
     }
 
@@ -83,6 +106,21 @@ class CatalogueController extends Controller
         $sortParams['order'] = $request->get('order');
 
         $facetsFilter = $request->get('facets', []);
+        $language = $request->get('lang', env('DEFAULT_LANGUAGE'));
+
+        foreach ($facetsFilter as $facet_key => $values) {
+            if (in_array($facet_key, FacetManager::RADIO_FACETS)) {
+                foreach ($values as $idx_value => $value) {
+                    if ($value !== 'false' &&  $value !== 'true') {
+                        unset($facetsFilter[$facet_key][$idx_value]);
+                    }
+                    $facetsFilter[$facet_key][$idx_value] = $value == Texts::web('true', $language) ? 'true' : 'false';
+                }
+            }
+        }
+        // $facetsFilter['organization'] = $collection->organization_id;
+
+        // $facetsFilter['collections'] = $collection->id;
         $facetsFilter['workspaces'] = $workspace->id;
 
         $response = $this->catalogueService->indexByWorkspace(
@@ -239,6 +277,48 @@ class CatalogueController extends Controller
                     $auxCDN->setHash($this->cdnService->generateDamResourceHash($auxCDN, $resource, $collection->id));
                     if ($auxCDN->getHash() !== null) $response->data[$i]['data']->cdns_attached[] = $auxCDN;
                 }
+            }
+        }
+
+        return $response;
+    }
+
+    /**
+     * Add all categories to catalogue response
+     * @param object $response
+     * @return object
+     */
+    private function appendAllCategories(object $response, $collection)
+    {
+        $categories = [];
+        $all_categories = $this->categoryService->getAll();
+        $type = $collection->solr_connection;
+        $multimedia_types = ['image', 'audio', 'video'];
+
+        foreach ($all_categories as $category) {
+            //* For others use
+                // if ($type !== 'multimedia' && $category->type == $type) {
+                //     $categories[] = $category;
+                // }
+                // if ($type === 'multimedia' && in_array($category->type, $multimedia_types) ) {
+                //     $categories[] = $category;
+                // }
+            //* For the moment only use on course
+            if ($type === 'course' && $category->type == $type) {
+                $categories[] = $category;
+            }
+        }
+
+        foreach ($response->facets as $index => $facet) {
+            if ($facet['key'] === 'categories') {
+                $values = array_keys($facet['values']);
+                foreach ($categories as $cateogory) {
+                    $key_category = strtolower($cateogory->name);
+                    if (!in_array($key_category, $values)) {
+                        $response->facets[$index]['values'][$key_category] = ['count' => 0, 'selected' => false, 'radio' => false];
+                    }
+                }
+                break;
             }
         }
 

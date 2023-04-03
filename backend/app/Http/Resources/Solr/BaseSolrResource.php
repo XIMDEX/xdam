@@ -28,9 +28,13 @@ class BaseSolrResource extends JsonResource
         $query = '';
         if ($searchPhrase !== "") {
             $query .= "name:*$searchPhrase*^10 ";
+            $query .= "OR lom:$searchPhrase^4 OR lomes:*$searchPhrase*^3 ";
         }
-        $query .= "name:$searchTerm^9  OR data:*$searchTerm*^5 ";
-        $query .= "lom:*$searchTerm*^4 OR lomes:*$searchTerm*^3 ";
+        if ($searchTerm !== '') {
+            if ($query !== '') $query .= 'OR ';
+            $query .= "name:$searchTerm^9  OR data:*$searchTerm*^5 ";
+            $query .= "OR lom:*$searchTerm*^4 OR lomes:*$searchTerm*^3 ";
+        }
         return $query;
     }
 
