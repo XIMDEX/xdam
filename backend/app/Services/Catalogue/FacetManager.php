@@ -145,7 +145,8 @@ class FacetManager
                         //$property->$valueFaceSet = ["count" => $count, "selected" => $isSelected];
                         $facetItem->values = $property;
                     if ($isBoolean && count($values) == 2) {
-                        $facetItem->values->{Texts::web('all')} = ['count' => 48, 'selected' => true, 'radio' => true];
+                        $all_count = $values['false'] + $values['true'];
+                        $facetItem->values->{Texts::web('all')} = ['count' => $all_count, 'selected' => true, 'radio' => true];
                     }
 
                     if ($collection) {

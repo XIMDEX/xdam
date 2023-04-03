@@ -19,7 +19,9 @@ class CourseSolrResource extends BaseSolrResource
     public static function generateQuery($searchTerm, $searchPhrase)
     {
         $query = parent::generateQuery($searchTerm, $searchPhrase);
-        $query .= " achievements:*$searchTerm*^3 OR preparations:*$searchTerm*^3";
+        if ($searchTerm !== '') {
+            $query .= " achievements:*$searchTerm*^3 OR preparations:*$searchTerm*^3";
+        }
         return $query;
     }
 

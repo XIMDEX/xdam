@@ -126,7 +126,7 @@ class SolrService
     public function getClient(string $client)
     {
         if (!array_key_exists($client, $this->clients)) {
-            throw new Exception("There is no client ${client}");
+            throw new Exception("There is no client $client");
         }
 
         return $this->clients[$client];
@@ -361,9 +361,36 @@ class SolrService
 
         /* if we have a search param, restrict the query */
         if (!empty($search)) {
+            $search = urldecode($search);
+            $term = '';
+            $phrase = '';
+            $terms = explode('"', $search);
+
+            if (count($terms) < 2) {
+                $term = $search;
+            } else {
+                $startWithPhrase = $terms[0] === '';
+                foreach ($terms as $idx => $element) {
+                    if (!$startWithPhrase && $idx == 0) {
+                        $term .= $element . ' ';
+                        continue;
+                    }
+                    $isPar = $idx % 2 == 0;
+                    if ($isPar) {
+                        $term .= $element . ' ';
+                    } else {
+                        $phrase .= '"' . $element . '" ';
+                    }
+                }
+            }
+
+            $term = trim($term);
+            $phrase = trim($phrase);
+
             $helper = $query->getHelper();
-            $searchTerm = $helper->escapeTerm($search);
-            $searchPhrase = $helper->escapePhrase($search);
+            $searchTerm = $helper->escapeTerm($term);
+            $searchPhrase = $helper->escapePhrase($phrase);
+            $searchPhrase = str_replace('"', '', $searchPhrase);
             $query->setQuery($this->generateQuery($collection, $core, $searchTerm, $searchPhrase));
         }
 

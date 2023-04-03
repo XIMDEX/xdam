@@ -55,6 +55,7 @@ class CorporationService extends BaseService
     {
         return $corporation->update([
             'name' => $this->satinizeCorporationName($data["name"]),
+            'description' => $this->satinizeCorporationName($data["description"]),
             'type' => ResourceType::fromKey($data["type"])->value
         ]);
     }
@@ -66,8 +67,14 @@ class CorporationService extends BaseService
      */
     public function store($params) : Corporation
     {
+        $name = $this->satinizeCorporationName($params["name"]);
+        $exists = Corporation::where('name', $name)->first();
+        if ($exists) {
+            return $exists;
+        }
         return Corporation::create([
-            'name' => $this->satinizeCorporationName($params["name"]),
+            'name' => $name,
+            'description' => $this->satinizeCorporationName($params["description"]),
             'type' => ResourceType::fromKey($params["type"])->value,
         ]);
     }
