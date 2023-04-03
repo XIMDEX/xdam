@@ -32,7 +32,7 @@ class XTagsService extends BaseApi
     {
         $bodies = [];
         foreach ($data as $tag) {
-            if (!isset($body[$tag->vocabulary])) {
+            if (!isset($bodies[$tag->vocabulary])) {
                 $bodies[$tag->vocabulary] = [
                     'resourceId' => $id,
                     'tags' => [],

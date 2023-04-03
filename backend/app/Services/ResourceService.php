@@ -326,7 +326,7 @@ class ResourceService
 
             // TODO save on xTags
             $lang = App::getLocale();
-            if (false && isset($resource->data->description->semantic_tags)) {
+            if (isset($resource->data->description->semantic_tags)) {
                 $this->xtagService->saveXTagsResource(
                     $resource->id,
                     'semantic_tags',
