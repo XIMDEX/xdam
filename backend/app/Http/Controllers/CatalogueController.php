@@ -66,13 +66,24 @@ class CatalogueController extends Controller
         $facetsFilter = $request->get('facets', []);
         $language = $request->get('lang', env('DEFAULT_LANGUAGE'));
 
-        foreach ($facetsFilter as $facet_key => $values) {
-            if (in_array($facet_key, FacetManager::RADIO_FACETS)) {
+        foreach ($facetsFilter as $facetKey => $values) {
+            if (!in_array($facetKey, FacetManager::RADIO_FACETS)) {
+                continue;
+            }
+            
+            if (is_array($values)) {
                 foreach ($values as $idx_value => $value) {
-                    if ($value !== 'false' &&  $value !== 'true') {
-                        unset($facetsFilter[$facet_key][$idx_value]);
+                    if (strtolower($value) == 'all') {
+                        unset($facetsFilter[$facetKey]);
+                    } else if (!in_array(strtolower($value), ['true', 'false'])) {
+                        $facetsFilter[$facetKey][$idx_value] = Texts::web(strtolower($value), $language);
                     }
-                    $facetsFilter[$facet_key][$idx_value] = $value == Texts::web('true', $language) ? 'true' : 'false';
+                }
+            } else {
+                if (strtolower($values) == 'all') {
+                    unset($facetsFilter[$facetKey]);
+                } else if (!in_array(strtolower($values), ['true', 'false'])) {
+                    $facetsFilter[$facetKey] = Texts::web(strtolower($values), $language);
                 }
             }
         }
@@ -108,13 +119,24 @@ class CatalogueController extends Controller
         $facetsFilter = $request->get('facets', []);
         $language = $request->get('lang', env('DEFAULT_LANGUAGE'));
 
-        foreach ($facetsFilter as $facet_key => $values) {
-            if (in_array($facet_key, FacetManager::RADIO_FACETS)) {
+        foreach ($facetsFilter as $facetKey => $values) {
+            if (!in_array($facetKey, FacetManager::RADIO_FACETS)) {
+                continue;
+            }
+            
+            if (is_array($values)) {
                 foreach ($values as $idx_value => $value) {
-                    if ($value !== 'false' &&  $value !== 'true') {
-                        unset($facetsFilter[$facet_key][$idx_value]);
+                    if (strtolower($value) == 'all') {
+                        unset($facetsFilter[$facetKey]);
+                    } else if (!in_array(strtolower($value), ['true', 'false'])) {
+                        $facetsFilter[$facetKey][$idx_value] = Texts::web(strtolower($value), $language);
                     }
-                    $facetsFilter[$facet_key][$idx_value] = $value == Texts::web('true', $language) ? 'true' : 'false';
+                }
+            } else {
+                if (strtolower($values) == 'all') {
+                    unset($facetsFilter[$facetKey]);
+                } else if (!in_array(strtolower($values), ['true', 'false'])) {
+                    $facetsFilter[$facetKey] = Texts::web(strtolower($values), $language);
                 }
             }
         }

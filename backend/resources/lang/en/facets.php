@@ -24,7 +24,9 @@ return [
         'workspaces' => 'Workspaces',
         'true' => 'Yes',
         'false' => 'No',
-        'all' => 'All'
+        'all' => 'All',
+        'yes' => 'true',
+        'no' => 'false'
     ],
     'MHE' => [],
     'SEK' => []
