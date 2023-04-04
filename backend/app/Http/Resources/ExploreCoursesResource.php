@@ -30,7 +30,11 @@ class ExploreCoursesResource extends JsonResource
     {
         $courses = [];
         try {
-            $resources = $this->resources()->whereIn('data->description->language', $lang)->get();
+            if ($lang[0] !== "") {
+                $resources = $this->resources()->whereIn('data->description->language', $lang)->get();
+            } else {
+                $resources = $this->resources;
+            }        
         } catch (\Throwable $th) {
             $resources = $this['resources'];
         }
