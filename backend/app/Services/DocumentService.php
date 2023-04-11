@@ -20,6 +20,10 @@ class DocumentService extends BaseService
                 $schema->properties->description->properties->$key->options = $categories->all();
                 $schema->properties->description->properties->$key->subType = 'dropdown';
             }
+
+            if ($key === 'semantic_tags') {
+                $schema->properties->description->properties->$key->subType = 'xtags';
+            }
         }
         return $schema;
     }

@@ -80,6 +80,16 @@
     "omitPositions": true,
     "multiValued": true
   },
+  "semantic_tags": {
+    "name": "semantic_tags",
+    "type": "text_general"
+  },
+  "language": {
+    "name": "language",
+    "type": "string",
+    "indexed": true,
+    "multiValued": false
+  },
   "type": {
     "name": "type",
     "type": "string",

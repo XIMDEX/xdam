@@ -45,6 +45,8 @@ class CoreFacetsBuilder {
                 "types",
                 "tags",
                 "workspaces",
+                "language",
+                "semantic_tags"
                 // "lom",
                 // "lomes"
             ],

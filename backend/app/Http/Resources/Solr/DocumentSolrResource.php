@@ -81,6 +81,23 @@ class DocumentSolrResource extends BaseSolrResource
         return ResourceType::document;
     }
 
+    private function getSemanticTags()
+    {
+        $semantic_tags = $this->data->description->semantic_tags ?? [];
+        return $semantic_tags;
+    }
+
+    protected function formatSemanticTags($tags)
+    {
+        $toSolr = [];
+        foreach ($tags as $tag) {
+            try {
+                $toSolr[] = $tag->label;
+            } catch (\Throwable $th) {}
+        }
+        return $toSolr;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -90,6 +107,7 @@ class DocumentSolrResource extends BaseSolrResource
     public function toArray($request)
     {
         $files = $this->getFiles();
+        $semanticTags = $this->getSemanticTags();
 
         return [
             'id'                    => $this->getID(),
@@ -104,6 +122,8 @@ class DocumentSolrResource extends BaseSolrResource
             'conversions'           => $this->getConversions(),
             'previews'              => $this->getPreviews(),
             'workspaces'            => $this->getWorkspaces(),
+            'language'              => $this->data->description->language ?? 'en-EN',
+            'semantic_tags'         => $this->formatSemanticTags($semanticTags),
             'organization'          => $this->getOrganization(),
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),
