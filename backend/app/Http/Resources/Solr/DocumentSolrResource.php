@@ -123,7 +123,7 @@ class DocumentSolrResource extends BaseSolrResource
             'previews'              => $this->getPreviews(),
             'workspaces'            => $this->getWorkspaces(),
             'language'              => $this->data->description->language ?? 'en-EN',
-            'semantic_tags'         => $this->formatSemanticTags($semanticTags),
+            //'semantic_tags'         => $this->formatSemanticTags($semanticTags),
             'organization'          => $this->getOrganization(),
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),
