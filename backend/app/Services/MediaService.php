@@ -71,7 +71,7 @@ class MediaService
         $mediaPath = $media->getPath();
         $fileType = explode('/', $mimeType)[0];
         $file_directory = str_replace($media->file_name, '', $mediaPath);
-        $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.png';
+        $thumbnail = $file_directory . '/' . $media->file_name . '__thumb_.png';
 
         if ($fileType === 'video') {
             return $this->previewVideo($media->id, $media->file_name, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail);
@@ -133,6 +133,7 @@ class MediaService
 
             if (!$thumb_exists) {
                 $this->saveVideoSnapshot($thumbnail, $mediaPath);
+                return $this->previewImage($mediaPath, $size);
             } else {
                 return $this->previewImage($thumbnail, $size);
             }
@@ -246,7 +247,7 @@ class MediaService
         $fileType = explode('/', $mimeType)[0];
         if($fileType == 'video') {
             $file_directory = str_replace($media->file_name, '', $mediaPath);
-            $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.png';
+            $thumbnail = $file_directory . '/' . $media->file_name . '__thumb_.png';
             $this->saveVideoSnapshot($thumbnail, $mediaPath);
         }
         return !empty($mediaList) ? end($mediaList) : [];
