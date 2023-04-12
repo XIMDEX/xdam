@@ -4,10 +4,14 @@ namespace App\Http\Resources\Solr;
 
 use App\Enums\ResourceType;
 use App\Http\Resources\Solr\BaseSolrResource;
+use App\Http\Resources\Solr\Traits\HasSemanticTags;
 use App\Utils\Texts;
 
 class CourseSolrResource extends BaseSolrResource
 {
+
+    use HasSemanticTags;
+
     private $toSolr;
 
     public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null, $toSolr = false)
@@ -74,23 +78,6 @@ class CourseSolrResource extends BaseSolrResource
         return ResourceType::course;
     }
 
-    private function getSemanticTags()
-    {
-        $semantic_tags = $this->data->description->semantic_tags ?? [];
-        return $semantic_tags;
-    }
-
-    protected function formatSemanticTags($tags)
-    {
-        $toSolr = [];
-        foreach ($tags as $tag) {
-            try {
-                $toSolr[] = $tag->label;
-            } catch (\Throwable $th) {}
-        }
-        return $toSolr;
-    }
-
     /**
      * Transform the resource into an array.
      *
@@ -104,7 +91,6 @@ class CourseSolrResource extends BaseSolrResource
         }
 
         $tags = $this->getTags();
-        $semanticTags = $this->getSemanticTags();
         $categories = $this->getCategories();
         $cost = $this->data->description->cost ?? 0;
 
@@ -119,7 +105,7 @@ class CourseSolrResource extends BaseSolrResource
             Texts::web('external')              => $this->getBooleanDataValue('external'),
             Texts::web('type')                  => $this->getType(),
             Texts::web('tags')                  => $this->formatTags($tags),
-            Texts::web('semantic_tags')         => $this->formatSemanticTags($semanticTags),
+            Texts::web('semantic_tags')         => $this->getFormattedSemanticTags(),
             Texts::web('categories')            => $this->formatCategories($categories),
             Texts::web('files')                 => $this->getFiles(),
             Texts::web('previews')              => $this->getPreviews(),

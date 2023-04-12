@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Solr;
 
 use App\Http\Resources\Solr\BaseSolrResource;
+use App\Http\Resources\Solr\Traits\HasSemanticTags;
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use App\Http\Resources\MediaResource;
@@ -13,6 +14,9 @@ use App\Utils\DamUrlUtil;
 
 class DocumentSolrResource extends BaseSolrResource
 {
+
+    use HasSemanticTags;
+
     public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null, $toSolr = false)
     {
         parent::__construct($resource, $lomSolrClient, $lomesSolrClient);
@@ -81,23 +85,6 @@ class DocumentSolrResource extends BaseSolrResource
         return ResourceType::document;
     }
 
-    private function getSemanticTags()
-    {
-        $semantic_tags = $this->data->description->semantic_tags ?? [];
-        return $semantic_tags;
-    }
-
-    protected function formatSemanticTags($tags)
-    {
-        $toSolr = [];
-        foreach ($tags as $tag) {
-            try {
-                $toSolr[] = $tag->label;
-            } catch (\Throwable $th) {}
-        }
-        return $toSolr;
-    }
-
     /**
      * Transform the resource into an array.
      *
@@ -107,7 +94,6 @@ class DocumentSolrResource extends BaseSolrResource
     public function toArray($request)
     {
         $files = $this->getFiles();
-        $semanticTags = $this->getSemanticTags();
 
         return [
             'id'                    => $this->getID(),
@@ -123,7 +109,7 @@ class DocumentSolrResource extends BaseSolrResource
             'previews'              => $this->getPreviews(),
             'workspaces'            => $this->getWorkspaces(),
             'language'              => $this->data->description->language ?? 'en-EN',
-            'semantic_tags'         => $this->formatSemanticTags($semanticTags),
+            'semantic_tags'         => $this->getFormattedSemanticTags(),
             'organization'          => $this->getOrganization(),
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),

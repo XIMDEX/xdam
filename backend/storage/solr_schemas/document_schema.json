@@ -82,7 +82,7 @@
   },
   "semantic_tags": {
     "name": "semantic_tags",
-    "type": "text_general"
+    "type": "strings"
   },
   "language": {
     "name": "language",
@@ -104,7 +104,7 @@
   },
   "tags": {
     "name": "tags",
-    "type": "text_general"
+    "type": "strings"
   },
   "organization": {
     "name": "organization",

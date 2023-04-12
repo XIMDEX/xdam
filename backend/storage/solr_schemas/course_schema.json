@@ -95,11 +95,11 @@
   },
   "tags": {
     "name": "tags",
-    "type": "text_general"
+    "type": "strings"
   },
   "semantic_tags": {
     "name": "semantic_tags",
-    "type": "text_general"
+    "type": "strings"
   },
   "language": {
     "name": "language",

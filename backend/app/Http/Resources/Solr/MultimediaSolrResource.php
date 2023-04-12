@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Solr;
 
 use App\Http\Resources\Solr\BaseSolrResource;
+use App\Http\Resources\Solr\Traits\HasSemanticTags;
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use App\Http\Resources\MediaResource;
@@ -11,6 +12,9 @@ use App\Utils\DamUrlUtil;
 
 class MultimediaSolrResource extends BaseSolrResource
 {
+
+    use HasSemanticTags;
+
     public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null, $toSolr = false)
     {
         parent::__construct($resource, $lomSolrClient, $lomesSolrClient);
@@ -98,6 +102,7 @@ class MultimediaSolrResource extends BaseSolrResource
             'types'                 => $this->getTypes($files),
             'tags'                  => $this->formatTags($this->getTags()),
             'categories'            => $this->formatCategories($this->getCategories()),
+            'semantic_tags'         => $this->getFormattedSemanticTags(),
             'files'                 => $files,
             'conversions'           => $this->getConversions(),
             'previews'              => $this->getPreviews(),
