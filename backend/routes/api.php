@@ -81,6 +81,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
 
     Route::group(['middleware' => 'show.resource'], function() {
         Route::group(['prefix' => 'resource'], function() {
+            Route::get('/render/{damUrl}/html',          [ResourceController::class, 'renderHtml'])->name('damResource.renderHtml');
             Route::get('/render/{damUrl}/{size}',   [ResourceController::class, 'render'])->name('damResource.renderWithSize');
             Route::get('/render/{damUrl}',          [ResourceController::class, 'render'])->name('damResource.render');
             Route::get('/{damResource}',            [ResourceController::class, 'get'])->name('damResource.get');

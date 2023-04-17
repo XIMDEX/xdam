@@ -320,6 +320,16 @@ class ResourceController extends Controller
         return $this->renderResource($damUrl, $method, $size, $size);
     }
 
+    public function renderHtml($damUrl)
+    {
+        $url = url('/') . "resource/render/{$damUrl}";
+
+        return response()->view('image-viewer', [
+            'title' => 'Image to share',
+            'imageURL' => $url,
+        ]);
+    }
+
     private function renderResource($damUrl, $method = null, $size = null, $renderKey = null, $isCDN = false)
     {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
