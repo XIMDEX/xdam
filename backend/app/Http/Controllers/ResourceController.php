@@ -322,7 +322,7 @@ class ResourceController extends Controller
 
     public function renderHtml($damUrl)
     {
-        $url = url('/') . "resource/render/{$damUrl}";
+        $url = url('/') . "/resource/render/{$damUrl}";
 
         return response()->view('image-viewer', [
             'title' => 'Image to share',
