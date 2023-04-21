@@ -6,10 +6,14 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ $title }}">
     <meta name="twitter:description" content="Image to share">
-    <meta name="twitter:image" content="{{ $imageURL }}">
+    <meta name="twitter:image" content="{{ $url }}">
     <title>{{ $title }}</title>
 </head>
 <body>
-    <img src="{{ $imageURL }}" alt="Share on Twitter">
+    @if ($fileType === 'image')
+        <img src="{{ $url }}" alt="Share on Twitter">
+    @elseif ($fileType === 'video')
+        <video src="{{ $url }}" controls></video>
+    @endif
 </body>
 </html>

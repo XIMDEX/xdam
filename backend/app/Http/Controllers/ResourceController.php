@@ -324,9 +324,15 @@ class ResourceController extends Controller
     {
         $url = url('/') . "/api/v1/resource/render/{$damUrl}";
 
+        $mediaId = DamUrlUtil::decodeUrl($damUrl);
+        $media = Media::findOrFail($mediaId);
+        $mimeType = $media->mime_type;
+        $fileType = explode('/', $mimeType)[0];
+
         return response()->view('image-viewer', [
-            'title' => 'Image to share',
-            'imageURL' => $url,
+            'title' => 'Media to share',
+            'url' => $url,
+            'fileType' => $fileType,
         ]);
     }
 
