@@ -436,7 +436,7 @@ class ResourceController extends Controller
                 }
             }
         }
-        
+
         return $errorMessage;
     }
 
@@ -596,7 +596,7 @@ class ResourceController extends Controller
 
         if (isset($request->size) && $this->getFileType($responseJson->files[0]->dam_url) === 'application/pdf')
             $accessCheck = true;
-        
+
         if ($cdnInfo->checkAccessRequirements($ipAddress, $originURL))
             $accessCheck = true;
 
@@ -608,10 +608,10 @@ class ResourceController extends Controller
 
         if (!isset($request->size))
             $request->size = null;
-    
+
         if (count($responseJson->files) == 0)
             return response(['error' => 'No files attached!']);
-        
+
         return $this->renderResource($responseJson->files[0]->dam_url, $method, $request->size, $request->size, true);
     }
 
@@ -627,7 +627,7 @@ class ResourceController extends Controller
 
         $resource = DamResource::where('id', $request->damResource)
                         ->first();
-        
+
         if ($resource === null)
             return response(['error' => 'Resource doesn\'t exist.']);
 

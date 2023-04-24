@@ -142,8 +142,8 @@ class CourseSolrResource extends BaseSolrResource
             Texts::web('corporations')          => $this->data->description->corporations ?? 'unassigned',
             Texts::web('collections')           => $this->getCollections(),
             Texts::web('core_resource_type')    => $this->getCoreResourceType(),
-            // 'lom'                   => $this->getLOMValues(),
-            // 'lomes'                 => $this->getLOMValues('lomes')
+            Texts::web('lom')                   => $this->getLOMValues(),
+            Texts::web('lomes')                 => $this->getLOMValues('lomes')
         ];
     }
 
@@ -194,8 +194,8 @@ class CourseSolrResource extends BaseSolrResource
             'corporations'          => $this->data->description->corporations ?? 'Unassigned',
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),
-            // 'lom'                   => $this->getLOMValues(),
-            // 'lomes'                 => $this->getLOMValues('lomes')
+            'lom'                   => $this->getLOMValues(),
+            'lomes'                 => $this->getLOMValues('lomes')
         ];
     }
 }

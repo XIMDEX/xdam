@@ -26,7 +26,9 @@ return [
         'false' => 'No',
         'all' => 'All',
         'yes' => 'true',
-        'no' => 'false'
+        'no' => 'false',
+        'lom' => 'LOM',
+        'LOMES' => 'LOMES'
     ],
     'MHE' => [],
     'SEK' => []
