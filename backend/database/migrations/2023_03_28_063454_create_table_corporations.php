@@ -30,7 +30,7 @@ class CreateTableCorporations extends Migration
             'type' => 'course'
         ]);
 
-        DB::statement(`UPDATE dam_resources SET data = JSON_SET(data, '$.description.corporations', JSON_ARRAY("Public")) WEHRE type='course'; `);
+        DB::statement(`UPDATE dam_resources SET data = JSON_SET(data, '$.description.corporations', JSON_ARRAY("Public")) WHERE type='course'; `);
     }
 
     /**
