@@ -11,7 +11,7 @@ class Corporation extends Model
 
     protected $table = "corporation";
 
-    protected $fillable = ["name", "description", "type"];
+    protected $fillable = ["name", "description", "type", "is_default"];
 
     const  REQUIRED_FILLABLES = ["name", "description"];
 }

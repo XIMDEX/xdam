@@ -27,6 +27,14 @@ class CorporationService extends BaseService
     }
 
     /**
+     * @return Corporation[]
+     */
+    public static function getDefault()
+    {
+        return Corporation::where('is_default', true)->first();
+    }
+
+    /**
      * @param Corporation $corporation
      * @return Corporation
      */

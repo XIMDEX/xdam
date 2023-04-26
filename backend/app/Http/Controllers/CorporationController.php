@@ -32,8 +32,19 @@ class CorporationController extends Controller
      */
     public function getAll()
     {
-       $categories =  $this->corporationService->getAll();
-       return (new CorporationCollection($categories))
+       $corporation =  $this->corporationService->getAll();
+       return (new CorporationCollection($corporation))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse|object
+     */
+    public function getDefault()
+    {
+       $corporation =  $this->corporationService->getDefault();
+       return (new CorporationResource($corporation))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
