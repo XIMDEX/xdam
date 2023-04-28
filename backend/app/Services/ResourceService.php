@@ -188,21 +188,27 @@ class ResourceService
      * @param null $type
      * @return Collection
      */
-    public function getAll($type = null, $ps = null)
+    public function getAll($type = null, $ps = null, $withDeleted = false)
     {
+        if ($withDeleted) {
+            $query = DamResource::withTrashed();
+        } else {
+            $query = DamResource::query();
+        }
+
         if (null == $ps && null == $type) {
-            return DamResource::all();
+            return $query->get();
         }
 
         if (null == $ps) {
-            return DamResource::where('type', $type)->get();
+            return $query->where('type', $type)->get();
         }
 
         if (null == $type) {
-            return DamResource::paginate($ps);
+            return $query->paginate($ps);
         }
 
-        return DamResource::where('type', $type)->paginate($ps);
+        return $query->where('type', $type)->paginate($ps);
     }
 
     /**

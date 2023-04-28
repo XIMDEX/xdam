@@ -56,7 +56,7 @@ class ReIndexSolr extends Command
             Artisan::call($command);
         }
 
-        $resources = $resourceService->getAll();
+        $resources = $resourceService->getAll(null, null, true);
         $count = 0;
         $reindexLOM = (!in_array('lom', $excludedCores));
 
