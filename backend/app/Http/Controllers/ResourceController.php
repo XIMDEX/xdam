@@ -212,7 +212,7 @@ class ResourceController extends Controller
      * @param DamResource $damResource
      * @return \Illuminate\Http\Response
      */
-    public function delete(DamResource $damResource)
+    public function delete($damResource)
     {
         $res = $this->resourceService->delete($damResource);
         return response(['deleted' => $res, 'resource' => $damResource], Response::HTTP_OK);

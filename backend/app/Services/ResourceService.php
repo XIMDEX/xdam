@@ -666,8 +666,9 @@ class ResourceService
      * @param DamResource $resource
      * @throws Exception
      */
-    public function delete(DamResource $resource)
+    public function delete($resourceId)
     {
+        $resource = DamResource::withTrashed()->findOrFail($resourceId);
         try {
             $this->solr->deleteDocument($resource);
             $resource->forceDelete();
