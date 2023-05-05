@@ -21,28 +21,28 @@ class ExploreCoursesResource extends JsonResource
         return [
             "categoryId" => $this['id'],
             "categorytitle" => $this['name'],
-            "courses" => $this->courses(explode(',',$request->lang), $corporations),
+            "courses" => $this->serializeCourses(explode(',',$request->lang), $corporations),
         ];
 
 
     }
 
-    public function courses($lang, $corporations): array
+    public function serializeCourses($lang, $corporations): array
     {
         $courses = [];
         try {
-            if ($lang[0] !== "" || count($corporations) > 0) {
-                $resources = $this->resources()
-                    ->when($lang[0] !== "", function($query) use ($lang) {
-                        return $query->whereIn('data->description->language', $lang);
-                    })
-                    ->when(count($corporations) > 0, function($query) use ($corporations) {
-                        return $query->whereIn('data->description->corporations', $corporations);
-                    })->get();
-
-            } else {
-                $resources = $this->resources;
+            $resources = $this->resources();
+            if ($lang[0] !== "") {
+                $resources->whereIn('data->description->language', $lang);
             }
+            if (count($corporations) > 0) {
+                foreach ($corporations as $corporation) {
+                    $resources->where(function($query) use ($corporation) {
+                        $query->orWhereJsonContains('data->description->corporations', $corporation);
+                    });
+                }
+            }
+            $resources = $resources->get();
         } catch (\Throwable $th) {
             $resources = $this['resources'];
         }
