@@ -49,22 +49,32 @@ class CompressVideos extends Command
         $tasks->each(function($task) {
             $path = explode('/', $task->dest_path);
             
-            MediaConversion::create([
-                'media_id' => $task->media_id,
-                'file_type' => $task->media()->pluck('mime_type')[0],
-                'file_name' => $path[count($path) - 1],
-                'file_compression' => $task->media_conversion_name_id,
-                'resolution' => $task->resolution
-            ]);
+            echo "Conversion on " . $path[count($path) - 1] . " with ID " . $task->media_id . PHP_EOL;
+            
+            $output = [];
+            $return_var = 0;
+            $command = 'ffmpeg -i "' . $task->src_path . '" -vf scale=' 
+                            . $task->resolution . ' -preset slow -crf 18 "'
+                            . $task->dest_path . '"';
+            exec($command, $output, $return_var);
 
-            $media = Media::where('id', $task->media_id)->first();
-            $resource = DamResource::where('id', $media->model_id)->first();
-            $command = "ffmpeg -i " . $task->src_path . " -vf scale=" 
-                            . $task->resolution . " -preset slow -crf 18 "
-                            . $task->dest_path;
-            exec($command);
-            $this->solr->saveOrUpdateDocument($resource);
-            $task->delete();
+            if ($return_var === 0) {
+                MediaConversion::create([
+                    'media_id' => $task->media_id,
+                    'file_type' => $task->media()->pluck('mime_type')[0],
+                    'file_name' => $path[count($path) - 1],
+                    'file_compression' => $task->media_conversion_name_id,
+                    'resolution' => $task->resolution
+                ]);
+
+                $media = Media::where('id', $task->media_id)->first();
+                $resource = DamResource::where('id', $media->model_id)->first();
+                $this->solr->saveOrUpdateDocument($resource);
+                $task->delete();
+            } else {
+                echo "ERROR on conversion of " . $task->dest_path . PHP_EOL;
+            }
+            
         });
     }
 }
