@@ -155,11 +155,6 @@ class MediaService
                 return $this->previewImage($thumbnail, $size);
             }
         } else if ($size == 'raw') {
-            if ($isDownload) {
-                $video = new Video();
-                $video->setPath($mediaPath);
-                return $video;
-            }
             return $this->getPreviewOrDownload($mediaPath, $isDownload);
         } else {
             if (!array_key_exists($sizeKey, $validSizes)) {
@@ -189,11 +184,6 @@ class MediaService
                 for ($i = count($validSizesKeys) - 1; $i >= 0; $i--) {
                     $item = $validSizes[$validSizesKeys[$i]];
                     if (file_exists($item['path'])) {
-                        if ($isDownload) {
-                            $video = new Video();
-                            $video->setPath($mediaPath);
-                            return $video;
-                        }
                         return $this->getPreviewOrDownload($item['path'], $isDownload);
                     }
                 }
