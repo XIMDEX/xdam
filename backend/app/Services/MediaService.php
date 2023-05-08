@@ -158,7 +158,7 @@ class MediaService
             return $this->getPreviewOrDownload($mediaPath, $isDownload);
         } else {
             if (!array_key_exists($sizeKey, $validSizes)) {
-                return $this->previewVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey, 'raw', $thumbnail);
+                return $this->getVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey, 'raw', $thumbnail, $isDownload);
             }
 
             if (!file_exists($validSizes[$sizeKey]['path'])) {
@@ -188,7 +188,7 @@ class MediaService
                     }
                 }
 
-                return $this->previewVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey, 'raw', $thumbnail);
+                return $this->getVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey, 'raw', $thumbnail, $isDownload);
             }
             return $this->getPreviewOrDownload($validSizes[$sizeKey]['path'], $isDownload);
         }
