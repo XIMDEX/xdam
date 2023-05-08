@@ -124,6 +124,7 @@ class MediaService
 
     private function downloadVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey = null, $size = null, $thumbnail = null)
     {
+        return $this->getVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail, true);
         $video = new Video();
         $video->setPath($mediaPath);
         return $video;
@@ -132,7 +133,12 @@ class MediaService
 
     private function previewVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey = null, $size = null, $thumbnail = null)
     {
-        return  VideoStreamer::streamFile($mediaPath);
+        return $this->getVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail, false);
+    }
+
+
+    private function getVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey = null, $size = null, $thumbnail = null, $isDownload = false)
+    {
         // Gets the real resolution of the video, and updates the available resolutions, according the computed aspect ratio
         $originalRes = $this->getVideoDimensions($mediaPath);
         $this->updateAvailableSizes($availableSizes, $originalRes['aspect_ratio'], $mediaPath, $mediaFileName);
@@ -149,7 +155,12 @@ class MediaService
                 return $this->previewImage($thumbnail, $size);
             }
         } else if ($size == 'raw') {
-            return VideoStreamer::streamFile($mediaPath);
+            if ($isDownload) {
+                $video = new Video();
+                $video->setPath($mediaPath);
+                return $video;
+            }
+            return $this->getPreviewOrDownload($mediaPath, $isDownload);
         } else {
             if (!array_key_exists($sizeKey, $validSizes)) {
                 return $this->previewVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey, 'raw', $thumbnail);
@@ -177,16 +188,32 @@ class MediaService
 
                 for ($i = count($validSizesKeys) - 1; $i >= 0; $i--) {
                     $item = $validSizes[$validSizesKeys[$i]];
-                    if (file_exists($item['path'])) return VideoStreamer::streamFile($item['path']);
+                    if (file_exists($item['path'])) {
+                        if ($isDownload) {
+                            $video = new Video();
+                            $video->setPath($mediaPath);
+                            return $video;
+                        }
+                        return $this->getPreviewOrDownload($item['path'], $isDownload);
+                    }
                 }
 
                 return $this->previewVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey, 'raw', $thumbnail);
             }
-
-            return VideoStreamer::streamFile($validSizes[$sizeKey]['path']);
+            return $this->getPreviewOrDownload($validSizes[$sizeKey]['path'], $isDownload);
         }
 
         return $mediaPath;
+    }
+
+    private function getPreviewOrDownload($path, $isDownload)
+    {
+        if ($isDownload) {
+            $video = new Video();
+            $video->setPath($path);
+            return $video;
+        }
+        return VideoStreamer::streamFile($path);
     }
 
     private function previewImage($mediaPath, $size)
