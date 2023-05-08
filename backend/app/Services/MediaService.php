@@ -13,6 +13,7 @@ use Iman\Streamer\VideoStreamer;
 use Intervention\Image\Facades\Image;
 use Intervention\Image\ImageManager;
 use Imagine;
+use Iman\Streamer\Video;
 use stdClass;
 
 
@@ -65,7 +66,7 @@ class MediaService
      * @return mixed
      * @throws \Exception
      */
-    public function preview(Media $media, $availableSizes, $sizeKey = null, $size = null)
+    public function preview(Media $media, $availableSizes, $sizeKey = null, $size = null, $isDownload = false)
     {
         $mimeType = $media->mime_type;
         $mediaPath = $media->getPath();
@@ -74,7 +75,9 @@ class MediaService
         $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.png';
 
         if ($fileType === 'video') {
-            return $this->previewVideo($media->id, $media->file_name, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail);
+            return $isDownload
+                ? $this->downloadVideo($media->id, $media->file_name, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail)
+                : $this->previewVideo($media->id, $media->file_name, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail);
         } else if($fileType === 'image') {
             return $this->previewImage($mediaPath, $size);
         } else {
@@ -119,8 +122,17 @@ class MediaService
         return $sizesRange;
     }
 
+    private function downloadVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey = null, $size = null, $thumbnail = null)
+    {
+        $video = new Video();
+        $video->setPath($mediaPath);
+        return $video;
+
+    }
+
     private function previewVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey = null, $size = null, $thumbnail = null)
     {
+        return  VideoStreamer::streamFile($mediaPath);
         // Gets the real resolution of the video, and updates the available resolutions, according the computed aspect ratio
         $originalRes = $this->getVideoDimensions($mediaPath);
         $this->updateAvailableSizes($availableSizes, $originalRes['aspect_ratio'], $mediaPath, $mediaFileName);
