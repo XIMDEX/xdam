@@ -36,11 +36,11 @@ class ExploreCoursesResource extends JsonResource
                 $resources->whereIn('data->description->language', $lang);
             }
             if (count($corporations) > 0) {
-                foreach ($corporations as $corporation) {
-                    $resources->where(function($query) use ($corporation) {
+                $resources->where(function($query) use ($corporations) {
+                    foreach ($corporations as $corporation) {
                         $query->orWhereJsonContains('data->description->corporations', $corporation);
-                    });
-                }
+                    }
+                });
             }
             $resources = $resources->get();
         } catch (\Throwable $th) {

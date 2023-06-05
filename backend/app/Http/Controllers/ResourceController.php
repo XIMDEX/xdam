@@ -463,8 +463,29 @@ class ResourceController extends Controller
     {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         $media = Media::findOrFail($mediaId);
+
         $mimes = new MimeTypes;
         $fileName = $damUrl . "." . $mimes->getExtension($media->mime_type); // json
+        $mediaFileName = $fileName;
+        $size = ($size === null ? 'default' : $size);
+
+        $mimeType = $media->mime_type;
+        $fileType = explode('/', $mimeType)[0];
+
+        if ($fileType == 'video' || $fileType == 'image') {
+            $sizeValue = $this->getResourceSize($fileType, $size);
+            $availableSizes = $this->getAvailableResourceSizes();
+            $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue, true);
+
+            if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small']))) {
+                $response = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
+                $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"', $mediaFileName));
+                return $response;
+            }
+
+            return response()->download($compressed->getPath(), null, ['Content-Disposition' => sprintf('attachment; filename="%s"', $mediaFileName)]);
+        }
+
         $thumb = $this->getThumbnailBySize($size, $media);
         if ($thumb) {
             return response()->download($thumb, $fileName);
