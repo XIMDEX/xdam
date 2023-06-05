@@ -103,7 +103,7 @@ class ResourceController extends Controller
             preg_match_all('!\d+!', $size, $matches);
             $thumbSize = implode("x", $matches[0]);
             foreach ($supportedThumbnails as $supportedThumbnail) {
-                if (strpos($supportedThumbnail, $thumbSize) !== false) {
+                if ($thumbSize != '' && strpos($supportedThumbnail, $thumbSize) !== false) {
                     return $media->getPath($supportedThumbnail);
                 }
             }

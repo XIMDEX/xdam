@@ -30,7 +30,7 @@ class CreateTableCorporations extends Migration
             'type' => 'course'
         ]);
 
-        DB::statement(`UPDATE dam_resources SET data = JSON_SET(data, '$.description.corporations', JSON_ARRAY("Public")) WHERE type='course'; `);
+        DB::statement("UPDATE dam_resources SET data = JSON_SET(data, '$.description.corporations', JSON_ARRAY('Public')) WHERE type='course';");
     }
 
     /**
@@ -42,6 +42,6 @@ class CreateTableCorporations extends Migration
     {
         Schema::dropIfExists('table_corporations');
 
-        DB::statement(`UPDATE dam_resources SET data = JSON_REMOVE(data, '$.description.corporations') WHERE JSON_EXTRACT(data, '$.description.corporations') IS NOT NULL AND type='course';`);
+        DB::statement("UPDATE dam_resources SET data = JSON_REMOVE(data, '$.description.corporations') WHERE JSON_EXTRACT(data, '$.description.corporations') IS NOT NULL AND type='course';");
     }
 }
