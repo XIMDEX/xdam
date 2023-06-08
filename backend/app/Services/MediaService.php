@@ -97,7 +97,11 @@ class MediaService
     private function updateAvailableSizes(&$availableSizes, $aspectRatio, $mediaPath, $mediaFileName)
     {
         foreach ($availableSizes['sizes_scale'] as $k) {
-            $availableSizes['sizes'][$k]['width'] = ceil($availableSizes['sizes'][$k]['height'] / $aspectRatio);
+            if ($aspectRatio >= 1) { // Horizontal
+                $availableSizes['sizes'][$k]['width'] = ceil($availableSizes['sizes'][$k]['height'] * $aspectRatio);
+            } else { // Vertical
+                $availableSizes['sizes'][$k]['width'] = ceil($availableSizes['sizes'][$k]['height'] / $aspectRatio);
+            }
 
             if ($availableSizes['sizes'][$k]['width'] % 2 !== 0) $availableSizes['sizes'][$k]['width'] -= 1;
 
@@ -218,10 +222,10 @@ class MediaService
 
             if ($size['height'] >= $height && $size['width'] >= $width) return $image;
 
-            if ($aspectRatio >= 1.0) {
+            if ($aspectRatio >= 1.0) { // Horizontal
                 $newWidth = $size['width'];
                 $newHeight = $newWidth / $aspectRatio;
-            } else {
+            } else { // Vertical
                 $newHeight = $size['height'];
                 $newWidth = $newHeight * $aspectRatio;
             }
@@ -232,9 +236,8 @@ class MediaService
         return $image;
     }
 
-    public function saveVideoSnapshot($thumbPath, $videoSourcePath)
-    {
-        $sec = 10;
+    public function saveVideoSnapshot($thumbPath, $videoSourcePath, $sec = 10)
+    {        
         $ffmpeg = FFMpeg::create([
             'ffmpeg.binaries'  => config('app.ffmpeg_path'),
             'ffprobe.binaries' => config('app.ffprobe_path')
@@ -270,7 +273,7 @@ class MediaService
         $mediaList = $this->list($model, $collection);
 
         $media = Media::findOrFail($mediaList[0]->id);
-        $mimeType = $media->mime_type;
+        $mimeType = $media->mime_type;        
         $mediaPath = $media->getPath();
         $fileType = explode('/', $mimeType)[0];
         if($fileType == 'video') {
