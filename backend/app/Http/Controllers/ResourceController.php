@@ -336,7 +336,7 @@ class ResourceController extends Controller
             $availableSizes = $this->getAvailableResourceSizes();
             $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue);
 
-            if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small']))) {
+            if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small', 'thumbnail']))) {
                 $response = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
                 $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
                 return $response;
@@ -369,14 +369,16 @@ class ResourceController extends Controller
     {
         $sizes = [
             'image' => [
-                'allowed_sizes' => ['small', 'medium', 'raw', 'default'],
-                'sizes' => [
+                'allowed_sizes' => ['thumbnail', 'small', 'medium', 'raw', 'default'],
+                'sizes' => [                    
+                    'thumbnail' => array('width' => 256, 'height' => 144),
                     'small'     => array('width' => 426, 'height' => 240),
                     'medium'    => array('width' => 854, 'height' => 480),
                     'raw'       => 'raw',
                     'default'   => array('width' => 1280, 'height' => 720)
                 ],
                 'qualities' => [
+                    'thumbnail' => 25,
                     'small'     => 25,
                     'medium'    => 50,
                     'raw'       => 'raw',
@@ -396,12 +398,14 @@ class ResourceController extends Controller
                     'hd'            => array('width' => 1280, 'height' => 720, 'name' => '720p'),
                     // 'full_hd'       => array('width' => 1920, 'height' => 1080, 'name' => '1080p'),
                     'raw'           => 'raw',
-                    'thumbnail'     => 'thumbnail',
+                    //'thumbnail'     => 'thumbnail',
+                    'thumbnail'     => array('width' => 256, 'height' => 144, 'name' => '144p'),
                     'small'         => array('width' => 426, 'height' => 240, 'name' => '240p'),
                     'medium'        => array('width' => 854, 'height' => 480, 'name' => '480p'),
                     'default'       => 'raw'
                 ],
                 'qualities' => [
+                    'thumbnail' => 25,
                     'small'     => 25,
                     'medium'    => 50,
                     'raw'       => 'raw',
@@ -477,7 +481,7 @@ class ResourceController extends Controller
             $availableSizes = $this->getAvailableResourceSizes();
             $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue, true);
 
-            if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small']))) {
+            if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small', 'thumbnail']))) {
                 $response = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
                 $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"', $mediaFileName));
                 return $response;
