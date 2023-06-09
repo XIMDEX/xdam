@@ -353,15 +353,17 @@ class ResourceService
             if ($type == ResourceType::image ) {
                 $mediaUrl = $this->mediaService->getMediaURL(new Media(), $resource_data['id']);
                 if ($mediaUrl) {
-                    $caption = $this->xowlService->getCaption($mediaUrl, env('BOOK_DEFAULT_LANGUAGE', 'en'));
-                    if ($caption) {
-                        $params['data']->description->description = $caption;
-                        $newResource->update(['data' => $params['data']]);
+                    try {
+                        $caption = $this->xowlService->getCaption($mediaUrl, env('BOOK_DEFAULT_LANGUAGE', 'en'));
+                        if ($caption) {
+                            $params['data']->description->description = $caption;
+                            $newResource->update(['data' => $params['data']]);
+                        }
+                    } catch (\Exception $exc) {
+                        // failed captioning image -- continue process
                     }
                 }
             }
-
-
             $newResource = $newResource->fresh();
             $this->solr->saveOrUpdateDocument($newResource);
             return $newResource;
