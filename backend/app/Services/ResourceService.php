@@ -13,7 +13,9 @@ use App\Models\Workspace;
 use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Services\Solr\SolrService;
 use App\Services\ExternalApis\KakumaService;
+use App\Services\ExternalApis\XowlService;
 use App\Services\ExternalApis\XTagsService;
+use App\Utils\DamUrlUtil;
 use App\Utils\Texts;
 use App\Utils\Utils;
 use DirectoryIterator;
@@ -55,6 +57,11 @@ class ResourceService
      */
     private XTagsService $xtagService;
 
+    /**
+     * @var XTagService
+     */
+    private XowlService $xowlService;
+
     const PAGE_SIZE = 30;
 
     /**
@@ -64,7 +71,7 @@ class ResourceService
      * @param CategoryService $categoryService
      */
     public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService,
-                                KakumaService $kakumaService, XTagsService $xtagService)
+                                KakumaService $kakumaService, XTagsService $xtagService, XowlService $xowlService)
     {
         $this->mediaService = $mediaService;
         $this->categoryService = $categoryService;
@@ -72,6 +79,7 @@ class ResourceService
         $this->workspaceService = $workspaceService;
         $this->kakumaService = $kakumaService;
         $this->xtagService = $xtagService;
+        $this->xowlService = $xowlService;
     }
 
     private function saveAssociateFile($type, $params, $model)
@@ -183,6 +191,7 @@ class ResourceService
             }
         }
     }
+
 
     /**
      * @param null $type
@@ -410,6 +419,19 @@ class ResourceService
             $this->linkCategoriesFromJson($newResource, $params['data']);
             $this->linkTagsFromJson($newResource, $params['data']);
             $this->saveAssociatedFiles($newResource, $params);
+
+            if ($type == ResourceType::image ) {
+                $mediaUrl = $this->mediaService->getMediaURL(new Media(), $resource_data['id']);
+                if ($mediaUrl) {
+                    $caption = $this->xowlService->getCaption($mediaUrl, env('BOOK_DEFAULT_LANGUAGE', 'en'));
+                    if ($caption) {
+                        $params['data']->description->description = $caption;
+                        $newResource->update(['data' => $params['data']]);
+                    }
+                }
+            }
+
+
             $newResource = $newResource->fresh();
             $this->solr->saveOrUpdateDocument($newResource);
             return $newResource;
