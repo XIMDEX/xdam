@@ -5,6 +5,7 @@ use App\Enums\MediaType;
 use App\Models\DocumentRendererKey;
 use App\Models\Media;
 use App\Models\PendingVideoCompressionTask;
+use App\Utils\DamUrlUtil;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
 use Illuminate\Database\Eloquent\Model;
@@ -58,6 +59,12 @@ class MediaService
             $files[] = $itemClass;
         }
         return $files;
+    }
+
+    public function getMediaURL(Model $model, $model_id)
+    {
+        $media = $model->where('model_id', $model_id)->first();
+        return $media ? url('resource/render/' . DamUrlUtil::generateDamUrl($media,  $media->custom_properties['parent_id'])) : false;
     }
 
     /**

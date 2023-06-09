@@ -12,6 +12,11 @@ use App\Models\Media;
 use App\Models\Workspace;
 use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Services\Solr\SolrService;
+use App\Services\ExternalApis\KakumaService;
+use App\Services\ExternalApis\XowlService;
+use App\Services\ExternalApis\XTagsService;
+use App\Utils\DamUrlUtil;
+use App\Utils\Texts;
 use App\Utils\Utils;
 use DirectoryIterator;
 use Exception;
@@ -40,6 +45,21 @@ class ResourceService
      */
     private WorkspaceService $workspaceService;
 
+    /**
+     * @var KakumaService
+     */
+    private KakumaService $kakumaService;
+
+    /**
+     * @var XTagService
+     */
+    private XTagsService $xtagService;
+
+    /**
+     * @var XTagService
+     */
+    private XowlService $xowlService;
+
     const PAGE_SIZE = 30;
 
     /**
@@ -48,12 +68,16 @@ class ResourceService
      * @param SolrService $solr
      * @param CategoryService $categoryService
      */
-    public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService)
+    public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService,
+                                KakumaService $kakumaService, XTagsService $xtagService, XowlService $xowlService)
     {
         $this->mediaService = $mediaService;
         $this->categoryService = $categoryService;
         $this->solr = $solr;
         $this->workspaceService = $workspaceService;
+        $this->kakumaService = $kakumaService;
+        $this->xtagService = $xtagService;
+        $this->xowlService = $xowlService;
     }
 
     private function saveAssociateFile($type, $params, $model)
@@ -140,7 +164,7 @@ class ResourceService
         }
     }
 
-    private function setDefaultLanguageIfNeeded(array $params): void 
+    private function setDefaultLanguageIfNeeded(array $params): void
     {
         if( isset($params['type']) && $params["type"] === ResourceType::book && !property_exists($params["data"]->description, "lang")) {
             $params["data"]->description->lang = getenv('BOOK_DEFAULT_LANGUAGE');
@@ -165,6 +189,7 @@ class ResourceService
             }
         }
     }
+
 
     /**
      * @param null $type
@@ -200,7 +225,7 @@ class ResourceService
      * @param String[] $query
      * return Collection
      */
-    public function queryFilter($queryFilters) 
+    public function queryFilter($queryFilters)
     {
 
         return DamResource::whereRaw($queryFilters)->get();
@@ -250,7 +275,7 @@ class ResourceService
         if (array_key_exists("FilesToRemove", $params)) {
             foreach ($params["FilesToRemove"] as $mediaID) {
                 $mediaResult = Media::where('id', $mediaID)->first();
-                
+
                 if ($mediaResult !== null) {
                     $this->deleteAssociatedFile($resource, $mediaResult);
                 }
@@ -324,6 +349,19 @@ class ResourceService
             $this->linkCategoriesFromJson($newResource, $params['data']);
             $this->linkTagsFromJson($newResource, $params['data']);
             $this->saveAssociatedFiles($newResource, $params);
+
+            if ($type == ResourceType::image ) {
+                $mediaUrl = $this->mediaService->getMediaURL(new Media(), $resource_data['id']);
+                if ($mediaUrl) {
+                    $caption = $this->xowlService->getCaption($mediaUrl, env('BOOK_DEFAULT_LANGUAGE', 'en'));
+                    if ($caption) {
+                        $params['data']->description->description = $caption;
+                        $newResource->update(['data' => $params['data']]);
+                    }
+                }
+            }
+
+
             $newResource = $newResource->fresh();
             $this->solr->saveOrUpdateDocument($newResource);
             return $newResource;
@@ -749,7 +787,7 @@ class ResourceService
         $resource = DamResource::where('id', $resourceID)
                         ->where('collection_id', $collectionID)
                         ->first();
-        
+
         return $resource;
     }
 
@@ -757,7 +795,7 @@ class ResourceService
     {
         $collection = ModelsCollection::where('id', $collectionID)
                         ->first();
-        
+
         return $collection;
     }
 }
