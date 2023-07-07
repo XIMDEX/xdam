@@ -913,7 +913,13 @@ class ResourceService
 
         return $collection;
     }
-
+    
+    /**
+     * Get the caption for an image.
+     *
+     * @param string $mediaUrl The URL of the image.
+     * @return string The caption for the image.
+     */
     private function getCaptionFromImage(string $mediaUrl){
             try {
                 return $caption = $this->xowlService->getCaptionImage($mediaUrl, env('BOOK_DEFAULT_LANGUAGE', 'en')) ?? "";
