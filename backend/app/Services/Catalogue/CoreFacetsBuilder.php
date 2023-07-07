@@ -51,6 +51,11 @@ class CoreFacetsBuilder {
             "activity" => [
                 "categories",
                 "active",
+                "isbn",
+                "unit",
+                "language_default",
+                "available_languages",
+                "assessments",
                 "workspaces",
                 // "lom",
                 // "lomes"
@@ -59,6 +64,9 @@ class CoreFacetsBuilder {
                 "categories",
                 "active",
                 "workspaces",
+                "isbn",
+                "unit",
+                "activities",
                 // "lom",
                 // "lomes"
             ],
@@ -68,7 +76,7 @@ class CoreFacetsBuilder {
                 "tags",
                 "workspaces",
                 "isbn",
-                "units",
+                "unit",
                 "lang",
                 // "lom",
                 // "lomes"

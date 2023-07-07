@@ -44,6 +44,30 @@
         },
         "active": {
           "type": "boolean"
+        },
+        "isbn": {
+          "name": "isbn",
+          "type": "array",
+          "format": "string",
+          "items": {
+            "type":"string"
+          }
+        },
+        "unit": {
+          "name": "unit",
+          "type": "array",
+          "format": "integer",
+          "items": {
+            "type":"integer"
+          }
+        },
+        "activities": {
+          "name": "activities",
+          "type": "array",
+          "format": "integer",
+          "items": {
+            "type":"integer"
+          }
         }
       }
     }

@@ -95,5 +95,17 @@
   "lomes": {
     "name": "lomes",
     "type": "text_general"
+  },
+  "isbn": {
+    "name": "isbn",
+    "type": "text_general"
+  },
+  "unit": {
+    "name": "unit",
+    "type": "pint"
+  },
+  "activities": {
+    "name": "activities",
+    "type": "pint"
   }
 }

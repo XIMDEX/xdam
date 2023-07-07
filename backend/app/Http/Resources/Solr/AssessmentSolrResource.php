@@ -58,7 +58,12 @@ class AssessmentSolrResource extends BaseSolrResource
             'created_at'            => $this->created_at,
             'updated_at'            => $this->updated_at,
             'lom'                   => $this->getLOMValues(),
-            'lomes'                 => $this->getLOMValues('lomes')
+            'lomes'                 => $this->getLOMValues('lomes'),
+            'unit'                  => $this->data->description->unit ?? $this->data->description->units ?? 0,
+            'isbn'                  => $this->data->description->isbn ?? $this->data->description->isbns ?? '',
+            'language_default'      => $this->data->description->language_default ?? getenv('BOOK_DEFAULT_LANGUAGE'),
+            'available_languages'   => $this->data->description->available_languages ?? [getenv('BOOK_DEFAULT_LANGUAGE')],
+            'activities'            => $this->data->description->activities ?? []
         ];
     }
 }

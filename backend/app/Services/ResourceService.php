@@ -400,10 +400,12 @@ class ResourceService
 
         if ($type == ResourceType::course) {
             $resource_data['id'] = $params['kakuma_id'];
+        } else if (isset($params['xeval_id'])) {
+            $resource_data['id'] = $params['xeval_id'];
         } else {
             $resource_data['id'] = Str::orderedUuid();
         }
-
+        $newResource = false;
         try {
             $newResource = DamResource::create($resource_data);
             $this->setResourceWorkspace($newResource, $wsp);
@@ -909,5 +911,12 @@ class ResourceService
                         ->first();
 
         return $collection;
+    }
+
+    public function countResources($type = null)
+    {
+        $query = (null !== $type) ? DamResource::where('type', $type) : DamResource::all();
+        return $query->count();
+
     }
 }
