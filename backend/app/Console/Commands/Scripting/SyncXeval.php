@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Scripting;
 
 use App\Models\Collection;
+use App\Models\DamResource;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Services\ExternalApis\XevalService;
@@ -167,6 +168,7 @@ class SyncXeval extends Command
                 foreach ($data['data'] as $resource) {
                     $resourcesBatch[] = $this->{$parseDataMethod}($resource, $collection->id);
                 }
+                $this->line("<options=bold;fg=cyan>Batch $batch</options=bold;fg=cyan>: <fg=cyan>Store on DAM</>");
                 $this->storeResources($resourcesBatch);
                 $page = $data['next_page'];
                 $batch++;
@@ -182,7 +184,12 @@ class SyncXeval extends Command
     private function storeResources($data)
     {
         foreach ($data as $resource) {
-            $this->resourceService->store($resource);
+            $damResource = DamResource::find($resource['xeval_id']);
+            if ($damResource) {
+                $this->resourceService->update($damResource, $resource);
+            } else {
+                $this->resourceService->store($resource);
+            }
         }
     }
 
