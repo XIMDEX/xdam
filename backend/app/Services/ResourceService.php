@@ -24,6 +24,8 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use App\Services\Solr\SolrConfig;
+
 
 class ResourceService
 {
@@ -51,6 +53,11 @@ class ResourceService
     private KakumaService $kakumaService;
 
     /**
+     * @var SolrConfig
+     */
+    private SolrConfig $solrConfig;
+
+    /**
      * @var XTagService
      */
     private XTagsService $xtagService;
@@ -64,7 +71,7 @@ class ResourceService
      * @param CategoryService $categoryService
      */
     public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService,
-                                KakumaService $kakumaService, XTagsService $xtagService)
+                                KakumaService $kakumaService, XTagsService $xtagService, SolrConfig $solrConfig)
     {
         $this->mediaService = $mediaService;
         $this->categoryService = $categoryService;
@@ -72,6 +79,7 @@ class ResourceService
         $this->workspaceService = $workspaceService;
         $this->kakumaService = $kakumaService;
         $this->xtagService = $xtagService;
+        $this->solrConfig = $solrConfig;
     }
 
     private function saveAssociateFile($type, $params, $model)
@@ -431,7 +439,7 @@ class ResourceService
                 $fileName = $fileinfo->getFilename();
                 $json_file = file_get_contents($path .'/'. $fileName);
                 $key = str_replace('.json', '', $fileName);
-                $resourceName = ucfirst(str_replace('_validator', '', $key));
+                $resourceName = ucfirst($this->solrConfig->getNameCoreConfig(str_replace('_validator', '', $key)));
                 $json = json_decode($json_file);
 
                 if (class_exists("App\\Services\\{$resourceName}Service")) {

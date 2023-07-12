@@ -126,7 +126,11 @@ class SolrService
     public function getClient(string $client)
     {
         if (!array_key_exists($client, $this->clients)) {
-            throw new Exception("There is no client $client");
+            $client = $this->getCoreNameVersioned($client);
+        }
+        
+        if (!array_key_exists($client, $this->clients)) {
+            throw new Exception("There is no client $client ". json_encode($this->clients));
         }
 
         return $this->clients[$client];
@@ -507,4 +511,9 @@ class SolrService
     {
         return $this->solrConfig->getCoreNameVersioned($solrCore, $solrVersion);
     }
+
+    public function getClientCoreAlias() {
+        return $this->solrConfig->getClientCoreAlias('lom');
+    }
+    
 }

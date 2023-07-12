@@ -52,10 +52,10 @@ class SolrConfig
         $eventDispatcher = new EventDispatcher();
         $clients = [];
 
-        foreach ($this->solrFullConfig as $config) {
+        foreach ($this->solrFullConfig as $nameCore => $config) {
             $endpointCore = $config['endpoint']['core'];
             $auxCore = $this->getCoreNameVersioned($endpointCore, $this->getCoreVersion($solrVersion));
-            $this->appendSolrConfigAlias($endpointCore, $auxCore);
+            $this->appendSolrConfigAlias($endpointCore, $auxCore, $nameCore);
 
             $solrConfig = [
                 'endpoint' => [
@@ -204,9 +204,13 @@ class SolrConfig
         foreach ($this->clients as $client) {
             //exclude cores
             $clientCoreName = $client->getEndpoint()->getOptions()['core'];
-            $auxClientCoreName = $this->getClientCoreAlias($clientCoreName);
+            $aliasClient = $this->getClientCoreAlias($clientCoreName);
 
-            if (!array_key_exists($auxClientCoreName, config('solarium.connections', []))) {
+            $isValid = false;
+            foreach ($aliasClient[$clientCoreName] as $auxClientCoreName) {
+                $isValid = !$isValid && !array_key_exists($auxClientCoreName, config('solarium.connections', []));
+            }
+            if (!$isValid) {
                 echo "Client detected not valid for xdam \n";
                 continue;
             }
@@ -231,23 +235,32 @@ class SolrConfig
         return "$counter instances has been cleared";
     }
 
-    private function appendSolrConfigAlias($solrCore, $solrCoreAlias)
+    private function appendSolrConfigAlias($solrCore, $solrCoreAlias, $nameCore)
     {
         if (!array_key_exists($solrCore, $this->solrClientsAlias)) {
             $this->solrClientsAlias[$solrCore] = [];
+            $aliasClient = [];
+        } else {
+            $aliasClient = $this->solrClientsAlias[$solrCore];
         }
 
-        if (!in_array($solrCore, $this->solrClientsAlias)) {
-            $this->solrClientsAlias[$solrCore][] = $solrCore;
+        if (!array_key_exists($nameCore, $aliasClient)) {
+            $aliasClient[] = $nameCore;
         }
 
-        if (!in_array($solrCoreAlias, $this->solrClientsAlias)) {
-            $this->solrClientsAlias[$solrCore][] = $solrCoreAlias;
+        if (!in_array($solrCore, $aliasClient)) {
+            $aliasClient[] = $solrCore;
         }
+
+        if (!in_array($solrCoreAlias, $aliasClient)) {
+            $aliasClient[] = $solrCoreAlias;
+        }
+        $this->solrClientsAlias[$solrCore]= array_unique($aliasClient);
     }
 
-    private function getClientCoreAlias($solrCore)
+    public function getClientCoreAlias($solrCore)
     {
+        return $this->solrClientsAlias;
         foreach ($this->solrClientsAlias as $key => $value) {
             foreach ($value as $item) {
                 if ($item === $solrCore) return $key;
@@ -329,9 +342,21 @@ class SolrConfig
 
     public function getCoreNameVersioned($solrCore, $solrVersion = null)
     {
+        if (isset($this->solrFullConfig[$solrCore]['endpoint']['core'])) $solrCore = $this->solrFullConfig[$solrCore]['endpoint']['core'];
         $solrVersion = (gettype($solrVersion) === 'array' && count($solrVersion) > 0 ? $solrVersion[0] : $solrVersion);
         if ($solrVersion === null || $solrVersion === '') return $solrCore;
         if (gettype($solrVersion) === 'array' && count($solrVersion) === 0) return $solrCore;
         return $solrCore . '_' . $solrVersion;
+    }
+    
+    public function getNameCoreConfig($type) {
+        $core_name = false;
+        foreach ($this->solrFullConfig as $core => $data) {
+            if ($data['endpoint']['core'] == $type) {
+                $core_name = $core;
+            }
+        }
+        
+        return $core_name ? $core_name : $type;
     }
 }

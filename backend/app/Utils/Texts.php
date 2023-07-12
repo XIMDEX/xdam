@@ -31,6 +31,12 @@ class Texts {
         return self::getText(self::getKey($key, self::TYPE_FACETS, $client), $lang, $key, $replace, $default);
     }
 
+    public static function facets(string $key, string $lang = null, array $replace = [], $default = null)
+    {
+        $client = env('APP_CLIENT') ?? self::DEFAULT;
+        return self::getText(self::getKey($key, self::TYPE_FACETS, $client), $lang, $key, $replace, $default);
+    }
+
     private static function getKey($key, $type, $client = self::DEFAULT)
     {
         $key_array = explode(".", $key);

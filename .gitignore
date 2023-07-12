@@ -4,3 +4,5 @@
 **backend/node_modules/*
 **/vendor/*
 backend/composer.phar
+backend/storage/media-library/*
+backend/php7.4.log

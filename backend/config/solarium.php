@@ -10,7 +10,7 @@ return [
                 'host'      => env('SOLR_HOST', 'localhost'),
                 'port'      => env('SOLR_PORT', '8983'),
                 'path'      => env('SOLR_PATH', '/'),
-                'core'      => 'activity',
+                'core'      => 'activity_v3',
             ],
             'resource'      => 'ActivitySolrResource',
             'classHandler'  => 'ActivityHandler',
@@ -22,7 +22,7 @@ return [
                 'host'      => env('SOLR_HOST', 'localhost'),
                 'port'      => env('SOLR_PORT', '8983'),
                 'path'      => env('SOLR_PATH', '/'),
-                'core'      => 'assessment',
+                'core'      => 'assessment_v3',
             ],
             'resource'      => 'AssessmentSolrResource',
             'classHandler'  => 'AssessmentHandler',
@@ -34,7 +34,7 @@ return [
                 'host'      => env('SOLR_HOST', 'localhost'),
                 'port'      => env('SOLR_PORT', '8983'),
                 'path'      => env('SOLR_PATH', '/'),
-                'core'      => 'course',
+                'core'      => 'course_v3',
             ],
             'resource'      => 'CourseSolrResource',
             'classHandler'  => 'CourseHandler',
@@ -46,7 +46,7 @@ return [
                 'host'      => env('SOLR_HOST', 'localhost'),
                 'port'      => env('SOLR_PORT', '8983'),
                 'path'      => env('SOLR_PATH', '/'),
-                'core'      => 'multimedia',
+                'core'      => 'multimedia_v3',
                 'timeout'   => 120,
             ],
             'resource'      => 'MultimediaSolrResource',
@@ -59,12 +59,12 @@ return [
                 'host'      => env('SOLR_HOST', 'localhost'),
                 'port'      => env('SOLR_PORT', '8983'),
                 'path'      => env('SOLR_PATH', '/'),
-                'core'      => 'book',
+                'core'      => 'book_v3',
             ],
             'resource'      => 'BookSolrResource',
             'classHandler'  => 'BookHandler',
             'accepts_types' => [ResourceType::book]
-        ],
+        ]],
         'document'  => [
             'endpoint'      => [
                 'scheme'    => 'http', # or https
@@ -98,7 +98,6 @@ return [
             ],
             'resource'      => 'LOMSolrResource',
             'classHandler'  => 'LOMHandler'
-        ]
     ],
     'solr_validators_folder'    => env('SOLR_VALIDATORS_FOLDER', ''),
     'solr_schemas_folder'       => env('SOLR_SCHEMAS_FOLDER', ''),
