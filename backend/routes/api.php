@@ -32,10 +32,8 @@ use App\Services\Solr\SolrService;
 */
 
 Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
-    Route::get('temp', function(SolrService $solrService) {
-
-        $aa = $solrService->getClientCoreAlias('lom'); 
-        return response()->json(['pdrueba' =>$aa]);
+    Route::get('temp', function() { 
+        return response()->json(['status' => 'OK']);
     });
 
     Route::group(['prefix' => 'cdn'], function() {
