@@ -104,7 +104,7 @@
   },
   "unit": {
     "name": "unit",
-    "type": "pint",
+    "type": "text_general",
     "indexed": true,
     "multiValued": true
   },

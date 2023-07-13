@@ -50,6 +50,7 @@ return [
         'type' => 'Type',
         'types' => 'Types',
         'units' => 'Units',
+        'unit' => 'Unit',
         'language' => 'Language',
         'is_deleted' => 'Is deleted?',
         'corporations' => 'Organizations',

@@ -50,6 +50,7 @@ return [
         'type' => 'Tipo',
         'types' => 'Tipos',
         'units' => 'Unidades',
+        'unit' => 'Unidad',
         'language' => 'Idioma',
         'is_deleted' => '¿Está borrado?',
         'corporations' => 'Organizaciones',

@@ -56,9 +56,9 @@
         "unit": {
           "name": "unit",
           "type": "array",
-          "format": "integer",
+          "format": "string",
           "items": {
-            "type":"integer"
+            "type":"string"
           }
         },
         "language_default": {
