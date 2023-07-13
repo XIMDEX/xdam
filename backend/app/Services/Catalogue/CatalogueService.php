@@ -10,6 +10,7 @@ use App\Services\OrganizationWorkspace\WorkspaceService;
 use phpDocumentor\GraphViz\Exception;
 use stdClass;
 use App\Utils\Texts;
+use App\Services\Solr\SolrConfig;
 
 class CatalogueService
 {
@@ -17,6 +18,11 @@ class CatalogueService
      * @var SolrService
      */
     private SolrService $solrService;
+    
+    /**
+     * @var SolrConfig
+     */
+    private SolrConfig $solrConfig;
 
     /**
      * @var WorkspaceService
@@ -28,10 +34,11 @@ class CatalogueService
      * @param SolrService $solrService
      * @param WorkspaceService $workspaceService
      */
-    public function __construct(SolrService $solrService, WorkspaceService $workspaceService)
+    public function __construct(SolrService $solrService, WorkspaceService $workspaceService, SolrConfig $solrConfig)
     {
         $this->solrService = $solrService;
         $this->workspaceService = $workspaceService;
+        $this->solrConfig = $solrConfig;
     }
 
     public function indexByCollection($pageParams, $sortParams, $facetsFilter, $collection): stdClass
@@ -58,7 +65,7 @@ class CatalogueService
     {
         if (!$collection instanceof Collection) return $data;
 
-        $type = ucfirst($collection->solr_connection);
+        $type = ucfirst($this->solrConfig->getNameCoreConfig($collection->solr_connection));
 
         if (class_exists("App\\Services\\{$type}Service")) {
             $resource_service = app("App\\Services\\{$type}Service");

@@ -17,6 +17,9 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkspaceController;
 
+
+use App\Services\Solr\SolrService;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -29,8 +32,8 @@ use App\Http\Controllers\WorkspaceController;
 */
 
 Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
-    Route::get('temp', function() {
-        return response()->json(['prueba' => __('facets.DEFAULT.categories')]);
+    Route::get('temp', function() { 
+        return response()->json(['status' => 'OK']);
     });
 
     Route::group(['prefix' => 'cdn'], function() {
