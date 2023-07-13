@@ -57,7 +57,7 @@ class Texts {
     public static function isAvailableLanguage($lang)
     {
         $client = env('APP_CLIENT') ?? self::DEFAULT;
-        $lang_available = config('constants.' . $client . '.languages');
+        $lang_available = config('constants.' . $client . '.languages') ?? config('constants.DEFAULT.languages');
         return in_array($lang, $lang_available);
     }
 }
