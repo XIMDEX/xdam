@@ -82,6 +82,9 @@ class SolrService
         $connection = $collection->solr_connection;
 
         if ($connection) {
+            if (!array_key_exists($connection, $this->clients)) {
+                $connection = $this->getCoreNameVersioned($connection);
+            }
             if (array_key_exists($connection, $this->clients)) {
                 return $this->clients[$connection];
             } else {
@@ -128,7 +131,7 @@ class SolrService
         if (!array_key_exists($client, $this->clients)) {
             $client = $this->getCoreNameVersioned($client);
         }
-        
+
         if (!array_key_exists($client, $this->clients)) {
             throw new Exception("There is no client $client ". json_encode($this->clients));
         }
@@ -515,5 +518,5 @@ class SolrService
     public function getClientCoreAlias() {
         return $this->solrConfig->getClientCoreAlias('lom');
     }
-    
+
 }
