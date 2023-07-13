@@ -16,7 +16,7 @@ class FacetManager
     private $facetLists;
     const UNLIMITED_FACETS_VALUES = -1;
     const RADIO_FACETS = ['active', 'aggregated', 'internal', 'internal', 'external', 'isFree', 'is_deleted'];
-    
+
     /**
      * @var SolrConfig
      */
@@ -126,7 +126,7 @@ class FacetManager
                 foreach ($facet as $valueFaceSet => $count) {
                         $facetItem = new \stdClass();
                         $facetItem->key = $facetKey['name'];
-                        $facetItem->label = Texts::web($facetLabel);
+                        $facetItem->label = Texts::facets($facetLabel);
                         $isSelected = false;
 
                         // if it exists in the parameter filter, mark it as selected
