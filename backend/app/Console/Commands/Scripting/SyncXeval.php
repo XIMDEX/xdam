@@ -159,29 +159,31 @@ class SyncXeval extends Command
         if ($page == 0) $page = 1;
 
         $this->line("<fg=green>Synchronized $countDAM of $countXEVAL $type</>");
+        $progressBar = $this->output->createProgressBar($countXEVAL);
+        $progressBar->advance($countDAM);
         try {
             $batch = 1;
             while (!$this->stopSync() || null !== $page) {
-                $this->line("<options=bold;fg=blue>Batch $batch</options=bold;fg=blue>: <fg=blue>Synchronizing $this->page_size $type</>");
                 $data = $this->{$requestMethod}($page, $this->page_size);
                 $resourcesBatch = [];
                 foreach ($data['data'] as $resource) {
                     $resourcesBatch[] = $this->{$parseDataMethod}($resource, $collection->id);
                 }
-                $this->line("<options=bold;fg=cyan>Batch $batch</options=bold;fg=cyan>: <fg=cyan>Store on DAM</>");
-                $this->storeResources($resourcesBatch);
+                $this->storeResources($resourcesBatch, $progressBar);
                 $page = $data['next_page'];
                 $batch++;
                 $countDAM++;
-                $this->line("<fg=green>Synchronized $countDAM of $countXEVAL $type</>");
             }
+            $status = $countDAM == $countXEVAL ? 'finished' : 'stopped';
+            $this->info("Synchronization $status. Resources on XDAM $countDAM of $countXEVAL");
+            $progressBar->finish();
         } catch (\Throwable $th) {
             throw $th;
         }
 
     }
 
-    private function storeResources($data)
+    private function storeResources($data, &$progressBar)
     {
         foreach ($data as $resource) {
             $damResource = DamResource::find($resource['xeval_id']);
@@ -190,6 +192,7 @@ class SyncXeval extends Command
             } else {
                 $this->resourceService->store($resource);
             }
+            $progressBar->advance();
         }
     }
 
