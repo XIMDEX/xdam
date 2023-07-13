@@ -80,6 +80,10 @@
           "items": {
             "type":"integer"
           }
+        },
+        "xeval_id": {
+            "type": "string",
+            "format": "string"
         }
       }
     }

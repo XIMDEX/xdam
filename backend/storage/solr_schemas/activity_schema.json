@@ -50,6 +50,14 @@
     "required": true,
     "stored": true
   },
+  "xeval_id": {
+    "name": "xeval_id",
+    "type": "string",
+    "multiValued": false,
+    "indexed": true,
+    "required": true,
+    "stored": true
+  },
   "name": {
     "name": "name",
     "type": "text_es_custom"

@@ -408,8 +408,6 @@ class ResourceService
 
         if ($type == ResourceType::course) {
             $resource_data['id'] = $params['kakuma_id'];
-        } else if (isset($params['xeval_id'])) {
-            $resource_data['id'] = $params['xeval_id'];
         } else {
             $resource_data['id'] = Str::orderedUuid();
         }

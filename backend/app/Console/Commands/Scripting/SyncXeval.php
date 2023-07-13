@@ -205,6 +205,11 @@ class SyncXeval extends Command
             'data' => new stdClass(),
             'status' => $activity['status'] === 'ACTIVE'
         ];
+        $assessments = [];
+        $_assessments = array_column($activity['assessments'], 'id');
+        foreach ($$_assessments as $assessment_id) {
+            $assessments[] = intval($assessment_id);
+        }
         $data['data']->description = new stdClass();
         $data['data']->description->name = $activity['name'] ?? "Un-named ID {$activity['id']}";
         $data['data']->description->description = $activity['title'];
@@ -214,7 +219,7 @@ class SyncXeval extends Command
         $data['data']->description->isbn = $activity['isbn'];
         $data['data']->description->unit = $activity['units'];
         $data['data']->description->active = $activity['status'] === 'ACTIVE';
-        $data['data']->description->assessments = array_column($activity['assessments'], 'id');
+        $data['data']->description->assessments = $assessments;
         if ($activity['tags']) {
             $data['data']->description->tags = $activity['tags'];
         }
@@ -230,12 +235,17 @@ class SyncXeval extends Command
             'data' => new stdClass(),
             'active' => $assessment['status'] === 'ACTIVE'
         ];
+        $activities = [];
+        $_assessments = array_column($assessment['activities'], 'id');
+        foreach ($$_assessments as $assessment_id) {
+            $activities[] = intval($activities_id);
+        }
         $data['data']->description = new stdClass();
         $data['data']->description->name = $assessment['title'];
         $data['data']->description->isbn = $assessment['isbn'];
         $data['data']->description->unit = $assessment['units'];
         $data['data']->description->active =$assessment['status'] === 'ACTIVE';
-        $data['data']->description->activities = array_column($assessment['activities'], 'id');
+        $data['data']->description->activities = $activities;
         return $data;
     }
 }
