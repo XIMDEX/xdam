@@ -156,7 +156,7 @@ class SyncXeval extends Command
         $pagesXEVAL = floor($countXEVAL / $this->page_size);
         $pagesDAM = floor($countDAM / $this->page_size);
         if ($pagesDAM <= $pagesXEVAL) $page = $pagesDAM;
-        if ($page == 0) $page = 1;
+        if ($page == 0 || $this->force) $page = 1;
 
         $this->line("<fg=green>Synchronized $countDAM of $countXEVAL $type</>");
         $progressBar = $this->output->createProgressBar($countXEVAL);
