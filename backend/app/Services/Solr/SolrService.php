@@ -83,7 +83,7 @@ class SolrService
 
         if ($connection) {
             if (!array_key_exists($connection, $this->clients)) {
-                $client = $this->getCoreNameVersioned($connection);
+                $connection = $this->getCoreNameVersioned($connection);
             }
             if (array_key_exists($connection, $this->clients)) {
                 return $this->clients[$connection];
