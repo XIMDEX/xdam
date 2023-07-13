@@ -214,6 +214,7 @@ class SyncXeval extends Command
             $assessments[] = intval($assessment_id);
         }
         $data['data']->description = new stdClass();
+        $data['data']->description->xeval_id = $activity['id'];
         $data['data']->description->name = $activity['name'] ?? "Un-named ID {$activity['id']}";
         $data['data']->description->description = $activity['title'];
         $data['data']->description->type = $activity['type'];
@@ -244,6 +245,7 @@ class SyncXeval extends Command
             $activities[] = intval($activity_id);
         }
         $data['data']->description = new stdClass();
+        $data['data']->description->xeval_id = $assessment['id'];
         $data['data']->description->name = $assessment['title'];
         $data['data']->description->isbn = $assessment['isbn'];
         $data['data']->description->unit = $assessment['units'];
