@@ -78,7 +78,8 @@ class SyncXeval extends Command
             }
             echo 'finished' . PHP_EOL;
         } catch (\Throwable $th) {
-            throw new \Error('Failed command');
+            throw $th;
+            // throw new \Error('Failed command');
         }
     }
 
@@ -87,6 +88,7 @@ class SyncXeval extends Command
         try {
             $workspace = Workspace::find($user->selected_workspace);
             $collection = Collection::where('organization_id', $workspace->organization_id)->where('solr_connection', self::ACTIVITY)->first();
+            if (null == $collection) $collection = Collection::where('organization_id', $workspace->organization_id)->where('accept', self::ACTIVITY)->first();
             $countActivitiesDAM = $this->resourceService->countResources(self::ACTIVITY);
             $countActivitiesXEVAL = $this->getActivitiesFromXeval(1, 0);
             $countActivitiesXEVAL = $countActivitiesXEVAL['total'];
@@ -102,7 +104,8 @@ class SyncXeval extends Command
     {
         try {
             $workspace = Workspace::find($user->selected_workspace);
-            $collection = Collection::where('organization_id', $workspace->organization_id)->where('solr_connection', self::ACTIVITY)->first();
+            $collection = Collection::where('organization_id', $workspace->organization_id)->where('solr_connection', self::ASSESSMENT)->first();
+            if (null == $collection) $collection = Collection::where('organization_id', $workspace->organization_id)->where('accept', self::ASSESSMENT)->first();
             $countAssessmentsDAM = $this->resourceService->countResources(self::ASSESSMENT);
             $countAssessmentsXEVAL = $this->getAssessmentsFromXeval(1,0);
             $countAssessmentsXEVAL = $countAssessmentsXEVAL['total'];
