@@ -65,6 +65,48 @@ class SemanticService
         ];
     }
 
+
+    public function 
+    enhanceV2($semanticRequest){
+        $uuid = Str::orderedUuid()->toString();
+        $data = json_decode($semanticRequest['data']);
+        $dataFilter = $data->description;
+        if (
+            $dataFilter->language
+        ) {
+            $langcode =  $dataFilter->language;
+        } else {
+            $langcode = 'es';
+        }
+
+        $errors = [];
+        $resourceStructure = [];
+
+         $resources = [
+            $uuid => [
+                'id' => $uuid,
+                'uuid' => $uuid,
+                'title' => isset($dataFilter->title) ? $dataFilter->title : $uuid,
+                'body' => $this->cleanText($dataFilter->body),
+                'language' => $langcode,
+                'category' => isset($dataFilter->category) ? $dataFilter->category : 'Otros',
+                'external_url' => isset($dataFilter->external_url) ? $dataFilter->external_url : '',
+                'image' => isset($dataFilter->image) ? $dataFilter->image : ''
+            ]
+        ];
+
+        $this->concurrentPost($resources, $errors, $dataFilter->enhanced, $semanticRequest);
+
+        foreach ($resources as $resource) {
+            $resourceStructure[] = $this->createResourceStructure($resource, $semanticRequest);
+        }
+
+        return [
+            'resources' => $resourceStructure,
+            'errors' => $errors
+        ];
+    }
+
     public function automaticEnhance($semanticRequest)
     {
 
@@ -361,6 +403,73 @@ class SemanticService
             $promises[$uuid] = $this->client->postAsync($this->getUrl($enhance), $options);
         }
 
+        $responses = Utils::settle($promises)->wait();
+
+        foreach ($responses as $key => $response) {
+            if($response['state'] === 'rejected') {
+                $errors[$key] = [
+                    'id' => $resourcesInesJA[$key]['id'],
+                    'uuid' => $resourcesInesJA[$key]['uuid'],
+                    'title' => $resourcesInesJA[$key]['title'],
+                    'status' => 'FAIL'
+                ];
+                unset($resourcesInesJA[$key]);
+                continue;
+            }
+            $output_xowl = $response['value']->getBody()->getContents();
+            $result = json_decode($output_xowl);
+            $resourcesInesJA[$key]['enhanced_interactive'] = true; //1 == $params['extra_links'];
+            $resourcesInesJA[$key]['enhanced'] = true;
+            $resourcesInesJA[$key]['xtags'] = $result->data->xtags;
+            $resourcesInesJA[$key]['xtags_interlinked'] = $result->data->xtags_interlinked;
+            $resourcesInesJA[$key]['request_data'] = $result->request;
+        }
+    }
+
+    public function getDataOwl($data, &$errors, $enhance, $params = [])
+    {
+        $promise = [];
+
+        if (count($params) === 0) {
+            $options = [
+                "watson"=> ["features" => ["entities" => ["mentions"=> false]], "extra_links" => true],
+                "dbpedia" => ["confidence"=> 1, "extra_links" => true],
+                "comprehend" => ["LanguageCode"=> "es", "extra_links" => true],
+                "extra_links" => true
+            ];
+
+            if (isset($options[strtolower($enhance)])) {
+                $options = [
+                    $options[strtolower($enhance)]
+                ];
+                $options['extra_links'] = true;
+            }
+            $params = [
+                'options' => json_encode($options)
+            ];
+
+            if ('All' !== $enhance) {
+                $params['enhancer'] = $enhance;
+            }
+        }
+
+        $params['interactive'] = 1;
+        $params['extra_links'] = true;
+
+        $options = [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+            'form_params' => $params,
+            'timeout' => 60
+        ];
+
+      /*  foreach ($resourcesInesJA as $uuid=>$resource) {
+            $options['form_params']['text'] = $resource['body'];
+            $promises[$uuid] = $this->client->postAsync($this->getUrl($enhance), $options);
+        }*/
+        $options['form_params']['text'] = $data->body;
+        $promises[$data->uuid] = $this->client->postAsync($this->getUrl($enhance), $options);
         $responses = Utils::settle($promises)->wait();
 
         foreach ($responses as $key => $response) {

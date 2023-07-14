@@ -192,7 +192,7 @@ class SemanticController extends Controller
      */
     public function enhance(Request $request) {
 
-        $response = $this->semanticService->enhance($request->all());
+        $response = $this->semanticService->enhanceV2($request->all());
         $resource = false;
         if (count($response['resources']) == 1){
             $resource = $this->resourceService->store($response['resources'][0]);
@@ -206,6 +206,8 @@ class SemanticController extends Controller
             Response::HTTP_OK
         );
     }
+
+    
 
     /**
      * @param Request $request
