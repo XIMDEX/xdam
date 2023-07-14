@@ -475,21 +475,21 @@ class SemanticService
         foreach ($responses as $key => $response) {
             if($response['state'] === 'rejected') {
                 $errors[$key] = [
-                    'id' => $resourcesInesJA[$key]['id'],
-                    'uuid' => $resourcesInesJA[$key]['uuid'],
-                    'title' => $resourcesInesJA[$key]['title'],
+                    'id' => $data->id,
+                    'uuid' => $data->uuid,
+                    'title' => $data->title,
                     'status' => 'FAIL'
                 ];
-                unset($resourcesInesJA[$key]);
+                unset($data[$data->uuid]);
                 continue;
             }
             $output_xowl = $response['value']->getBody()->getContents();
             $result = json_decode($output_xowl);
-            $resourcesInesJA[$key]['enhanced_interactive'] = true; //1 == $params['extra_links'];
-            $resourcesInesJA[$key]['enhanced'] = true;
-            $resourcesInesJA[$key]['xtags'] = $result->data->xtags;
-            $resourcesInesJA[$key]['xtags_interlinked'] = $result->data->xtags_interlinked;
-            $resourcesInesJA[$key]['request_data'] = $result->request;
+            $resourcesInesJA[$key]['enhanced_interactive'] = true; //1 == $params['extra_links']; $data->enhanced_interactive = true;
+            $resourcesInesJA[$key]['enhanced'] = true; //$data->enhanced = true;
+            $resourcesInesJA[$key]['xtags'] = $result->data->xtags; //$data->xtags = $result->data->xtags;
+            $resourcesInesJA[$key]['xtags_interlinked'] = $result->data->xtags_interlinked; //$data->xtags_interlinked = $result->data->xtags_interlinked;
+            $resourcesInesJA[$key]['request_data'] = $result->request; // $data->request_data = $result->request;
         }
     }
 
