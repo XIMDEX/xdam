@@ -65,9 +65,9 @@ class ReIndexSolr extends Command
         $this->withProgressBar($resources, function ($resource) use (&$count, $reindexLOM, &$reindexed, $solrService, $excludedCores, $solrVersion) {
             if (!isset($reindexed[$resource->type])) $reindexed[$resource->type] = 0;
             $reindexed[$resource->type]++;
-            if ( $reindexed[$resource->type] >= 10) return;
+            // if ( $reindexed[$resource->type] >= 10) return;
             $resourceCoreName = $solrService->getClientFromResource($resource)->getEndpoint()->getOptions()['core'];
-            
+
             if (!in_array($resourceCoreName, $excludedCores) && $resourceCoreName !== null) {
                 try {
                     $solrService->saveOrUpdateDocument($resource, $solrVersion, $reindexLOM);
