@@ -1,80 +1,78 @@
 {
-  "type": "object",
-  "properties": {
-    "description": {
-      "type": "object",
-      "required": ["active", "partials", "name"],
-      "properties": {
-        "name": {
-          "type": "string",
-          "format": "string"
-        },
-        "external_url": {
-          "type": "string",
-          "format": "string"
-        },
-        "description": {
-          "type": "string",
-          "format": "string"
-        },
-        "tags": {
+    "type": "object",
+    "properties": {
+      "description": {
+        "type": "object",
+        "required": ["active", "partials", "name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "external_url": {
+            "type": "string",
+            "format": "string"
+          },
+          "description": {
+            "type": "string",
+            "format": "string"
+          },
+          "tags": {
             "title": "tags",
             "type": "array",
             "format": "string",
             "items": {
                 "type":"string"
             }
-        },
-          "categories": {
-            "title": "categories",
+          },
+          "category": {
+            "title": "category",
+            "type": "string",
+            "format": "string"
+          },
+          "partials": {
+            "type": "object",
+            "properties": {
+              "pages": {
+                "type": "integer",
+                "format": "integer"
+              }
+            }
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "isbn": {
+            "name": "isbn",
             "type": "array",
             "format": "string",
             "items": {
               "type":"string"
             }
-        },
-        "partials": {
-          "type": "object",
-          "properties": {
-            "pages": {
-              "type": "integer",
-              "format": "integer"
+          },
+          "unit": {
+            "name": "unit",
+            "type": "array",
+            "format": "string",
+            "items": {
+              "type":"string"
             }
-          }
-        },
-        "active": {
-          "type": "boolean"
-        },
-        "isbn": {
-          "name": "isbn",
-          "type": "array",
-          "format": "string",
-          "items": {
-            "type":"string"
-          }
-        },
-        "unit": {
-          "name": "unit",
-          "type": "array",
-          "format": "string",
-          "items": {
-            "type":"string"
-          }
-        },
-        "activities": {
-          "name": "activities",
-          "type": "array",
-          "format": "integer",
-          "items": {
-            "type":"integer"
-          }
-        },
-        "xeval_id": {
+          },
+          "activities": {
+            "name": "activities",
+            "type": "array",
+            "format": "integer",
+            "items": {
+              "type":"integer"
+            }
+          },
+          "xeval_id": {
+            "name": "xeval_id",
             "type": "string",
             "format": "string"
+          }
         }
       }
-    }
-  },
-  "required": ["description"]
-}
+    },
+    "required": ["description"]
+  }

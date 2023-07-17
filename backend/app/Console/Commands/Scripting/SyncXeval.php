@@ -189,7 +189,7 @@ class SyncXeval extends Command
     private function storeResources($data, &$progressBar)
     {
         foreach ($data as $resource) {
-            $damResource = DamResource::find($resource['xeval_id']);
+            $damResource = DamResource::where('external_id', $resource['external_id'])->first();
             if ($damResource) {
                 $this->resourceService->update($damResource, $resource);
             } else {
@@ -202,7 +202,7 @@ class SyncXeval extends Command
     private function parseActivityData($activity, $collection_id)
     {
         $data = [
-            'xeval_id' => $activity['id'],
+            'external_id' => $activity['id'],
             'collection_id' => $collection_id,
             'type' => self::ACTIVITY,
             'data' => new stdClass(),
@@ -220,8 +220,8 @@ class SyncXeval extends Command
         $data['data']->description->type = $activity['type'];
         $data['data']->description->language_default = $activity['language_default'];
         $data['data']->description->available_languages = $activity['available_languages'];
-        $data['data']->description->isbn = $activity['isbn'];
-        $data['data']->description->unit = $activity['units'];
+        $data['data']->description->isbn = $activity['isbn'] ?? [];
+        $data['data']->description->unit = $activity['units'] ?? [];
         $data['data']->description->active = $activity['status'] === 'ACTIVE';
         $data['data']->description->assessments = $assessments;
         if ($activity['tags']) {
@@ -233,7 +233,7 @@ class SyncXeval extends Command
     private function parseAssessmentData($assessment, $collection_id)
     {
         $data = [
-            'xeval_id' => $assessment['id'],
+            'external_id' => $assessment['id'],
             'collection_id' => $collection_id,
             'type' => self::ASSESSMENT,
             'data' => new stdClass(),
@@ -247,8 +247,8 @@ class SyncXeval extends Command
         $data['data']->description = new stdClass();
         $data['data']->description->xeval_id = $assessment['id'];
         $data['data']->description->name = $assessment['title'];
-        $data['data']->description->isbn = $assessment['isbn'];
-        $data['data']->description->unit = $assessment['units'];
+        $data['data']->description->isbn = $assessment['isbn'] ?? [];
+        $data['data']->description->unit = $assessment['units'] ?? [];
         $data['data']->description->active =$assessment['status'] === 'ACTIVE';
         $data['data']->description->activities = $activities;
         return $data;

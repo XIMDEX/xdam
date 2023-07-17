@@ -16,3 +16,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::group(['prefix' => 'solr'], function() {
+    Route::get('/', function() {
+        return response()->json(['status' => 'KO', 'message' => 'connection under test']);
+    });
+});

@@ -1,92 +1,93 @@
 {
-  "type": "object",
-  "properties": {
-    "description": {
-      "type": "object",
-      "required": ["active", "partials", "name"],
-      "properties": {
-        "name": {
-          "type": "string",
-          "format": "string"
-        },
-        "external_url": {
-          "type": "string",
-          "format": "string"
-        },
-        "description": {
-          "type": "string",
-          "format": "string"
-        },
-        "tags": {
-            "title": "tags",
-            "type": "array",
-            "format": "string",
-            "items": {
+    "type": "object",
+    "properties": {
+      "description": {
+        "type": "object",
+        "required": ["active", "partials", "name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "external_url": {
+            "type": "string",
+            "format": "string"
+          },
+          "description": {
+            "type": "string",
+            "format": "string"
+          },
+          "tags": {
+              "title": "tags",
+              "type": "array",
+              "format": "string",
+              "items": {
+                  "type":"string"
+              }
+          },
+            "categories": {
+              "title": "categories",
+              "type": "array",
+              "format": "string",
+              "items": {
                 "type":"string"
+              }
+          },
+          "partials": {
+            "type": "object",
+            "properties": {
+              "pages": {
+                "type": "integer",
+                "format": "integer"
+              }
             }
-        },
-          "categories": {
-            "title": "categories",
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "isbn": {
+            "name": "isbn",
             "type": "array",
             "format": "string",
             "items": {
               "type":"string"
             }
-        },
-        "partials": {
-          "type": "object",
-          "properties": {
-            "pages": {
-              "type": "integer",
-              "format": "integer"
+          },
+          "unit": {
+            "name": "unit",
+            "type": "array",
+            "format": "string",
+            "items": {
+              "type":"string"
             }
+          },
+          "language_default": {
+            "name": "language_default",
+            "type": "string"
+          },
+          "available_languages": {
+            "name": "available_languages",
+            "type": "array",
+            "format": "string",
+            "items": {
+              "type":"string"
+            }
+          },
+          "assessments": {
+            "name": "assessments",
+            "type": "array",
+            "format": "integer",
+            "items": {
+              "type":"integer"
+            }
+          },
+          "xeval_id": {
+              "name": "xeval_id",
+              "type": "string",
+              "format": "string"
           }
-        },
-        "active": {
-          "type": "boolean"
-        },
-        "isbn": {
-          "name": "isbn",
-          "type": "array",
-          "format": "string",
-          "items": {
-            "type":"string"
-          }
-        },
-        "unit": {
-          "name": "unit",
-          "type": "array",
-          "format": "string",
-          "items": {
-            "type":"string"
-          }
-        },
-        "language_default": {
-          "name": "language_default",
-          "type": "string"
-        },
-        "available_languages": {
-          "name": "available_languages",
-          "type": "array",
-          "format": "string",
-          "items": {
-            "type":"string"
-          }
-        },
-        "assessments": {
-          "name": "assessments",
-          "type": "array",
-          "format": "integer",
-          "items": {
-            "type":"integer"
-          }
-        },
-        "xeval_id": {
-            "type": "string",
-            "format": "string"
         }
       }
-    }
-  },
-  "required": ["description"]
-}
+    },
+    "required": ["description"]
+  }

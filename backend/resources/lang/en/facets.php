@@ -31,7 +31,11 @@ return [
         'yes' => 'true',
         'no' => 'false',
         'lom' => 'LOM',
-        'lomes' => 'LOMES'
+        'lomes' => 'LOMES',
+        'activities' => 'Activities',
+        'assessments' => 'Assessments',
+        'language_default' => 'Language default',
+        'available_languages' => 'Available languages'
     ],
     'MHE' => [
         'active' => 'Active',
@@ -61,7 +65,11 @@ return [
         'yes' => 'true',
         'no' => 'false',
         'lom' => 'LOM',
-        'lomes' => 'LOMES'
+        'lomes' => 'LOMES',
+        'activities' => 'Activities',
+        'assessments' => 'Assessments',
+        'language_default' => 'Language default',
+        'available_languages' => 'Available languages'
     ],
     'SEK' => []
 ];

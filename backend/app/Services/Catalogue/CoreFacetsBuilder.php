@@ -57,6 +57,7 @@ class CoreFacetsBuilder {
                 "available_languages",
                 "assessments",
                 "workspaces",
+                "type"
                 // "lom",
                 // "lomes"
             ],
@@ -77,6 +78,7 @@ class CoreFacetsBuilder {
                 "workspaces",
                 "isbn",
                 "unit",
+                'units',
                 "lang",
                 // "lom",
                 // "lomes"

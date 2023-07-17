@@ -32,6 +32,19 @@ class ActivitySolrResource extends BaseSolrResource
         return ResourceType::activity;
     }
 
+    protected function getLanguageDefault()
+    {
+        return $this->data->description->language_default ?? getenv('BOOK_DEFAULT_LANGUAGE');
+    }
+
+    protected function getAvailableLanguages()
+    {
+        $available_languages = $this->data->description->available_languages ?? [];
+
+        return array_unique(array_merge([$this->getLanguageDefault()], $available_languages));
+    }
+
+
     /**
      * Transform the resource into an array.
      *
@@ -61,9 +74,10 @@ class ActivitySolrResource extends BaseSolrResource
             'lomes'                 => $this->getLOMValues('lomes'),
             'unit'                  => $this->data->description->unit ?? $this->data->description->units ?? [],
             'isbn'                  => $this->data->description->isbn ?? $this->data->description->isbns ?? [],
-            'language_default'      => $this->data->description->language_default ?? getenv('BOOK_DEFAULT_LANGUAGE'),
-            'available_languages'   => $this->data->description->available_languages ?? [getenv('BOOK_DEFAULT_LANGUAGE')],
-            'assessments'           => $this->data->description->assessments ?? []
+            'language_default'      => $this->getLanguageDefault(),
+            'available_languages'   => $this->getAvailableLanguages(),
+            'assessments'           => $this->data->description->assessments ?? [],
+            'xeval_id'              => $this->data->description->xeval_id
         ];
     }
 }
