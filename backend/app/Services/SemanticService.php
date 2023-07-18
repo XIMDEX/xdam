@@ -550,7 +550,7 @@ class SemanticService
             'name' => 'options',
             'contents' => $options
         ];*/
-        $request = new Request('POST', $this->xowlUrl . '/enhance/all?XDEBUG_SESSION_START=VSCODE');
+        $request = new Request('POST', $this->xowlUrl . '/enhance/all');
         $request = $request->withBody(new MultipartStream($options['multipart']));
 
         $promises[$data->uuid] = $this->client->sendAsync($request);
