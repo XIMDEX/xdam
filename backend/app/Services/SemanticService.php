@@ -81,9 +81,15 @@ class SemanticService
 
         $errors = [];
         $resourceStructure = [];
-
-         $resources = [
-            $uuid => [
+        $dataFilter->id = $uuid;
+        $dataFilter->uuid = $uuid;
+        $dataFilter->title = isset($dataFilter->title) ? $dataFilter->title : $uuid;
+        $dataFilter->body = $this->cleanText($dataFilter->body);
+        $dataFilter->language = $langcode;
+        $dataFilter->category = isset($dataFilter->category) ? $dataFilter->category : 'Otros';
+        $dataFilter->external_url = isset($dataFilter->external_url) ? $dataFilter->external_url : '';
+        $dataFilter->image = isset($dataFilter->image) ? $dataFilter->image : '';
+        /* $resources = [
                 'id' => $uuid,
                 'uuid' => $uuid,
                 'title' => isset($dataFilter->title) ? $dataFilter->title : $uuid,
@@ -92,15 +98,15 @@ class SemanticService
                 'category' => isset($dataFilter->category) ? $dataFilter->category : 'Otros',
                 'external_url' => isset($dataFilter->external_url) ? $dataFilter->external_url : '',
                 'image' => isset($dataFilter->image) ? $dataFilter->image : ''
-            ]
-        ];
+        ];*/
 
-        $this->concurrentPost($resources, $errors, $dataFilter->enhanced, $semanticRequest);
-
-        foreach ($resources as $resource) {
+        $dataResult = $this->getDataOwl($dataFilter, $errors, $dataFilter->enhanced, $semanticRequest);
+      //  $resourceStructure[] = $this->createResourceStructure($dataResult, $semanticRequest);
+      //if($dataResult->xtags_interlinked) $dataResult->xtags_interlinked = $this->getInfoXtags();
+      /*  foreach ($resources as $resource) {
             $resourceStructure[] = $this->createResourceStructure($resource, $semanticRequest);
-        }
-
+        }*/
+        $resourceStructure[] = $this->createResourceStructure2($dataResult, $semanticRequest);
         return [
             'resources' => $resourceStructure,
             'errors' => $errors
@@ -185,6 +191,43 @@ class SemanticService
         return [
             'type' => 'document',
             'data' => [ 'description' => $description ],
+            'collection_id' => Collection::where('name', 'Public Organization Document collection')->first()->id
+        ];
+    }
+
+    private function createResourceStructure2($resource, $params) {
+        $entities_linked = [];
+        $entities_non_linked = [];
+        $array_linked = [];
+
+        if ($resource->xtags_interlinked) {
+            foreach ($resource->xtags_interlinked as $key => $entity) {
+                $entities_linked[] = $this->getInfoXtags($entity, true);
+                $array_linked[] = $key;
+                //unset($resource['xtags_interlinked']);
+            }
+        }
+
+        if ($resource->xtags) {
+            foreach ($resource->xtags as $key => $entity) {
+                if (!in_array($key, $array_linked)) {
+                    $entities_non_linked[] = $this->getInfoXtags($entity, false);
+                }
+                //unset($resource['xtags']);
+            }
+        }
+        $resource->active=1;
+        $resource->entities_linked = $entities_linked;
+        $resource->entities_non_linked = $entities_non_linked;
+       /* $description = array_merge($resource, [
+            'active' => 1,
+            'entities_linked' => $entities_linked,
+            'entities_non_linked' => $entities_non_linked
+        ]);*/
+
+        return [
+            'type' => 'document',
+            'data' => [ 'description' => $resource ],
             'collection_id' => Collection::where('name', 'Public Organization Document collection')->first()->id
         ];
     }
@@ -469,7 +512,7 @@ class SemanticService
             $promises[$uuid] = $this->client->postAsync($this->getUrl($enhance), $options);
         }*/
         $options['form_params']['text'] = $data->body;
-        $promises[$data->uuid] = $this->client->postAsync($this->getUrl($enhance), $options);
+        $promises[$data->uuid] = $this->client->postAsync( $this->xowlUrl . '/enhance?XDEBUG_SESSION_START=VSCODE', $options);
         $responses = Utils::settle($promises)->wait();
 
         foreach ($responses as $key => $response) {
@@ -485,11 +528,12 @@ class SemanticService
             }
             $output_xowl = $response['value']->getBody()->getContents();
             $result = json_decode($output_xowl);
-            $resourcesInesJA[$key]['enhanced_interactive'] = true; //1 == $params['extra_links']; $data->enhanced_interactive = true;
-            $resourcesInesJA[$key]['enhanced'] = true; //$data->enhanced = true;
-            $resourcesInesJA[$key]['xtags'] = $result->data->xtags; //$data->xtags = $result->data->xtags;
-            $resourcesInesJA[$key]['xtags_interlinked'] = $result->data->xtags_interlinked; //$data->xtags_interlinked = $result->data->xtags_interlinked;
-            $resourcesInesJA[$key]['request_data'] = $result->request; // $data->request_data = $result->request;
+            $data->enhanced_interactive = true; //1 == $params['extra_links']; $data->enhanced_interactive = true;
+            $data->enhanced = true; //$data->enhanced = true;
+            $data->xtags = $result->data->xtags; //$data->xtags = $result->data->xtags;
+            $data->xtags_interlinked = $result->data->xtags_interlinked; //$data->xtags_interlinked = $result->data->xtags_interlinked;
+            $data->request_data = $result->request; // $data->request_data = $result->request;
+            return $data;
         }
     }
 
