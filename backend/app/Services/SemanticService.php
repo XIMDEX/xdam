@@ -528,12 +528,17 @@ class SemanticService
             'contents' => $data->body
         ];*/
 
-        if ($params['File']) {
+        if (isset($params['File'])) {
             $file = new \Illuminate\Http\File($params['File'][0]->getRealPath());
             $options['multipart'][] = [
                 'name' => 'file',
                 'contents' => fopen($file->getPathname(), 'r'),
                 'filename' => $params['File'][0]->getClientOriginalName()
+            ];
+        }else{
+            $options['multipart'][] = [
+                'name' => 'text',
+                'contents' => $data->body
             ];
         }
         // Add interactive field
@@ -541,11 +546,11 @@ class SemanticService
             'name' => 'interactive',
             'contents' => '1'
         ];
-      /*  $options['multipart'][] = [
+        /*  $options['multipart'][] = [
             'name' => 'options',
             'contents' => $options
         ];*/
-        $request = new Request('POST', $this->xowlUrl . '/enhance?XDEBUG_SESSION_START=VSCODE');
+        $request = new Request('POST', $this->xowlUrl . '/enhance/all?XDEBUG_SESSION_START=VSCODE');
         $request = $request->withBody(new MultipartStream($options['multipart']));
 
         $promises[$data->uuid] = $this->client->sendAsync($request);
@@ -565,6 +570,71 @@ class SemanticService
             }
             $output_xowl = $response['value']->getBody()->getContents();
             $result = json_decode($output_xowl);
+            $data->enhanced_interactive = true; //1 == $params['extra_links']; $data->enhanced_interactive = true;
+            $data->enhanced = true; //$data->enhanced = true;
+            $data->xtags = $result->data->xtags; //$data->xtags = $result->data->xtags;
+            $data->xtags_interlinked = $result->data->xtags_interlinked; //$data->xtags_interlinked = $result->data->xtags_interlinked;
+            $data->request_data = $result->request; // $data->request_data = $result->request;
+        }
+        return $data;
+    }
+
+
+    public function getDataOwl1($data, &$errors, $enhance, $params = [])
+    {
+        $promise = [];
+        if (count($params) === 0) {
+            $options = [
+                "watson" => ["features" => ["entities" => ["mentions" => false]], "extra_links" => true],
+                "dbpedia" => ["confidence" => 1, "extra_links" => true],
+                "comprehend" => ["LanguageCode" => "es", "extra_links" => true],
+                "extra_links" => true
+            ];
+            if (isset($options[strtolower($enhance)])) {
+                $options = [
+                    $options[strtolower($enhance)]
+                ];
+                $options['extra_links'] = true;
+            }
+            $params = [
+                'options' => json_encode($options)
+            ];
+            if ('All' !== $enhance) {
+                $params['enhancer'] = $enhance;
+            }
+        }
+        $params['interactive'] = 1;
+        $params['extra_links'] = true;
+        $options = [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+            'form_params' => $params,
+            'timeout' => 60
+        ];
+        /*  foreach ($resourcesInesJA as $uuid=>$resource) {
+            $options['form_params']['text'] = $resource['body'];
+            $promises[$uuid] = $this->client->postAsync($this->getUrl($enhance), $options);
+        }*/
+        $options['form_params']['text'] = $data->body;
+
+        $promises[$data->uuid] = $this->client->postAsync($this->xowlUrl . '/enhance?XDEBUG_SESSION_START=VSCODE', $options);
+        $responses = Utils::settle($promises)->wait();
+
+        foreach ($responses as $key => $response) {
+            if ($response['state'] === 'rejected') {
+                $errors[$key] = [
+                    'id' => $data->id,
+                    'uuid' => $data->uuid,
+                    'title' => $data->title,
+                    'status' => 'FAIL'
+                ];
+                unset($data[$data->uuid]);
+                continue;
+            }
+            $output_xowl = $response['value']->getBody()->getContents();
+            $result = json_decode($output_xowl);
+
             $data->enhanced_interactive = true; //1 == $params['extra_links']; $data->enhanced_interactive = true;
             $data->enhanced = true; //$data->enhanced = true;
             $data->xtags = $result->data->xtags; //$data->xtags = $result->data->xtags;
