@@ -6,6 +6,8 @@ use \GuzzleHttp\Client;
 use App\Models\Collection;
 use App\Models\DamResource;
 use GuzzleHttp\Promise\Utils;
+use GuzzleHttp\Psr7\MultipartStream;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Str;
 
 
@@ -17,14 +19,15 @@ class SemanticService
     private $client;
     private $xowlUrl;
 
-    public function __construct() {
+    public function __construct()
+    {
 
         $this->client = new Client();
         $this->xowlUrl = getenv('XOWL_URL');
-
     }
 
-    public function enhance($semanticRequest) {
+    public function enhance($semanticRequest)
+    {
         $uuid = Str::orderedUuid()->toString();
 
         if (
@@ -66,8 +69,9 @@ class SemanticService
     }
 
 
-    public function 
-    enhanceV2($semanticRequest){
+    public function
+    enhanceV2($semanticRequest)
+    {
         $uuid = Str::orderedUuid()->toString();
         $data = json_decode($semanticRequest['data']);
         $dataFilter = $data->description;
@@ -101,9 +105,9 @@ class SemanticService
         ];*/
 
         $dataResult = $this->getDataOwl($dataFilter, $errors, $dataFilter->enhanced, $semanticRequest);
-      //  $resourceStructure[] = $this->createResourceStructure($dataResult, $semanticRequest);
-      //if($dataResult->xtags_interlinked) $dataResult->xtags_interlinked = $this->getInfoXtags();
-      /*  foreach ($resources as $resource) {
+        //  $resourceStructure[] = $this->createResourceStructure($dataResult, $semanticRequest);
+        //if($dataResult->xtags_interlinked) $dataResult->xtags_interlinked = $this->getInfoXtags();
+        /*  foreach ($resources as $resource) {
             $resourceStructure[] = $this->createResourceStructure($resource, $semanticRequest);
         }*/
         $resourceStructure[] = $this->createResourceStructure2($dataResult, $semanticRequest);
@@ -117,7 +121,7 @@ class SemanticService
     {
 
         $countDocuments = DamResource::where('type', 'document')->get();
-        if($countDocuments) $countDocuments = count($countDocuments);
+        if ($countDocuments) $countDocuments = count($countDocuments);
 
         $isEnhanceResource = !key_exists('only-text', $semanticRequest);
 
@@ -143,7 +147,8 @@ class SemanticService
         ];
     }
 
-    public function updateWithEnhance($semanticResource, $semanticRequest) {
+    public function updateWithEnhance($semanticResource, $semanticRequest)
+    {
 
         $resourceToEnhance = [];
         $errors = [];
@@ -160,7 +165,8 @@ class SemanticService
         ];
     }
 
-    private function createResourceStructure($resource, $params) {
+    private function createResourceStructure($resource, $params)
+    {
         $entities_linked = [];
         $entities_non_linked = [];
         $array_linked = [];
@@ -190,12 +196,13 @@ class SemanticService
 
         return [
             'type' => 'document',
-            'data' => [ 'description' => $description ],
+            'data' => ['description' => $description],
             'collection_id' => Collection::where('name', 'Public Organization Document collection')->first()->id
         ];
     }
 
-    private function createResourceStructure2($resource, $params) {
+    private function createResourceStructure2($resource, $params)
+    {
         $entities_linked = [];
         $entities_non_linked = [];
         $array_linked = [];
@@ -216,10 +223,10 @@ class SemanticService
                 //unset($resource['xtags']);
             }
         }
-        $resource->active=1;
+        $resource->active = 1;
         $resource->entities_linked = $entities_linked;
         $resource->entities_non_linked = $entities_non_linked;
-       /* $description = array_merge($resource, [
+        /* $description = array_merge($resource, [
             'active' => 1,
             'entities_linked' => $entities_linked,
             'entities_non_linked' => $entities_non_linked
@@ -227,12 +234,13 @@ class SemanticService
 
         return [
             'type' => 'document',
-            'data' => [ 'description' => $resource ],
+            'data' => ['description' => $resource],
             'collection_id' => Collection::where('name', 'Public Organization Document collection')->first()->id
         ];
     }
 
-    private function getUrl($enhancer) {
+    private function getUrl($enhancer)
+    {
 
         if ($enhancer == 'All' || count(explode(',', $enhancer)) > 1) {
             return $this->xowlUrl . '/enhance/all';
@@ -241,7 +249,8 @@ class SemanticService
         }
     }
 
-    public function fetchDocuments($semanticRequest, $isUuidSearch = false) {
+    public function fetchDocuments($semanticRequest, $isUuidSearch = false)
+    {
 
         $categories = config('inesja.dataset');
 
@@ -279,10 +288,10 @@ class SemanticService
             'resources' => $resources,
             'errors' => $errors
         ];
-
     }
 
-    public function getSingleDocument($key, $type, $source, $isUuidSearch = false) {
+    public function getSingleDocument($key, $type, $source, $isUuidSearch = false)
+    {
 
         $uri = config('inesja.base_url');
         $uri .= $type . '.json';
@@ -309,7 +318,6 @@ class SemanticService
         }
 
         return $result;
-
     }
 
     public function getDataINES($p, $ps, $type)
@@ -319,7 +327,7 @@ class SemanticService
 
         if (isset($categories[$type])) $categories = [$categories[$type]];
 
-        foreach ($categories as $category=>$data) {
+        foreach ($categories as $category => $data) {
             $uri = config('inesja.base_url');
 
             $uri .= $category . '.json';                            // dataset and format
@@ -371,7 +379,7 @@ class SemanticService
         $add_url_fields = ['image', 'external_url'];
         $output = [];
         $urlJA = config('inesja.url');
-        foreach ($fields as $key=>$field) {
+        foreach ($fields as $key => $field) {
             $output[$key] = $data;
             $array_keys = explode('.', $field);
             foreach ($array_keys as $field_key) {
@@ -392,7 +400,8 @@ class SemanticService
         return $output;
     }
 
-    public function addOnlyResource(&$resourcesInesJA) {
+    public function addOnlyResource(&$resourcesInesJA)
+    {
         foreach ($resourcesInesJA as $key => $resource) {
 
             $resourcesInesJA[$key]['enhanced_interactive'] = false; //1 == $params['extra_links'];
@@ -409,9 +418,9 @@ class SemanticService
 
         if (count($params) === 0) {
             $options = [
-                "watson"=> ["features" => ["entities" => ["mentions"=> false]], "extra_links" => true],
-                "dbpedia" => ["confidence"=> 1, "extra_links" => true],
-                "comprehend" => ["LanguageCode"=> "es", "extra_links" => true],
+                "watson" => ["features" => ["entities" => ["mentions" => false]], "extra_links" => true],
+                "dbpedia" => ["confidence" => 1, "extra_links" => true],
+                "comprehend" => ["LanguageCode" => "es", "extra_links" => true],
                 "extra_links" => true
             ];
 
@@ -441,7 +450,7 @@ class SemanticService
             'timeout' => 60
         ];
 
-        foreach ($resourcesInesJA as $uuid=>$resource) {
+        foreach ($resourcesInesJA as $uuid => $resource) {
             $options['form_params']['text'] = $resource['body'];
             $promises[$uuid] = $this->client->postAsync($this->getUrl($enhance), $options);
         }
@@ -449,7 +458,7 @@ class SemanticService
         $responses = Utils::settle($promises)->wait();
 
         foreach ($responses as $key => $response) {
-            if($response['state'] === 'rejected') {
+            if ($response['state'] === 'rejected') {
                 $errors[$key] = [
                     'id' => $resourcesInesJA[$key]['id'],
                     'uuid' => $resourcesInesJA[$key]['uuid'],
@@ -475,9 +484,9 @@ class SemanticService
 
         if (count($params) === 0) {
             $options = [
-                "watson"=> ["features" => ["entities" => ["mentions"=> false]], "extra_links" => true],
-                "dbpedia" => ["confidence"=> 1, "extra_links" => true],
-                "comprehend" => ["LanguageCode"=> "es", "extra_links" => true],
+                "watson" => ["features" => ["entities" => ["mentions" => false]], "extra_links" => true],
+                "dbpedia" => ["confidence" => 1, "extra_links" => true],
+                "comprehend" => ["LanguageCode" => "es", "extra_links" => true],
                 "extra_links" => true
             ];
 
@@ -502,21 +511,49 @@ class SemanticService
         $options = [
             'headers' => [
                 'Accept' => 'application/json',
+                'Content-Type' => 'multipart/form-data'
             ],
-            'form_params' => $params,
+            'multipart' => [],
             'timeout' => 60
         ];
 
-      /*  foreach ($resourcesInesJA as $uuid=>$resource) {
+        /*  foreach ($resourcesInesJA as $uuid=>$resource) {
             $options['form_params']['text'] = $resource['body'];
             $promises[$uuid] = $this->client->postAsync($this->getUrl($enhance), $options);
         }*/
-        $options['form_params']['text'] = $data->body;
-        $promises[$data->uuid] = $this->client->postAsync( $this->xowlUrl . '/enhance?XDEBUG_SESSION_START=VSCODE', $options);
+        /* $options['multipart']['text'] = $data->body;
+        if($params['File']) $options['multipart']['file'] = $params['File'][0];*/
+        /*$options['multipart'][] = [
+            'name' => 'text',
+            'contents' => $data->body
+        ];*/
+
+        if ($params['File']) {
+            $file = new \Illuminate\Http\File($params['File'][0]->getRealPath());
+            $options['multipart'][] = [
+                'name' => 'file',
+                'contents' => fopen($file->getPathname(), 'r'),
+                'filename' => $params['File'][0]->getClientOriginalName()
+            ];
+        }
+        // Add interactive field
+        $options['multipart'][] = [
+            'name' => 'interactive',
+            'contents' => '1'
+        ];
+      /*  $options['multipart'][] = [
+            'name' => 'options',
+            'contents' => $options
+        ];*/
+        $request = new Request('POST', $this->xowlUrl . '/enhance?XDEBUG_SESSION_START=VSCODE');
+        $request = $request->withBody(new MultipartStream($options['multipart']));
+
+        $promises[$data->uuid] = $this->client->sendAsync($request);
+
         $responses = Utils::settle($promises)->wait();
 
         foreach ($responses as $key => $response) {
-            if($response['state'] === 'rejected') {
+            if ($response['state'] === 'rejected') {
                 $errors[$key] = [
                     'id' => $data->id,
                     'uuid' => $data->uuid,
@@ -552,15 +589,16 @@ class SemanticService
         return $output;
     }
 
-    private function cleanText($text) {
+    private function cleanText($text)
+    {
 
-        $text = preg_replace_callback("# <(?![/a-z]) | (?<=\s)>(?![a-z]) #i", array( $this, 'replaceContent' ), $text);
+        $text = preg_replace_callback("# <(?![/a-z]) | (?<=\s)>(?![a-z]) #i", array($this, 'replaceContent'), $text);
         $text = str_replace("\t", "", $text);
         return strip_tags($text);
-
     }
 
-    private function replaceContent( $item  = null, $item2 = null ) {
-        return str_repeat( "" , mb_strlen( $item[0]) )  ;
-     }
+    private function replaceContent($item  = null, $item2 = null)
+    {
+        return str_repeat("", mb_strlen($item[0]));
+    }
 }
