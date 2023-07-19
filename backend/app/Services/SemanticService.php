@@ -484,9 +484,9 @@ class SemanticService
 
         if (count($params) === 0) {
             $options = [
-                "watson" => ["features" => ["entities" => ["mentions" => false]], "extra_links" => true],
-                "dbpedia" => ["confidence" => 1, "extra_links" => true],
-                "comprehend" => ["LanguageCode" => "es", "extra_links" => true],
+                "watson" => ["features" => ["entities" => ["mentions" => false]], "extra_links" => true,"confidence" => 1],
+                "dbpedia" => ["confidence" => 2, "extra_links" => true],
+                "comprehend" => ["LanguageCode" => "es", "extra_links" => true],"confidence" => 1,
                 "extra_links" => true
             ];
 
@@ -513,7 +513,7 @@ class SemanticService
                 'Accept' => 'application/json',
                 'Content-Type' => 'multipart/form-data'
             ],
-            'multipart' => [],
+            'multipart' => [ ],
             'timeout' => 60
         ];
 
@@ -541,6 +541,13 @@ class SemanticService
                 'contents' => $data->body
             ];
         }
+        $options['multipart'][] = [
+            'name' => 'options',
+            'contents' => json_encode(["watson" => ["features" => ["entities" => ["mentions" => false]], "extra_links" => true,"confidence" => 1],
+            "dbpedia" => ["confidence" => 2, "extra_links" => true],
+            "comprehend" => ["LanguageCode" => "es", "extra_links" => true],"confidence" => 1,
+            "extra_links" => true])
+        ];
         // Add interactive field
         $options['multipart'][] = [
             'name' => 'interactive',
@@ -565,15 +572,21 @@ class SemanticService
                     'title' => $data->title,
                     'status' => 'FAIL'
                 ];
-                unset($data[$data->uuid]);
+               // unset($data[$data->uuid]);
                 continue;
             }
             $output_xowl = $response['value']->getBody()->getContents();
             $result = json_decode($output_xowl);
             $data->enhanced_interactive = true; //1 == $params['extra_links']; $data->enhanced_interactive = true;
             $data->enhanced = true; //$data->enhanced = true;
-            $data->xtags = $result->data->xtags; //$data->xtags = $result->data->xtags;
-            $data->xtags_interlinked = $result->data->xtags_interlinked; //$data->xtags_interlinked = $result->data->xtags_interlinked;
+            $data->xtags = $this->deleteDuplicateXtag($result->data->xtags) ;// array_unique(array_column($result->data->xtags,'text')); //$data->xtags = $result->data->xtags;
+          /*  $texts = array_map(function($obj) {
+                return $obj->text;
+            }, (array) $result->data->xtags);*/
+            //hacer funcion intermedia para el nuevo array de xtag, mirar con un in_array if the propierty is there and then add to the array 
+          //  $uniqueTexts = array_unique($texts);
+           
+            $data->xtags_interlinked = $this->deleteDuplicateXtag($result->data->xtags_interlinked); //$data->xtags_interlinked = $result->data->xtags_interlinked;
             $data->request_data = $result->request; // $data->request_data = $result->request;
         }
         return $data;
@@ -606,5 +619,17 @@ class SemanticService
     private function replaceContent($item  = null, $item2 = null)
     {
         return str_repeat("", mb_strlen($item[0]));
+    }
+
+    private function deleteDuplicateXtag($xtags){
+        $result = [];
+        $aux    = [];
+        foreach ($xtags as $xtag ) {
+            if(!in_array($xtag->text,$aux)){
+                $result[] = $xtag;
+                $aux[] = $xtag->text;
+            }
+        }
+        return $result;
     }
 }
