@@ -93,23 +93,8 @@ class SemanticService
         $dataFilter->category = isset($dataFilter->category) ? $dataFilter->category : 'Otros';
         $dataFilter->external_url = isset($dataFilter->external_url) ? $dataFilter->external_url : '';
         $dataFilter->image = isset($dataFilter->image) ? $dataFilter->image : '';
-        /* $resources = [
-                'id' => $uuid,
-                'uuid' => $uuid,
-                'title' => isset($dataFilter->title) ? $dataFilter->title : $uuid,
-                'body' => $this->cleanText($dataFilter->body),
-                'language' => $langcode,
-                'category' => isset($dataFilter->category) ? $dataFilter->category : 'Otros',
-                'external_url' => isset($dataFilter->external_url) ? $dataFilter->external_url : '',
-                'image' => isset($dataFilter->image) ? $dataFilter->image : ''
-        ];*/
 
         $dataResult = $this->getDataOwl($dataFilter, $errors, $dataFilter->enhanced, $semanticRequest);
-        //  $resourceStructure[] = $this->createResourceStructure($dataResult, $semanticRequest);
-        //if($dataResult->xtags_interlinked) $dataResult->xtags_interlinked = $this->getInfoXtags();
-        /*  foreach ($resources as $resource) {
-            $resourceStructure[] = $this->createResourceStructure($resource, $semanticRequest);
-        }*/
         $resourceStructure[] = $this->createResourceStructure2($dataResult, $semanticRequest);
         return [
             'resources' => $resourceStructure,
@@ -207,30 +192,23 @@ class SemanticService
         $entities_non_linked = [];
         $array_linked = [];
 
-        if ($resource->xtags_interlinked) {
+        if (isset($resource->xtags_interlinked)) {
             foreach ($resource->xtags_interlinked as $key => $entity) {
                 $entities_linked[] = $this->getInfoXtags($entity, true);
                 $array_linked[] = $key;
-                //unset($resource['xtags_interlinked']);
             }
         }
 
-        if ($resource->xtags) {
+        if (isset($resource->xtags)) {
             foreach ($resource->xtags as $key => $entity) {
                 if (!in_array($key, $array_linked)) {
                     $entities_non_linked[] = $this->getInfoXtags($entity, false);
                 }
-                //unset($resource['xtags']);
             }
         }
         $resource->active = 1;
         $resource->entities_linked = $entities_linked;
         $resource->entities_non_linked = $entities_non_linked;
-        /* $description = array_merge($resource, [
-            'active' => 1,
-            'entities_linked' => $entities_linked,
-            'entities_non_linked' => $entities_non_linked
-        ]);*/
 
         return [
             'type' => 'document',
@@ -517,17 +495,6 @@ class SemanticService
             'timeout' => 60
         ];
 
-        /*  foreach ($resourcesInesJA as $uuid=>$resource) {
-            $options['form_params']['text'] = $resource['body'];
-            $promises[$uuid] = $this->client->postAsync($this->getUrl($enhance), $options);
-        }*/
-        /* $options['multipart']['text'] = $data->body;
-        if($params['File']) $options['multipart']['file'] = $params['File'][0];*/
-        /*$options['multipart'][] = [
-            'name' => 'text',
-            'contents' => $data->body
-        ];*/
-
         if (isset($params['File'])) {
             $file = new \Illuminate\Http\File($params['File'][0]->getRealPath());
             $options['multipart'][] = [
@@ -553,11 +520,7 @@ class SemanticService
             'name' => 'interactive',
             'contents' => '1'
         ];
-        /*  $options['multipart'][] = [
-            'name' => 'options',
-            'contents' => $options
-        ];*/
-        $request = new Request('POST', $this->xowlUrl . '/enhance/all');
+        $request = new Request('POST', $this->xowlUrl . '/enhance/all?XDEBUG_SESSION_START=VSCODE');
         $request = $request->withBody(new MultipartStream($options['multipart']));
 
         $promises[$data->uuid] = $this->client->sendAsync($request);
