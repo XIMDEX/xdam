@@ -8,6 +8,7 @@ use App\Models\DamResource;
 use GuzzleHttp\Promise\Utils;
 use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 
@@ -95,14 +96,16 @@ class SemanticService
         $dataFilter->image = isset($dataFilter->image) ? $dataFilter->image : '';
 
         $dataResult = $this->getDataOwl($dataFilter, $errors, $dataFilter->enhanced, $semanticRequest);
-        $resourceStructure[] = $this->createResourceStructure2($dataResult, $semanticRequest);
+        $path = Storage::disk('semantic')->put($dataFilter->uuid."/", json_encode($dataResult));
+      
+        $resourceStructure[] = $this->createResourceStructure2($dataFilter, $semanticRequest);
         return [
             'resources' => $resourceStructure,
             'errors' => $errors
         ];
     }
 
-    public function automaticEnhance($semanticRequest)
+    public function automaticEnhance($dataFilter)
     {
 
         $countDocuments = DamResource::where('type', 'document')->get();
@@ -186,13 +189,13 @@ class SemanticService
         ];
     }
 
-    private function createResourceStructure2($resource, $params)
+    private function createResourceStructure2($resource)
     {
         $entities_linked = [];
         $entities_non_linked = [];
         $array_linked = [];
 
-        if (isset($resource->xtags_interlinked)) {
+        /*if (isset($resource->xtags_interlinked)) {
             foreach ($resource->xtags_interlinked as $key => $entity) {
                 $entities_linked[] = $this->getInfoXtags($entity, true);
                 $array_linked[] = $key;
@@ -208,7 +211,8 @@ class SemanticService
         }
         $resource->active = 1;
         $resource->entities_linked = $entities_linked;
-        $resource->entities_non_linked = $entities_non_linked;
+        $resource->entities_non_linked = $entities_non_linked;*/
+   
 
         return [
             'type' => 'document',
@@ -458,8 +462,7 @@ class SemanticService
 
     public function getDataOwl($data, &$errors, $enhance, $params = [])
     {
-        $promise = [];
-
+        $finalResult = [];
         if (count($params) === 0) {
             $options = [
                 "watson" => ["features" => ["entities" => ["mentions" => false]], "extra_links" => true,"confidence" => 1],
@@ -535,24 +538,20 @@ class SemanticService
                     'title' => $data->title,
                     'status' => 'FAIL'
                 ];
-               // unset($data[$data->uuid]);
                 continue;
             }
             $output_xowl = $response['value']->getBody()->getContents();
             $result = json_decode($output_xowl);
-            $data->enhanced_interactive = true; //1 == $params['extra_links']; $data->enhanced_interactive = true;
-            $data->enhanced = true; //$data->enhanced = true;
-            $data->xtags = $this->deleteDuplicateXtag($result->data->xtags) ;// array_unique(array_column($result->data->xtags,'text')); //$data->xtags = $result->data->xtags;
-          /*  $texts = array_map(function($obj) {
-                return $obj->text;
-            }, (array) $result->data->xtags);*/
-            //hacer funcion intermedia para el nuevo array de xtag, mirar con un in_array if the propierty is there and then add to the array 
-          //  $uniqueTexts = array_unique($texts);
-           
-            $data->xtags_interlinked = $this->deleteDuplicateXtag($result->data->xtags_interlinked); //$data->xtags_interlinked = $result->data->xtags_interlinked;
-            $data->request_data = $result->request; // $data->request_data = $result->request;
+        /*    $data->enhanced_interactive = true; 
+            $data->enhanced = true;*/
+            $xtags = $this->deleteDuplicateXtag($result->data->xtags) ;
+            $xtags_interlinked = $this->deleteDuplicateXtag($result->data->xtags_interlinked);
+            $xtags = $this->checkNonLinked($xtags_interlinked,$xtags);
+            $finalResult['xtags'] = $xtags;
+            $finalResult['$xtags_interlinked'] = $xtags_interlinked ;
+           // $data->request_data = $result->request;
         }
-        return $data;
+        return $finalResult;
     }
 
 
@@ -584,6 +583,14 @@ class SemanticService
         return str_repeat("", mb_strlen($item[0]));
     }
 
+
+    /**
+     * Delete duplicate xtag.
+     *
+     * @param array $xtags The array of xtags.
+     *
+     * @return array The array of xtags without duplicates.
+     */
     private function deleteDuplicateXtag($xtags){
         $result = [];
         $aux    = [];
@@ -592,6 +599,24 @@ class SemanticService
                 $result[] = $xtag;
                 $aux[] = $xtag->text;
             }
+        }
+        return $result;
+    }
+    /**
+     * Check non-linked.
+     *
+     * @param array $linked The linked array.
+     * @param array $nonLinked The non-linked array.
+     *
+     * @return array The result array.
+     */
+    private function checkNonLinked(array $linked,array $nonLinked){
+        $result = [];
+        $linkedTexts = array_map(function($link) {
+            return $link->text;
+        }, $linked);
+        foreach ($nonLinked as $tag) {
+           if(!in_array($tag->text,$linkedTexts)) $result[] =  $tag;
         }
         return $result;
     }
