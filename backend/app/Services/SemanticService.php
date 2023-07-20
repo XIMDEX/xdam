@@ -548,7 +548,7 @@ class SemanticService
             $xtags_interlinked = $this->deleteDuplicateXtag($result->data->xtags_interlinked);
             $xtags = $this->checkNonLinked($xtags_interlinked,$xtags);
             $finalResult['xtags'] = $xtags;
-            $finalResult['$xtags_interlinked'] = $xtags_interlinked ;
+            $finalResult['xtags_interlinked'] = $xtags_interlinked ;
            // $data->request_data = $result->request;
         }
         return $finalResult;
