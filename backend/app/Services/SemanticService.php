@@ -105,7 +105,7 @@ class SemanticService
         ];
     }
 
-    public function automaticEnhance($dataFilter)
+    public function automaticEnhance($semanticRequest)
     {
 
         $countDocuments = DamResource::where('type', 'document')->get();
@@ -547,6 +547,12 @@ class SemanticService
             $xtags = $this->deleteDuplicateXtag($result->data->xtags) ;
             $xtags_interlinked = $this->deleteDuplicateXtag($result->data->xtags_interlinked);
             $xtags = $this->checkNonLinked($xtags_interlinked,$xtags);
+            foreach ($xtags as &$tag) {
+                $tag = $this->getInfoXtags($tag,false);
+            }
+            foreach ($xtags_interlinked  as &$tag) {
+                $tag = $this->getInfoXtags($tag,true);
+            }
             $finalResult['xtags'] = $xtags;
             $finalResult['xtags_interlinked'] = $xtags_interlinked ;
            // $data->request_data = $result->request;
