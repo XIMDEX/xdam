@@ -197,10 +197,10 @@ class SolrService
             $fields = $document->getFields();
             $fields["data"] = @json_decode($fields["data"]);
             //Here new function
-            if (Storage::disk("semantic")->exists($fields["id"])) {
-                $json = json_decode(Storage::get($fields["id"]));
-                $fields["data"]->description->entities_linked = $json->entities_linked;
-                $fields["data"]->description->non_entities_linked = $json->non_entities_linked;
+            if (Storage::disk("semantic")->exists($fields["id"].".json")) {
+                $json = json_decode(Storage::disk("semantic")->get($fields["id"].".json"));
+                $fields["data"]->description->entities_linked = $json->xtags_interlinked;
+                $fields["data"]->description->non_entities_linked = $json->xtags;
             }
             $documentsResponse[] = $fields;
         }
