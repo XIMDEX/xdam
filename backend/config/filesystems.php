@@ -55,7 +55,7 @@ return [
 
         'semantic' => [
             'driver' => 'local',
-            'root' => storage_path('app/semantic'),
+            'root' => storage_path('semantic'),
         ],
 
         'public' => [

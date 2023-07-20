@@ -7,6 +7,7 @@ use App\Models\Collection;
 use App\Models\DamResource;
 use App\Services\Catalogue\FacetManager;
 use Exception;
+use Illuminate\Support\Facades\Storage;
 use Solarium\Client;
 use Solarium\Core\Query\Result\ResultInterface;
 use stdClass;
@@ -195,6 +196,12 @@ class SolrService
         foreach ($allDocuments as $document) {
             $fields = $document->getFields();
             $fields["data"] = @json_decode($fields["data"]);
+            //Here new function
+            if (Storage::disk("semantic")->exists($fields["id"])) {
+                $json = json_decode(Storage::get($fields["id"]));
+                $fields["data"]->description->entities_linked = $json->entities_linked;
+                $fields["data"]->description->non_entities_linked = $json->non_entities_linked;
+            }
             $documentsResponse[] = $fields;
         }
 
@@ -206,6 +213,7 @@ class SolrService
         foreach ($facets as $key => $facet) {
             ksort($facets[$key]['values']);
         }
+
 
         $solr_schema = $client->getOptions()['schema'];
         $this->addFacetType($facets, $solr_schema);
