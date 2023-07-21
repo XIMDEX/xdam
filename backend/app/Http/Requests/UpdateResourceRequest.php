@@ -39,10 +39,33 @@ class UpdateResourceRequest extends FormRequest
         } else {
             return [
                 MediaType::Preview()->key => 'file',
+                'extra' => 'sometimes|nullable',
+                'extra.link' => 'string',
+                'extra.hover' => 'string',
+                'extra.content' => 'string',
+                'lang' => 'sometimes|nullable|in:cat,en,es'
             ];
         }
         
     }
+
+    public function validationData()
+    {
+        $all = $this->all();
+
+        if (property_exists($all['data']->description, 'extra')) {
+            $all['extra'] = (array) $all['data']->description->extra;
+        }
+
+        if (property_exists($all['data']->description, 'lang')) {
+            $language = $all['data']->description->lang;
+
+            $all['lang'] = $language === 'ca' ? 'cat' : $language;
+        }
+
+        return $all;
+    }
+
 
     public function prepareForValidation()
     {

@@ -2,14 +2,36 @@
 
 namespace App\Http\Resources\Solr;
 
-use App\Enums\MediaType;
 use App\Enums\ResourceType;
-use App\Http\Resources\MediaResource;
-use App\Utils\Utils;
-use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Solr\BaseSolrResource;
 
-class ActivitySolrResource extends JsonResource
+class ActivitySolrResource extends BaseSolrResource
 {
+    public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null, $toSolr = false)
+    {
+        parent::__construct($resource, $lomSolrClient, $lomesSolrClient);
+    }
+
+    protected function formatTags($tags)
+    {
+        return $tags ?? [''];
+    }
+
+    protected function formatCategories($categories)
+    {
+        return $categories ?? [''];
+    }
+
+    protected function getType()
+    {
+        return ResourceType::activity;
+    }
+
+    protected function getCoreResourceType()
+    {
+        return ResourceType::activity;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -18,30 +40,25 @@ class ActivitySolrResource extends JsonResource
      */
     public function toArray($request)
     {
-        $files = array_column(
-            json_decode(MediaResource::collection($this->getMedia(MediaType::File()->key))->toJson(), true),
-            'dam_url'
-        );
-        $previews = array_column(
-            json_decode(MediaResource::collection($this->getMedia(MediaType::Preview()->key))->toJson(), true),
-            'dam_url'
-        );
-
-        $workspaces = Utils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
-
         return [
-            'id' => $this->id,
-            'name' => $this->data->description->name,
-            'data' => is_object($this->data) ? json_encode($this->data) : $this->data,
-            'active' => $this->active,
-            'type' => ResourceType::activity,
-            'tags' => $this->tags()->pluck('name')->toArray() ?? [''],
-            'categories' => $this->categories()->pluck('name')->toArray() ?? [''],
-            'files' => $files,
-            'previews' => $previews,
-            'collection' => $this->collection->id,
-            'workspaces' => $workspaces,
-            'organization' => $this->organization()->id
+            'id'                    => $this->getID(),
+            'name'                  => $this->getName(),
+            'data'                  => $this->getData(),
+            'active'                => $this->getActive(),
+            'type'                  => $this->getType(),
+            'tags'                  => $this->formatTags($this->getTags()),
+            'categories'            => $this->formatCategories($this->getCategories()),
+            'files'                 => $this->getFiles(),
+            'previews'              => $this->getPreviews(),
+            'collection'            => $this->collection->id,
+            'workspaces'            => $this->getWorkspaces(),
+            'organization'          => $this->getOrganization(),
+            'collections'           => $this->getCollections(),
+            'core_resource_type'    => $this->getCoreResourceType(),
+            'created_at'            => $this->created_at,
+            'updated_at'            => $this->updated_at,
+            'lom'                   => $this->getLOMValues(),
+            'lomes'                 => $this->getLOMValues('lomes')
         ];
     }
 }

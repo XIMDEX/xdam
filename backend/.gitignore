@@ -5,5 +5,7 @@ vendor/*
 bootstrap/cache/*
 storage/*.key
 storage/logs
+**node_modules/*
 .env
 .phpunit.result.cache
+**backend/node_modules/*

@@ -2,24 +2,12 @@
 
 namespace App\Services\Solr\CoreHandlers;
 
-class DocumentHandler
+use App\Services\Solr\CoreHandlers\BaseHandler;
+
+class DocumentHandler extends BaseHandler
 {
-
-    private $query;
-
     public function __construct($query)
     {
-        $this->query = $query;
-
-    }
-
-    public function queryCoreSpecifics($params) {
-        $this->defaultBehaviour();
-
-        return $this->query;
-    }
-
-    public function defaultBehaviour()
-    {
+        parent::__construct($query);
     }
 }

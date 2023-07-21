@@ -36,6 +36,17 @@ class Utils
         return $array_of_names;
     }
 
+    public static function formatWorkspaces(array $ids): array
+    {
+        $output = [];
+
+        foreach (Workspace::find($ids) as $wsp) {
+            $output[] = json_encode($wsp->toArray());
+        }
+
+        return $output;
+    }
+
     public static function arrayToObject($array)
     {
         // First we convert the array to a json string
@@ -60,5 +71,25 @@ class Utils
         }
 
         return json_decode(file_get_contents($path), $associative);
+    }
+    public static function getLomSchema($asArray = false)
+    {
+        $json_file = file_get_contents(storage_path('/lom') . '/lomSchema.json');
+        $schema = json_decode($json_file, $asArray);
+        return $schema;
+    }
+
+    public static function getLomesSchema($asArray = false)
+    {
+        $json_file = file_get_contents(storage_path('/lomes') .'/lomesSchema.json');
+        $schema = json_decode($json_file, $asArray);
+        return $schema;
+    }
+
+    public static function getRepetitiveString($character, $times)
+    {
+        $string = '';
+        for ($i = 0; $i < $times; $i++) $string .= $character;
+        return $string;
     }
 }

@@ -37,7 +37,6 @@ class UserService
         }
 
         return Utils::unique_multidimensional_array($resources, 'id');
-
     }
 
     public function resourceInfo(DamResource $dam)
@@ -68,8 +67,6 @@ class UserService
         $user->selected_workspace = $wsp_id;
         $user->save();
         return ['org' => ($wsp ? $wsp->organization()->first() : 'personal context'), 'selected workspace' => $wsp];
-
-
     }
 
     public function attachResourceToCollection($cid, $rid, $oid): DamResource

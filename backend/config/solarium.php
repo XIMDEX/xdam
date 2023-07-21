@@ -3,69 +3,66 @@
 use App\Enums\ResourceType;
 
 return [
-    'connections' => [
-        'activity' => [
-            'endpoint' => [
-                'scheme' => 'http', # or https
-                'host' => env('SOLR_HOST', 'localhost'),
-                'port' => env('SOLR_PORT', '8983'),
-                'path' => env('SOLR_PATH', '/'),
-                'core' => 'activity',
+    'connections'   => [
+        'activity'  => [
+            'endpoint'      => [
+                'scheme'    => 'http', # or https
+                'host'      => env('SOLR_HOST', 'localhost'),
+                'port'      => env('SOLR_PORT', '8983'),
+                'path'      => env('SOLR_PATH', '/'),
+                'core'      => 'activity',
             ],
-            'resource' => 'ActivitySolrResource',
-            'classHandler' => 'ActivityHandler',
+            'resource'      => 'ActivitySolrResource',
+            'classHandler'  => 'ActivityHandler',
             'accepts_types' => [ResourceType::activity]
         ],
-        'assessment' => [
-            'endpoint' => [
-                'scheme' => 'http', # or https
-                'host' => env('SOLR_HOST', 'localhost'),
-                'port' => env('SOLR_PORT', '8983'),
-                'path' => env('SOLR_PATH', '/'),
-                'core' => 'assessment',
+        'assessment'    => [
+            'endpoint'      => [
+                'scheme'    => 'http', # or https
+                'host'      => env('SOLR_HOST', 'localhost'),
+                'port'      => env('SOLR_PORT', '8983'),
+                'path'      => env('SOLR_PATH', '/'),
+                'core'      => 'assessment',
             ],
-            'resource' => 'AssessmentSolrResource',
-            'classHandler' => 'AssessmentHandler',
+            'resource'      => 'AssessmentSolrResource',
+            'classHandler'  => 'AssessmentHandler',
             'accepts_types' => [ResourceType::assessment]
         ],
-
-        'course' => [
-            'endpoint' => [
-                'scheme' => 'http', # or https
-                'host' => env('SOLR_HOST', 'localhost'),
-                'port' => env('SOLR_PORT', '8983'),
-                'path' => env('SOLR_PATH', '/'),
-                'core' => 'course',
+        'course'    => [
+            'endpoint'      => [
+                'scheme'    => 'http', # or https
+                'host'      => env('SOLR_HOST', 'localhost'),
+                'port'      => env('SOLR_PORT', '8983'),
+                'path'      => env('SOLR_PATH', '/'),
+                'core'      => 'course',
             ],
-            'resource' => 'CourseSolrResource',
-            'classHandler' => 'CourseHandler',
+            'resource'      => 'CourseSolrResource',
+            'classHandler'  => 'CourseHandler',
             'accepts_types' => [ResourceType::course]
         ],
-
-        'multimedia' => [
-            'endpoint' => [
-                'scheme' => 'http', # or https
-                'host' => env('SOLR_HOST', 'localhost'),
-                'port' => env('SOLR_PORT', '8983'),
-                'path' => env('SOLR_PATH', '/'),
-                'core' => 'multimedia',
-                'timeout' => 120,
+        'multimedia'    => [
+            'endpoint'      => [
+                'scheme'    => 'http', # or https
+                'host'      => env('SOLR_HOST', 'localhost'),
+                'port'      => env('SOLR_PORT', '8983'),
+                'path'      => env('SOLR_PATH', '/'),
+                'core'      => 'multimedia',
+                'timeout'   => 120,
             ],
-            'resource' => 'MultimediaSolrResource',
-            'classHandler' => 'MultimediaHandler',
+            'resource'      => 'MultimediaSolrResource',
+            'classHandler'  => 'MultimediaHandler',
             'accepts_types' => [ResourceType::multimedia]
         ],
-
-        'book' => [
-            'endpoint' => [
-                'scheme' => 'http', # or https
-                'host' => env('SOLR_HOST', 'localhost'),
-                'port' => env('SOLR_PORT', '8983'),
-                'path' => env('SOLR_PATH', '/'),
-                'core' => 'book',
+        'book'  => [
+            'endpoint'      => [
+                'scheme'    => 'http', # or https
+                'host'      => env('SOLR_HOST', 'localhost'),
+                'port'      => env('SOLR_PORT', '8983'),
+                'path'      => env('SOLR_PATH', '/'),
+                'core'      => 'book',
             ],
-            'resource' => 'BookSolrResource',
-            'classHandler' => 'BookHandler',
+            'resource'      => 'BookSolrResource',
+            'classHandler'  => 'BookHandler',
             'accepts_types' => [ResourceType::book]
         ],
         

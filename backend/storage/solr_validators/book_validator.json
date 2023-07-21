@@ -44,6 +44,37 @@
         },
         "active": {
           "type": "boolean"
+        },
+        "isbn": {
+            "title": "isbn",
+            "type": "string"
+        },
+        "unit": {
+            "title": "unit",
+            "type": "integer"
+        },
+        "lang": {
+          "title": "lang",
+          "type": "string"
+        },
+        "links": {
+          "title": "links",
+          "type": "object"
+        },
+        "extra": {
+          "title": "extra",
+          "type": "object",
+          "properties": {
+            "link": {
+              "type": "string"
+            },
+            "hover": {
+              "type": "string"
+            },
+            "content": {
+              "type": "string"
+            }
+          }
         }
       }
     }

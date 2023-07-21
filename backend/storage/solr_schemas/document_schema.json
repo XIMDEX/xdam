@@ -130,5 +130,52 @@
       "sortMissingLast": true,
       "docValues": false,
       "omitPositions": true
-    }
+    },
+
+  "files": {
+    "name": "files",
+    "type": "text_general"
+  },
+  "name": {
+    "name": "name",
+    "type": "text_es_custom"
+  },
+  "conversions": {
+    "name": "conversions",
+    "type": "strings",
+    "omitNorms": true,
+    "omitTermFreqAndPositions": true,
+    "indexed": true,
+    "stored": true,
+    "uninvertible": true,
+    "sortMissingLast": true,
+    "docValues": false,
+    "omitPositions": true,
+    "multiValued": true
+  },
+  "previews": {
+    "name": "previews",
+    "type": "strings",
+    "omitNorms": true,
+    "omitTermFreqAndPositions": true,
+    "indexed": true,
+    "stored": true,
+    "uninvertible": true,
+    "sortMissingLast": true,
+    "docValues": false,
+    "omitPositions": true,
+    "multiValued": true
+  },
+  "tags": {
+    "name": "tags",
+    "type": "text_general"
+  },
+  "lom": {
+    "name": "lom",
+    "type": "text_general"
+  },
+  "lomes": {
+    "name": "lomes",
+    "type": "text_general"
+  }
 }

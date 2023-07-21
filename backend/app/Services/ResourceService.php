@@ -12,12 +12,20 @@ use App\Models\Media;
 use App\Models\Workspace;
 use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Services\Solr\SolrService;
+use App\Services\ExternalApis\KakumaService;
+use App\Services\ExternalApis\XTagsService;
+use App\Utils\Texts;
 use App\Utils\Utils;
 use DirectoryIterator;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use App\Services\Solr\SolrConfig;
+
 
 class ResourceService
 {
@@ -40,18 +48,39 @@ class ResourceService
     private WorkspaceService $workspaceService;
 
     /**
+     * @var KakumaService
+     */
+    private KakumaService $kakumaService;
+
+    /**
+     * @var SolrConfig
+     */
+    private SolrConfig $solrConfig;
+
+    /**
+     * @var XTagService
+     */
+    private XTagsService $xtagService;
+
+    const PAGE_SIZE = 30;
+
+    /**
      * ResourceService constructor.
      * @param MediaService $mediaService
      * @param SolrService $solr
      * @param CategoryService $categoryService
      */
-    public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService, SemanticService $semanticService)
+    public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService,
+                                KakumaService $kakumaService, XTagsService $xtagService, SolrConfig $solrConfig, SemanticService $semanticService)
     {
         $this->mediaService = $mediaService;
         $this->categoryService = $categoryService;
         $this->solr = $solr;
         $this->workspaceService = $workspaceService;
         $this->semanticService = $semanticService;
+        $this->kakumaService = $kakumaService;
+        $this->xtagService = $xtagService;
+        $this->solrConfig = $solrConfig;
     }
 
     private function saveAssociateFile($type, $params, $model)
@@ -64,23 +93,27 @@ class ResourceService
             // If is a array of files, add a association from each item
             if (is_array($params[$type])) {
                 foreach ($params[$type] as $file) {
+                    if ($model->doesThisResourceSupportsAnAdditionalFile()) {
+                        $this->mediaService->addFromRequest(
+                            $model,
+                            null,
+                            $type,
+                            ["parent_id" => $model->id],
+                            $file
+                        );
+                    }
+                }
+            } else {
+                if ($model->doesThisResourceSupportsAnAdditionalFile()) {
+                    // If is not a array, associate file directly
                     $this->mediaService->addFromRequest(
                         $model,
                         null,
                         $type,
                         ["parent_id" => $model->id],
-                        $file
+                        $params[$type]
                     );
                 }
-            } else {
-                // If is not a array, associate file directly
-                $this->mediaService->addFromRequest(
-                    $model,
-                    null,
-                    $type,
-                    ["parent_id" => $model->id],
-                    $params[$type]
-                );
             }
         }
     }
@@ -134,6 +167,13 @@ class ResourceService
         }
     }
 
+    private function setDefaultLanguageIfNeeded(array $params): void
+    {
+        if( isset($params['type']) && $params["type"] === ResourceType::book && !property_exists($params["data"]->description, "lang")) {
+            $params["data"]->description->lang = getenv('BOOK_DEFAULT_LANGUAGE');
+        }
+    }
+
 
     /**
      * @param $resource
@@ -157,9 +197,27 @@ class ResourceService
      * @param null $type
      * @return Collection
      */
-    public function getAll($type = null)
+    public function getAll($type = null, $ps = null, $withDeleted = false)
     {
-        return $type ? DamResource::where('type', $type)->get() : DamResource::all();
+        if ($withDeleted) {
+            $query = DamResource::withTrashed();
+        } else {
+            $query = DamResource::query();
+        }
+
+        if (null == $ps && null == $type) {
+            return $query->get();
+        }
+
+        if (null == $ps) {
+            return $query->where('type', $type)->get();
+        }
+
+        if (null == $type) {
+            return $query->paginate($ps);
+        }
+
+        return $query->where('type', $type)->paginate($ps);
     }
 
     /**
@@ -172,21 +230,58 @@ class ResourceService
     }
 
     /**
-     * @param String $id
-     * @return DamResource
+     * @param String[] $query
+     * return Collection
      */
-    public function getById($id) : DamResource {
-        return DamResource::findOrFail($id);
-    }
+    public function queryFilter($queryFilters)
+    {
 
+        return DamResource::whereRaw($queryFilters)->get();
+
+    }
 
     /**
      * @return mixed
      */
-    public function exploreCourses(): Collection
+    public function exploreCourses($user_id = null): Collection
     {
+        $recommendedCategory = $this->getRecommendedCategory($user_id);
         $course = ResourceType::course;
-        return Category::where('type', $course)->orWhere('type', "=", strval($course))->get();
+
+        $categories = Category::where('type', $course)->orWhere('type', "=", strval($course))->get();
+
+        $categories->prepend($recommendedCategory);
+
+        return $categories;
+    }
+
+    public function getRecommendedCategory($user_id): array
+    {
+        if (!$user_id) {
+            throw new Exception ("User id must be sent to get recommendations");
+        }
+
+        $courses = $this->kakumaService->getRecommendedCourses($user_id);
+
+        return [
+            'id' => "",
+            'name' => 'Recommended for you',
+            'resources' => $this->getRecommendedCourses($courses)
+        ];
+    }
+
+    public function getRecommendedCourses($courses)
+    {
+        $resources = [];
+        foreach ($courses as $course) {
+            try {
+                $damResource = DamResource::findOrFail($course);
+                array_push($resources, $damResource);
+            } catch (Exception $e) {
+                continue;
+            }
+        }
+        return $resources;
     }
 
     /**
@@ -236,6 +331,9 @@ class ResourceService
         }
 
         if (array_key_exists("data", $params) && !empty($params["data"])) {
+
+            $this->setDefaultLanguageIfNeeded($params);
+
             $resource->update(
                 [
                     'data' => $params['data'],
@@ -246,6 +344,44 @@ class ResourceService
             $this->linkCategoriesFromJson($resource, $params['data']);
             $this->linkTagsFromJson($resource, $params['data']);
         }
+
+        if (array_key_exists("FilesToRemove", $params)) {
+            foreach ($params["FilesToRemove"] as $mediaID) {
+                $mediaResult = Media::where('id', $mediaID)->first();
+
+                if ($mediaResult !== null) {
+                    $this->deleteAssociatedFile($resource, $mediaResult);
+                }
+            }
+        }
+
+        // TODO save all languages label on taxon path
+        if (isset($params['data']->description->semantic_tags)) {
+            $semantic_tags = $params['data']->description->semantic_tags;
+            $lom_params = [
+                'Taxon Path'=> [],
+                '_tab_key' => "9"
+            ];
+            foreach ($semantic_tags as $semantic_tag) {
+                $lom_params['Taxon Path'][] = [
+                    'Id' => $semantic_tag->id,
+                    'Entry' => $semantic_tag->label
+                ];
+            }
+
+            // TODO save on xTags
+            $lang = App::getLocale();
+            if (isset($resource->data->description->semantic_tags)) {
+                $this->xtagService->saveXTagsResource(
+                    $resource->id,
+                    'semantic_tags',
+                    $lang,
+                    $resource->data->description->semantic_tags
+                );
+            }
+            $this->setLomData($resource, $lom_params);
+        }
+
         $this->saveAssociatedFiles($resource, $params);
         $resource = $resource->fresh();
         $this->solr->saveOrUpdateDocument($resource);
@@ -290,6 +426,8 @@ class ResourceService
             $params['data'] = Utils::arrayToObject($params['data']);
         }
 
+        $this->setDefaultLanguageIfNeeded($params);
+
         $resource_data = [
             'data' => $params['data'],
             'name' => $params['data']->description->name ?? $name,
@@ -320,15 +458,9 @@ class ResourceService
             $_newResource = false;
             return $newResource;
         } catch (\Exception $th) {
-            if (false !== $_newResource) {
-                $this->solr->deleteDocument($_newResource);
-                $_newResource->delete();
-                $_newResource = false;
-                return false;
-            }
-            if ($launchThrow) {
-                throw $th;
-            }
+            $this->solr->deleteDocument($newResource);
+            $newResource->forceDelete();
+            throw $th;
         }
     }
 
@@ -343,9 +475,22 @@ class ResourceService
                 $fileName = $fileinfo->getFilename();
                 $json_file = file_get_contents($path .'/'. $fileName);
                 $key = str_replace('.json', '', $fileName);
-                $schemas[$key] = json_decode($json_file);
+                $resourceName = ucfirst($this->solrConfig->getNameCoreConfig(str_replace('_validator', '', $key)));
+                $json = json_decode($json_file);
+
+                if (class_exists("App\\Services\\{$resourceName}Service")) {
+                    $resource_service = app("App\\Services\\{$resourceName}Service");
+                    $json = $resource_service::handleSchema($json);
+                }
+                $schemas[$key] = $json;
+                if (isset($schemas[$key]->properties->description->properties)) {
+                    foreach ($schemas[$key]->properties->description->properties as $key_prop => $prop) {
+                        $schemas[$key]->properties->description->properties->$key_prop->title = Texts::web($key_prop, null, [], $prop->title ?? $key_prop);
+                    }
+                }
             }
         }
+
 
         $path = storage_path('collection_config');
         $dir = new DirectoryIterator($path);
@@ -361,6 +506,13 @@ class ResourceService
         return $schemas;
     }
 
+    private function searchPreviewImage($data, $name): ?UploadedFile
+    {
+        $fileName = str_replace('.', '_', $name).'_preview';
+
+        return array_key_exists($fileName, $data) ? $data[$fileName] : null;
+    }
+
     public function storeBatch ($data)
     {
         $collection = ModelsCollection::find($data['collection']);
@@ -372,6 +524,10 @@ class ResourceService
             $wsp = $data['workspace'];
         }
 
+        $genericResourceDescription = array_key_exists('generic', $data) ? json_decode($data['generic'], true) : [];
+
+        $especificFilesInfoMap = array_key_exists('filesInfo', $data) ? json_decode($data['filesInfo'], true) : [];
+
         $createdResources = [];
 
         //$supported_mime_types = $this->resourcesSchema();
@@ -381,15 +537,25 @@ class ResourceService
         foreach ($data['files'] as $file) {
             $name = $file->getClientOriginalName();
             $type = explode('/', $file->getMimeType())[0];
+
+            $specificInfo = array_key_exists($name, $especificFilesInfoMap) ? $especificFilesInfoMap[$name] : [];
+
+            $description = array_merge(
+                [
+                    'name' => $name,
+                    'active' => false,
+                ],
+                $genericResourceDescription,
+                $specificInfo,
+            );
+
             $params = [
                 'data' => [
-                    'description' => [
-                        'name' => $name,
-                        'active' => false,
-                    ]
+                    'description' => $description
                 ],
                 'collection_id' => $collection->id,
                 'File' => [$file],
+                'Preview' => $this->searchPreviewImage($data, $name),
             ];
             $resource = $this->store($params, $wsp, $collection->accept === ResourceType::multimedia ? $type : $collection->accept);
             $createdResources[] = $resource;
@@ -398,18 +564,20 @@ class ResourceService
         return $createdResources;
     }
 
-    public function lomesSchema ($asArray = false)
+    public function lomesSchema($asArray = false)
     {
-        $json_file = file_get_contents(storage_path('/lomes') .'/lomesSchema.json');
+        /*$json_file = file_get_contents(storage_path('/lomes') .'/lomesSchema.json');
         $schema = json_decode($json_file, $asArray);
-        return $schema;
+        return $schema;*/
+        return Utils::getLomesSchema($asArray);
     }
 
-    public function lomSchema ($asArray = false)
+    public function lomSchema($asArray = false)
     {
-        $json_file = file_get_contents(storage_path('/lom') . '/lomSchema.json');
+        /*$json_file = file_get_contents(storage_path('/lom') . '/lomSchema.json');
         $schema = json_decode($json_file, $asArray);
-        return $schema;
+        return $schema;*/
+        return Utils::getLomSchema($asArray);
     }
 
     public function searchForAssociativeKey($key, $tabKey, $array )
@@ -431,6 +599,7 @@ class ResourceService
         $tabKey = $formData['_tab_key'];
         $lomesSchema = $this->lomesSchema(true);
         $tabSchema = $this->searchForAssociativeKey('key', $tabKey, $lomesSchema['tabs']);
+
         foreach ($tabSchema['properties'] as $label => $props) {
             foreach ($formData as $f_key => $f_value) {
                 if($f_key === $label && $f_value !== null) {
@@ -438,18 +607,25 @@ class ResourceService
                 }
             }
         }
+
         $dam_lomes->update($updateArray);
         $dam_lomes->save();
+        $this->solr->saveOrUpdateDocument($damResource, null, true);
     }
 
     public function setLomData($damResource, $params)
     {
         $dam_lom = $damResource->lom()->firstOrCreate();
         $updateArray = [];
-        $formData = $params->all();
+        if ($params instanceof Request) {
+            $formData = $params->all();
+        } else {
+            $formData = $params;
+        }
         $tabKey = $formData['_tab_key'];
         $lomSchema = $this->lomSchema(true);
         $tabSchema = $this->searchForAssociativeKey('key', $tabKey, $lomSchema['tabs']);
+
         foreach ($tabSchema['properties'] as $label => $props) {
             foreach ($formData as $f_key => $f_value) {
                 if($f_key === $label && $f_value !== null) {
@@ -457,8 +633,10 @@ class ResourceService
                 }
             }
         }
+
         $dam_lom->update($updateArray);
         $dam_lom->save();
+        $this->solr->saveOrUpdateDocument($damResource, null, true);
     }
 
     public function getLomesData($damResource)
@@ -532,15 +710,54 @@ class ResourceService
      * @param DamResource $resource
      * @throws Exception
      */
-    public function delete(DamResource $resource)
+    public function delete($resourceId)
     {
+        $resource = DamResource::withTrashed()->findOrFail($resourceId);
         try {
             $this->solr->deleteDocument($resource);
-            $resource->delete();
+            $resource->forceDelete();
             return true;
         } catch (\Throwable $th) {
             throw $th;
         }
+
+    }
+
+    /**
+     * @param DamResource $resource
+     * @param bool $force
+     * @param bool $onlyLocal -> if true, only deletes in dam and not in external services
+     * @throws Exception
+     */
+    public function softDelete(DamResource $resource, bool $force, bool $onlyLocal)
+    {
+        if ($resource->type == ResourceType::course && !$onlyLocal) {
+            $this->kakumaService->softDeleteCourse($resource->id, $force);
+        }
+
+        $resource->delete();
+        $this->solr->saveOrUpdateDocument($resource);
+
+        return true;
+
+    }
+
+    /**
+     * @param $resourceId
+     * @param bool $onlyLocal -> if true, only deletes in dam and not in external services
+     * @throws Exception
+     */
+    public function restore($resourceId, bool $onlyLocal)
+    {
+        $resource = DamResource::withTrashed()->findOrFail($resourceId);
+        if ($resource->type == ResourceType::course && !$onlyLocal) {
+            $this->kakumaService->restoreCourse($resource->id);
+        }
+
+        $resource->restore();
+        $this->solr->saveOrUpdateDocument($resource);
+
+        return true;
 
     }
 
@@ -719,5 +936,22 @@ class ResourceService
 
     public function updateAsOther($toBeCloned, $theClon) {
 
+    }
+
+    public function getResource($resourceID, $collectionID)
+    {
+        $resource = DamResource::where('id', $resourceID)
+                        ->where('collection_id', $collectionID)
+                        ->first();
+
+        return $resource;
+    }
+
+    public function getCollection($collectionID)
+    {
+        $collection = ModelsCollection::where('id', $collectionID)
+                        ->first();
+
+        return $collection;
     }
 }

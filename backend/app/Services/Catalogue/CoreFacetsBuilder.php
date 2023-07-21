@@ -10,7 +10,71 @@ class CoreFacetsBuilder {
 
     public function __construct()
     {
-        $this->coreList = config('solarium.facets');
+        $this->coreList = [
+            "course" => [
+                "active",
+                "is_deleted",
+                "language",
+                "categories",
+                "semantic_tags",
+                "tags",
+                "skills",
+                "corporations",
+                "workspaces",
+                "internal",
+                "aggregated",
+                "duration",
+                "isFree",
+                "currency",
+                "cost",
+                // "lom",
+                // "lomes"
+            ],
+            "multimedia" => [
+                "categories",
+                "active",
+                "type",
+                "tags",
+                "workspaces",
+                // "lom",
+                // "lomes"
+            ],
+            "document" => [
+                "categories",
+                "active",
+                "type",
+                "types",
+                "tags",
+                "workspaces",
+                // "lom",
+                // "lomes"
+            ],
+            "activity" => [
+                "categories",
+                "active",
+                "workspaces",
+                // "lom",
+                // "lomes"
+            ],
+            "assessment" => [
+                "categories",
+                "active",
+                "workspaces",
+                // "lom",
+                // "lomes"
+            ],
+            "book" => [
+                "categories",
+                "active",
+                "tags",
+                "workspaces",
+                "isbn",
+                "units",
+                "lang",
+                // "lom",
+                // "lomes"
+            ]
+        ];
     }
 
     public function upCoreConfig(): array
