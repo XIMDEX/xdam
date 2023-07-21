@@ -200,7 +200,7 @@ class SolrService
             if (Storage::disk("semantic")->exists($fields["id"].".json")) {
                 $json = json_decode(Storage::disk("semantic")->get($fields["id"].".json"));
                 $fields["data"]->description->entities_linked = $json->xtags_interlinked;
-                $fields["data"]->description->non_entities_linked = $json->xtags;
+                $fields["data"]->description->entities_non_linked = $json->xtags;
             }
             $documentsResponse[] = $fields;
         }
