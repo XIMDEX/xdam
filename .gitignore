@@ -2,3 +2,4 @@
 .idea
 .vscode
 backend/composer.phar
+backend/storage/semantic/
