@@ -191,29 +191,6 @@ class SemanticService
 
     private function createResourceStructure2($resource)
     {
-        $entities_linked = [];
-        $entities_non_linked = [];
-        $array_linked = [];
-
-        /*if (isset($resource->xtags_interlinked)) {
-            foreach ($resource->xtags_interlinked as $key => $entity) {
-                $entities_linked[] = $this->getInfoXtags($entity, true);
-                $array_linked[] = $key;
-            }
-        }
-
-        if (isset($resource->xtags)) {
-            foreach ($resource->xtags as $key => $entity) {
-                if (!in_array($key, $array_linked)) {
-                    $entities_non_linked[] = $this->getInfoXtags($entity, false);
-                }
-            }
-        }
-        $resource->active = 1;
-        $resource->entities_linked = $entities_linked;
-        $resource->entities_non_linked = $entities_non_linked;*/
-   
-
         return [
             'type' => 'document',
             'data' => ['description' => $resource],
@@ -530,33 +507,31 @@ class SemanticService
 
         $responses = Utils::settle($promises)->wait();
 
-        foreach ($responses as $key => $response) {
+        $response = array_shift($responses);
             if ($response['state'] === 'rejected') {
-                $errors[$key] = [
+                $finalResult = [
                     'id' => $data->id,
                     'uuid' => $data->uuid,
                     'title' => $data->title,
                     'status' => 'FAIL'
                 ];
-                continue;
+            }else{
+                $output_xowl = $response['value']->getBody()->getContents();
+                $result = json_decode($output_xowl);
+                $xtags = $this->deleteDuplicateXtag($result->data->xtags) ;
+                $xtags_interlinked = $this->deleteDuplicateXtag($result->data->xtags_interlinked);
+                $xtags = $this->checkNonLinked($xtags_interlinked,$xtags);
+                foreach ($xtags as &$tag) {
+                    $tag = $this->getInfoXtags($tag,false);
+                }
+                foreach ($xtags_interlinked  as &$tag) {
+                    $tag = $this->getInfoXtags($tag,true);
+                }
+                $finalResult['xtags'] = $xtags;
+                $finalResult['xtags_interlinked'] = $xtags_interlinked ;
             }
-            $output_xowl = $response['value']->getBody()->getContents();
-            $result = json_decode($output_xowl);
-        /*    $data->enhanced_interactive = true; 
-            $data->enhanced = true;*/
-            $xtags = $this->deleteDuplicateXtag($result->data->xtags) ;
-            $xtags_interlinked = $this->deleteDuplicateXtag($result->data->xtags_interlinked);
-            $xtags = $this->checkNonLinked($xtags_interlinked,$xtags);
-            foreach ($xtags as &$tag) {
-                $tag = $this->getInfoXtags($tag,false);
-            }
-            foreach ($xtags_interlinked  as &$tag) {
-                $tag = $this->getInfoXtags($tag,true);
-            }
-            $finalResult['xtags'] = $xtags;
-            $finalResult['xtags_interlinked'] = $xtags_interlinked ;
-           // $data->request_data = $result->request;
-        }
+        
+        
         return $finalResult;
     }
 
