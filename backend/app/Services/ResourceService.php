@@ -62,6 +62,11 @@ class ResourceService
      */
     private XTagsService $xtagService;
 
+     /**
+     * @var SemanticService
+     */
+    private SemanticService $semanticService;
+
     const PAGE_SIZE = 30;
 
     /**
@@ -77,8 +82,8 @@ class ResourceService
         $this->categoryService = $categoryService;
         $this->solr = $solr;
         $this->workspaceService = $workspaceService;
-        $this->semanticService = $semanticService;
         $this->kakumaService = $kakumaService;
+        $this->semanticService = $semanticService;
         $this->xtagService = $xtagService;
         $this->solrConfig = $solrConfig;
     }
@@ -290,36 +295,6 @@ class ResourceService
      * @return DamResource
      * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
      */
-    public function patch(DamResource $resource, $params): DamResource
-    {
-        if (array_key_exists("type", $params) && $params["type"]) {
-            $resource->update(
-                [
-                    'type' => ResourceType::fromKey($params["type"])->value,
-                ]
-            );
-            unset($params["type"]);
-        }
-
-        if (array_key_exists("data", $params) && gettype($params["data"]) == "string") {
-            $params["data"] = json_decode($params["data"]);
-        }
-
-        $resource->update($params);
-
-
-        $this->saveAssociatedFiles($resource, $params);
-        $resource = $resource->fresh();
-        $this->solr->saveOrUpdateDocument($resource);
-        return $resource;
-    }
-
-    /**
-     * @param DamResource $resource
-     * @param $params
-     * @return DamResource
-     * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
-     */
     public function update(DamResource $resource, $params): DamResource
     {
         if (array_key_exists("type", $params) && $params["type"]) {
@@ -388,9 +363,39 @@ class ResourceService
         return $resource;
     }
 
+      /**
+     * @param DamResource $resource
+     * @param $params
+     * @return DamResource
+     * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
+     */
+    public function patch(DamResource $resource, $params): DamResource
+    {
+        if (array_key_exists("type", $params) && $params["type"]) {
+            $resource->update(
+                [
+                    'type' => ResourceType::fromKey($params["type"])->value,
+                ]
+            );
+            unset($params["type"]);
+        }
+
+        if (array_key_exists("data", $params) && gettype($params["data"]) == "string") {
+            $params["data"] = json_decode($params["data"]);
+        }
+
+        $resource->update($params);
+
+
+        $this->saveAssociatedFiles($resource, $params);
+        $resource = $resource->fresh();
+        $this->solr->saveOrUpdateDocument($resource);
+        return $resource;
+    }
+
     /**
      * @param $params
-     * @return DamResource | false
+     * @return DamResource
      * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
      */
     public function store(
@@ -398,7 +403,8 @@ class ResourceService
         $toWorkspaceId = null,
         $fromBatchType = null,
         $launchThrow = true
-    )
+    ): DamResource
+
     {
         /*
             $wid cannot be null
@@ -444,7 +450,6 @@ class ResourceService
         } else {
             $resource_data['id'] = Str::orderedUuid();
         }
-
         $_newResource = false;
         try {
             $newResource = DamResource::create($resource_data);

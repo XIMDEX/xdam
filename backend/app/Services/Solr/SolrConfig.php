@@ -290,7 +290,7 @@ class SolrConfig
         } else {
             echo "Aborted \n";
             die();
-        }
+    }
 
         $request->setRawData($json_field_type);
         $res = json_decode($client->executeRequest($request)->getBody(), true);

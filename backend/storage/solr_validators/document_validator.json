@@ -120,6 +120,14 @@
             "type": "array",
             "items": { "$ref" : "#/definitions/entities_linked" }
         },
+        "tags": {
+            "title": "tags",
+            "type": "array",
+            "format": "string",
+            "items": {
+                "type":"string"
+            }
+        },
         "entities_non_linked": {
             "title": "Entities Non-Linked",
             "type": "array",

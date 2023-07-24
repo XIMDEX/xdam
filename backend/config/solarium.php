@@ -77,8 +77,30 @@ return [
             'resource' => 'DocumentSolrResource',
             'classHandler' => 'DocumentHandler',
             'accepts_types' => [ResourceType::document]
-        ]
-    ],
+        ],
+        ],
+        'lom'   => [
+            'endpoint'      => [
+                'scheme'    => 'http', # or https
+                'host'      => env('SOLR_HOST', 'localhost'),
+                'port'      => env('SOLR_PORT', '8983'),
+                'path'      => env('SOLR_PATH', '/'),
+                'core'      => 'lom',
+            ],
+            'resource'      => 'LOMSolrResource',
+            'classHandler'  => 'LOMHandler'
+        ],
+        'lomes' => [
+            'endpoint'      => [
+                'scheme'    => 'http', # or https
+                'host'      => env('SOLR_HOST', 'localhost'),
+                'port'      => env('SOLR_PORT', '8983'),
+                'path'      => env('SOLR_PATH', '/'),
+                'core'      => 'lomes',
+            ],
+            'resource'      => 'LOMSolrResource',
+            'classHandler'  => 'LOMHandler'
+        ],
     'solr_validators_folder' => env('SOLR_VALIDATORS_FOLDER', ''),
     'solr_schemas_folder' => env('SOLR_SCHEMAS_FOLDER', ''),
     'facets' => [
