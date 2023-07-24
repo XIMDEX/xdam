@@ -10,6 +10,28 @@
     "sortMissingLast": true,
     "omitPositions": true
   },
+  "id": {
+      "name": "id",
+      "type": "text_general",
+      "multiValued": false,
+      "indexed": true,
+      "required": true,
+      "stored": true
+    },
+  "external_id": {
+    "name": "external_id",
+    "type": "string",
+    "multiValued": false,
+    "indexed": true,
+    "required": true,
+    "stored": true
+  },
+  "langcode":{
+    "name": "langcode",
+    "type": "string",
+    "indexed": true,
+    "stored": true
+  },
   "categories": {
     "name": "categories",
     "type": "text_general"
@@ -42,17 +64,55 @@
     "name": "files",
     "type": "text_general"
   },
-  "id": {
-    "name": "id",
-    "type": "string",
-    "multiValued": false,
-    "indexed": true,
-    "required": true,
-    "stored": true
-  },
   "name": {
     "name": "name",
     "type": "text_es_custom"
+  },
+  "title": {
+    "name": "title",
+    "type": "string",
+    "omitNorms": true,
+    "omitTermFreqAndPositions": true,
+    "indexed": true,
+    "stored": true,
+    "uninvertible": true,
+    "docValues": true,
+    "sortMissingLast": true,
+    "omitPositions": true
+  },
+  "entities_linked": {
+    "name": "entities_linked",
+    "type": "string",
+    "multiValued": true
+  },
+  "entities_non_linked": {
+    "name": "entities_non_linked",
+    "type": "string",
+    "multiValued": true
+  },
+  "enhanced": {
+    "name": "enhanced",
+    "type": "boolean",
+    "indexed": true,
+    "stored": true
+  },
+  "enhanced_interactive": {
+    "name": "enhanced_interactive",
+    "type": "boolean",
+    "indexed": true,
+    "stored": true
+  },
+  "body": {
+    "name": "body",
+    "type": "string",
+    "omitNorms": true,
+    "omitTermFreqAndPositions": true,
+    "indexed": true,
+    "stored": true,
+    "uninvertible": true,
+    "sortMissingLast": true,
+    "docValues": false,
+    "omitPositions": true
   },
   "conversions": {
     "name": "conversions",

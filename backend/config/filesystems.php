@@ -53,6 +53,11 @@ return [
             'root' => env('BACKUP_PATH'),
         ],
 
+        'semantic' => [
+            'driver' => 'local',
+            'root' => storage_path('semantic'),
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

@@ -1,11 +1,105 @@
 {
   "type": "object",
+  "definitions": {
+    "entities_linked": {
+      "type": "object",
+      "title": "Entities Linked",
+      "properties": {
+          "name": {
+              "type": "string",
+              "default": ""
+          },
+          "confidence": {
+              "type": "number",
+              "title": "Entry",
+              "default": ""
+          },
+          "type": {
+              "type": "string",
+              "title": "Entry",
+              "default": ""
+          },
+          "start": {
+              "type": "number",
+              "title": "Entry",
+              "default": ""
+          },
+          "end": {
+              "type": "number",
+              "title": "Entry",
+              "default": ""
+          },
+          "uri": {
+              "type": "string",
+              "title": "Entry",
+              "default": ""
+          }
+      }
+    },
+    "entities_non_linked": {
+      "type": "object",
+      "title": "Entities Non-Linked",
+      "properties": {
+          "name": {
+              "type": "string",
+              "default": ""
+          },
+          "confidence": {
+              "type": "number",
+              "title": "Entry",
+              "default": ""
+          },
+          "type": {
+              "type": "string",
+              "title": "Entry",
+              "default": ""
+          },
+          "start": {
+              "type": "number",
+              "title": "Entry",
+              "default": ""
+          },
+          "end": {
+              "type": "number",
+              "title": "Entry",
+              "default": ""
+          }
+      }
+    }
+  },
   "properties": {
     "description": {
       "type": "object",
-      "required": ["active", "partials", "name"],
+      "required": ["active", "title", "body", "id", "uuid"],
       "properties": {
         "name": {
+          "type": "string",
+          "format": "string"
+        },
+        "title": {
+          "type": "string",
+          "format": "string",
+          "default": ""
+        },
+        "id": {
+          "title": "ID",
+          "type": "string",
+          "format": "string",
+          "default": ""
+        },
+        "uuid": {
+          "title": "UUID",
+          "type": "string",
+          "format": "string",
+          "default": ""
+        },
+        "category": {
+            "title": "Category",
+            "type": "string",
+            "format": "string",
+            "default": "Other"
+        },
+        "image": {
           "type": "string",
           "format": "string"
         },
@@ -17,6 +111,30 @@
           "type": "string",
           "format": "string"
         },
+        "language": {
+          "type": "string",
+          "enum": [
+            "es",
+            "en"
+          ],
+          "default": "es"
+        },
+        "entities_linked": {
+            "title": "Entities Linked",
+            "type": "array",
+            "items": { "$ref" : "#/definitions/entities_linked" }
+        },
+        "entities_non_linked": {
+          "title": "Entities Non-Linked",
+          "type": "array",
+          "items": { "$ref" : "#/definitions/entities_non_linked" }
+      },
+      "enhanced_interactive": {
+        "type": "boolean"
+      },
+      "enhanced": {
+        "type":"boolean"
+      },
         "tags": {
             "title": "tags",
             "type": "array",

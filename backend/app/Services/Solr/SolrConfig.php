@@ -281,7 +281,7 @@ class SolrConfig
 
         $out = $this->copyRequiredFiles($client);
 
-        echo "\n BEFORE CONTINUE: $out \n Continue? [y/N]";
+        echo "\n BEFORE CONTINUE: \n\n $out \n\n\n If you didn't execute the last command, the installation will fail. \n Continue? [y/N]";
 
         $answer = fgetc(STDIN);
 
@@ -290,7 +290,7 @@ class SolrConfig
         } else {
             echo "Aborted \n";
             die();
-        }
+    }
 
         $request->setRawData($json_field_type);
         $res = json_decode($client->executeRequest($request)->getBody(), true);

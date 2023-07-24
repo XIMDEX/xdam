@@ -4,6 +4,7 @@
 namespace App\Services\Solr;
 
 
+use App\Utils\Utils;
 use Exception;
 use Illuminate\Support\Facades\File;
 
@@ -36,20 +37,23 @@ class SolrConfigRequirements
     public function getFullConfig(): array
     {
         foreach ($this->config as $key => $value) {
-            $validatorPath = $this->validatorPath . "/$key" . self::validatorSufix;
-            if (!File::exists($validatorPath)) {
-                throw new Exception("Validation configuration missing for core $key");
-            } else {
-                $this->config[$key]["validator"] = json_decode(file_get_contents($validatorPath));
-            }
-
-            $schemaPath = $this->schemaPath . "/$key" . self::schemaSufix;
-            if (!File::exists($schemaPath)) {
-                throw new Exception("Schema configuration missing for core $key");
-            } else {
-                $this->config[$key]['schema'] = json_decode(file_get_contents($schemaPath));
-            }
+            $this->config[$key]["validator"] = $this->getValidator($key);
+            $this->config[$key]["schema"] = $this->getSchema($key);
         }
         return $this->config;
+    }
+
+    public function getValidator($key)
+    {
+        $validatorPath = $this->validatorPath . "/$key" . self::validatorSufix;
+
+        return Utils::getJsonFile($validatorPath, false, "Validation configuration missing for core $key");
+    }
+
+    public function getSchema($key)
+    {
+        $validatorPath = $this->schemaPath . "/$key" . self::schemaSufix;
+
+        return Utils::getJsonFile($validatorPath, false, "Schema configuration missing for core $key");
     }
 }

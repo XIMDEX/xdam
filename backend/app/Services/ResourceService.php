@@ -62,6 +62,11 @@ class ResourceService
      */
     private XTagsService $xtagService;
 
+     /**
+     * @var SemanticService
+     */
+    private SemanticService $semanticService;
+
     const PAGE_SIZE = 30;
 
     /**
@@ -71,13 +76,14 @@ class ResourceService
      * @param CategoryService $categoryService
      */
     public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService,
-                                KakumaService $kakumaService, XTagsService $xtagService, SolrConfig $solrConfig)
+                                KakumaService $kakumaService, XTagsService $xtagService, SolrConfig $solrConfig, SemanticService $semanticService)
     {
         $this->mediaService = $mediaService;
         $this->categoryService = $categoryService;
         $this->solr = $solr;
         $this->workspaceService = $workspaceService;
         $this->kakumaService = $kakumaService;
+        $this->semanticService = $semanticService;
         $this->xtagService = $xtagService;
         $this->solrConfig = $solrConfig;
     }
@@ -357,6 +363,36 @@ class ResourceService
         return $resource;
     }
 
+      /**
+     * @param DamResource $resource
+     * @param $params
+     * @return DamResource
+     * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
+     */
+    public function patch(DamResource $resource, $params): DamResource
+    {
+        if (array_key_exists("type", $params) && $params["type"]) {
+            $resource->update(
+                [
+                    'type' => ResourceType::fromKey($params["type"])->value,
+                ]
+            );
+            unset($params["type"]);
+        }
+
+        if (array_key_exists("data", $params) && gettype($params["data"]) == "string") {
+            $params["data"] = json_decode($params["data"]);
+        }
+
+        $resource->update($params);
+
+
+        $this->saveAssociatedFiles($resource, $params);
+        $resource = $resource->fresh();
+        $this->solr->saveOrUpdateDocument($resource);
+        return $resource;
+    }
+
     /**
      * @param $params
      * @return DamResource
@@ -365,7 +401,8 @@ class ResourceService
     public function store(
         $params,
         $toWorkspaceId = null,
-        $fromBatchType = null
+        $fromBatchType = null,
+        $launchThrow = true
     ): DamResource
 
     {
@@ -408,18 +445,22 @@ class ResourceService
 
         if ($type == ResourceType::course) {
             $resource_data['id'] = $params['kakuma_id'];
+        } else if ($type == ResourceType::document && isset($params['data']->description->uuid) && null != $params['data']->description->uuid) {
+            $resource_data['id'] = $params['data']->description->uuid;
         } else {
             $resource_data['id'] = Str::orderedUuid();
         }
-
+        $_newResource = false;
         try {
             $newResource = DamResource::create($resource_data);
+            $_newResource = $newResource;
             $this->setResourceWorkspace($newResource, $wsp);
             $this->linkCategoriesFromJson($newResource, $params['data']);
             $this->linkTagsFromJson($newResource, $params['data']);
             $this->saveAssociatedFiles($newResource, $params);
             $newResource = $newResource->fresh();
             $this->solr->saveOrUpdateDocument($newResource);
+            $_newResource = false;
             return $newResource;
         } catch (\Exception $th) {
             $this->solr->deleteDocument($newResource);
