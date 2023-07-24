@@ -364,7 +364,6 @@ class SolrService
 
         // The facets to be applied to the query
         $this->facetManager->setFacets($facetSet, [], $core);
-
         // Limit the query to facets that the user has marked us
         $this->facetManager->setQueryByFacets($query, [], $core);
 

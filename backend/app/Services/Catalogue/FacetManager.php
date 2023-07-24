@@ -116,6 +116,8 @@ class FacetManager
             $isBoolean = false;
             $collection = Collection::find($facetsFilter['collections']);
 
+         //   if($facetsFilter['collections'] === 49)$collection = Collection::find($facetsFilter['collection']);
+
             if (in_array($facetKey['name'], self::RADIO_FACETS) && (key_exists('true', $values) || key_exists('false', $values))) {
                 $isBoolean = true;
             }
@@ -159,9 +161,10 @@ class FacetManager
 
                     if ($collection) {
                         $type = ucfirst($this->solrConfig->getNameCoreConfig($collection->solr_connection));
-                        if (class_exists("App\\Services\\{$type}Service")) $service = app("App\\Services\\{$type}Service");
-
-                        $facetItem->values = $service::handleFacetValues($facetItem->values, $facetItem->key);
+                        if (class_exists("App\\Services\\{$type}Service")){
+                            $service = app("App\\Services\\{$type}Service");
+                            $facetItem->values = $service::handleFacetValues($facetItem->values, $facetItem->key);
+                        } 
                     }
                 }
                 if ($facetItem != null) {

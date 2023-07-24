@@ -92,13 +92,4 @@ class Utils
         for ($i = 0; $i < $times; $i++) $string .= $character;
         return $string;
     }
-
-    public static function getJsonFile($path, $associative = false, $error_message = false)
-    {
-        if (!File::exists($path)) {
-            throw new Exception($error_message ? $error_message : 'missing file at ' . $path);
-        }
-
-        return json_decode(file_get_contents($path), $associative);
-    }
 }

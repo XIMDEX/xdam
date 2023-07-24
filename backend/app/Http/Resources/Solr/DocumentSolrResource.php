@@ -89,38 +89,28 @@ class DocumentSolrResource extends BaseSolrResource
      */
     public function toArray($request)
     {
-
-      $workspaces = AppUtils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
-
-        if (property_exists($this->data->description, 'entities_linked')) {
-
-        }
-        $entities_linked = property_exists($this->data->description, 'entities_linked')
-            ? array_column($this->data->description->entities_linked, 'name')
-            : [];
-
-        $entities_non_linked = property_exists($this->data->description, 'entities_non_linked')
-            ? array_column($this->data->description->entities_non_linked, 'name')
-            : [];
+        $files = $this->getFiles();
 
         return [
-            'id' => $this->id,
-            'external_id' => $this->data->description->id,
-            'external_uuid' => $this->data->description->uuid,
-            'langcode' => $this->data->description->language,
-            'category' => $this->data->description->category,
-            'title' => $this->data->description->title,
-            'body' => $this->data->description->body,
-            'entities_non_linked' =>  count($entities_non_linked) > 0 ? $entities_non_linked : [],
-            'entities_linked' => count($entities_linked) > 0 ? $entities_linked : [],
-            'active' => $this->active,
-            'type' => ResourceType::document,
-            'collection' => $this->collection->id,
-            'workspaces' => $workspaces,
-            'organization' => $this->organization()->id,
-            'enhanced' => property_exists($this->data->description, 'enhanced') ? $this->data->description->enhanced : false,
-            'enhanced_interactive' => property_exists($this->data->description, 'enhanced_interactive') ? $this->data->description->enhanced_interactive : false,
-            'data' => is_object($this->data) ? json_encode($this->data) : $this->data
+            'id'                    => $this->getID(),
+            'name'                  => $this->getName(),
+            'data'                  => $this->getData(),
+            'active'                => $this->getActive(),
+            'type'                  => $this->getType(),
+            'types'                 => $this->getTypes($files),
+            'tags'                  => $this->formatTags($this->getTags()),
+            'categories'            => $this->formatCategories($this->getCategories()),
+            'files'                 => $files,
+            'conversions'           => $this->getConversions(),
+            'previews'              => $this->getPreviews(),
+            'workspaces'            => $this->getWorkspaces(),
+            'organization'          => $this->getOrganization(),
+            'collections'           => $this->getCollections(),
+            'core_resource_type'    => $this->getCoreResourceType(),
+            'created_at'            => $this->created_at,
+            'updated_at'            => $this->updated_at,
+            'lom'                   => $this->getLOMValues(),
+            'lomes'                 => $this->getLOMValues('lomes')
         ];
     }
 }
