@@ -3,7 +3,6 @@
 
 namespace App\Services\Solr;
 
-
 use App\Utils\Utils;
 use Exception;
 use Illuminate\Support\Facades\File;
@@ -57,3 +56,4 @@ class SolrConfigRequirements
         return Utils::getJsonFile($validatorPath, false, "Schema configuration missing for core $key");
     }
 }
+

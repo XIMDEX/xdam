@@ -207,7 +207,7 @@ class SemanticController extends Controller
         );
     }
 
-
+    
 
     /**
      * @param Request $request

@@ -42,3 +42,4 @@ class InesJASeeder extends Seeder
         ]);
     }
 }
+

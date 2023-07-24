@@ -45,7 +45,7 @@ class UpdateResourceRequest extends FormRequest
                 'extra.content' => 'string',
                 'lang' => 'sometimes|nullable|in:cat,en,es'
             ];
-        }
+        }   
     }
 
     public function validationData()

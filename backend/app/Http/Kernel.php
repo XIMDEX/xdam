@@ -76,6 +76,7 @@ class Kernel extends HttpKernel
         'collection.automatic' => \App\Http\Middleware\AddAutomaticCollection::class,
         'update.resource.card' => \App\Http\Middleware\ResourcePermissions\UpdateResourceCard::class,
         'delete.resource.card' => \App\Http\Middleware\ResourcePermissions\DeleteResourceCard::class,
+        'collection.automatic' => \App\Http\Middleware\AddAutomaticCollection::class,
 
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,

@@ -89,6 +89,7 @@ class DocumentSolrResource extends BaseSolrResource
      */
     public function toArray($request)
     {
+
       $workspaces = AppUtils::workspacesToName($this->resource->workspaces->pluck('id')->toArray());
 
         if (property_exists($this->data->description, 'entities_linked')) {

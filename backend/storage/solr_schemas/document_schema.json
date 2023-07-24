@@ -140,30 +140,9 @@
     "omitPositions": true,
     "multiValued": true
   },
-  "type": {
-    "name": "type",
-    "type": "string",
-    "omitNorms": true,
-    "omitTermFreqAndPositions": true,
-    "indexed": true,
-    "stored": true,
-    "uninvertible": true,
-    "sortMissingLast": true,
-    "docValues": true,
-    "omitPositions": true
-  },
   "tags": {
     "name": "tags",
     "type": "text_general"
-  },
-  "organization": {
-    "name": "organization",
-    "type": "strings"
-  },
-  "workspaces": {
-    "name": "workspaces",
-    "type": "string",
-    "multiValued": true
   },
   "lom": {
     "name": "lom",

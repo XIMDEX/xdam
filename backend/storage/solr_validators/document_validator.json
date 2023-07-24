@@ -72,14 +72,14 @@
       "type": "object",
       "required": ["active", "title", "body", "id", "uuid"],
       "properties": {
-        "name": {
-          "type": "string",
-          "format": "string"
-        },
         "title": {
           "type": "string",
           "format": "string",
           "default": ""
+        },
+        "body": {
+          "type": "string",
+          "format": "string"
         },
         "id": {
           "title": "ID",
@@ -99,15 +99,11 @@
             "format": "string",
             "default": "Other"
         },
-        "image": {
-          "type": "string",
-          "format": "string"
-        },
         "external_url": {
           "type": "string",
           "format": "string"
         },
-        "description": {
+        "image": {
           "type": "string",
           "format": "string"
         },
@@ -124,17 +120,6 @@
             "type": "array",
             "items": { "$ref" : "#/definitions/entities_linked" }
         },
-        "entities_non_linked": {
-          "title": "Entities Non-Linked",
-          "type": "array",
-          "items": { "$ref" : "#/definitions/entities_non_linked" }
-      },
-      "enhanced_interactive": {
-        "type": "boolean"
-      },
-      "enhanced": {
-        "type":"boolean"
-      },
         "tags": {
             "title": "tags",
             "type": "array",
@@ -143,25 +128,19 @@
                 "type":"string"
             }
         },
-          "categories": {
-            "title": "categories",
+        "entities_non_linked": {
+            "title": "Entities Non-Linked",
             "type": "array",
-            "format": "string",
-            "items": {
-              "type":"string"
-            }
-        },
-        "partials": {
-          "type": "object",
-          "properties": {
-            "pages": {
-              "type": "integer",
-              "format": "integer"
-            }
-          }
+            "items": { "$ref" : "#/definitions/entities_non_linked" }
         },
         "active": {
           "type": "boolean"
+        },
+        "enhanced_interactive": {
+          "type": "boolean"
+        },
+        "enhanced": {
+          "type":"boolean"
         }
       }
     }
