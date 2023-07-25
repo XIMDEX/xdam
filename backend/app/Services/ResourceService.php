@@ -981,11 +981,11 @@ class ResourceService
 
     private function saveCaptionImage(string $caption,string $uuid){
         $result = ["imageCaptionAi" => $caption];
-        if (file_exists("semantic/"+$uuid.".json")) {
-            $file = json_decode(file_get_contents("semantic/"+$uuid.".json"));
+        if (Storage::disk('semantic')->exists($uuid."json")) {
+            $file = json_decode(Storage::disk("semantic")->get($uuid.".json"));
             $file->imageCaptionAi = $caption;
             $result = json_encode($file);
         }
-        Storage::disk('semantic')->put($uuid.".json", json_encode($caption));
+        Storage::disk('semantic')->put($uuid.".json", json_encode($result));
     }
 }

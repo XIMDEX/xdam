@@ -13,6 +13,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\CorporationController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\ResourceJsonController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SemanticController;
 use App\Http\Controllers\UserController;
@@ -90,6 +91,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
             Route::get('/{damResource}',            [ResourceController::class, 'get'])->name('damResource.get');
             Route::get('/lastCreated/{collection}', [CollectionController::class, 'getLastResourceCreated'])->name('collection.get.lastCreated');
             Route::get('/lastUpdated/{collection}', [CollectionController::class, 'getLastResourceUpdated'])->name('collection.get.lastUpdated');
+            Route::get('/json/{damResource}',       [ResourceJsonController::class, 'getJsonFile'])->name('damResource.getJson');
         });
     });
 
