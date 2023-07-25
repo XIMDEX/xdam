@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Services\Solr\SolrConfig;
-
+use Illuminate\Support\Facades\Storage;
 
 class ResourceService
 {
@@ -69,7 +69,7 @@ class ResourceService
      * @var XTagService
      */
     private XowlService $xowlService;
-
+    /*
      * @var SemanticService
      */
     private SemanticService $semanticService;
@@ -84,8 +84,8 @@ class ResourceService
      * @param CategoryService $categoryService
      */
     public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService,
-                                KakumaService $kakumaService, XTagsService $xtagService, XowlService $xowlService)
-                                KakumaService $kakumaService, XTagsService $xtagService, SolrConfig $solrConfig, SemanticService $semanticService)
+                                KakumaService $kakumaService, XTagsService $xtagService, XowlService $xowlService, SemanticService $semanticService,SolrConfig $solrConfig)
+            
     {
         $this->mediaService = $mediaService;
         $this->categoryService = $categoryService;
@@ -442,7 +442,7 @@ class ResourceService
             'user_owner_id' => Auth::user()->id,
             'collection_id' => $params['collection_id'] ?? null
         ];
-
+        //TODO: Improve this part
         if ($type == ResourceType::course) {
             $resource_data['id'] = $params['kakuma_id'];
         } else if ($type == ResourceType::document && isset($params['data']->description->uuid) && null != $params['data']->description->uuid) {
@@ -461,13 +461,8 @@ class ResourceService
             //here 
             if ($type == ResourceType::image ) {
                 $mediaUrl = $this->mediaService->getMediaURL(new Media(), $resource_data['id']);
-                if ($mediaUrl) {
-                   $caption = $this->getCaptionFromImage($mediaUrl);
-                   if ($caption) {
-                    $paramsData->description->description = $caption;
-                    $newResource->update(['data' => $paramsData]);
-                   }
-                }
+                $caption = $this->getCaptionFromImage("https://www.ruralidays.co.uk/travel/wp-content/uploads/2018/03/Beach-of-La-Carihuela-in-Torremolinos-Malaga.jpg");
+                if($caption)$this->saveCaptionImage($caption,$resource_data['id']);
             } 
             $newResource = $newResource->fresh();
             $this->solr->saveOrUpdateDocument($newResource);
@@ -983,5 +978,9 @@ class ResourceService
             } catch (\Exception $exc) {
                 // failed captioning image -- continue process
             }
+    }
+
+    private function saveCaptionImage(string $caption,string $uuid){
+        Storage::disk('semantic')->put($uuid.".json", json_encode($caption));
     }
 }
