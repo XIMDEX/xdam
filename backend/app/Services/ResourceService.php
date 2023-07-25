@@ -458,7 +458,6 @@ class ResourceService
             $this->linkCategoriesFromJson($newResource,$paramsData );
             $this->linkTagsFromJson($newResource,$paramsData);
             $this->saveAssociatedFiles($newResource, $params);
-            //here 
             if ($type == ResourceType::image ) {
                 $mediaUrl = $this->mediaService->getMediaURL(new Media(), $resource_data['id']);
                 $caption = $this->getCaptionFromImage("https://www.ruralidays.co.uk/travel/wp-content/uploads/2018/03/Beach-of-La-Carihuela-in-Torremolinos-Malaga.jpg");
@@ -981,6 +980,12 @@ class ResourceService
     }
 
     private function saveCaptionImage(string $caption,string $uuid){
+        $result = ["imageCaptionAi" => $caption];
+        if (file_exists("semantic/"+$uuid.".json")) {
+            $file = json_decode(file_get_contents("semantic/"+$uuid.".json"));
+            $file->imageCaptionAi = $caption;
+            $result = json_encode($file);
+        }
         Storage::disk('semantic')->put($uuid.".json", json_encode($caption));
     }
 }
