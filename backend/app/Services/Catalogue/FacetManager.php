@@ -5,6 +5,8 @@ namespace App\Services\Catalogue;
 use App\Models\Collection;
 use App\Utils\Texts;
 use Solarium\QueryType\Select\Query\Query;
+use App\Services\Solr\SolrConfig;
+
 
 class FacetManager
 {
@@ -15,9 +17,15 @@ class FacetManager
     const UNLIMITED_FACETS_VALUES = -1;
     const RADIO_FACETS = ['active', 'aggregated', 'internal', 'internal', 'external', 'isFree', 'is_deleted'];
 
-    public function __construct(CoreFacetsBuilder $coreFacetsBuilder)
+    /**
+     * @var SolrConfig
+     */
+    private SolrConfig $solrConfig;
+
+    public function __construct(CoreFacetsBuilder $coreFacetsBuilder, SolrConfig $solrConfig)
     {
         $this->facetLists = $coreFacetsBuilder->upCoreConfig();
+        $this->solrConfig = $solrConfig;
     }
 
     //Define black-list fields (organization_id)
@@ -108,6 +116,8 @@ class FacetManager
             $isBoolean = false;
             $collection = Collection::find($facetsFilter['collections']);
 
+         //   if($facetsFilter['collections'] === 49)$collection = Collection::find($facetsFilter['collection']);
+
             if (in_array($facetKey['name'], self::RADIO_FACETS) && (key_exists('true', $values) || key_exists('false', $values))) {
                 $isBoolean = true;
             }
@@ -118,7 +128,7 @@ class FacetManager
                 foreach ($facet as $valueFaceSet => $count) {
                         $facetItem = new \stdClass();
                         $facetItem->key = $facetKey['name'];
-                        $facetItem->label = Texts::web($facetLabel);
+                        $facetItem->label = Texts::facets($facetLabel);
                         $isSelected = false;
 
                         // if it exists in the parameter filter, mark it as selected
@@ -137,7 +147,7 @@ class FacetManager
                         }
 
                         if ($isBoolean) {
-                            $valueFaceSet = Texts::web($valueFaceSet);
+                            $valueFaceSet = Texts::facets($valueFaceSet);
                         }
 
                         // return the occurrence count and if it is selected or not
@@ -146,14 +156,15 @@ class FacetManager
                         $facetItem->values = $property;
                     if ($isBoolean && count($values) == 2) {
                         $all_count = $values['false'] + $values['true'];
-                        $facetItem->values->{Texts::web('all')} = ['count' => $all_count, 'selected' => true, 'radio' => true];
+                        $facetItem->values->{Texts::facets('all')} = ['count' => $all_count, 'selected' => true, 'radio' => true];
                     }
 
                     if ($collection) {
-                        $type = ucfirst($collection->solr_connection);
-                        if (class_exists("App\\Services\\{$type}Service"))
-                        $service = app("App\\Services\\{$type}Service");
-                        $facetItem->values = $service::handleFacetValues($facetItem->values, $facetItem->key);
+                        $type = ucfirst($this->solrConfig->getNameCoreConfig($collection->solr_connection));
+                        if (class_exists("App\\Services\\{$type}Service")){
+                            $service = app("App\\Services\\{$type}Service");
+                            $facetItem->values = $service::handleFacetValues($facetItem->values, $facetItem->key);
+                        } 
                     }
                 }
                 if ($facetItem != null) {

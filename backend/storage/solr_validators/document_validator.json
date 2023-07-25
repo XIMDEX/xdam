@@ -1,21 +1,124 @@
 {
   "type": "object",
+  "definitions": {
+    "entities_linked": {
+      "type": "object",
+      "title": "Entities Linked",
+      "properties": {
+          "name": {
+              "type": "string",
+              "default": ""
+          },
+          "confidence": {
+              "type": "number",
+              "title": "Entry",
+              "default": ""
+          },
+          "type": {
+              "type": "string",
+              "title": "Entry",
+              "default": ""
+          },
+          "start": {
+              "type": "number",
+              "title": "Entry",
+              "default": ""
+          },
+          "end": {
+              "type": "number",
+              "title": "Entry",
+              "default": ""
+          },
+          "uri": {
+              "type": "string",
+              "title": "Entry",
+              "default": ""
+          }
+      }
+    },
+    "entities_non_linked": {
+      "type": "object",
+      "title": "Entities Non-Linked",
+      "properties": {
+          "name": {
+              "type": "string",
+              "default": ""
+          },
+          "confidence": {
+              "type": "number",
+              "title": "Entry",
+              "default": ""
+          },
+          "type": {
+              "type": "string",
+              "title": "Entry",
+              "default": ""
+          },
+          "start": {
+              "type": "number",
+              "title": "Entry",
+              "default": ""
+          },
+          "end": {
+              "type": "number",
+              "title": "Entry",
+              "default": ""
+          }
+      }
+    }
+  },
   "properties": {
     "description": {
       "type": "object",
-      "required": ["active", "partials", "name"],
+      "required": ["active", "title", "body", "id", "uuid"],
       "properties": {
-        "name": {
+        "title": {
+          "type": "string",
+          "format": "string",
+          "default": ""
+        },
+        "body": {
           "type": "string",
           "format": "string"
+        },
+        "id": {
+          "title": "ID",
+          "type": "string",
+          "format": "string",
+          "default": ""
+        },
+        "uuid": {
+          "title": "UUID",
+          "type": "string",
+          "format": "string",
+          "default": ""
+        },
+        "category": {
+            "title": "Category",
+            "type": "string",
+            "format": "string",
+            "default": "Other"
         },
         "external_url": {
           "type": "string",
           "format": "string"
         },
-        "description": {
+        "image": {
           "type": "string",
           "format": "string"
+        },
+        "language": {
+          "type": "string",
+          "enum": [
+            "es",
+            "en"
+          ],
+          "default": "es"
+        },
+        "entities_linked": {
+            "title": "Entities Linked",
+            "type": "array",
+            "items": { "$ref" : "#/definitions/entities_linked" }
         },
         "tags": {
             "title": "tags",
@@ -25,25 +128,19 @@
                 "type":"string"
             }
         },
-          "categories": {
-            "title": "categories",
+        "entities_non_linked": {
+            "title": "Entities Non-Linked",
             "type": "array",
-            "format": "string",
-            "items": {
-              "type":"string"
-            }
-        },
-        "partials": {
-          "type": "object",
-          "properties": {
-            "pages": {
-              "type": "integer",
-              "format": "integer"
-            }
-          }
+            "items": { "$ref" : "#/definitions/entities_non_linked" }
         },
         "active": {
           "type": "boolean"
+        },
+        "enhanced_interactive": {
+          "type": "boolean"
+        },
+        "enhanced": {
+          "type":"boolean"
         }
       }
     }

@@ -26,6 +26,8 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use App\Services\Solr\SolrConfig;
+
 
 class ResourceService
 {
@@ -53,14 +55,25 @@ class ResourceService
     private KakumaService $kakumaService;
 
     /**
+     * @var SolrConfig
+     */
+    private SolrConfig $solrConfig;
+
+    /**
      * @var XTagService
      */
     private XTagsService $xtagService;
 
      /**
+
      * @var XTagService
      */
     private XowlService $xowlService;
+
+     * @var SemanticService
+     */
+    private SemanticService $semanticService;
+
 
     const PAGE_SIZE = 30;
 
@@ -72,14 +85,17 @@ class ResourceService
      */
     public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService,
                                 KakumaService $kakumaService, XTagsService $xtagService, XowlService $xowlService)
+                                KakumaService $kakumaService, XTagsService $xtagService, SolrConfig $solrConfig, SemanticService $semanticService)
     {
         $this->mediaService = $mediaService;
         $this->categoryService = $categoryService;
         $this->solr = $solr;
         $this->workspaceService = $workspaceService;
         $this->kakumaService = $kakumaService;
+        $this->semanticService = $semanticService;
         $this->xtagService = $xtagService;
         $this->xowlService = $xowlService;
+        $this->solrConfig = $solrConfig;
     }
 
     private function saveAssociateFile($type, $params, $model)
@@ -357,6 +373,36 @@ class ResourceService
         return $resource;
     }
 
+      /**
+     * @param DamResource $resource
+     * @param $params
+     * @return DamResource
+     * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
+     */
+    public function patch(DamResource $resource, $params): DamResource
+    {
+        if (array_key_exists("type", $params) && $params["type"]) {
+            $resource->update(
+                [
+                    'type' => ResourceType::fromKey($params["type"])->value,
+                ]
+            );
+            unset($params["type"]);
+        }
+
+        if (array_key_exists("data", $params) && gettype($params["data"]) == "string") {
+            $params["data"] = json_decode($params["data"]);
+        }
+
+        $resource->update($params);
+
+
+        $this->saveAssociatedFiles($resource, $params);
+        $resource = $resource->fresh();
+        $this->solr->saveOrUpdateDocument($resource);
+        return $resource;
+    }
+
     /**
      * @param $params
      * @return DamResource
@@ -365,7 +411,8 @@ class ResourceService
     public function store(
         $params,
         $toWorkspaceId = null,
-        $fromBatchType = null
+        $fromBatchType = null,
+        $launchThrow = true
     ): DamResource
 
     {
@@ -395,9 +442,18 @@ class ResourceService
             'user_owner_id' => Auth::user()->id,
             'collection_id' => $params['collection_id'] ?? null
         ];
-        
+
+        if ($type == ResourceType::course) {
+            $resource_data['id'] = $params['kakuma_id'];
+        } else if ($type == ResourceType::document && isset($params['data']->description->uuid) && null != $params['data']->description->uuid) {
+            $resource_data['id'] = $params['data']->description->uuid;
+        } else {
+            $resource_data['id'] = Str::orderedUuid();
+        }
+        $_newResource = false;
         try {
             $newResource = DamResource::create($resource_data);
+            $_newResource = $newResource;
             $this->setResourceWorkspace($newResource, $wsp);
             $this->linkCategoriesFromJson($newResource,$paramsData );
             $this->linkTagsFromJson($newResource,$paramsData);
@@ -415,6 +471,7 @@ class ResourceService
             } 
             $newResource = $newResource->fresh();
             $this->solr->saveOrUpdateDocument($newResource);
+            $_newResource = false;
             return $newResource;
         } catch (\Exception $th) {
             $this->solr->deleteDocument($newResource);
@@ -434,7 +491,7 @@ class ResourceService
                 $fileName = $fileinfo->getFilename();
                 $json_file = file_get_contents($path .'/'. $fileName);
                 $key = str_replace('.json', '', $fileName);
-                $resourceName = ucfirst(str_replace('_validator', '', $key));
+                $resourceName = ucfirst($this->solrConfig->getNameCoreConfig(str_replace('_validator', '', $key)));
                 $json = json_decode($json_file);
 
                 if (class_exists("App\\Services\\{$resourceName}Service")) {

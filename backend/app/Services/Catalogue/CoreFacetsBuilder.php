@@ -7,6 +7,7 @@ class CoreFacetsBuilder {
     private $and_facets = []; //add here facets with AND operator behaviour. Example ['tags']; The default operator is OR
     private $formedList;
 
+
     public function __construct()
     {
         $this->coreList = [
@@ -42,7 +43,7 @@ class CoreFacetsBuilder {
                 "categories",
                 "active",
                 "type",
-                "types",
+               // "types",
                 "tags",
                 "workspaces",
                 // "lom",

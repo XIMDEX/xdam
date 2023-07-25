@@ -1,6 +1,11 @@
 .DS_Store
 .idea
 .vscode
+backend/composer.phar
+backend/storage/semantic/
 **backend/node_modules/*
 **/vendor/*
 backend/composer.phar
+backend/storage/media-library/*
+backend/php7.4.log
+backend/storage/semantic

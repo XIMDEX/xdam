@@ -60,15 +60,24 @@ class ReIndexSolr extends Command
         $count = 0;
         $reindexLOM = (!in_array('lom', $excludedCores));
 
-        foreach ($resources as $resource) {
+        $reindexed = [];
+
+        $this->withProgressBar($resources, function ($resource) use (&$count, $reindexLOM, &$reindexed, $solrService, $excludedCores, $solrVersion) {
+            if (!isset($reindexed[$resource->type])) $reindexed[$resource->type] = 0;
+            $reindexed[$resource->type]++;
+            // if ( $reindexed[$resource->type] >= 10) return;
             $resourceCoreName = $solrService->getClientFromResource($resource)->getEndpoint()->getOptions()['core'];
 
             if (!in_array($resourceCoreName, $excludedCores) && $resourceCoreName !== null) {
-                $solrService->saveOrUpdateDocument($resource, $solrVersion, $reindexLOM);
+                try {
+                    $solrService->saveOrUpdateDocument($resource, $solrVersion, $reindexLOM);
+                } catch (\Throwable $th) {
+                    $this->error("\n Reindex of resource with ID " . $resource->id . " failed. Message Error: " . $th->getMessage());
+                    // continue with reindex
+                }
                 $count++;
             }
-        }
-
+        });
         $this->line("$count documents indexed");
     }
 }

@@ -12,6 +12,7 @@ use App\Http\Resources\Solr\LOMSolrResource;
 use App\Services\Catalogue\FacetManager;
 use App\Utils\Utils;
 use Exception;
+use Illuminate\Support\Facades\Storage;
 use Solarium\Client;
 use Solarium\Core\Client\Adapter\Curl;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -43,6 +44,7 @@ class SolrService
         $this->facetManager = $facetManager;
         $this->solrConfig = $solrConfig;
         $this->clients = $solrConfig->getClients();
+        $this->solrConfigReque = $solrConfig;
     }
 
     /**
@@ -82,6 +84,9 @@ class SolrService
         $connection = $collection->solr_connection;
 
         if ($connection) {
+            if (!array_key_exists($connection, $this->clients)) {
+                $connection = $this->getCoreNameVersioned($connection);
+            }
             if (array_key_exists($connection, $this->clients)) {
                 return $this->clients[$connection];
             } else {
@@ -126,7 +131,11 @@ class SolrService
     public function getClient(string $client)
     {
         if (!array_key_exists($client, $this->clients)) {
-            throw new Exception("There is no client $client");
+            $client = $this->getCoreNameVersioned($client);
+        }
+
+        if (!array_key_exists($client, $this->clients)) {
+            throw new Exception("There is no client $client ". json_encode($this->clients));
         }
 
         return $this->clients[$client];
@@ -355,7 +364,6 @@ class SolrService
 
         // The facets to be applied to the query
         $this->facetManager->setFacets($facetSet, [], $core);
-
         // Limit the query to facets that the user has marked us
         $this->facetManager->setQueryByFacets($query, [], $core);
 
@@ -414,6 +422,12 @@ class SolrService
         foreach ($allDocuments as $document) {
             $fields = $document->getFields();
             $fields["data"] = @json_decode($fields["data"]);
+            //Here new function
+            if (Storage::disk("semantic")->exists($fields["id"].".json")) {
+                $json = json_decode(Storage::disk("semantic")->get($fields["id"].".json"));
+                if(isset($json->xtags_interlinked))$fields["data"]->description->entities_linked = $json->xtags_interlinked ;
+                if(isset($json->xtags))$fields["data"]->description->entities_non_linked = $json->xtags ;
+            }
             $documentsResponse[] = $fields;
         }
 
@@ -479,6 +493,27 @@ class SolrService
         return json_decode(json_encode($std), true);
     }
 
+
+    private function addFacetType(&$facet, $solr_schema)
+    {
+
+        foreach ($facet as $key => $facet_element) {
+            $facet_name = $facet_element['key'];
+
+            if (!property_exists($solr_schema, $facet_name)) continue;
+
+            switch ($solr_schema->$facet_name->type) {
+                case 'boolean':
+                    $type = 'boolean';
+                    break;
+                default:
+                    $type = 'string';
+                    break;
+            }
+            $facet[$key]['type'] = $type;
+        }
+
+    }
     private function generateQuery($collection, $core, $searchTerm, $searchPhrase): string
     {
         if ('document' === $core) {
@@ -507,4 +542,9 @@ class SolrService
     {
         return $this->solrConfig->getCoreNameVersioned($solrCore, $solrVersion);
     }
+
+    public function getClientCoreAlias() {
+        return $this->solrConfig->getClientCoreAlias('lom');
+    }
+
 }

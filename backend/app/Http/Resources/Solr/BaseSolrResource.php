@@ -107,7 +107,7 @@ class BaseSolrResource extends JsonResource
 
     protected function getName()
     {
-        return $this->data->description->name;
+        return $this->data->description->name ?? "";
     }
 
     protected function getOrganization()

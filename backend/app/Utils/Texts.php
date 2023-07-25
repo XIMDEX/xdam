@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\App;
 
 class Texts {
     const TYPE_FACETS = 'facets';
+    const TYPE_WEB = 'web';
     const TYPES = [self::TYPE_FACETS];
     const DEFAULT = 'DEFAULT';
 
@@ -26,6 +27,12 @@ class Texts {
     }
 
     public static function web(string $key, string $lang = null, array $replace = [], $default = null)
+    {
+        $client = env('APP_CLIENT') ?? self::DEFAULT;
+        return self::getText(self::getKey($key, self::TYPE_WEB, $client), $lang, $key, $replace, $default);
+    }
+
+    public static function facets(string $key, string $lang = null, array $replace = [], $default = null)
     {
         $client = env('APP_CLIENT') ?? self::DEFAULT;
         return self::getText(self::getKey($key, self::TYPE_FACETS, $client), $lang, $key, $replace, $default);
@@ -50,7 +57,7 @@ class Texts {
     public static function isAvailableLanguage($lang)
     {
         $client = env('APP_CLIENT') ?? self::DEFAULT;
-        $lang_available = config('constants.' . $client . '.languages');
+        $lang_available = config('constants.' . $client . '.languages') ?? config('constants.DEFAULT.languages');
         return in_array($lang, $lang_available);
     }
 }
