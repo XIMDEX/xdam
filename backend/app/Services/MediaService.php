@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\File;
 use Iman\Streamer\VideoStreamer;
 use Intervention\Image\Facades\Image;
 use Intervention\Image\ImageManager;
+use App\Utils\DamUrlUtil;
 use Imagine;
 use Iman\Streamer\Video;
 use stdClass;
@@ -359,5 +360,11 @@ class MediaService
                 $key->delete();
             }
         }
+    }
+
+    public function getMediaURL(Model $model, $model_id)
+    {
+        $media = $model->where('model_id', $model_id)->first();
+        return $media ? url('resource/render/' . DamUrlUtil::generateDamUrl($media,  $media->custom_properties['parent_id'])) : false;
     }
 }

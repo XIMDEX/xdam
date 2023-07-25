@@ -14,8 +14,10 @@ use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Services\Solr\SolrService;
 use App\Services\ExternalApis\KakumaService;
 use App\Services\ExternalApis\XTagsService;
+use App\Services\ExternalApis\XowlService;
 use App\Utils\Texts;
 use App\Utils\Utils;
+use App\Utils\DamUrlUtil;
 use DirectoryIterator;
 use Exception;
 use Illuminate\Http\Request;
@@ -63,9 +65,15 @@ class ResourceService
     private XTagsService $xtagService;
 
      /**
+
+     * @var XTagService
+     */
+    private XowlService $xowlService;
+
      * @var SemanticService
      */
     private SemanticService $semanticService;
+
 
     const PAGE_SIZE = 30;
 
@@ -76,6 +84,7 @@ class ResourceService
      * @param CategoryService $categoryService
      */
     public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService,
+                                KakumaService $kakumaService, XTagsService $xtagService, XowlService $xowlService)
                                 KakumaService $kakumaService, XTagsService $xtagService, SolrConfig $solrConfig, SemanticService $semanticService)
     {
         $this->mediaService = $mediaService;
@@ -85,6 +94,7 @@ class ResourceService
         $this->kakumaService = $kakumaService;
         $this->semanticService = $semanticService;
         $this->xtagService = $xtagService;
+        $this->xowlService = $xowlService;
         $this->solrConfig = $solrConfig;
     }
 
@@ -410,35 +420,25 @@ class ResourceService
             $wid cannot be null
         */
         $wsp = null;
-
-        if($toWorkspaceId) {
-            $wsp = Workspace::find($toWorkspaceId);
-        } else {
-            $wsp = Workspace::find(Auth::user()->selected_workspace);
-        }
-
-        if($wsp === null) {
-            throw new Exception("Undefined workspace");
-        }
-
-        if(!$wsp->organization()->first()) {
-            throw new Exception("The workspace doesn't belong to an organization");
-        }
-
+        $paramsData =  is_array($params['data']) ?  Utils::arrayToObject($params['data']) : $params['data'];
+        $exceptionStrings = ['notWorkspace' => 'Undefined workspace','notOrganization' => 'The workspace doesn\'t belong to an organization'];
+        $wsp  = $toWorkspaceId ? Workspace::find($toWorkspaceId) : Workspace::find(Auth::user()->selected_workspace);
         $name = array_key_exists('name', $params) ? $params["name"] : "";
         $type = $fromBatchType ?? ResourceType::fromKey($params["type"])->value;
+        $idResourceData = ($type == ResourceType::course) ? $params['kakuma_id'] : Str::orderedUuid() ; 
+        $nameResource   = $paramsData->description->name ?? $name;
 
-        if(is_array($params['data'])) {
-            $params['data'] = Utils::arrayToObject($params['data']);
-        }
-
+        if($wsp === null) throw new Exception($exceptionStrings['notWorkspace']);
+        if(!$wsp->organization()->first()) throw new Exception($exceptionStrings['notOrganization']);
+        
         $this->setDefaultLanguageIfNeeded($params);
 
         $resource_data = [
-            'data' => $params['data'],
-            'name' => $params['data']->description->name ?? $name,
+            'id'   => $idResourceData,
+            'data' => $paramsData,
+            'name' => $nameResource, 
             'type' => $type,
-            'active' => $params['data']->description->active,
+            'active' =>  $paramsData->description->active,
             'user_owner_id' => Auth::user()->id,
             'collection_id' => $params['collection_id'] ?? null
         ];
@@ -455,9 +455,20 @@ class ResourceService
             $newResource = DamResource::create($resource_data);
             $_newResource = $newResource;
             $this->setResourceWorkspace($newResource, $wsp);
-            $this->linkCategoriesFromJson($newResource, $params['data']);
-            $this->linkTagsFromJson($newResource, $params['data']);
+            $this->linkCategoriesFromJson($newResource,$paramsData );
+            $this->linkTagsFromJson($newResource,$paramsData);
             $this->saveAssociatedFiles($newResource, $params);
+            //here 
+            if ($type == ResourceType::image ) {
+                $mediaUrl = $this->mediaService->getMediaURL(new Media(), $resource_data['id']);
+                if ($mediaUrl) {
+                   $caption = $this->getCaptionFromImage($mediaUrl);
+                   if ($caption) {
+                    $paramsData->description->description = $caption;
+                    $newResource->update(['data' => $paramsData]);
+                   }
+                }
+            } 
             $newResource = $newResource->fresh();
             $this->solr->saveOrUpdateDocument($newResource);
             $_newResource = false;
@@ -958,5 +969,19 @@ class ResourceService
                         ->first();
 
         return $collection;
+    }
+    
+    /**
+     * Get the caption for an image.
+     *
+     * @param string $mediaUrl The URL of the image.
+     * @return string The caption for the image.
+     */
+    private function getCaptionFromImage(string $mediaUrl){
+            try {
+                return $caption = $this->xowlService->getCaptionImage($mediaUrl, env('BOOK_DEFAULT_LANGUAGE', 'en')) ?? "";
+            } catch (\Exception $exc) {
+                // failed captioning image -- continue process
+            }
     }
 }
