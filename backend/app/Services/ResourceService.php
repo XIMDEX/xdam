@@ -443,13 +443,9 @@ class ResourceService
             'collection_id' => $params['collection_id'] ?? null
         ];
         //TODO: Improve this part
-        if ($type == ResourceType::course) {
-            $resource_data['id'] = $params['kakuma_id'];
-        } else if ($type == ResourceType::document && isset($params['data']->description->uuid) && null != $params['data']->description->uuid) {
-            $resource_data['id'] = $params['data']->description->uuid;
-        } else {
-            $resource_data['id'] = Str::orderedUuid();
-        }
+ 
+        if ($type == ResourceType::document && isset($params['data']['description']->uuid) && null != $params['data']['description']->uuid) $resource_data['id'] = $params['data']['description']->uuid;
+       
         $_newResource = false;
         try {
             $newResource = DamResource::create($resource_data);
