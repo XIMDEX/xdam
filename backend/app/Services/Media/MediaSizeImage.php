@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Services\Media;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
 
 class MediaSizeImage
@@ -24,30 +24,30 @@ class MediaSizeImage
     private string $size;
     private ImageManager $manager;
     private Image $image;
-   public function __construct(string $size, string $path)
+   public function __construct(string $size, string $path,ImageManager $manager,Image $image)
    {
-    $this->size;
-    $this->manager = new ImageManager(['driver' => 'imagick']);
-    $this->image   = Image::make($path);
+    $this->size = $size;
+    $this->manager = $manager;
+    $this->image   = $image;
    }
 
-   public function save($path,$type){
-    $pathSave = $this->image->dirname."/__".$type.".jpg";
-    $this->image->encode('jpg', $this->qualities[$type])->save($pathSave);
+   public function save(){
+    $pathSave = $this->image->dirname."/__".$this->size.".jpg";
+    $this->image->resize($this->sizes[$this->size]['width'],$this->sizes[$this->size]['height'])->save($pathSave);
    }
 
-   public function imageExists($type){
+   public function imageExists(){
     $result = false;
     $path = $this->image->dirname;
-    if ($type !== 'default') {
-        $path = $this->image->dirname."/__".$type.".jpg";
+    if ($this->size !== 'default') {
+        $path = $this->image->dirname."/__".$this->size.".jpg";
     }
     $result = file_exists($path);
-    return $path;
+    return $result;
    }
 
    public function getImage(){
-    return  $this->manager->make($this->image->dirname."/__".$type.".jpg");
+    return  $this->manager->make($this->image->dirname."/__".$this->size.".jpg");
    }
 
 }

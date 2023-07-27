@@ -5,6 +5,7 @@ use App\Enums\MediaType;
 use App\Models\DocumentRendererKey;
 use App\Models\Media;
 use App\Models\PendingVideoCompressionTask;
+use App\Services\Media\MediaSizeImage;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
 use Illuminate\Database\Eloquent\Model;
@@ -80,7 +81,7 @@ class MediaService
                 : $this->previewVideo($media->id, $media->file_name, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail);
         } else if($fileType === 'image') {
             $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.jpg';
-            return $this->previewImage($mediaPath, $size,$thumbnail);
+            return $this->previewImage($mediaPath,$sizeKey);
         } else {
             return $mediaPath;
         }
@@ -211,19 +212,25 @@ class MediaService
         return VideoStreamer::streamFile($path);
     }
 
-    private function previewImage($mediaPath, $size, $type = 'default')
+    private function previewImage($mediaPath, $type = 'default')
     {
         $manager = new ImageManager(['driver' => 'imagick']);
+        $image   = $manager->make($mediaPath);
+        $imageProcess= new MediaSizeImage($type,$mediaPath,$manager,$image);
+        if (!$imageProcess->imageExists()) {
+            $imageProcess->save();
+        }
+        $result = $imageProcess->getImage();
       //  $image = $manager->make($mediaPath);
         //$filename = pathinfo($mediaPath, PATHINFO_FILENAME);
       //  $newFilename = $filename . '_thumbnail.png';
-        if(!file_exists($thumbnail)){
+        /*if(!file_exists($thumbnail)){
         $image =  Image::make($mediaPath);
          $path = $image->dirname."/__thumb_.jpg";
         $image->encode('jpg', 10)->save($path);
         }
         $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.jpg';
-        $image =  $manager->make($thumbnail);
+        $image =  $manager->make($thumbnail);*/
    /*     if ($size !== 'raw') {
             $width = $image->width();
             $height = $image->height();
@@ -242,7 +249,7 @@ class MediaService
             $image->resize($newWidth, $newHeight);
         }
 */
-        return $image;
+        return $result;
     }
 
     public function saveVideoSnapshot($thumbPath, $videoSourcePath, $sec = 10)
