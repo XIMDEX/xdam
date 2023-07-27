@@ -34,12 +34,13 @@ class MediaSizeImage
    }
 
    public function save(){
-    $pathSave = $this->image->dirname."/__".$this->size.".png";
+    $pathSave = $this->image->dirname."/__".$this->size.".jpg";
+    $aspectRatio = $this->getAspectRatio($this->sizes[$this->size]['width'] / $this->sizes[$this->size]['height']);
     if ($this->size === 'default'){
         $pathSave = $this->path;
         $this->image->save($pathSave);
     }else{
-        $this->image->resize($this->sizes[$this->size]['width'],$this->sizes[$this->size]['height'])->save($pathSave);
+        $this->image->resize($this->sizes[$this->size]['width'],$aspectRatio)->save($pathSave);
     }
 
    }
@@ -48,16 +49,27 @@ class MediaSizeImage
     $result = false;
     $path = $this->path;
     if ($this->size !== 'default') {
-        $path = $this->image->dirname."/__".$this->size.".png";
+        $path = $this->image->dirname."/__".$this->size.".jpg";
     }
     $result = file_exists($path);
     return $result;
    }
 
    public function getImage(){
-    $result = $this->image->dirname."/__".$this->size.".png";
+    $result = $this->image->dirname."/__".$this->size.".jpg";
     if($this->size === "default")$result = $this->path;
     return  $this->manager->make($result);
+   }
+
+   private function getAspectRatio($aspectRatio){
+    if ($aspectRatio >= 1.0) { // Horizontal
+        $newWidth = $this->sizes[$this->size]['width'];
+        $newHeight = $newWidth / $aspectRatio;
+    } else { // Vertical
+        $newHeight = $$this->sizes[$this->size]['height'];
+        $newWidth = $newHeight * $aspectRatio;
+    }
+    $result = ["height" => $newHeight,"width" => $newWidth];
    }
 
 }
