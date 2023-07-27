@@ -79,7 +79,8 @@ class MediaService
                 ? $this->downloadVideo($media->id, $media->file_name, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail)
                 : $this->previewVideo($media->id, $media->file_name, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail);
         } else if($fileType === 'image') {
-            return $this->previewImage($mediaPath, $size);
+            $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.jpg';
+            return $this->previewImage($mediaPath, $size,$thumbnail);
         } else {
             return $mediaPath;
         }
@@ -210,12 +211,20 @@ class MediaService
         return VideoStreamer::streamFile($path);
     }
 
-    private function previewImage($mediaPath, $size)
+    private function previewImage($mediaPath, $size, $type = 'default')
     {
         $manager = new ImageManager(['driver' => 'imagick']);
-        $image = $manager->make($mediaPath);
-
-        if ($size !== 'raw') {
+      //  $image = $manager->make($mediaPath);
+        //$filename = pathinfo($mediaPath, PATHINFO_FILENAME);
+      //  $newFilename = $filename . '_thumbnail.png';
+        if(!file_exists($thumbnail)){
+        $image =  Image::make($mediaPath);
+         $path = $image->dirname."/__thumb_.jpg";
+        $image->encode('jpg', 10)->save($path);
+        }
+        $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.jpg';
+        $image =  $manager->make($thumbnail);
+   /*     if ($size !== 'raw') {
             $width = $image->width();
             $height = $image->height();
             $aspectRatio = $width / $height;
@@ -232,7 +241,7 @@ class MediaService
 
             $image->resize($newWidth, $newHeight);
         }
-
+*/
         return $image;
     }
 
