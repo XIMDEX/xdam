@@ -18,8 +18,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkspaceController;
 
 
-use App\Services\Solr\SolrService;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -32,7 +30,7 @@ use App\Services\Solr\SolrService;
 */
 
 Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
-    Route::get('temp', function() { 
+    Route::get('temp', function() {
         return response()->json(['status' => 'OK']);
     });
 

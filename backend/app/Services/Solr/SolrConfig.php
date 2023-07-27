@@ -294,7 +294,7 @@ class SolrConfig
 
         $request->setRawData($json_field_type);
         $res = json_decode($client->executeRequest($request)->getBody(), true);
-        
+
         if (array_key_exists('error', $res)) {
             echo "\n Error occurred adding field type in core " . $client->getEndpoint()->getOptions()['core'] . ". Check laravel log. \n";
             Log::error(json_encode($res));
@@ -348,7 +348,7 @@ class SolrConfig
         if (gettype($solrVersion) === 'array' && count($solrVersion) === 0) return $solrCore;
         return $solrCore . '_' . $solrVersion;
     }
-    
+
     public function getNameCoreConfig($type) {
         $core_name = false;
         foreach ($this->solrFullConfig as $core => $data) {
@@ -356,7 +356,12 @@ class SolrConfig
                 $core_name = $core;
             }
         }
-        
+
         return $core_name ? $core_name : $type;
+    }
+
+    public function getSolrFullConfig()
+    {
+        return $this->solrFullConfig;
     }
 }
