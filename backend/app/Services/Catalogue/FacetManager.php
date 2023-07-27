@@ -176,8 +176,9 @@ class FacetManager
         // TODO handle LOM y LOMES
         $clients = $this->solrConfig->getClients();
         foreach ($facetsArray as $idx => $facet) {
-            if (isset($clients[$facet->key])) {
-                $this->lomService->handleFacets($facetsArray, $facet->key, $idx);
+            $core_facet = $this->solrConfig->getNameCoreConfig($facet->key);
+            if (isset($clients[$core_facet])) {
+                $this->lomService->handleFacets($facetsArray, $core_facet, $idx);
 
             }
         }

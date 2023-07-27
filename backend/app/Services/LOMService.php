@@ -8,7 +8,7 @@ use stdClass;
 class LOMService {
     public function handleFacets(&$facetsArray, $facet, $facet_idx)
     {
-        $schema = $facet == 'lom' ? Utils::getLomSchema(false) : Utils::getLomesSchema(false);
+        $schema = str_starts_with('lomes', $facet)  ? Utils::getLomesSchema(false) : Utils::getLomSchema(false);
         $schemaConfig = config('solr_facets.client.'.env('APP_CLIENT', 'DEFAULT'));
         if (count($schemaConfig) > 0) {
 
