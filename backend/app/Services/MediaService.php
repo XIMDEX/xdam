@@ -212,7 +212,7 @@ class MediaService
         return VideoStreamer::streamFile($path);
     }
 
-    private function previewImage($mediaPath, $type = 'default')
+    private function previewImage($mediaPath, $type = 'raw')
     {
         $manager = new ImageManager(['driver' => 'imagick']);
         $image   = $manager->make($mediaPath);
