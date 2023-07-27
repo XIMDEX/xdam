@@ -6,8 +6,6 @@ use App\Utils\Utils;
 use stdClass;
 
 class LOMService {
-
-
     public function handleFacets(&$facetsArray, $facet, $facet_idx)
     {
         $schema = $facet == 'lom' ? Utils::getLomSchema(false) : Utils::getLomesSchema(false);
@@ -50,13 +48,16 @@ class LOMService {
                 }
             }
 
-
-
             foreach (array_values($newFacets) as $newFacet) {
                 $facetsArray[] = $newFacet;
             }
             unset($facetsArray[$facet_idx]);
             $facetsArray = array_values($facetsArray);
         }
+    }
+
+    public static function handleSchema($json)
+    {
+        return $json;
     }
 }
