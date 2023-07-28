@@ -216,6 +216,7 @@ class MediaService
         $manager = new ImageManager(['driver' => 'imagick']);
         $image   = $manager->make($mediaPath);
         $imageProcess= new MediaSizeImage($type,$mediaPath,$manager,$image);
+        if(!$imageProcess->checkSize())$imageProcess->setSizeDefault();
         if (!$imageProcess->imageExists()) {
             $imageProcess->save();
         }
