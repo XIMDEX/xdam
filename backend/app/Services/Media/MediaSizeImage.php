@@ -34,19 +34,36 @@ class MediaSizeImage
    }
 
    public function save(){
+    $height = $this->image->height();
+    $width  =  $this->image->width();
     $pathSave = $this->image->dirname."/__".$this->size.".jpg";
-    $aspectRatio = $this->getAspectRatio($this->sizes[$this->size]['width'] / $this->sizes[$this->size]['height']);
+    $aspectRatio = $this->getAspectRatio($width /  $height);
     if ($this->size === 'default'){
-        $pathSave = $this->path;
-        $this->image->save($pathSave);
+            $pathSave = $this->path;
+            $this->image->save($pathSave);
     }else{
-        $this->image->resize($this->sizes[$this->size]['width'],$aspectRatio)->save($pathSave);
+            $this->image->resize($aspectRatio['width'],$aspectRatio['height'])->save($pathSave);
     }
+
+    
 
    }
 
+   public function checkSize(){
+    $result = true;
+    $heightOriginal = $this->image->height();
+    $widthOriginal  =  $this->image->width();
+    $widthNew       = $this->sizes[$this->size]['width'];
+    $heightNew      = $this->sizes[$this->size]['height'] ;
+    if ($widthNew >=  $widthOriginal ||  $heightNew >=  $heightOriginal ) {
+       $result = false;
+    }
+    return $result;
+   }    
+
    public function imageExists(){
     $result = false;
+    if(!$this->checkSize()) $this->size = 'default';
     $path = $this->path;
     if ($this->size !== 'default') {
         $path = $this->image->dirname."/__".$this->size.".jpg";
@@ -57,7 +74,7 @@ class MediaSizeImage
 
    public function getImage(){
     $result = $this->image->dirname."/__".$this->size.".jpg";
-    if($this->size === "default")$result = $this->path;
+    if($this->size === "default" )$result = $this->path;
     return  $this->manager->make($result);
    }
 
@@ -66,10 +83,12 @@ class MediaSizeImage
         $newWidth = $this->sizes[$this->size]['width'];
         $newHeight = $newWidth / $aspectRatio;
     } else { // Vertical
-        $newHeight = $$this->sizes[$this->size]['height'];
+        $newHeight = $this->sizes[$this->size]['height'];
         $newWidth = $newHeight * $aspectRatio;
     }
+
     $result = ["height" => $newHeight,"width" => $newWidth];
+    return $result;
    }
 
 }
