@@ -94,10 +94,10 @@ class SemanticService
         $dataFilter->category = isset($dataFilter->category) ? $dataFilter->category : 'Otros';
         $dataFilter->external_url = isset($dataFilter->external_url) ? $dataFilter->external_url : '';
         $dataFilter->image = isset($dataFilter->image) ? $dataFilter->image : '';
-
-        $dataResult = $this->getDataOwl($dataFilter, $errors, $dataFilter->enhanced, $semanticRequest);
-        Storage::disk('semantic')->put($dataFilter->uuid.".json", json_encode($dataResult));
-      
+        if(isset($dataFilter->enhanced)){
+            $dataResult = $this->getDataOwl($dataFilter, $errors, $dataFilter->enhanced, $semanticRequest);
+            Storage::disk('semantic')->put($dataFilter->uuid.".json", json_encode($dataResult));
+        }
         $resourceStructure[] = $this->createResourceStructure2($dataFilter, $semanticRequest);
         return [
             'resources' => $resourceStructure,
