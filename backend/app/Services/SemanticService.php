@@ -103,23 +103,12 @@ class SemanticService
         $dataFilter->category = isset($dataFilter->category) ? $dataFilter->category : 'Otros';
         $dataFilter->external_url = isset($dataFilter->external_url) ? $dataFilter->external_url : '';
         $dataFilter->image = isset($dataFilter->image) ? $dataFilter->image : '';
-        $resource_data = [
-            'id'   => $dataFilter->id ,
-            'data' => $data,
-            'name' => $dataFilter->title,  
-            'type' => $semanticRequest['type'],
-            'active' =>  $dataFilter->active,
-            'user_owner_id' => Auth::user()->id,
-            'collection_id' => $params['collection_id'] ?? null
-        ];
-        $newResource = DamResource::create($resource_data);
-        $this->saveAssociatedFiles($newResource,$dataFilter);
         if(isset($dataFilter->enhanced)){
             $dataResult = $this->getDataOwl($dataFilter, $errors, $dataFilter->enhanced, $semanticRequest);
             Storage::disk('semantic')->put($dataFilter->uuid.".json", json_encode($dataResult));
         }
 
-        $resourceStructure[] = $this->createResourceStructure2($dataFilter, $semanticRequest);
+        $resourceStructure[] = $this->createResourceStructure2($dataFilter, $semanticRequest['File'][0]);
         return [
             'resources' => $resourceStructure,
             'errors' => $errors
@@ -210,13 +199,15 @@ class SemanticService
         ];
     }
 
-    private function createResourceStructure2($resource)
-    {
-        return [
+    private function createResourceStructure2($resource,$file)
+    {   
+        $result = [
             'type' => 'document',
             'data' => ['description' => $resource],
             'collection_id' => Collection::where('name', 'Public Organization Document collection')->first()->id
         ];
+        if($file) $result['File'] = $file;
+        return $result;
     }
 
     private function getUrl($enhancer)
@@ -623,52 +614,5 @@ class SemanticService
         return $result;
     }
 
-        /**
-     * @param $model
-     * @param $params
-     */
-    private function saveAssociatedFiles(DamResource $model, $params): void
-    {
-        // Save Associated Files
-        $this->saveAssociateFile(MediaType::File()->key, $params, $model);
-        // Save Associated Previews
-        $this->saveAssociateFile(MediaType::Preview()->key, $params, $model);
-    }
-
-
-    private function saveAssociateFile($type, $params, $model)
-    {
-        if (array_key_exists($type, $params) && $params[$type]) {
-            if ($type === MediaType::Preview()->key) {
-                // only one associated preview file is allowed
-                $this->mediaService->deleteAllPreviews($model);
-            }
-            // If is a array of files, add a association from each item
-            if (is_array($params[$type])) {
-                foreach ($params[$type] as $file) {
-                    if ($model->doesThisResourceSupportsAnAdditionalFile()) {
-                        $this->mediaService->addFromRequest(
-                            $model,
-                            null,
-                            $type,
-                            ["parent_id" => $model->id],
-                            $file
-                        );
-                    }
-                }
-            } else {
-                if ($model->doesThisResourceSupportsAnAdditionalFile()) {
-                    // If is not a array, associate file directly
-                    $this->mediaService->addFromRequest(
-                        $model,
-                        null,
-                        $type,
-                        ["parent_id" => $model->id],
-                        $params[$type]
-                    );
-                }
-            }
-        }
-    }
 
 }
