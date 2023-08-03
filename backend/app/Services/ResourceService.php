@@ -366,7 +366,7 @@ class ResourceService
             }
             $this->setLomData($resource, $lom_params);
         }
-
+        //here
         $this->saveAssociatedFiles($resource, $params);
         $resource = $resource->fresh();
         $this->solr->saveOrUpdateDocument($resource);
@@ -444,7 +444,7 @@ class ResourceService
         ];
         //TODO: Improve this part
  
-        if ($type == ResourceType::document && isset($params['data']['description']->uuid) && null != $params['data']['description']->uuid) $resource_data['id'] = $params['data']['description']->uuid;
+        if ($type == ResourceType::document && isset($params->data->description->uuid) && null != $params->data->description->uuid) $resource_data['id'] = $params['data']['description']->uuid;
        
         $_newResource = false;
         try {
