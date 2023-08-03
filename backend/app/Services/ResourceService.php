@@ -444,21 +444,31 @@ class ResourceService
         ];
         //TODO: Improve this part
  
-        if ($type == ResourceType::document && isset($params->data->description->uuid) && null != $params->data->description->uuid) $resource_data['id'] = $params['data']['description']->uuid;
+        if ($type == ResourceType::document && isset($params->description->uuid) && null != $params->description->uuid) $resource_data['id'] = $params['data']['description']->uuid;
        
         $_newResource = false;
         try {
+     
             $newResource = DamResource::create($resource_data);
             $_newResource = $newResource;
-            $this->setResourceWorkspace($newResource, $wsp);
-            $this->linkCategoriesFromJson($newResource,$paramsData );
-            $this->linkTagsFromJson($newResource,$paramsData);
-            $this->saveAssociatedFiles($newResource, $params);
+
+
+            if (isset($paramsData->description->enhanced) && $paramsData->description->enhanced) {
+                $dataResult = $this->semanticService->getDataOwl($paramsData->description, $errors, $paramsData->description->enhanced,$params);
+                Storage::disk('semantic')->put($newResource->id .".json", json_encode($dataResult));
+            }
             if ($type == ResourceType::image ) {
                 $mediaUrl = $this->mediaService->getMediaURL(new Media(), $resource_data['id']);
                 $caption = $this->getCaptionFromImage("https://www.ruralidays.co.uk/travel/wp-content/uploads/2018/03/Beach-of-La-Carihuela-in-Torremolinos-Malaga.jpg");
                 if($caption)$this->saveCaptionImage($caption,$resource_data['id']);
             } 
+
+            $this->setResourceWorkspace($newResource, $wsp);
+            $this->linkCategoriesFromJson($newResource,$paramsData );
+            $this->linkTagsFromJson($newResource,$paramsData);
+            $this->saveAssociatedFiles($newResource, $params);
+        
+      
             $newResource = $newResource->fresh();
             $this->solr->saveOrUpdateDocument($newResource);
             $_newResource = false;
