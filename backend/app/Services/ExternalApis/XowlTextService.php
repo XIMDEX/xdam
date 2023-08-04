@@ -1,68 +1,69 @@
 <?php
 
-use GuzzleHttp\Psr7\Request;
+namespace App\Services\ExternalApis;
+
 
 class XowlTextService
 {
-    private array $defaultOptions = [
-            "watson" => ["features" => ["entities" => ["mentions" => false]], "extra_links" => true, "confidence" => 1],
-            "dbpedia" => ["confidence" => 2, "extra_links" => true],
-            "comprehend" => ["LanguageCode" => "es", "extra_links" => true], "confidence" => 1,
-            "extra_links" => true
-        
+    private  $defaultOptions = [
+        "watson" => ["features" => ["entities" => ["mentions" => false]], "extra_links" => true, "confidence" => 1],
+        "dbpedia" => ["confidence" => 2, "extra_links" => true],
+        "comprehend" => ["LanguageCode" => "es", "extra_links" => true], "confidence" => 1,
+        "extra_links" => true
     ];
     private array $request = [
         'headers' => [
             'Accept' => 'application/json',
             'Content-Type' => 'multipart/form-data'
         ],
-        'multipart' => [],
+        'multipart' => [
+            [
+                'name' => 'interactive',
+                'contents' => '1'
+            ],
+        ],
         'timeout' => 60
     ];
     private \GuzzleHttp\Client $client;
     private string $xowlUrl;
     public function __construct()
     {
-        $this->client = new \GuzzleHttp\Client();
+        $this->client  = new \GuzzleHttp\Client();
         $this->xowlUrl = getenv('XOWL_URL');
     }
 
-    public function getDataOwlFromFile($data, $enhance, $params = [])
+    public function getDataOwlFromFile($data,$params = [])
     {
-        $finalResult = [];
+        $result = [];
 
         //fin seteo optios
         $params['interactive'] = 1;
         $params['extra_links'] = true;
-
+        $this->request['multipart'][] = [
+            
+                'name' => 'options',
+                'contents' => json_encode($this->defaultOptions)
+            
+        ];
 
         if (isset($params['File'])) {
             $file = new \Illuminate\Http\File($params['File'][0]->getRealPath());
-            $options['multipart'][] = [
+            $this->request['multipart'][] = [
                 'name' => 'file',
                 'contents' => fopen($file->getPathname(), 'r'),
                 'filename' => $params['File'][0]->getClientOriginalName()
             ];
         }
-        $options['multipart'][] = [
-            'name' => 'options',
-            'contents' => json_encode($this->defaultOptions)
-        ];
-        // Add interactive field
-        $options['multipart'][] = [
-            'name' => 'interactive',
-            'contents' => '1'
-        ];
-        $request = new GuzzleHttp\Psr7\Request('POST', $this->xowlUrl . '/enhance/all?XDEBUG_SESSION_START=VSCODE');
-        $request = $request->withBody(new GuzzleHttp\Psr7\MultipartStream($options['multipart']));
+        $requestOwl = new \GuzzleHttp\Psr7\Request('POST', $this->xowlUrl . '/enhance/all?XDEBUG_SESSION_START=VSCODE');
+        $requestOwl = $requestOwl->withBody(new \GuzzleHttp\Psr7\MultipartStream($this->request['multipart']));
 
-        $promises[$data->uuid] = $this->client->sendAsync($request);
+        $promises[$data->uuid] = $this->client->sendAsync($requestOwl);
 
-        $responses = GuzzleHttp\Promise\Utils::settle($promises)->wait();
+        $responses = \GuzzleHttp\Promise\Utils::settle($promises)->wait();
 
         $response = array_shift($responses);
         if ($response['state'] === 'rejected') {
-            $finalResult = [
+            $result = [
                 'id' => $data->id,
                 'uuid' => $data->uuid,
                 'title' => $data->title,
@@ -71,21 +72,8 @@ class XowlTextService
         } else {
             $output_xowl = $response['value']->getBody()->getContents();
             $result = json_decode($output_xowl);
-            $xtags = $this->deleteDuplicateXtag($result->data->xtags);
-            $xtags_interlinked = $this->deleteDuplicateXtag($result->data->xtags_interlinked);
-            $xtags = $this->checkNonLinked($xtags_interlinked, $xtags);
-            foreach ($xtags as &$tag) {
-                $tag = $this->getInfoXtags($tag, false);
-            }
-            foreach ($xtags_interlinked  as &$tag) {
-                $tag = $this->getInfoXtags($tag, true);
-            }
-            $finalResult['xtags'] = $xtags;
-            $finalResult['xtags_interlinked'] = $xtags_interlinked;
         }
-
-
-        return $finalResult;
+        return $result;
     }
 
     /**

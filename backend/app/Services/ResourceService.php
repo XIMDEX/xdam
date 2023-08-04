@@ -13,8 +13,10 @@ use App\Models\Workspace;
 use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Services\Solr\SolrService;
 use App\Services\ExternalApis\KakumaService;
+use App\Services\ExternalApis\Xowl\XtagsCleaner;
 use App\Services\ExternalApis\XTagsService;
 use App\Services\ExternalApis\XowlImageService;
+use App\Services\ExternalApis\XowlTextService;
 use App\Utils\Texts;
 use App\Utils\Utils;
 use App\Utils\DamUrlUtil;
@@ -454,8 +456,14 @@ class ResourceService
 
 
             if (isset($paramsData->description->enhanced) && $paramsData->description->enhanced) {
-                $dataResult = $this->semanticService->getDataOwl($paramsData->description,$paramsData->description->enhanced,$params);
-                Storage::disk('semantic')->put($newResource->id .".json", json_encode($dataResult));
+                //$dataResult = $this->semanticService->getDataOwl($paramsData->description,$paramsData->description->enhanced,$params);
+                //check when there is not file.
+
+                $xowlText = new XowlTextService();
+                $dataResult = $xowlText->getDataOwlFromFile($paramsData->description,$params);
+                $cleaner = new XtagsCleaner($dataResult->xtags,$dataResult->xtags_interlinked);
+                $dataResultCleaned = $cleaner->getProcessedXtags();
+                Storage::disk('semantic')->put($newResource->id .".json", json_encode($dataResultCleaned));
             }
             if ($type == ResourceType::image ) {
                 $mediaUrl = $this->mediaService->getMediaURL(new Media(), $resource_data['id']);
