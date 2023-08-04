@@ -461,7 +461,7 @@ class ResourceService
 
                 $xowlText = new XowlTextService();
                 $dataResult = $xowlText->getDataOwlFromFile($paramsData->description,$params);
-                $cleaner = new XtagsCleaner($dataResult->xtags,$dataResult->xtags_interlinked);
+                $cleaner = new XtagsCleaner($dataResult->data->xtags,$dataResult->data->xtags_interlinked);
                 $dataResultCleaned = $cleaner->getProcessedXtags();
                 Storage::disk('semantic')->put($newResource->id .".json", json_encode($dataResultCleaned));
             }
