@@ -455,15 +455,17 @@ class ResourceService
             $_newResource = $newResource;
 
 
-            if (isset($paramsData->description->enhanced) && $paramsData->description->enhanced) {
+            if (isset($paramsData->description->enhanced) && $paramsData->description->enhanced && isset($params['File'][0])) {
                 //$dataResult = $this->semanticService->getDataOwl($paramsData->description,$paramsData->description->enhanced,$params);
                 //check when there is not file.
 
                 $xowlText = new XowlTextService();
                 $dataResult = $xowlText->getDataOwlFromFile($paramsData->description,$params);
-                $cleaner = new XtagsCleaner($dataResult->data->xtags,$dataResult->data->xtags_interlinked);
-                $dataResultCleaned = $cleaner->getProcessedXtags();
-                Storage::disk('semantic')->put($newResource->id .".json", json_encode($dataResultCleaned));
+                if($dataResult->status !=='FAIL'){
+                    $cleaner = new XtagsCleaner($dataResult->data->xtags,$dataResult->data->xtags_interlinked);
+                    $dataResultCleaned = $cleaner->getProcessedXtags();
+                    Storage::disk('semantic')->put($newResource->id .".json", json_encode($dataResultCleaned));
+                }
             }
             if ($type == ResourceType::image ) {
                 $mediaUrl = $this->mediaService->getMediaURL(new Media(), $resource_data['id']);
