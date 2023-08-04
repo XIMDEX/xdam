@@ -14,7 +14,7 @@ use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Services\Solr\SolrService;
 use App\Services\ExternalApis\KakumaService;
 use App\Services\ExternalApis\XTagsService;
-use App\Services\ExternalApis\XowlService;
+use App\Services\ExternalApis\XowlImageService;
 use App\Utils\Texts;
 use App\Utils\Utils;
 use App\Utils\DamUrlUtil;
@@ -68,7 +68,7 @@ class ResourceService
 
      * @var XTagService
      */
-    private XowlService $xowlService;
+    private XowlImageService $xowlImageService;
     /*
      * @var SemanticService
      */
@@ -84,7 +84,7 @@ class ResourceService
      * @param CategoryService $categoryService
      */
     public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService,
-                                KakumaService $kakumaService, XTagsService $xtagService, XowlService $xowlService, SemanticService $semanticService,SolrConfig $solrConfig)
+                                KakumaService $kakumaService, XTagsService $xtagService, XowlImageService $xowlImageService, SemanticService $semanticService,SolrConfig $solrConfig)
             
     {
         $this->mediaService = $mediaService;
@@ -94,7 +94,7 @@ class ResourceService
         $this->kakumaService = $kakumaService;
         $this->semanticService = $semanticService;
         $this->xtagService = $xtagService;
-        $this->xowlService = $xowlService;
+        $this->xowlImageService = $xowlImageService;
         $this->solrConfig = $solrConfig;
     }
 
@@ -454,7 +454,7 @@ class ResourceService
 
 
             if (isset($paramsData->description->enhanced) && $paramsData->description->enhanced) {
-                $dataResult = $this->semanticService->getDataOwl($paramsData->description, $errors, $paramsData->description->enhanced,$params);
+                $dataResult = $this->semanticService->getDataOwl($paramsData->description,$paramsData->description->enhanced,$params);
                 Storage::disk('semantic')->put($newResource->id .".json", json_encode($dataResult));
             }
             if ($type == ResourceType::image ) {
@@ -979,7 +979,7 @@ class ResourceService
      */
     private function getCaptionFromImage(string $mediaUrl){
             try {
-                return $caption = $this->xowlService->getCaptionImage($mediaUrl, env('BOOK_DEFAULT_LANGUAGE', 'en')) ?? "";
+                return $caption = $this->xowlImageService->getCaptionImage($mediaUrl, env('BOOK_DEFAULT_LANGUAGE', 'en')) ?? "";
             } catch (\Exception $exc) {
                 // failed captioning image -- continue process
             }
