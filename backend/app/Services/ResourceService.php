@@ -456,9 +456,6 @@ class ResourceService
 
 
             if (isset($paramsData->description->enhanced) && $paramsData->description->enhanced && isset($params['File'][0])) {
-                //$dataResult = $this->semanticService->getDataOwl($paramsData->description,$paramsData->description->enhanced,$params);
-                //check when there is not file.
-
                 $xowlText = new XowlTextService();
                 $dataResult = $xowlText->getDataOwlFromFile($paramsData->description,$params);
                 if($dataResult->status !=='FAIL'){

@@ -5,8 +5,8 @@ namespace App\Services\ExternalApis\Xowl;
 
 class XtagsCleaner
 {
-    private array $xtags;
-    private array $xtags_interlinked;
+    private  $xtags;
+    private  $xtags_interlinked;
     public function __construct($xtags, $xtags_interlinked)
     {
         $this->xtags = $xtags;
