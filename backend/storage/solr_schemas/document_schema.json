@@ -96,12 +96,6 @@
     "indexed": true,
     "stored": true
   },
-  "enhanced_interactive": {
-    "name": "enhanced_interactive",
-    "type": "boolean",
-    "indexed": true,
-    "stored": true
-  },
   "body": {
     "name": "body",
     "type": "string",

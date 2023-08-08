@@ -136,9 +136,6 @@
         "active": {
           "type": "boolean"
         },
-        "enhanced_interactive": {
-          "type": "boolean"
-        },
         "enhanced": {
           "type":"boolean"
         }
