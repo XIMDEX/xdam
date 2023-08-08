@@ -279,19 +279,6 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
         Route::group(['prefix' => 'catalogue'], function() {
             Route::get('/{collection}',                         [CatalogueController::class, 'index'])->name('catalogue.index');
         });
-        Route::group(['prefix' => 'semantic', 'middleware' => 'collection.automatic'], function () {
-            Route::get('documents', [SemanticController::class, 'getAll'])->name('semantic.getAll');
-            Route::post('documents', [SemanticController::class, 'store'])->name('semantic.store');
-            Route::get('documents/fetch', [SemanticController::class, 'fetchDocumentsById'])->name('semantic.fetchDocumentsById');
-            Route::get('documents/fetch-uuid', [SemanticController::class, 'fetchDocumentsByUuid'])->name('semantic.fetchDocumentsByUuid');
-            Route::get('documents/{damResource}', [SemanticController::class, 'get'])->name('semantic.get');
-            Route::put('documents/{damResource}', [SemanticController::class, 'update'])->name('semantic.update');
-            Route::patch('documents/{damResource}', [SemanticController::class, 'patch'])->name('semantic.patch');
-            Route::delete('documents/{damResource}', [SemanticController::class, 'delete'])->name('semantic.delete');
-            Route::post('documents/{damResource}/enhance', [SemanticController::class, 'updateWithEnhancement'])->name('semantic.updateEnhancement');
-            Route::post('enhance', [SemanticController::class, 'enhance'])->name('semantic.enhance');
-            Route::get('enhance/automatic', [SemanticController::class, 'enhanceAutomatic'])->name('semantic.enhanceAutomatic');
-        });
 
         Route::group(['prefix' => 'tag'], function() {
             Route::get('',          [TagController::class, 'index'])->name('tag.index');
