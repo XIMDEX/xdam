@@ -22,8 +22,8 @@ class XowlTextService
             ],
             [
                 'name' => 'options',
-                'contents' => "{'watson':{'features':{'entities':{'mentions':false}},'extra_links':true,'confidence':1},'dbpedia':{'confidence':2,'extra_links':true},'comprehend':{'LanguageCode':'es','extra_links':true},'confidence':1,'extra_links':true}"
-               
+                'contents' => '{"watson": {"features": {"entities": {"mentions": false}}, "extra_links": true, "confidence": 1}, "dbpedia": {"confidence": 2, "extra_links": true}, "comprehend": {"LanguageCode": "es", "extra_links": true}, "confidence": 1, "extra_links": true}
+                '
             ]
         ],
         'timeout' => 60
@@ -36,13 +36,13 @@ class XowlTextService
         $this->xowlUrl = getenv('XOWL_URL');
     }
     //Mete file directamente
-    public function getDataOwlFromFile($data, $params = [])
+    public function getDataOwlFromFile($data, $file)
     {
         $result = new stdClass();
-        $result->status="FAIL";
+        $result->status = "FAIL";
 
-        if (isset($params['File']))  $this->setFile(new \Illuminate\Http\File($params['File'][0]->getRealPath()),$params['File'][0]->getClientOriginalName());
-        
+        if (isset($file))  $this->setFile(new \Illuminate\Http\File($file->getRealPath()), $file->getClientOriginalName());
+
         $requestOwl = new \GuzzleHttp\Psr7\Request('POST', $this->xowlUrl . '/enhance/all?XDEBUG_SESSION_START=VSCODE');
         $requestOwl = $requestOwl->withBody(new \GuzzleHttp\Psr7\MultipartStream($this->request['multipart']));
 
@@ -55,11 +55,12 @@ class XowlTextService
             $output_xowl = $response['value']->getBody()->getContents();
             $result = json_decode($output_xowl);
             $result->status = 'success';
-        } 
+        }
         return $result;
     }
 
-    private function setFile(\Illuminate\Http\File $file, string $fileName){
+    private function setFile(\Illuminate\Http\File $file, string $fileName)
+    {
         $this->request['multipart'][] = [
             'name' => 'file',
             'contents' => fopen($file->getPathname(), 'r'),
