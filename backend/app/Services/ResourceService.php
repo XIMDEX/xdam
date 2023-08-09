@@ -71,10 +71,7 @@ class ResourceService
      * @var XTagService
      */
     private XowlImageService $xowlImageService;
-    /*
-     * @var SemanticService
-     */
-    private SemanticService $semanticService;
+
 
 
     const PAGE_SIZE = 30;
@@ -86,7 +83,7 @@ class ResourceService
      * @param CategoryService $categoryService
      */
     public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService,
-                                KakumaService $kakumaService, XTagsService $xtagService, XowlImageService $xowlImageService, SemanticService $semanticService,SolrConfig $solrConfig)
+                                KakumaService $kakumaService, XTagsService $xtagService, XowlImageService $xowlImageService,SolrConfig $solrConfig)
             
     {
         $this->mediaService = $mediaService;
@@ -94,7 +91,6 @@ class ResourceService
         $this->solr = $solr;
         $this->workspaceService = $workspaceService;
         $this->kakumaService = $kakumaService;
-        $this->semanticService = $semanticService;
         $this->xtagService = $xtagService;
         $this->xowlImageService = $xowlImageService;
         $this->solrConfig = $solrConfig;
@@ -369,6 +365,10 @@ class ResourceService
             $this->setLomData($resource, $lom_params);
         }
         //here
+        if (isset($params['data']->description->enhanced) && $params['data']->description->enhanced && isset($params['File'][0]) && $params["type"] == ResourceType::document) {
+            $semanticData = $this->GetSemanticData($params['data']->description,($params['File'][0]));
+            if ($semanticData !==null) Storage::disk('semantic')->put($resource->id .".json", json_encode($semanticData));
+        }
         $this->saveAssociatedFiles($resource, $params);
         $resource = $resource->fresh();
         $this->solr->saveOrUpdateDocument($resource);
@@ -455,14 +455,9 @@ class ResourceService
             $_newResource = $newResource;
 
 
-            if (isset($paramsData->description->enhanced) && $paramsData->description->enhanced && isset($params['File'][0])) {
-                $xowlText = new XowlTextService();
-                $dataResult = $xowlText->getDataOwlFromFile($paramsData->description,$params);
-                if($dataResult->status !=='FAIL'){
-                    $cleaner = new XtagsCleaner($dataResult->data->xtags,$dataResult->data->xtags_interlinked);
-                    $dataResultCleaned = $cleaner->getProcessedXtags();
-                    Storage::disk('semantic')->put($newResource->id .".json", json_encode($dataResultCleaned));
-                }
+            if (isset($paramsData->description->enhanced) && $paramsData->description->enhanced && isset($params['File'][0]) && $type == ResourceType::document) {
+                $semanticData = $this->GetSemanticData($paramsData->description,($params['File'][0]));
+                Storage::disk('semantic')->put($newResource->id .".json", json_encode($semanticData));
             }
             if ($type == ResourceType::image ) {
                 $mediaUrl = $this->mediaService->getMediaURL(new Media(), $resource_data['id']);
@@ -1000,5 +995,14 @@ class ResourceService
             $result = json_encode($file);
         }
         Storage::disk('semantic')->put($uuid.".json", json_encode($result));
+    }
+
+    private function GetSemanticData( $description,$file){
+        $xowlText = new XowlTextService();
+        $dataResult = $xowlText->getDataOwlFromFile($description,$file);
+        if($dataResult->status !=='FAIL'){
+            $cleaner = new XtagsCleaner($dataResult->data->xtags,$dataResult->data->xtags_interlinked);
+            return $cleaner->getProcessedXtags();
+        }
     }
 }
