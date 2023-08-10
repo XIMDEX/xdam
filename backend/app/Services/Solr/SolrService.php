@@ -622,10 +622,10 @@ class SolrService
         // $changeParams = [];
         foreach ($json['response']['docs'] as $idx => $doc) {
             $indexLom = array_search($doc['id'], $lom_items_id);
-            if ($indexLom !== false) {
-                foreach ($schemaConfig as $key_schema => $value) {
-                    $json['response']['docs'][$idx][$value['solr_label']] = $lom_items[$indexLom]->$key_schema;
-                }
+            foreach ($schemaConfig as $key_schema => $value) {
+                $json['response']['docs'][$idx][$value['solr_label']] = $indexLom !== false
+                    ? $lom_items[$indexLom]->$key_schema
+                    : null;
             }
 
             //* hide Ximdex fields

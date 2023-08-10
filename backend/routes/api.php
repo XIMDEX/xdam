@@ -91,7 +91,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
     });
 
     Route::get('/exploreCourses', [ResourceController::class, 'exploreCourses'])->name('damResource.exploreCourses');
-    Route::get('/corporation/getDefault',                           [CorporationController::class, 'getDefault'])->name('corporation.getAll');
+    Route::get('/corporation/getDefault',                           [CorporationController::class, 'getDefault'])->name('corporation.getDefault');
 
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/ini_pms', function() {

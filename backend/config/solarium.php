@@ -102,5 +102,5 @@ return [
     ],
     'solr_validators_folder'    => env('SOLR_VALIDATORS_FOLDER', ''),
     'solr_schemas_folder'       => env('SOLR_SCHEMAS_FOLDER', ''),
-'solr_core_allow_external'  => explode(',', env('SOLR_CORES_ALLOW', 'multimedia,activity,assessment'))
+    'solr_core_allow_external'  => explode(',', env('SOLR_CORES_ALLOW', 'multimedia,activity,assessment,book,course'))
 ];
