@@ -33,6 +33,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Mimey\MimeTypes;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Cache;
 
 class ResourceController extends Controller
 {
@@ -316,13 +317,16 @@ class ResourceController extends Controller
      */
     public function render($damUrl, $size = null)
     {
+        $mediaId = DamUrlUtil::decodeUrl($damUrl);
+        if (Cache::has("{$mediaId}__{$size}")) {
+            return Cache::get("{$mediaId}__$size");
+        }
         $method = request()->method();
-        return $this->renderResource($damUrl, $method, $size, $size);
+        return $this->renderResource($mediaId, $method, $size, $size);
     }
 
-    private function renderResource($damUrl, $method = null, $size = null, $renderKey = null, $isCDN = false)
+    private function renderResource($mediaId, $method = null, $size = null, $renderKey = null, $isCDN = false)
     {
-        $mediaId = DamUrlUtil::decodeUrl($damUrl);
         $media = Media::findOrFail($mediaId);
         $mediaFileName = explode('/', $media->getPath());
         $mediaFileName = $mediaFileName[count($mediaFileName) - 1];
@@ -339,6 +343,7 @@ class ResourceController extends Controller
             if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small', 'thumbnail']))) {
                 $response = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
                 $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
+                Cache::put("{$mediaId}__$size", $response);
                 return $response;
             }
 
