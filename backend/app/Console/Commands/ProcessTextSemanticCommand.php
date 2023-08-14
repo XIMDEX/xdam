@@ -52,7 +52,9 @@ class ProcessTextSemanticCommand extends Command
           }
         }
         var_dump($finalFiles[0]);
-        $this->getSemanticData($finalFiles[0]);
+        die();
+       $result = $this->getSemanticData($finalFiles[0]);
+       Storage::disk('semantic')->put(basename(dirname($finalFiles[0])).".json", json_encode($result));
         //$petition = new XowlTextService(basename(dirname($finalFiles[0])));
       //  $petition->setFile($finalFiles[0],basename($finalFiles[0]));
       //  $result = $petition->;
