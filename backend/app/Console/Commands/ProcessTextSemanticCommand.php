@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\ProcessXowlDocument;
 use App\Services\ExternalApis\Xowl\XtagsCleaner;
 use App\Services\ExternalApis\XowlTextService;
 use Illuminate\Console\Command;
@@ -41,50 +42,32 @@ class ProcessTextSemanticCommand extends Command
      * @return int
      */
     public function handle()
-    {   
-         $object = new stdClass();
-         $object->uuid="";
-         $files = Storage::allFiles('public');
-         $finalFiles = [];
+    {
+        $files = Storage::allFiles('public');
         foreach ($files as $file) {
-          if(isset(pathinfo($file)['extension']) && (pathinfo($file)['extension']==='txt' || pathinfo($file)['extension']==='pdf') ){
-               $finalFiles[] = $file;
-          }
+            if (isset(pathinfo($file)['extension']) && (pathinfo($file)['extension'] === 'txt' || pathinfo($file)['extension'] === 'pdf')) {
+                ProcessXowlDocument::dispatch($file);
+            }
         }
-        var_dump(basename(dirname($finalFiles[0]).".json"));
-        if (!Storage::disk('semantic')->exists(basename(dirname($finalFiles[0]).".json"))) {
-            var_dump(dirname($finalFiles[0].".json"));
-            $result = $this->getSemanticData($finalFiles[0]);
-            Storage::disk('semantic')->put(basename(dirname($finalFiles[0])).".json", json_encode($result));
-        }
-     
-        //$petition = new XowlTextService(basename(dirname($finalFiles[0])));
-      //  $petition->setFile($finalFiles[0],basename($finalFiles[0]));
-      //  $result = $petition->;
-       // $test = new XowlTextService();
-       //  $file = Storage::path($files); 
-       //  $file = Storage::get($files);
-         //$passed = $this->get
-         //$file22 = new \Symfony\Component\HttpFoundation\File\File($file);
-         //$file = new UploadedFile($file,basename(dirname($file)));
-         //$object->uuid=basename(dirname($file));
-         
-         //var_dump($this->getSemanticData($object,$file));
-         echo("hello world\n");
-        // var_dump($file);
-        // $file = new \Symfony\Component\HttpFoundation\File\File($files);
-         
-
     }
 
-    private function getSemanticData($file){
+    private function getSemanticData($file)
+    {
         $xowlText = new XowlTextService(basename(dirname($file)));
-        $xowlText->setFile(Storage::path($file),basename($file));
+        $xowlText->setFile(Storage::path($file), basename($file));
         $dataResult = $xowlText->getDataOwlFromFile($file);
-        if($dataResult->status !=='FAIL'){
-            $cleaner = new XtagsCleaner($dataResult->data->xtags,$dataResult->data->xtags_interlinked);
+        if ($dataResult->status !== 'FAIL') {
+            $cleaner = new XtagsCleaner($dataResult->data->xtags, $dataResult->data->xtags_interlinked);
             return $cleaner->getProcessedXtags();
-     
+        }
+    }
+
+    private function save($file)
+    {
+        if (!Storage::disk('semantic')->exists(basename(dirname($file) . ".json"))) {
+            var_dump(dirname($file . ".json"));
+            $result = $this->getSemanticData($file);
+            Storage::disk('semantic')->put($file . ".json", json_encode($result));
         }
     }
 }
