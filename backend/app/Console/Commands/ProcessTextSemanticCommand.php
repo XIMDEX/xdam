@@ -51,10 +51,13 @@ class ProcessTextSemanticCommand extends Command
                $finalFiles[] = $file;
           }
         }
-        var_dump($finalFiles[0]);
-        die();
-       $result = $this->getSemanticData($finalFiles[0]);
-       Storage::disk('semantic')->put(basename(dirname($finalFiles[0])).".json", json_encode($result));
+        var_dump(basename(dirname($finalFiles[0]).".json"));
+        if (!Storage::disk('semantic')->exists(basename(dirname($finalFiles[0]).".json"))) {
+            var_dump(dirname($finalFiles[0].".json"));
+            $result = $this->getSemanticData($finalFiles[0]);
+            Storage::disk('semantic')->put(basename(dirname($finalFiles[0])).".json", json_encode($result));
+        }
+     
         //$petition = new XowlTextService(basename(dirname($finalFiles[0])));
       //  $petition->setFile($finalFiles[0],basename($finalFiles[0]));
       //  $result = $petition->;
@@ -78,7 +81,6 @@ class ProcessTextSemanticCommand extends Command
         $xowlText = new XowlTextService(basename(dirname($file)));
         $xowlText->setFile(Storage::path($file),basename($file));
         $dataResult = $xowlText->getDataOwlFromFile($file);
-        var_dump(  $dataResult );
         if($dataResult->status !=='FAIL'){
             $cleaner = new XtagsCleaner($dataResult->data->xtags,$dataResult->data->xtags_interlinked);
             return $cleaner->getProcessedXtags();
