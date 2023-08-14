@@ -36,20 +36,12 @@ class XowlTextService
         $this->xowlUrl = getenv('XOWL_URL');
     }
     //Mete file directamente
-    public function getDataOwlFromFile($data, $file)
+    public function getDataOwlFromFile(String $uuid, $file)
     {
         $result = new stdClass();
         $result->status = "FAIL";
-
-        if (isset($file))  $this->setFile(new \Illuminate\Http\File($file->getRealPath()), $file->getClientOriginalName());
-
-        $requestOwl = new \GuzzleHttp\Psr7\Request('POST', $this->xowlUrl . '/enhance/all?XDEBUG_SESSION_START=VSCODE');
-        $requestOwl = $requestOwl->withBody(new \GuzzleHttp\Psr7\MultipartStream($this->request['multipart']));
-
-        $promises[$data->uuid] = $this->client->sendAsync($requestOwl);
-
+        $promises[$uuid] = $this->setPromises($uuid);
         $responses = \GuzzleHttp\Promise\Utils::settle($promises)->wait();
-
         $response = array_shift($responses);
         if ($response['state'] === 'fulfilled') {
             $output_xowl = $response['value']->getBody()->getContents();
@@ -59,12 +51,19 @@ class XowlTextService
         return $result;
     }
 
-    private function setFile(\Illuminate\Http\File $file, string $fileName)
+    private function setFile(\Illuminate\Http\File $file)
     {
         $this->request['multipart'][] = [
             'name' => 'file',
             'contents' => fopen($file->getPathname(), 'r'),
-            'filename' => $fileName
+            'filename' => $file->getFilename()
         ];
+    }
+
+    private function setPromises(String $uuid){
+        $requestOwl = new \GuzzleHttp\Psr7\Request('POST', $this->xowlUrl . '/enhance/all?XDEBUG_SESSION_START=VSCODE');
+        $requestOwl = $requestOwl->withBody(new \GuzzleHttp\Psr7\MultipartStream($this->request['multipart']));
+        $promises[$uuid] = $this->client->sendAsync($requestOwl);
+        return $promises;
     }
 }
