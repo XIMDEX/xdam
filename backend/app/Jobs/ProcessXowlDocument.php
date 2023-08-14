@@ -17,15 +17,17 @@ class ProcessXowlDocument implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private $file;
+    private $uuid;
+    private $path;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($file)
+    public function __construct($uuid,$path)
     {
-        $this->file = $file;
+        $this->uuid = $uuid;
+        $this->path = $path;
     }
 
     /**
@@ -35,31 +37,23 @@ class ProcessXowlDocument implements ShouldQueue
      */
     public function handle()
     {
-        $this->save($this->file);
-        /*$files = Storage::allFiles('public');
-        foreach ($files as $file) {
-          if(isset(pathinfo($file)['extension']) && (pathinfo($file)['extension']==='txt' || pathinfo($file)['extension']==='pdf') ){
-               $this->save($file);
-          }
-        }*/
+        $this->save();
     }
 
-    private function getSemanticData($file){
-        $xowlText = new XowlTextService(basename(dirname($file)));
-        $xowlText->setFile(Storage::path($file),basename($file));
-        $dataResult = $xowlText->getDataOwlFromFile($file);
+    private function getSemanticData(){
+        $xowlText = new XowlTextService($this->uuid);
+        $xowlText->setFile($this->path,$this->uuid);
+        $dataResult = $xowlText->getDataOwlFromFile($this->uuid);
         if($dataResult->status !=='FAIL'){
             $cleaner = new XtagsCleaner($dataResult->data->xtags,$dataResult->data->xtags_interlinked);
-            return $cleaner->getProcessedXtags();
-     
+            return $cleaner->getProcessedXtags(); 
         }
     }
 
-    private function save($file){
-        if (!Storage::disk('semantic')->exists(basename(dirname($file).".json"))) {
-            var_dump(dirname($file.".json"));
-            $result = $this->getSemanticData($file);
-            Storage::disk('semantic')->put(basename(dirname($file)).".json", json_encode($result));
+    private function save(){
+        if (!Storage::disk('semantic')->exists($this->uuid.".json")) {
+            $result = $this->getSemanticData();
+            Storage::disk('semantic')->put($this->uuid.".json", json_encode($result));
         }
     }
 }

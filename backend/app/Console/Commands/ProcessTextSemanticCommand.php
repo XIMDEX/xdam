@@ -46,12 +46,12 @@ class ProcessTextSemanticCommand extends Command
         $files = Storage::allFiles('public');
         foreach ($files as $file) {
             if (isset(pathinfo($file)['extension']) && (pathinfo($file)['extension'] === 'txt' || pathinfo($file)['extension'] === 'pdf')) {
-                ProcessXowlDocument::dispatch($file);
+                ProcessXowlDocument::dispatch(basename(dirname($file)),Storage::path($file));
             }
         }
     }
 
-    private function getSemanticData($file)
+ /*   private function getSemanticData($file)
     {
         $xowlText = new XowlTextService(basename(dirname($file)));
         $xowlText->setFile(Storage::path($file), basename($file));
@@ -69,5 +69,5 @@ class ProcessTextSemanticCommand extends Command
             $result = $this->getSemanticData($file);
             Storage::disk('semantic')->put($file . ".json", json_encode($result));
         }
-    }
+    }*/
 }
