@@ -35,13 +35,12 @@ class XowlTextService
         $this->client  = new \GuzzleHttp\Client();
         $this->xowlUrl = getenv('XOWL_URL');
     }
-    //Mete file directamente
-    public function getDataOwlFromFile(String $uuid, $file)
+
+    public function getDataOwlFromFile(String $uuid)
     {
         $result = new stdClass();
         $result->status = "FAIL";
-        $promises[$uuid] = $this->setPromises($uuid);
-        $responses = \GuzzleHttp\Promise\Utils::settle($promises)->wait();
+        $responses = \GuzzleHttp\Promise\Utils::settle($this->setPromises($uuid))->wait();
         $response = array_shift($responses);
         if ($response['state'] === 'fulfilled') {
             $output_xowl = $response['value']->getBody()->getContents();
@@ -51,12 +50,12 @@ class XowlTextService
         return $result;
     }
 
-    private function setFile(\Illuminate\Http\File $file)
+    public function setFile($path,$name)
     {
         $this->request['multipart'][] = [
             'name' => 'file',
-            'contents' => fopen($file->getPathname(), 'r'),
-            'filename' => $file->getFilename()
+            'contents' => fopen($path, 'r'),
+            'filename' => $name
         ];
     }
 

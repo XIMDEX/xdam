@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Services\ExternalApis\Xowl\XtagsCleaner;
 use App\Services\ExternalApis\XowlTextService;
 use Illuminate\Console\Command;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
@@ -45,15 +44,19 @@ class ProcessTextSemanticCommand extends Command
     {   
          $object = new stdClass();
          $object->uuid="";
-         $files = Storage::allFiles();
+         $files = Storage::allFiles('public');
          $finalFiles = [];
         foreach ($files as $file) {
-           // var_dump($file);
           if(isset(pathinfo($file)['extension']) && (pathinfo($file)['extension']==='txt' || pathinfo($file)['extension']==='pdf') ){
-            if(new UploadedFile($file,basename(dirname($file)))!==null)$finalFiles[] = new UploadedFile($file,basename(dirname($file)));
+               $finalFiles[] = $file;
           }
         }
-        var_dump($finalFiles);
+        var_dump($finalFiles[0]);
+        $this->getSemanticData($finalFiles[0]);
+        //$petition = new XowlTextService(basename(dirname($finalFiles[0])));
+      //  $petition->setFile($finalFiles[0],basename($finalFiles[0]));
+      //  $result = $petition->;
+       // $test = new XowlTextService();
        //  $file = Storage::path($files); 
        //  $file = Storage::get($files);
          //$passed = $this->get
@@ -69,9 +72,10 @@ class ProcessTextSemanticCommand extends Command
 
     }
 
-    private function getSemanticData($description,$file){
-        $xowlText = new XowlTextService();
-        $dataResult = $xowlText->getDataOwlFromFile($description,$file);
+    private function getSemanticData($file){
+        $xowlText = new XowlTextService(basename(dirname($file)));
+        $xowlText->setFile(Storage::path($file),basename($file));
+        $dataResult = $xowlText->getDataOwlFromFile($file);
         var_dump(  $dataResult );
         if($dataResult->status !=='FAIL'){
             $cleaner = new XtagsCleaner($dataResult->data->xtags,$dataResult->data->xtags_interlinked);
