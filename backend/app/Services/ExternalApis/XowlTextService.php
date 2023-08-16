@@ -52,13 +52,11 @@ class XowlTextService
 
     public function setFile($path,$name)
     {
-        var_dump($path);
-        var_dump($name);
-        var_dump(fopen($path, 'r'));
+        $extension = pathinfo(storage_path($path), PATHINFO_EXTENSION);
         $this->request['multipart'][] = [
             'name' => 'file',
             'contents' => fopen($path, 'r'),
-            'filename' => $name.".pdf"
+            'filename' => $name.".$extension"
         ];
     }
 
