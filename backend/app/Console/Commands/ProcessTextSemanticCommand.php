@@ -24,7 +24,7 @@ class ProcessTextSemanticCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Add semantic data to all documents(txt,pdf)';
 
     /**
      * Create a new command instance.
@@ -50,24 +50,4 @@ class ProcessTextSemanticCommand extends Command
             }
         }
     }
-
- /*   private function getSemanticData($file)
-    {
-        $xowlText = new XowlTextService(basename(dirname($file)));
-        $xowlText->setFile(Storage::path($file), basename($file));
-        $dataResult = $xowlText->getDataOwlFromFile($file);
-        if ($dataResult->status !== 'FAIL') {
-            $cleaner = new XtagsCleaner($dataResult->data->xtags, $dataResult->data->xtags_interlinked);
-            return $cleaner->getProcessedXtags();
-        }
-    }
-
-    private function save($file)
-    {
-        if (!Storage::disk('semantic')->exists(basename(dirname($file) . ".json"))) {
-            var_dump(dirname($file . ".json"));
-            $result = $this->getSemanticData($file);
-            Storage::disk('semantic')->put($file . ".json", json_encode($result));
-        }
-    }*/
 }
