@@ -28,10 +28,8 @@ class XowlQueue
 
     private function dispatchJobs($files, $id)
     {
-        $jobs = array_map(function ($file) use ($id) {
-            return new ProcessXowlDocument($id, Storage::path($file));
-        }, $files);
-
-        dispatch($jobs);
+       foreach ($files as $file) {
+         ProcessXowlDocument::dispatch($id,Storage::path($file));
+       }
     }
 }
