@@ -40,7 +40,7 @@ class ProcessXowlDocument implements ShouldQueue
     }
 
     private function getSemanticData(){
-        $xowlText = new XowlTextService($this->uuid);
+        $xowlText = new XowlTextService($this->uuid); //dependency 
         $xowlText->setFile($this->path,$this->uuid);
         $dataResult = $xowlText->getDataOwlFromFile($this->uuid);
         if($dataResult->status !=='FAIL'){
