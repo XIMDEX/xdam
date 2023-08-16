@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
+use App\Jobs\ProcessXowlDocument;
 use App\Models\Category;
 use App\Models\Collection as ModelsCollection;
 use App\Models\DamResource;
@@ -13,6 +14,7 @@ use App\Models\Workspace;
 use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Services\Solr\SolrService;
 use App\Services\ExternalApis\KakumaService;
+use App\Services\ExternalApis\Xowl\XowlQueue;
 use App\Services\ExternalApis\Xowl\XtagsCleaner;
 use App\Services\ExternalApis\XTagsService;
 use App\Services\ExternalApis\XowlImageService;
@@ -446,7 +448,7 @@ class ResourceService
         ];
         //TODO: Improve this part
  
-        if ($type == ResourceType::document && isset($params->description->uuid) && null != $params->description->uuid) $resource_data['id'] = $params['data']['description']->uuid;
+        // ($type == ResourceType::document && isset($params->description->uuid) && null != $params->description->uuid) $resource_data['id'] = $params['data']['description']->uuid;
        
         $_newResource = false;
         try {
@@ -455,10 +457,7 @@ class ResourceService
             $_newResource = $newResource;
 
 
-            if (isset($paramsData->description->enhanced) && $paramsData->description->enhanced && isset($params['File'][0]) && $type == ResourceType::document) {
-                $semanticData = $this->GetSemanticData($paramsData->description,($params['File'][0]));
-                Storage::disk('semantic')->put($newResource->id .".json", json_encode($semanticData));
-            }
+          
             if ($type == ResourceType::image ) {
                 $mediaUrl = $this->mediaService->getMediaURL(new Media(), $resource_data['id']);
                 $caption = $this->getCaptionFromImage("https://www.ruralidays.co.uk/travel/wp-content/uploads/2018/03/Beach-of-La-Carihuela-in-Torremolinos-Malaga.jpg");
@@ -469,10 +468,23 @@ class ResourceService
             $this->linkCategoriesFromJson($newResource,$paramsData );
             $this->linkTagsFromJson($newResource,$paramsData);
             $this->saveAssociatedFiles($newResource, $params);
-        
-      
             $newResource = $newResource->fresh();
             $this->solr->saveOrUpdateDocument($newResource);
+              
+            if (isset($paramsData->description->enhanced) && $paramsData->description->enhanced && isset($params['File'][0]) && $type == ResourceType::document) {
+                $XowlQueue = new XowlQueue();
+                $mediaFiles = $newResource->getMedia('File');
+                $XowlQueue->addDocumentToQueue($newResource->id,$mediaFiles);
+             /*   $uuid = $newResource;
+                $uuid = $uuid->getMedia('File');
+                foreach ($uuid as $id) {
+                    $path = "public/{$id->id}";
+                    $files = Storage::allFiles($path);
+                    foreach ($files as $file) {
+                        ProcessXowlDocument::dispatch($newResource->id,Storage::path($file));
+                    }
+                }*/
+            }
             $_newResource = false;
             return $newResource;
         } catch (\Exception $th) {
@@ -997,9 +1009,10 @@ class ResourceService
         Storage::disk('semantic')->put($uuid.".json", json_encode($result));
     }
 
-    private function GetSemanticData( $description,$file){
+    private function GetSemanticData($description,$file){
         $xowlText = new XowlTextService();
-        $dataResult = $xowlText->getDataOwlFromFile($description,$file);
+        $fileNew  = new \Illuminate\Http\File($file->getRealPath());
+        $dataResult = $xowlText->getDataOwlFromFile($description->uuid,$fileNew);
         if($dataResult->status !=='FAIL'){
             $cleaner = new XtagsCleaner($dataResult->data->xtags,$dataResult->data->xtags_interlinked);
             return $cleaner->getProcessedXtags();
