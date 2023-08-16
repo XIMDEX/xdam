@@ -14,14 +14,16 @@ class ProcessXowlImage implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    private $xowlImageService;
+
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($xowlImageService)
     {
-        //
+        $this->xowlImageService = $xowlImageService;
     }
 
     /**
