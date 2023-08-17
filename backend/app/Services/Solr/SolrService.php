@@ -423,11 +423,23 @@ class SolrService
             $fields = $document->getFields();
             $fields["data"] = @json_decode($fields["data"]);
             //Here new function
-            if (Storage::disk("semantic")->exists($fields["id"].".json")) {
-                $json = json_decode(Storage::disk("semantic")->get($fields["id"].".json"));
-                if(isset($json->xtags_interlinked))$fields["data"]->description->entities_linked = $json->xtags_interlinked ;
-                if(isset($json->xtags))$fields["data"]->description->entities_non_linked = $json->xtags ;
+            //$last_uuid = substr($string, strrpos($string, "@") + 1);
+            $fields["data"]->description->entities_linked  = [];
+            $fields["data"]->description->entities_non_linked = [];
+            if (isset($fields['files'])) {
+                foreach ($fields['files'] as $file) {
+                    $last_uuid = substr($file, strrpos($file, "@",-4));
+                    $last_uuid= str_replace("@", "", $last_uuid);
+                    
+                    if (Storage::disk("semantic")->exists($last_uuid.".json")) {
+                        $json = json_decode(Storage::disk("semantic")->get($last_uuid.".json"));
+                        if(isset($json->xtags_interlinked))$fields["data"]->description->entities_linked = array_merge($fields["data"]->description->entities_linked, $json->xtags_interlinked) ;
+                        if(isset($json->xtags))$fields["data"]->description->entities_non_linked = array_merge($fields["data"]->description->entities_non_linked, $json->xtags) ;
+                    }
+                }
             }
+           
+          
             $documentsResponse[] = $fields;
         }
 
