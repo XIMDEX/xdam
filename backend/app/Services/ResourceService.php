@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Enums\MediaType;
 use App\Enums\ResourceType;
-use App\Jobs\ProcessXowlDocument;
 use App\Models\Category;
 use App\Models\Collection as ModelsCollection;
 use App\Models\DamResource;
@@ -368,8 +367,11 @@ class ResourceService
         }
         //here
         if (isset($params['data']->description->enhanced) && $params['data']->description->enhanced && isset($params['File'][0]) && $params["type"] == ResourceType::document) {
-            $semanticData = $this->GetSemanticData($params['data']->description,($params['File'][0]));
-            if ($semanticData !==null) Storage::disk('semantic')->put($resource->id .".json", json_encode($semanticData));
+            /*$semanticData = $this->GetSemanticData($params['data']->description,($params['File'][0]));
+            if ($semanticData !==null) Storage::disk('semantic')->put($resource->id .".json", json_encode($semanticData));*/
+            $XowlQueue = new XowlQueue();
+            $mediaFiles = $resource->getMedia('File');
+            $XowlQueue->addDocumentToQueue($mediaFiles);
         }
         $this->saveAssociatedFiles($resource, $params);
         $resource = $resource->fresh();
@@ -474,16 +476,7 @@ class ResourceService
             if (isset($paramsData->description->enhanced) && $paramsData->description->enhanced && isset($params['File'][0]) && $type == ResourceType::document) {
                 $XowlQueue = new XowlQueue();
                 $mediaFiles = $newResource->getMedia('File');
-                $XowlQueue->addDocumentToQueue($newResource->id,$mediaFiles);
-             /*   $uuid = $newResource;
-                $uuid = $uuid->getMedia('File');
-                foreach ($uuid as $id) {
-                    $path = "public/{$id->id}";
-                    $files = Storage::allFiles($path);
-                    foreach ($files as $file) {
-                        ProcessXowlDocument::dispatch($newResource->id,Storage::path($file));
-                    }
-                }*/
+                $XowlQueue->addDocumentToQueue($mediaFiles);
             }
             $_newResource = false;
             return $newResource;
