@@ -365,17 +365,15 @@ class ResourceService
             }
             $this->setLomData($resource, $lom_params);
         }
-        //here
+    
+        $this->saveAssociatedFiles($resource, $params);
+        $resource = $resource->fresh();
+        $this->solr->saveOrUpdateDocument($resource);
         if (isset($params['data']->description->enhanced) && $params['data']->description->enhanced && isset($params['File'][0]) && $params["type"] == ResourceType::document) {
-            /*$semanticData = $this->GetSemanticData($params['data']->description,($params['File'][0]));
-            if ($semanticData !==null) Storage::disk('semantic')->put($resource->id .".json", json_encode($semanticData));*/
             $XowlQueue = new XowlQueue();
             $mediaFiles = $resource->getMedia('File');
             $XowlQueue->addDocumentToQueue($mediaFiles);
         }
-        $this->saveAssociatedFiles($resource, $params);
-        $resource = $resource->fresh();
-        $this->solr->saveOrUpdateDocument($resource);
         return $resource;
     }
 
