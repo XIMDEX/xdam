@@ -23,10 +23,11 @@ class ProcessXowlDocument implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($uuid,$path)
+    public function __construct($uuid,$path,$uuidParent)
     {
         $this->uuid = $uuid;
         $this->path = $path;
+        $this->uuidParent = $uuidParent;
     }
 
     /**
