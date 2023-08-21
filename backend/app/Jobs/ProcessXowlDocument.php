@@ -18,6 +18,7 @@ class ProcessXowlDocument implements ShouldQueue
 
     private $uuid;
     private $path;
+    private $uuidParent;
     /**
      * Create a new job instance.
      *
@@ -51,9 +52,9 @@ class ProcessXowlDocument implements ShouldQueue
     }
 
     private function save(){
-        if (!Storage::disk('semantic')->exists($this->uuid.".json")) {
+        if (!Storage::disk('semantic')->exists($this->uuidParent."/".$this->uuid.".json")) {
             $result = $this->getSemanticData();
-            Storage::disk('semantic')->put($this->uuid.".json", json_encode($result));
+            Storage::disk('semantic')->put($this->uuidParent."/".$this->uuid.".json", json_encode($result));
         }
     }
 }

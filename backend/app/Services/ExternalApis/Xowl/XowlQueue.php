@@ -24,7 +24,7 @@ class XowlQueue
             $filtered_files = array_filter($files, function ($file)  use ($regex) {
                 return preg_match($regex, $file);
             });
-            $this->dispatchJobs($filtered_files, $media->id);
+            $this->dispatchJobs($filtered_files, $media->id,$media->model_id);
         }
     }
 
@@ -32,10 +32,10 @@ class XowlQueue
         
     }
 
-    private function dispatchJobs($files, $id)
+    private function dispatchJobs($files, $id,$parent_id)
     {
         foreach ($files as $file) {
-            ProcessXowlDocument::dispatch($id, Storage::path($file));
+            ProcessXowlDocument::dispatch($id, Storage::path($file),$parent_id);
         }
     }
 
