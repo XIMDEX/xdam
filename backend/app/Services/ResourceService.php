@@ -16,7 +16,7 @@ use App\Services\ExternalApis\KakumaService;
 use App\Services\ExternalApis\Xowl\XowlQueue;
 use App\Services\ExternalApis\Xowl\XtagsCleaner;
 use App\Services\ExternalApis\XTagsService;
-use App\Services\ExternalApis\XowlImageService;
+use App\Services\ExternalApis\Xowl\XowlImageService;
 use App\Services\ExternalApis\XowlTextService;
 use App\Utils\Texts;
 use App\Utils\Utils;
@@ -31,6 +31,7 @@ use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Services\Solr\SolrConfig;
 use Illuminate\Support\Facades\Storage;
+use stdClass;
 
 class ResourceService
 {
@@ -306,6 +307,7 @@ class ResourceService
      */
     public function update(DamResource $resource, $params): DamResource
     {
+
         if (array_key_exists("type", $params) && $params["type"]) {
             $resource->update(
                 [
@@ -317,7 +319,30 @@ class ResourceService
         if (array_key_exists("data", $params) && !empty($params["data"])) {
 
             $this->setDefaultLanguageIfNeeded($params);
+            if (isset($params['data']->description->entities_linked) || isset($params['data']->description->entities_non_linked)) {
+                $entitiesXtags = [];
+                $entitiesXtagUnlinked = [];
+                if (isset($params['data']->description->entities_linked)) {
+                    foreach ($params['data']->description->entities_linked as $line) {
+                        $entitiesXtags[$line->uuid][] = $line;
+                    }
+                    unset($params['data']->description->entities_linked);
+                }
+                if (isset($params['data']->description->entities_non_linked)) {
+                    foreach ($params['data']->description->entities_non_linked as $line) {
+                        $entitiesXtagUnlinked[$line->uuid][] = $line;
+                    }
+                    unset($params['data']->description->entities_non_linked);
+                }
+                foreach ($entitiesXtags as $key => $entity) {
+                    $finalObject = new stdClass();
+                    $finalObject->xtags_interlinked = $entitiesXtags[$key];
+                    $finalObject->xtags             = $entitiesXtagUnlinked[$key];
 
+                    Storage::disk('semantic')->put($resource->id."/".$key.".json", json_encode($finalObject));
+                }
+            }
+           
             $resource->update(
                 [
                     'data' => $params['data'],
@@ -374,6 +399,7 @@ class ResourceService
             $mediaFiles = $resource->getMedia('File');
             $XowlQueue->addDocumentToQueue($mediaFiles);
         }
+    
         return $resource;
     }
 
@@ -998,15 +1024,5 @@ class ResourceService
             $result = json_encode($file);
         }
         Storage::disk('semantic')->put($uuid.".json", json_encode($result));
-    }
-
-    private function GetSemanticData($description,$file){
-        $xowlText = new XowlTextService();
-        $fileNew  = new \Illuminate\Http\File($file->getRealPath());
-        $dataResult = $xowlText->getDataOwlFromFile($description->uuid,$fileNew);
-        if($dataResult->status !=='FAIL'){
-            $cleaner = new XtagsCleaner($dataResult->data->xtags,$dataResult->data->xtags_interlinked);
-            return $cleaner->getProcessedXtags();
-        }
     }
 }
