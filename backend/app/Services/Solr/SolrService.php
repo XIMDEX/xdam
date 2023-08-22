@@ -432,8 +432,18 @@ class SolrService
                     
                     if (Storage::disk("semantic")->exists($fields["id"]."/".$last_uuid.".json")) {
                         $json = json_decode(Storage::disk("semantic")->get($fields["id"]."/".$last_uuid.".json"));
-                        if(isset($json->xtags_interlinked))$fields["data"]->description->entities_linked = array_merge($fields["data"]->description->entities_linked, $json->xtags_interlinked) ;
-                        if(isset($json->xtags))$fields["data"]->description->entities_non_linked = array_merge($fields["data"]->description->entities_non_linked, $json->xtags) ;
+                        if(isset($json->xtags_interlinked)){
+                            foreach ($json->xtags_interlinked as  $line) {
+                                $line->uuid = $last_uuid;
+                            }
+                            $fields["data"]->description->entities_linked = array_merge($fields["data"]->description->entities_linked, $json->xtags_interlinked);
+                        }
+                        if(isset($json->xtags)){
+                            foreach ($json->xtags as $line) {
+                                $line->uuid = $last_uuid;
+                            }
+                            $fields["data"]->description->entities_non_linked = array_merge($fields["data"]->description->entities_non_linked, $json->xtags) ;
+                        }
                     }
                 }
             }
