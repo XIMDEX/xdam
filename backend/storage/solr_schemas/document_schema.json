@@ -80,16 +80,6 @@
     "sortMissingLast": true,
     "omitPositions": true
   },
-  "entities_linked": {
-    "name": "entities_linked",
-    "type": "string",
-    "multiValued": true
-  },
-  "entities_non_linked": {
-    "name": "entities_non_linked",
-    "type": "string",
-    "multiValued": true
-  },
   "enhanced": {
     "name": "enhanced",
     "type": "boolean",
@@ -136,6 +126,10 @@
   },
   "tags": {
     "name": "tags",
+    "type": "text_general"
+  },
+  "semantic_tags": {
+    "name": "semantic_tags",
     "type": "text_general"
   },
   "lom": {

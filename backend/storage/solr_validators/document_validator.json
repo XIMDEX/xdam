@@ -1,71 +1,7 @@
 {
   "type": "object",
   "definitions": {
-    "entities_linked": {
-      "type": "object",
-      "title": "Entities Linked",
-      "properties": {
-          "name": {
-              "type": "string",
-              "default": ""
-          },
-          "confidence": {
-              "type": "number",
-              "title": "Entry",
-              "default": ""
-          },
-          "type": {
-              "type": "string",
-              "title": "Entry",
-              "default": ""
-          },
-          "start": {
-              "type": "number",
-              "title": "Entry",
-              "default": ""
-          },
-          "end": {
-              "type": "number",
-              "title": "Entry",
-              "default": ""
-          },
-          "uri": {
-              "type": "string",
-              "title": "Entry",
-              "default": ""
-          }
-      }
-    },
-    "entities_non_linked": {
-      "type": "object",
-      "title": "Entities Non-Linked",
-      "properties": {
-          "name": {
-              "type": "string",
-              "default": ""
-          },
-          "confidence": {
-              "type": "number",
-              "title": "Entry",
-              "default": ""
-          },
-          "type": {
-              "type": "string",
-              "title": "Entry",
-              "default": ""
-          },
-          "start": {
-              "type": "number",
-              "title": "Entry",
-              "default": ""
-          },
-          "end": {
-              "type": "number",
-              "title": "Entry",
-              "default": ""
-          }
-      }
-    }
+  
   },
   "properties": {
     "description": {
@@ -115,11 +51,6 @@
           ],
           "default": "es"
         },
-        "entities_linked": {
-            "title": "Entities Linked",
-            "type": "array",
-            "items": { "$ref" : "#/definitions/entities_linked" }
-        },
         "tags": {
             "title": "tags",
             "type": "array",
@@ -128,16 +59,36 @@
                 "type":"string"
             }
         },
-        "entities_non_linked": {
-            "title": "Entities Non-Linked",
-            "type": "array",
-            "items": { "$ref" : "#/definitions/entities_non_linked" }
-        },
         "active": {
           "type": "boolean"
         },
         "enhanced": {
           "type":"boolean"
+        },
+        "semantic_tags": {
+          "title": "Semantic Tags",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "string"
+                },
+                "solr_language": {
+                  "type": "string",
+                  "format": "string"
+                },
+                "vocabulary": {
+                    "type": "string",
+                    "format": "string"
+                },
+                "label": {
+                    "type": "string",
+                    "format": "string"
+                }
+            }
+          }
         }
       }
     }
