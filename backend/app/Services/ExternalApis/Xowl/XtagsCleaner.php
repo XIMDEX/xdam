@@ -82,6 +82,7 @@ class XtagsCleaner
     private function getInfoXtags($entity, $withURL)
     {
         $output = [
+            'id' => $entity->id,
             'name' => $entity->text,
             'confidence' => $entity->confidence,
             'type' => $entity->type,

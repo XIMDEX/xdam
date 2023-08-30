@@ -23,7 +23,7 @@
     "type": "string",
     "multiValued": false,
     "indexed": true,
-    "required": true,
+    "required": false,
     "stored": true
   },
   "langcode":{
