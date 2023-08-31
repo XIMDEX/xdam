@@ -444,9 +444,11 @@ class SolrService
                             }
                             $fields["data"]->description->entities_non_linked = array_merge($fields["data"]->description->entities_non_linked, $json->xtags) ;
                         }
+
                     }
                 }
             }
+        
             $documentsResponse[] = $fields;
         }
 
@@ -469,6 +471,13 @@ class SolrService
             'nextPage'              => (($currentPage + 1) > $totalPages) ? $totalPages : $currentPage + 1,
             'prevPage'              => (($currentPage - 1) > 1) ? $currentPage - 1 : 1
         ];
+    }
+
+    private function findObjectByName($array, $name) {
+        $result = array_filter($array, function ($e) use ($name) {
+            return $e->name == $name;
+        });
+        return array_shift($result);
     }
 
     private function executeDistributedSearchQuery($pageParams = [], $sortParams = [], $facetsFilter, $workspace)
