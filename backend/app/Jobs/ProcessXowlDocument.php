@@ -19,16 +19,18 @@ class ProcessXowlDocument implements ShouldQueue
     private $uuid;
     private $path;
     private $uuidParent;
+    private $name;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($uuid,$path,$uuidParent)
+    public function __construct($uuid,$path,$uuidParent,$name)
     {
         $this->uuid = $uuid;
         $this->path = $path;
         $this->uuidParent = $uuidParent;
+        $this->name = $name;
     }
 
     /**
@@ -46,8 +48,10 @@ class ProcessXowlDocument implements ShouldQueue
         $xowlText->setFile($this->path,$this->uuid);
         $dataResult = $xowlText->getDataOwlFromFile($this->uuid);
         if($dataResult->status !=='FAIL'){
-            $cleaner = new XtagsCleaner($dataResult->data->xtags,$dataResult->data->xtags_interlinked);
-            return $cleaner->getProcessedXtags(); 
+            $cleaner = new XtagsCleaner($dataResult->data->xtags,$dataResult->data->xtags_interlinked,$this->uuid);
+            $cleaner = $cleaner->getProcessedXtags();
+            $cleaner['file_name'] = $this->name; 
+            return $cleaner; 
         }
     }
 
