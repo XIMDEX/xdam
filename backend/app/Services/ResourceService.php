@@ -498,7 +498,7 @@ class ResourceService
             $newResource = $newResource->fresh();
             $this->solr->saveOrUpdateDocument($newResource);
               
-            if (isset($params['File'][0]) && $type == ResourceType::document && $params['File'][0]->extension() === 'pdf' || $params['File'][0]->extension() === 'txt'   ) {
+            if (isset($params['File'][0]) && $type == ResourceType::document ) {
                 $XowlQueue = new XowlQueue();
                 $mediaFiles = $newResource->getMedia('File');
                 $XowlQueue->addDocumentToQueue($mediaFiles);
