@@ -485,11 +485,15 @@ class ResourceService
 
 
           
-            if ($type == ResourceType::image ) {
+          /*  if (isset($params['File'][0]) && $type == ResourceType::image ) {
+                $XowlQueue = new XowlQueue();
                 $mediaUrl = $this->mediaService->getMediaURL(new Media(), $resource_data['id']);
+                echo($mediaUrl);
+                $test = MediaType::File()->key;
+               /* $mediaUrl = $this->mediaService->getMediaURL(new Media(), $resource_data['id']);
                 $caption = $this->getCaptionFromImage("https://www.ruralidays.co.uk/travel/wp-content/uploads/2018/03/Beach-of-La-Carihuela-in-Torremolinos-Malaga.jpg");
                 if($caption)$this->saveCaptionImage($caption,$resource_data['id']);
-            } 
+            } */
 
             $this->setResourceWorkspace($newResource, $wsp);
             $this->linkCategoriesFromJson($newResource,$paramsData );
@@ -502,7 +506,14 @@ class ResourceService
                 $XowlQueue = new XowlQueue();
                 $mediaFiles = $newResource->getMedia('File');
                 $XowlQueue->addDocumentToQueue($mediaFiles);
+              //  $XowlQueue->addImageToQueue($mediaFiles);
             }
+               
+           /* if (isset($params['Preview'])) {
+                $XowlQueue = new XowlQueue();
+                $mediaFiles = $newResource->getMedia('File');
+                $XowlQueue->addImageToQueue($mediaFiles);
+            }*/
             $_newResource = false;
             return $newResource;
         } catch (\Exception $th) {

@@ -2,8 +2,10 @@
 
 namespace App\Services\ExternalApis\Xowl;
 
+use App\Jobs\Xowl\ProcessXowlImage;
 use App\Jobs\Xowl\ProcessXowlDocument;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\Process\Process;
 
 class XowlQueue
 {
@@ -26,7 +28,19 @@ class XowlQueue
         }
     }
 
-    public function addImageToQueue(){
+    public function addImageToQueue($mediaFiles){
+
+        $xowlImageService = new \App\Services\ExternalApis\Xowl\XowlImageService();
+        $regex = '/\.(' . implode('|', ['jpg', 'jpeg', 'png', 'gif']) . ')$/';
+        foreach ($mediaFiles as $media) {
+            $files = Storage::allFiles("public/{$media->id}");
+            $imageFiles = array_filter($files, function ($file)  use ($regex) {
+                return preg_match($regex, $file);
+            });
+            foreach ($imageFiles as $imageFile) {
+                ProcessXowlImage::dispatch($xowlImageService,$media); //injectar xowlimage, mediaurl y media
+            }
+        }
         
     }
 

@@ -3,10 +3,37 @@
 namespace App\Services\ExternalApis\Xowl;
 
 use App\Services\ExternalApis\BaseApi;
+use Illuminate\Support\Facades\Storage;
 
 class XowlImageService extends BaseApi
 {
-    const CAPTION = '/caption';
+
+    public function __construct(){
+
+    }
+
+
+    public function getCaptionFromImage($mediaUrl)
+    {
+        try {
+            return "image description";
+        } catch (\Exception $exc) {
+            // failed captioning image -- continue process
+        }
+    }
+
+    public function saveCaptionImage(string $caption, string $uuid, string $uuidParent)
+    {
+        $result = ["imageCaptionAi" => $caption];
+        if (!Storage::disk('semantic')->exists($uuidParent."/".$uuid . "json")) {
+            Storage::disk('semantic')->put($uuidParent."/".$uuid . ".json", json_encode($result));
+        }
+ 
+    }
+
+
+
+    /*const CAPTION = '/caption';
     const TRANSLATE = '/translate';
 
     public function __construct()
@@ -51,5 +78,5 @@ class XowlImageService extends BaseApi
             $result = json_encode($file);
         }
         Storage::disk('semantic')->put($uuid . ".json", json_encode($result));
-    }
+    }*/
 }
