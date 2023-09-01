@@ -425,6 +425,7 @@ class SolrService
 
             $fields["data"]->description->entities_linked  = [];
             $fields["data"]->description->entities_non_linked = [];
+            if (!isset($fields['data']->description->semantic_tags)) $fields['data']->description->semantic_tags = [];
             if (isset($fields['files'])) {
                 foreach ($fields['files'] as $file) {
                     $last_uuid = substr($file, strrpos($file, "@",-4));

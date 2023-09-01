@@ -2,13 +2,13 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\ProcessXowlDocument;
-use App\Services\ExternalApis\Xowl\XtagsCleaner;
-use App\Services\ExternalApis\XowlTextService;
+use App\Enums\MediaType;
+use App\Http\Resources\ResourceCollection;
+use App\Http\Resources\ResourceResource;
+use App\Jobs\Xowl\ProcessXowlDocument;
+use App\Services\ResourceService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use stdClass;
 
 class ProcessTextSemanticCommand extends Command
 {
@@ -41,12 +41,17 @@ class ProcessTextSemanticCommand extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(ResourceService $resourceService)
     {
-        $files = Storage::allFiles('public');
-        foreach ($files as $file) {
-            if (isset(pathinfo($file)['extension']) && (pathinfo($file)['extension'] === 'txt' || pathinfo($file)['extension'] === 'pdf')) {
-                ProcessXowlDocument::dispatch(basename(dirname($file)),Storage::path($file));
+        $resources = $resourceService->getAll('document');
+        foreach ($resources as $media) {
+            $media2 = $media->getMedia('File');
+            foreach ($media2 as $media3) {
+                if (pathinfo($media3->getPath())['extension'] === "pdf" || pathinfo($media3->getPath())['extension'] === "txt") {
+                    $file = new ResourceResource($media3);
+                    $path = $media3->getPath();
+                    ProcessXowlDocument::dispatch($file,  $path);
+                }
             }
         }
     }
