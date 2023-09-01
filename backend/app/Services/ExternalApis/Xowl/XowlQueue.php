@@ -2,7 +2,7 @@
 
 namespace App\Services\ExternalApis\Xowl;
 
-use App\Jobs\ProcessXowlDocument;
+use App\Jobs\Xowl\ProcessXowlDocument;
 use Illuminate\Support\Facades\Storage;
 
 class XowlQueue
@@ -16,15 +16,13 @@ class XowlQueue
 
     public function addDocumentToQueue($mediaFiles)
     {
-        //sacar padre
-        
         $regex = '/\.(' . implode('|', $this->documentExtensions) . ')$/';
         foreach ($mediaFiles as $media) {
             $files = Storage::allFiles("public/{$media->id}");
             $filtered_files = array_filter($files, function ($file)  use ($regex) {
                 return preg_match($regex, $file);
             });
-            $this->dispatchJobs($filtered_files, $media->id,$media->model_id);
+            $this->dispatchDocumentJobs($filtered_files, $media);
         }
     }
 
@@ -32,10 +30,10 @@ class XowlQueue
         
     }
 
-    private function dispatchJobs($files, $id,$parent_id)
+    private function dispatchDocumentJobs($files, $media)
     {
         foreach ($files as $file) {
-            ProcessXowlDocument::dispatch($id, Storage::path($file),$parent_id);
+            ProcessXowlDocument::dispatch($media, Storage::path($file));
         }
     }
 

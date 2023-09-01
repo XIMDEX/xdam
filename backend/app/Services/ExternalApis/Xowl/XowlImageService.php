@@ -1,39 +1,36 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Services\ExternalApis\Xowl;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Storage;
+use App\Services\ExternalApis\BaseApi;
 
-class ProcessXowlImage implements ShouldQueue
+class XowlImageService extends BaseApi
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    const CAPTION = '/caption';
+    const TRANSLATE = '/translate';
 
-    private $xowlImageService;
-
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public function __construct($xowlImageService)
+    public function __construct()
     {
-        $this->xowlImageService = $xowlImageService;
+        $this->BASE_URL = config('ximdex.XOWL_URL');
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function handle()
+    public function getCaptionImage(string $url, string $lang = "")
     {
-        //
+        //ambiguous name 
+        $XWOLPetition = $this->BASE_URL . self::CAPTION . "?url=" . urlencode($url);
+
+        if ($lang) {
+            $XWOLPetition  .= "&lang=" . $lang;
+        }
+
+        try {
+            $response = $this->call($XWOLPetition, [], "post");
+            $response = trim($response['caption'], '_');
+        } catch (\Exception $exc) {
+            $response = false;
+        }
+
+        return $response;
     }
 
     private function getCaptionFromImage(string $mediaUrl)

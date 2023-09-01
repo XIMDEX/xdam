@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\ExternalApis;
+namespace App\Services\ExternalApis\Xowl;
 
 use stdClass;
 
@@ -47,6 +47,7 @@ class XowlTextService
             $result = json_decode($output_xowl);
             $result->status = 'success';
         }
+        
         return $result;
     }
 

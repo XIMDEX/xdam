@@ -334,13 +334,13 @@ class ResourceService
                     }
                     unset($params['data']->description->entities_non_linked);
                 }
-                foreach ($entitiesXtags as $key => $entity) {
+              /*  foreach ($entitiesXtags as $key => $entity) {
                     $finalObject = new stdClass();
                     $finalObject->xtags_interlinked = $entitiesXtags[$key];
                     $finalObject->xtags             = $entitiesXtagUnlinked[$key];
 
                     Storage::disk('semantic')->put($resource->id."/".$key.".json", json_encode($finalObject));
-                }
+                }*/
             }
            
             $resource->update(
@@ -350,6 +350,7 @@ class ResourceService
                     'name' => $params['data']->description->name ?? 'name not found'
                 ]
             );
+          
             $this->linkCategoriesFromJson($resource, $params['data']);
             $this->linkTagsFromJson($resource, $params['data']);
         }
@@ -365,7 +366,7 @@ class ResourceService
         }
 
         // TODO save all languages label on taxon path
-        if (isset($params['data']->description->semantic_tags)) {
+      /*  if (isset($params['data']->description->semantic_tags)) {
             $semantic_tags = $params['data']->description->semantic_tags;
             $lom_params = [
                 'Taxon Path'=> [],
@@ -374,7 +375,7 @@ class ResourceService
             foreach ($semantic_tags as $semantic_tag) {
                 $lom_params['Taxon Path'][] = [
                     'Id' => $semantic_tag->id,
-                    'Entry' => $semantic_tag->label
+                    'Entry' => $semantic_tag->name
                 ];
             }
 
@@ -389,8 +390,8 @@ class ResourceService
                 );
             }
             $this->setLomData($resource, $lom_params);
-        }
-    
+        }*/
+      
         $this->saveAssociatedFiles($resource, $params);
         $resource = $resource->fresh();
         $this->solr->saveOrUpdateDocument($resource);
@@ -497,7 +498,7 @@ class ResourceService
             $newResource = $newResource->fresh();
             $this->solr->saveOrUpdateDocument($newResource);
               
-            if (isset($paramsData->description->enhanced) && $paramsData->description->enhanced && isset($params['File'][0]) && $type == ResourceType::document) {
+            if (isset($params['File'][0]) && $type == ResourceType::document && $params['File'][0]->extension() === 'pdf' || $params['File'][0]->extension() === 'txt'   ) {
                 $XowlQueue = new XowlQueue();
                 $mediaFiles = $newResource->getMedia('File');
                 $XowlQueue->addDocumentToQueue($mediaFiles);
