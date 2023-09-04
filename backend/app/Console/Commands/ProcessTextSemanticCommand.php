@@ -3,12 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Enums\MediaType;
-use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\ResourceResource;
 use App\Jobs\Xowl\ProcessXowlDocument;
 use App\Services\ResourceService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
 
 class ProcessTextSemanticCommand extends Command
 {

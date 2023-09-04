@@ -366,7 +366,7 @@ class ResourceService
         }
 
         // TODO save all languages label on taxon path
-      /*  if (isset($params['data']->description->semantic_tags)) {
+        if (isset($params['data']->description->semantic_tags)) {
             $semantic_tags = $params['data']->description->semantic_tags;
             $lom_params = [
                 'Taxon Path'=> [],
@@ -390,7 +390,7 @@ class ResourceService
                 );
             }
             $this->setLomData($resource, $lom_params);
-        }*/
+        }
       
         $this->saveAssociatedFiles($resource, $params);
         $resource = $resource->fresh();
@@ -506,7 +506,7 @@ class ResourceService
                 $XowlQueue = new XowlQueue();
                 $mediaFiles = $newResource->getMedia('File');
                 $XowlQueue->addDocumentToQueue($mediaFiles);
-              //  $XowlQueue->addImageToQueue($mediaFiles);
+                $XowlQueue->addImageToQueue($mediaFiles);
             }
                
            /* if (isset($params['Preview'])) {

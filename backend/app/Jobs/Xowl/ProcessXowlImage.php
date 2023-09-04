@@ -2,13 +2,13 @@
 
 namespace App\Jobs\Xowl;
 
+use App\Models\Media;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Storage;
 
 class ProcessXowlImage implements ShouldQueue
 {
@@ -16,18 +16,18 @@ class ProcessXowlImage implements ShouldQueue
 
     private $xowlImageService;
     private  $media;
-    private string $capiton;
-    private string $uuid;
+    private  $mediaService;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($xowlImageService,$media)
+    public function __construct($xowlImageService,$media,$mediaService)
     {
         $this->xowlImageService = $xowlImageService;
         $this->media = $media;
+        $this->mediaService = $mediaService;
     }
 
     /**
@@ -38,7 +38,7 @@ class ProcessXowlImage implements ShouldQueue
     public function handle()
     {
         $xowlImageService = $this->xowlImageService;
-        $caption = $xowlImageService->getCaptionFromImage($this->media->getUrl());
+        $caption = $xowlImageService->getCaptionFromImage($this->mediaService->getMediaURL->getMediaUrl(new Media(), $this->media->id));
         $xowlImageService->saveCaptionImage($caption,$this->media->id,$this->media->model_id);
     }
 
