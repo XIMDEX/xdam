@@ -445,6 +445,9 @@ class SolrService
                             }
                             $fields["data"]->description->entities_non_linked = array_merge($fields["data"]->description->entities_non_linked, $json->xtags) ;
                         }
+                        if (isset($json->imageCaptionAi)) {
+                            $fields["data"]->description->imageCaptionAi = $json->imageCaptionAi;
+                        }
 
                     }
                 }
