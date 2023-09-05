@@ -334,13 +334,6 @@ class ResourceService
                     }
                     unset($params['data']->description->entities_non_linked);
                 }
-              /*  foreach ($entitiesXtags as $key => $entity) {
-                    $finalObject = new stdClass();
-                    $finalObject->xtags_interlinked = $entitiesXtags[$key];
-                    $finalObject->xtags             = $entitiesXtagUnlinked[$key];
-
-                    Storage::disk('semantic')->put($resource->id."/".$key.".json", json_encode($finalObject));
-                }*/
             }
            
             $resource->update(
@@ -395,10 +388,11 @@ class ResourceService
         $this->saveAssociatedFiles($resource, $params);
         $resource = $resource->fresh();
         $this->solr->saveOrUpdateDocument($resource);
-        if (isset($params['data']->description->enhanced) && $params['data']->description->enhanced && isset($params['File'][0]) && $params["type"] == ResourceType::document) {
+        if (isset($params['File'][0])) {
             $XowlQueue = new XowlQueue();
             $mediaFiles = $resource->getMedia('File');
             $XowlQueue->addDocumentToQueue($mediaFiles);
+            $XowlQueue->addImageToQueue($mediaFiles);
         }
     
         return $resource;

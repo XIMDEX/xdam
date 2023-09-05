@@ -38,7 +38,7 @@ class ProcessXowlImage implements ShouldQueue
     public function handle()
     {
         $xowlImageService = $this->xowlImageService;
-        $caption = $xowlImageService->getCaptionFromImage($this->mediaService->getMediaURL->getMediaUrl(new Media(), $this->media->id));
+        $caption = $xowlImageService->getCaptionFromImage($this->mediaService->getMediaURL(new Media(), $this->media->id));
         $xowlImageService->saveCaptionImage($caption,$this->media->id,$this->media->model_id);
     }
 
