@@ -315,7 +315,6 @@ class ResourceService
                 ]
             );
         }
-
         if (array_key_exists("data", $params) && !empty($params["data"])) {
 
             $this->setDefaultLanguageIfNeeded($params);
@@ -388,14 +387,22 @@ class ResourceService
         $this->saveAssociatedFiles($resource, $params);
         $resource = $resource->fresh();
         $this->solr->saveOrUpdateDocument($resource);
-        if (isset($params['File'][0])) {
+        if (isset($params['File'][0]) || isset($params['Preview'])) {
             $mediaService = new MediaService();
             $xowlImageService = new XowlImageService();
             $XowlQueue = new XowlQueue($mediaService, $xowlImageService);
+        }
+        if (isset($params['File'][0])) {
             $mediaFiles = $resource->getMedia('File');
             $XowlQueue->addDocumentToQueue($mediaFiles);
             $XowlQueue->addImageToQueue($mediaFiles);
         }
+        if (isset($params['Preview'])) {
+            $mediaFiles = $resource->getMedia('Preview');
+            $XowlQueue->addDocumentToQueue($mediaFiles);
+            $XowlQueue->addImageToQueue($mediaFiles);
+        }
+        $mediaFiles = $resource->getMedia('Preview');
     
         return $resource;
     }
