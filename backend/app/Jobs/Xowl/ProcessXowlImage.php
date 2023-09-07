@@ -38,21 +38,22 @@ class ProcessXowlImage implements ShouldQueue
      */
     public function handle()
     {
-        if (!Storage::disk('semantic')->exists($this->media->model_id . "/" . $this->media->id . ".json")) {
-            $xowlImageService = $this->xowlImageService;
-            $caption = $xowlImageService->getCaptionFromImage("https://cf.bstatic.com/xdata/images/hotel/max1024x768/200579300.jpg?k=ad127946b5410f06fa1ccd78af7f635606ab71782a855936f43b52a0dc52e7e6&o=&hp=1");
-            //$caption = $xowlImageService->getCaptionFromImage($this->mediaService->getMediaURL(new Media(), $this->media->model_id));
-           // $xowlImageService->saveCaptionImage($caption,$this->media->id,$this->media->model_id);
-            $result = ["imageCaptionAi" => $caption];
-            Storage::disk('semantic')->put($this->media->model_id . "/" . $this->media->id . ".json", $result);
-        }
-      
-      //  $caption = $xowlImageService->getCaptionFromImage($this->mediaService->getMediaURL(new Media(), $this->media->model_id));
-       
+        $urlMedia = $this->mediaService->getMediaURL(new Media(), $this->media->model_id);
+        $caption = $this->getCaptionFromImage($urlMedia);
+        $this->save($caption);
     }
 
-    private function save(){
+    private function getCaptionFromImage($url){
+        $result = ["imageCaptionAi" => ""];
+        $caption = $this->xowlImageService->getCaptionFromImage("https://cf.bstatic.com/xdata/images/hotel/max1024x768/200579300.jpg?k=ad127946b5410f06fa1ccd78af7f635606ab71782a855936f43b52a0dc52e7e6&o=&hp=1");
+        if (isset($caption)) $result = ["imageCaptionAi" => $caption];
+        return $result;
+    }
 
+    private function save($result){
+        if (!Storage::disk('semantic')->exists($this->media->model_id . "/" . $this->media->id . ".json")){
+            Storage::disk('semantic')->put($this->media->model_id . "/" . $this->media->id . ".json", json_encode($result));
+        }
     }
 
   
