@@ -9,10 +9,15 @@ use Symfony\Component\Process\Process;
 
 class XowlQueue
 {
-
+    //For the future, make a XowlQueue for each file type
     private array $documentExtensions = ['pdf', 'txt'];
-    public function __construct()
+    private  \App\Services\MediaService $mediaService;
+    private  \App\Services\ExternalApis\Xowl\XowlImageService $xowlImageService;
+
+    public function __construct(\App\Services\MediaService $mediaService, \App\Services\ExternalApis\Xowl\XowlImageService $xowlImageService )
     {
+        $this->mediaService = $mediaService;    
+        $this->xowlImageService = $xowlImageService;
     }
 
 
@@ -30,26 +35,29 @@ class XowlQueue
 
     public function addImageToQueue($mediaFiles){
 
-        $xowlImageService = new \App\Services\ExternalApis\Xowl\XowlImageService();
-        $mediaService     = new \App\Services\MediaService();
+     
         $regex = '/\.(' . implode('|', ['jpg', 'jpeg', 'png']) . ')$/';
         foreach ($mediaFiles as $media) {
             $files = Storage::allFiles("public/{$media->id}");
             $imageFiles = array_filter($files, function ($file)  use ($regex) {
                 return preg_match($regex, $file);
             });
-            foreach ($imageFiles as $imageFile) {
-                ProcessXowlImage::dispatch($xowlImageService,$media,$mediaService); //injectar xowlimage, mediaurl y media
-            }
+            $this->dispatchImageJobs($imageFiles, $media);
         }
         
     }
 
     private function dispatchDocumentJobs($files, $media)
     {
-        foreach ($files as $file) {
+        array_map(function($file) use ($media) {
             ProcessXowlDocument::dispatch($media, Storage::path($file));
-        }
+        }, $files);        
+    }
+
+    private function dispatchImageJobs($imageFiles,$media){
+        array_map(function() use ($media) {
+            ProcessXowlImage::dispatch($this->xowlImageService, $media, $this->mediaService);
+        }, $imageFiles);
     }
 
 }

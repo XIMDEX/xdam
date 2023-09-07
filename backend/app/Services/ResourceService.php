@@ -389,7 +389,9 @@ class ResourceService
         $resource = $resource->fresh();
         $this->solr->saveOrUpdateDocument($resource);
         if (isset($params['File'][0])) {
-            $XowlQueue = new XowlQueue();
+            $mediaService = new MediaService();
+            $xowlImageService = new XowlImageService();
+            $XowlQueue = new XowlQueue($mediaService, $xowlImageService);
             $mediaFiles = $resource->getMedia('File');
             $XowlQueue->addDocumentToQueue($mediaFiles);
             $XowlQueue->addImageToQueue($mediaFiles);
@@ -477,18 +479,6 @@ class ResourceService
             $newResource = DamResource::create($resource_data);
             $_newResource = $newResource;
 
-
-          
-          /*  if (isset($params['File'][0]) && $type == ResourceType::image ) {
-                $XowlQueue = new XowlQueue();
-                $mediaUrl = $this->mediaService->getMediaURL(new Media(), $resource_data['id']);
-                echo($mediaUrl);
-                $test = MediaType::File()->key;
-               /* $mediaUrl = $this->mediaService->getMediaURL(new Media(), $resource_data['id']);
-                $caption = $this->getCaptionFromImage("https://www.ruralidays.co.uk/travel/wp-content/uploads/2018/03/Beach-of-La-Carihuela-in-Torremolinos-Malaga.jpg");
-                if($caption)$this->saveCaptionImage($caption,$resource_data['id']);
-            } */
-
             $this->setResourceWorkspace($newResource, $wsp);
             $this->linkCategoriesFromJson($newResource,$paramsData );
             $this->linkTagsFromJson($newResource,$paramsData);
@@ -496,15 +486,19 @@ class ResourceService
             $newResource = $newResource->fresh();
             $this->solr->saveOrUpdateDocument($newResource);
               
-            if (isset($params['File'][0]) && $type == ResourceType::document ) {
-                $XowlQueue = new XowlQueue();
+            if (isset($params['File'][0])) {
+                $mediaService = new MediaService();
+                $xowlImageService = new XowlImageService();
+                $XowlQueue = new XowlQueue($mediaService, $xowlImageService);
                 $mediaFiles = $newResource->getMedia('File');
                 $XowlQueue->addDocumentToQueue($mediaFiles);
                 $XowlQueue->addImageToQueue($mediaFiles);
             }
                
            /* if (isset($params['Preview'])) {
-                $XowlQueue = new XowlQueue();
+                $mediaService = new MediaService();
+                $xowlImageService = new XowlImageService();
+                $XowlQueue = new XowlQueue($mediaService, $xowlImageService);
                 $mediaFiles = $newResource->getMedia('File');
                 $XowlQueue->addImageToQueue($mediaFiles);
             }*/
