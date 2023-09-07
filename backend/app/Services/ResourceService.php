@@ -70,7 +70,7 @@ class ResourceService
 
      /**
 
-     * @var XTagService
+     * @var XowlImageService
      */
     private XowlImageService $xowlImageService;
 
@@ -388,9 +388,7 @@ class ResourceService
         $resource = $resource->fresh();
         $this->solr->saveOrUpdateDocument($resource);
         if (isset($params['File'][0]) || isset($params['Preview'])) {
-            $mediaService = new MediaService();
-            $xowlImageService = new XowlImageService();
-            $XowlQueue = new XowlQueue($mediaService, $xowlImageService);
+            $XowlQueue = new XowlQueue($this->mediaService, $this->xowlImageService);
         }
         if (isset($params['File'][0])) {
             $mediaFiles = $resource->getMedia('File');
@@ -399,7 +397,6 @@ class ResourceService
         }
         if (isset($params['Preview'])) {
             $mediaFiles = $resource->getMedia('Preview');
-            $XowlQueue->addDocumentToQueue($mediaFiles);
             $XowlQueue->addImageToQueue($mediaFiles);
         }
         $mediaFiles = $resource->getMedia('Preview');
@@ -492,23 +489,24 @@ class ResourceService
             $this->saveAssociatedFiles($newResource, $params);
             $newResource = $newResource->fresh();
             $this->solr->saveOrUpdateDocument($newResource);
+
+
+            if (isset($params['File'][0]) || isset($params['Preview'])) {
+                $mediaService = new MediaService();
+                $xowlImageService = new XowlImageService('ES');
+                $XowlQueue = new XowlQueue($mediaService, $xowlImageService);
+            }
               
             if (isset($params['File'][0])) {
-                $mediaService = new MediaService();
-                $xowlImageService = new XowlImageService();
-                $XowlQueue = new XowlQueue($mediaService, $xowlImageService);
                 $mediaFiles = $newResource->getMedia('File');
                 $XowlQueue->addDocumentToQueue($mediaFiles);
                 $XowlQueue->addImageToQueue($mediaFiles);
             }
                
-           /* if (isset($params['Preview'])) {
-                $mediaService = new MediaService();
-                $xowlImageService = new XowlImageService();
-                $XowlQueue = new XowlQueue($mediaService, $xowlImageService);
-                $mediaFiles = $newResource->getMedia('File');
+            if (isset($params['Preview'])) {
+                $mediaFiles = $newResource->getMedia('Preview');
                 $XowlQueue->addImageToQueue($mediaFiles);
-            }*/
+            }
             $_newResource = false;
             return $newResource;
         } catch (\Exception $th) {

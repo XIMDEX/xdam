@@ -8,28 +8,46 @@ use Illuminate\Support\Facades\Storage;
 class XowlImageService extends BaseApi
 {
 
-    public function __construct(){
+    protected string $BASE_URL;
+    private string $lang;
 
+    public function __construct(){
+        $this->BASE_URL = config('ximdex.XOWL_URL');
+        $this->lang = 'ES'; 
     }
 
 
     public function getCaptionFromImage($mediaUrl)
     {
+       
         try {
-            return "image description";
+            $XWOLPetition = $this->BASE_URL . "/caption". "?url=" . urlencode($mediaUrl);
+
+         /*   if ($this->lang) {
+                $XWOLPetition  .= "&lang=" . $this->lang;
+            }*/
+            $XWOLPetition .= "&XDEBUG_SESSION_START=VSCODE";
+            try {
+                $response = $this->call($XWOLPetition, [], "post");
+                $response = trim($response['caption'], '_');
+            } catch (\Exception $exc) {
+                $response = $exc;
+            }
+            return $response;
+
         } catch (\Exception $exc) {
             // failed captioning image -- continue process
         }
     }
 
-    public function saveCaptionImage(string $caption, string $uuid, string $uuidParent)
+  /*  public function saveCaptionImage(string $caption, string $uuid, string $uuidParent)
     {
         $result = ["imageCaptionAi" => $caption];
         if (!Storage::disk('semantic')->exists($uuidParent."/".$uuid . "json")) {
             Storage::disk('semantic')->put($uuidParent."/".$uuid . ".json", json_encode($result));
         }
  
-    }
+    }*/
 
 
 
