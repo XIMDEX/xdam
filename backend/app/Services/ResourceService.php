@@ -322,15 +322,9 @@ class ResourceService
                 $entitiesXtags = [];
                 $entitiesXtagUnlinked = [];
                 if (isset($params['data']->description->entities_linked)) {
-                    foreach ($params['data']->description->entities_linked as $line) {
-                        $entitiesXtags[$line->uuid][] = $line;
-                    }
                     unset($params['data']->description->entities_linked);
                 }
                 if (isset($params['data']->description->entities_non_linked)) {
-                    foreach ($params['data']->description->entities_non_linked as $line) {
-                        $entitiesXtagUnlinked[$line->uuid][] = $line;
-                    }
                     unset($params['data']->description->entities_non_linked);
                 }
             }
