@@ -319,8 +319,6 @@ class ResourceService
 
             $this->setDefaultLanguageIfNeeded($params);
             if (isset($params['data']->description->entities_linked) || isset($params['data']->description->entities_non_linked)) {
-                $entitiesXtags = [];
-                $entitiesXtagUnlinked = [];
                 if (isset($params['data']->description->entities_linked)) {
                     unset($params['data']->description->entities_linked);
                 }

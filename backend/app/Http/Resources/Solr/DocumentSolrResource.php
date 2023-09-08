@@ -88,7 +88,7 @@ class DocumentSolrResource extends BaseSolrResource
         return $conversions;
     }
 
-    private function getSemanticTags()
+    protected function getSemanticTags()
     {
         $semantic_tags = $this->data->description->semantic_tags ?? [];
         return $semantic_tags;
