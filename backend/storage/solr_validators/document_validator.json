@@ -59,9 +59,6 @@
         "active": {
           "type": "boolean"
         },
-        "enhanced": {
-          "type":"boolean"
-        },
         "semantic_tags": {
           "title": "Semantic Tags",
           "type": "array",

@@ -80,12 +80,6 @@
     "sortMissingLast": true,
     "omitPositions": true
   },
-  "enhanced": {
-    "name": "enhanced",
-    "type": "boolean",
-    "indexed": true,
-    "stored": true
-  },
   "body": {
     "name": "body",
     "type": "string",
