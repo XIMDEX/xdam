@@ -453,9 +453,22 @@ class SolrService
                 }
                 if (isset($fields['data']->description->semantic_tags)) {
                     foreach ($fields['data']->description->semantic_tags  as $key => $tag) {
-                        $fields['data']->description->semantic_tags[$key] = $this->findObjectByName($fields["data"]->description->entities_linked, $tag);
+                        $semanticData = $this->findObjectByName($fields["data"]->description->entities_linked, $tag);
+                        if ($semanticData) {
+                            $fields['data']->description->semantic_tags[$key] = $semanticData;
+                        }
                      }
                 }
+                if (isset($fields['data']->description->semantic_tags)) {
+                    foreach ($fields['data']->description->semantic_tags  as $key => $tag) {
+                        $semanticData = $this->findObjectByName($fields["data"]->description->entities_non_linked, $tag);
+                        if ($semanticData) {
+                            $fields['data']->description->semantic_tags[$key] = $semanticData;
+                        }
+                     }
+                    
+                }
+                
               
             }
         

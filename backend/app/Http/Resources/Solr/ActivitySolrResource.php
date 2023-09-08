@@ -40,6 +40,7 @@ class ActivitySolrResource extends BaseSolrResource
      */
     public function toArray($request)
     {
+        $semanticTags = $this->getSemanticTags();
         return [
             'id'                    => $this->getID(),
             'name'                  => $this->getName(),
@@ -55,6 +56,7 @@ class ActivitySolrResource extends BaseSolrResource
             'organization'          => $this->getOrganization(),
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),
+            'semantic_tags'         => $this->formatSemanticTags($semanticTags),
             'created_at'            => $this->created_at,
             'updated_at'            => $this->updated_at,
             'lom'                   => $this->getLOMValues(),

@@ -95,5 +95,9 @@
   "lomes": {
     "name": "lomes",
     "type": "text_general"
+  },
+  "semantic_tags": {
+    "name": "semantic_tags",
+    "type": "text_general"
   }
 }

@@ -60,6 +60,7 @@ class BaseSolrResource extends JsonResource
         $data = (!is_object($data) ? json_decode($data) : $data);
         $data->lom = $this->getLOMRawValues('lom');
         $data->lomes = $this->getLOMRawValues('lomes');
+        $data->description->semantic_tags = $this->formatSemanticTags($this->getSemanticTags());
         $finalData = $data;
         $finalData = is_object($finalData) ? json_encode($finalData) : $finalData;
         return $finalData;
@@ -190,6 +191,25 @@ class BaseSolrResource extends JsonResource
             }
         }
 
+        
+
         return $values;
+    }
+
+    protected function getSemanticTags()
+    {
+        $semantic_tags = $this->data->description->semantic_tags ?? [];
+        return $semantic_tags;
+    }
+
+    protected function formatSemanticTags($tags)
+    {
+        $toSolr = [];
+        foreach ($tags as $tag) {
+            try {
+                $toSolr[] = $tag->name;
+            } catch (\Throwable $th) {}
+        }
+        return $toSolr;
     }
 }
