@@ -32,22 +32,6 @@
     "indexed": true,
     "stored": true
   },
-  "categories": {
-    "name": "categories",
-    "type": "text_general"
-  },
-  "category": {
-    "name": "category",
-    "type": "string",
-    "omitNorms": true,
-    "omitTermFreqAndPositions": true,
-    "indexed": true,
-    "stored": true,
-    "uninvertible": true,
-    "sortMissingLast": true,
-    "docValues": true,
-    "multiValued": true
-  },
   "data": {
     "name": "data",
     "type": "text_es_custom",
