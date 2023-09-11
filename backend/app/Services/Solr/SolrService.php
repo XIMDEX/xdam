@@ -436,12 +436,14 @@ class SolrService
                         if(isset($json->xtags_interlinked)){
                             foreach ($json->xtags_interlinked as  $line) {
                                 $line->uuid = $last_uuid;
+                                $line->vocabulary = $json->vocabulary ?? "";
                             }
                             $fields["data"]->description->entities_linked = array_merge($fields["data"]->description->entities_linked, $json->xtags_interlinked);
                         }
                         if(isset($json->xtags)){
                             foreach ($json->xtags as $line) {
                                 $line->uuid = $last_uuid;
+                                $line->vocabulary = $json->vocabulary ?? "";
                             }
                             $fields["data"]->description->entities_non_linked = array_merge($fields["data"]->description->entities_non_linked, $json->xtags) ;
                         }

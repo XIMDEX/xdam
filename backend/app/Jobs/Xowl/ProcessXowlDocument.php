@@ -55,6 +55,7 @@ class ProcessXowlDocument implements ShouldQueue
             $cleaner['file_name'] = $file->name;
             $cleaner['file_extension'] = $file->extension;
             $cleaner['file_size'] = $file->size;
+            $cleaner['vocabulary'] = "AiTextCaption";
             return $cleaner;
         }
     }
