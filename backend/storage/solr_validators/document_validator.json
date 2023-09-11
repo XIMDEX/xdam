@@ -26,6 +26,12 @@
           "format": "string",
           "default": ""
         },
+        "category": {
+          "title": "Category",
+          "type": "string",
+          "format": "string",
+          "default": "Other"
+        },
         "external_url": {
           "type": "string",
           "format": "string"
@@ -77,7 +83,15 @@
                 }
             }
           }
-        }
+        },
+        "categories": {
+          "title": "categories",
+          "type": "array",
+          "format": "string",
+          "items": {
+            "type":"string"
+          }
+       }
       }
     }
   },

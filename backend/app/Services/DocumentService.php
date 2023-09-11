@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-class ActivityService extends BaseService
+class DocumentService extends BaseService
 {
 
     public static function handleSchema($schema)
@@ -13,7 +13,7 @@ class ActivityService extends BaseService
 
         foreach ($schema->properties->description->properties as $key => $property) {
             if ($key === 'categories') {
-                $categories = CategoryService::where('type', 'activity');
+                $categories = CategoryService::where('type', 'document');
                 $schema->properties->description->properties->$key->options = $categories->all();
                 $schema->properties->description->properties->$key->subType = 'dropdown';
             }
