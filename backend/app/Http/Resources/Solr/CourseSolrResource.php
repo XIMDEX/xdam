@@ -74,11 +74,11 @@ class CourseSolrResource extends BaseSolrResource
         return ResourceType::course;
     }
 
-    private function getSemanticTags()
+    /*private function getSemanticTags()
     {
         $semantic_tags = $this->data->description->semantic_tags ?? [];
         return $semantic_tags;
-    }
+    }*/
 
     protected function formatSemanticTags($tags)
     {
