@@ -41,7 +41,8 @@ class UpdateResourceRequest extends FormRequest
     public function validationData()
     {
         $all = $this->all();
-
+       // $this->replace(['data' => (object) $this->data]);
+       $all['data'] = json_decode($all['data']);
         if (property_exists($all['data']->description, 'extra')) {
             $all['extra'] = (array) $all['data']->description->extra;
         }
@@ -58,13 +59,14 @@ class UpdateResourceRequest extends FormRequest
 
     public function prepareForValidation()
     {
-        $all = $this->all();
+      /*  $all = $this->all();
         $castedData = [];
         if (array_key_exists('data', $all)) {
-            $castedData = json_decode($all['data']);
+            $castedData = (array)json_decode($all['data']);
         }
-        return $this->merge(['data' => $castedData])->all();
+        return $this->merge(['data' => $castedData])->all();*/
     }
+
 
     public function withValidator($factory)
     {

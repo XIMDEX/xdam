@@ -291,6 +291,7 @@ class ResourceService
      */
     public function update(DamResource $resource, $params): DamResource
     {
+        $params['data'] = json_decode($params['data']);
         if (array_key_exists("type", $params) && $params["type"]) {
             $resource->update(
                 [
@@ -331,7 +332,7 @@ class ResourceService
                 'Taxon Path'=> [],
                 '_tab_key' => "9"
             ];
-            foreach ($semantic_tags as $semantic_tag) {
+            /*foreach ($semantic_tags as $semantic_tag) {
                 $lom_params['Taxon Path'][] = [
                     'Id' => $semantic_tag->id,
                     'Entry' => $semantic_tag->label
@@ -347,7 +348,7 @@ class ResourceService
                     $lang,
                     $resource->data->description->semantic_tags
                 );
-            }
+            }*/
             $this->setLomData($resource, $lom_params);
         }
 
