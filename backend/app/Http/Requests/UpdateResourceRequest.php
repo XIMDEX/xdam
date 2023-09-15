@@ -41,18 +41,14 @@ class UpdateResourceRequest extends FormRequest
     public function validationData()
     {
         $all = $this->all();
-       // $this->replace(['data' => (object) $this->data]);
        $all['data'] = json_decode($all['data']);
         if (property_exists($all['data']->description, 'extra')) {
             $all['extra'] = (array) $all['data']->description->extra;
         }
-
         if (property_exists($all['data']->description, 'lang')) {
             $language = $all['data']->description->lang;
-
             $all['lang'] = $language === 'ca' ? 'cat' : $language;
         }
-
         return $all;
     }
 

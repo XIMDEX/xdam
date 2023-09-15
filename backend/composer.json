@@ -21,6 +21,7 @@
         "laravel/tinker": "^2.5",
         "opis/json-schema": "^1.0",
         "phan/phan": "^5.4",
+        "ralouphie/mimey": "^1.0",
         "silber/bouncer": "^1.0",
         "solarium/solarium": "^6.1",
         "spatie/laravel-medialibrary": "^10.12"
