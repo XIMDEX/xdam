@@ -93,16 +93,16 @@ class CourseService extends BaseService
             foreach ($items as $item) {
                 $name = strtolower($item->name);
                 if (!in_array($name, $values_names)) {
-                    $values->$name = [
+                    $values->{$name} = [
                         'count' => 0,
                         'selected' => false,
                         'radio' => $values->{$values_names[0]}['radio']
                     ];
                 }
-                $values->{$name['canEdit']} = true;
-                $values->{$name['canDelete']} = true;
-                $values->{$name['values']} = $item->toArray();
-                $values->{$name['fields']} = $fields;
+                $values->{$name}['canEdit'] = true;
+                $values->{$name}['canDelete'] = true;
+                $values->{$name}['values'] = $item->toArray();
+                $values->{$name}['fields'] = $fields;
 
                 // $required = defined("{$resourceName}::REQUIRED_FILLABLES") ? $model::REQUIRED_FILLABLES : $fillables;
 
@@ -116,8 +116,8 @@ class CourseService extends BaseService
                     $route_delete = 'v1corporation.delete';
                     $opt = ['corporation' => $item->id];
                 }
-                $values->{$name['route']} = route($route, $opt);
-                $values->{$name['route_delete']} = route($route_delete, $opt);
+                $values->{$name}['route'] = route($route, $opt);
+                $values->{$name}['route_delete'] = route($route_delete, $opt);
 
 
                 // $required = (new Category())->getFillable();
