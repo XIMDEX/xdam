@@ -95,10 +95,10 @@ class ResourceService
                     if ($model->doesThisResourceSupportsAnAdditionalFile()) {
                         $this->mediaService->addFromRequest(
                             $model,
-                            null,
                             $type,
                             ["parent_id" => $model->id],
-                            $file
+                            $file,
+                            null
                         );
                     }
                 }
@@ -107,10 +107,10 @@ class ResourceService
                     // If is not a array, associate file directly
                     $this->mediaService->addFromRequest(
                         $model,
-                        null,
                         $type,
                         ["parent_id" => $model->id],
-                        $params[$type]
+                        $params[$type],
+                        null
                     );
                 }
             }
