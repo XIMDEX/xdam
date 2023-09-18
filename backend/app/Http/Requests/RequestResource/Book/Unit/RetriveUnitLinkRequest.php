@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Resource\Book\Unit;
+namespace App\Http\Requests\RequestResource\Book\Unit;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DeleteUnitsLinkRequest extends FormRequest
+class RetriveUnitLinkRequest extends FormRequest
 {
     public function authorize()
     {
@@ -17,16 +17,15 @@ class DeleteUnitsLinkRequest extends FormRequest
     {
         return [
             'isbn' => 'required|string',
-            'units' => 'nullable|array',
-            'units.*' => 'required|int',
+            'unit' => 'required|int'
         ];
     }
 
     public function validationData()
     {
         return [
-            'isbn' => $this->isbn,
-            'units' => $this->input('units')
+            "isbn" => $this->isbn,
+            "unit" => $this->unit
         ];
     }
 }

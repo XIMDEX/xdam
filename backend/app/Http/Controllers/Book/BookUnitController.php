@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Book;
 
-use App\Http\Requests\Resource\Book\Unit\RetriveUnitLinkRequest;
-use App\Http\Requests\Resource\Book\Unit\DeleteUnitLinkRequest;
-use App\Http\Requests\Resource\Book\Unit\DeleteUnitsLinkRequest;
-use App\Http\Requests\Resource\Book\Unit\UpdateLinksRequest;
+use App\Http\Requests\RequestResource\Book\Unit\RetriveUnitLinkRequest;
+use App\Http\Requests\RequestResource\Book\Unit\DeleteUnitLinkRequest;
+use App\Http\Requests\RequestResource\Book\Unit\DeleteUnitsLinkRequest;
+use App\Http\Requests\RequestResource\Book\Unit\UpdateLinksRequest;
 use App\Http\Controllers\Controller;
 use App\Services\BookService;
 use Illuminate\Http\Request;
