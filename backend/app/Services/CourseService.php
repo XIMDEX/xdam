@@ -99,11 +99,10 @@ class CourseService extends BaseService
                         'radio' => $values->{$values_names[0]}['radio']
                     ];
                 }
-                $values->$name['canEdit'] = true;
-                $values->$name['canDelete'] = true;
-                $values->$name['values'] = $item->toArray();
-
-                $values->$name['fields'] = $fields;
+                $values->{$name['canEdit']} = true;
+                $values->{$name['canDelete']} = true;
+                $values->{$name['values']} = $item->toArray();
+                $values->{$name['fields']} = $fields;
 
                 // $required = defined("{$resourceName}::REQUIRED_FILLABLES") ? $model::REQUIRED_FILLABLES : $fillables;
 
