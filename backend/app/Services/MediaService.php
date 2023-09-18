@@ -243,7 +243,7 @@ class MediaService
      * @param null $files
      * @return array|mixed
      */
-    public function addFromRequest(Model $model, $requestKey = null, $collection, $customProperties, $files = null)
+    public function addFromRequest(Model $model,  $collection, $customProperties, $files = null,$requestKey = null)
     {
         $collection = $collection ?? $this->defaultFileCollection;
         if (!empty($requestKey) && empty($files))
