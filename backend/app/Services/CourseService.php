@@ -116,8 +116,8 @@ class CourseService extends BaseService
                     $route_delete = 'v1corporation.delete';
                     $opt = ['corporation' => $item->id];
                 }
-                $values->$name['route'] = route($route, $opt);
-                $values->$name['route_delete'] = route($route_delete, $opt);
+                $values->{$name['route']} = route($route, $opt);
+                $values->{$name['route_delete']} = route($route_delete, $opt);
 
 
                 // $required = (new Category())->getFillable();
