@@ -10,10 +10,10 @@ use App\Models\DamResource;
 use App\Models\DamResourceUse;
 use App\Models\Media;
 use App\Models\Workspace;
+use App\Services\ExternalApis\Xowl\XowlQueue;
 use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Services\Solr\SolrService;
 use App\Services\ExternalApis\KakumaService;
-use App\Services\ExternalApis\Xowl\XowlQueue;
 use App\Services\ExternalApis\Xowl\XtagsCleaner;
 use App\Services\ExternalApis\XTagsService;
 use App\Services\ExternalApis\Xowl\XowlImageService;
@@ -999,27 +999,4 @@ class ResourceService
         return $collection;
     }
     
-    /**
-     * Get the caption for an image.
-     *
-     * @param string $mediaUrl The URL of the image.
-     * @return string The caption for the image.
-     */
-    private function getCaptionFromImage(string $mediaUrl){
-            try {
-                return $caption = $this->xowlImageService->getCaptionImage($mediaUrl, env('BOOK_DEFAULT_LANGUAGE', 'en')) ?? "";
-            } catch (\Exception $exc) {
-                // failed captioning image -- continue process
-            }
-    }
-
-    private function saveCaptionImage(string $caption,string $uuid){
-        $result = ["imageCaptionAi" => $caption];
-        if (Storage::disk('semantic')->exists($uuid."json")) {
-            $file = json_decode(Storage::disk("semantic")->get($uuid.".json"));
-            $file->imageCaptionAi = $caption;
-            $result = json_encode($file);
-        }
-        Storage::disk('semantic')->put($uuid.".json", json_encode($result));
-    }
 }
