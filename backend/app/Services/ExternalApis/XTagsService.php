@@ -44,7 +44,7 @@ class XTagsService extends BaseApi
                 'definitionId' => $tag->id,
                 'langId' => 1,
                 'lang' => $lang,
-                'name' => $tag->label,
+                'name' => $tag->label ?? $tag->name,
                 'typeId' => 1,
             ];
         }
