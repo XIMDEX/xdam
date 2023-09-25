@@ -124,7 +124,7 @@
   },
   "semantic_tags": {
     "name": "semantic_tags",
-    "type": "string"
+    "type": "strings"
   },
   "lom": {
     "name": "lom",
