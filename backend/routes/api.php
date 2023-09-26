@@ -71,6 +71,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
         });
 
         Route::group(['prefix' => 'resource'], function() {
+            Route::get('/{damResourceHash}/render',        [ResourceController::class, 'renderCDNResourceFile'])->name('damResource.renderCDNResource');
             Route::get('/{damResourceHash}',        [ResourceController::class, 'renderCDNResource'])->name('damResource.renderCDNResource');
             Route::get('/{damResourceHash}/{size}', [ResourceController::class, 'renderCDNResource'])->name('damResource.renderCDNResourceWithSize');
         });
