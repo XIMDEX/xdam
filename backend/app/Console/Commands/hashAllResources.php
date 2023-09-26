@@ -6,6 +6,8 @@ use App\Http\Controllers\CDNController;
 use App\Models\DamResource;
 use App\Services\CDNService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class hashAllResources extends Command
 {
@@ -14,7 +16,7 @@ class hashAllResources extends Command
      *
      * @var string
      */
-    protected $signature = 'hash:allresources';
+    protected $signature = 'hash:allresources {--collection=*} {--cdn=*}';
 
     /**
      * The console command description.
@@ -44,12 +46,32 @@ class hashAllResources extends Command
     public function handle()
     {
         //$cdnController = new CDNController() ;
-        $ids = DamResource::All();
-        foreach ($ids as $id) {
-            echo $id;
+        $cdnId = $this->option('cdn')[0];
+        if ($cdnId) {
+            $collection = $this->option('collection')[0];
+            $resources  = [];
+            var_dump($collection);
+            $exists = DB::table('collections')->where('id',$collection)->exists();
+            if ($collection) {
+                if($exists) {
+                    $resources = DamResource::where('collection_id', $collection)->get();
+                }else{
+                    echo "collection not found";
+                }
+            }else{
+                $resources = DamResource::All();
+            }
+                $progressBar = new ProgressBar($this->output, $resources->count());
+                $cdn = $this->cdnService->getCDNInfo($cdnId);
+
+                foreach ($resources as $resource) {
+                    if(!$collection) $collection = $resource->collection_id;
+                    $this->cdnService->generateDamResourceHash($cdn, $resource, $collection);
+                    $progressBar->advance();
+                }
+                $progressBar->finish();
+        }else{
+        echo("no cdn specified");
         }
-        $cdn = $this->cdnService->getCDNInfo($request->cdn_code)
-        $this->cdnService->generateDamResourceHash($cdn, $resource, $request->collection_id);
-       // $cdnController->createCDNResourceHash();
     }
 }
