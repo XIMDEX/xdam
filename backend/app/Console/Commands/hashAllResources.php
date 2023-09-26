@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Http\Controllers\CDNController;
 use App\Models\DamResource;
+use App\Services\CDNService;
 use Illuminate\Console\Command;
 
 class hashAllResources extends Command
@@ -22,14 +23,17 @@ class hashAllResources extends Command
      */
     protected $description = 'generate a hash for every resource';
 
+    private CDNService $cdnService;
+
     /**
      * Create a new command instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(CDNService $cdnService)
     {
         parent::__construct();
+        $this->cdnService = $cdnService;    
     }
 
     /**
@@ -37,13 +41,15 @@ class hashAllResources extends Command
      *
      * @return int
      */
-    public function handle(CDNController $cdnController)
+    public function handle()
     {
         //$cdnController = new CDNController() ;
-        $ids = DamResource::pluck('id');
+        $ids = DamResource::All();
         foreach ($ids as $id) {
             echo $id;
         }
+        $cdn = $this->cdnService->getCDNInfo($request->cdn_code)
+        $this->cdnService->generateDamResourceHash($cdn, $resource, $request->collection_id);
        // $cdnController->createCDNResourceHash();
     }
 }
