@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\CDNController;
 use App\Models\DamResource;
 use App\Services\CDNService;
 use Illuminate\Console\Command;
@@ -45,33 +44,51 @@ class hashAllResources extends Command
      */
     public function handle()
     {
-        //$cdnController = new CDNController() ;
-        $cdnId = $this->option('cdn')[0];
-        if ($cdnId) {
-            $collection = $this->option('collection')[0];
-            $resources  = [];
-            var_dump($collection);
-            $exists = DB::table('collections')->where('id',$collection)->exists();
-            if ($collection) {
-                if($exists) {
-                    $resources = DamResource::where('collection_id', $collection)->get();
-                }else{
-                    echo "collection not found";
-                }
-            }else{
-                $resources = DamResource::All();
-            }
-                $progressBar = new ProgressBar($this->output, $resources->count());
-                $cdn = $this->cdnService->getCDNInfo($cdnId);
+        try {
+            $cdnId = $this->option('cdn')[0];
+            $collectionId = $this->option('collection')[0];
 
-                foreach ($resources as $resource) {
-                    if(!$collection) $collection = $resource->collection_id;
-                    $this->cdnService->generateDamResourceHash($cdn, $resource, $collection);
-                    $progressBar->advance();
+            if (empty($cdnId)) {
+                $this->error('No CDN specified.');
+                return 1;
+            }
+
+            $cdnExists = DB::table('cdns')->where('id', $cdnId)->exists();
+            if (!$cdnExists) {
+                $this->error('CDN not found.');
+                return 1;
+            }
+
+            $resources = [];
+            if (!empty($collectionId)) {
+                $collectionExists = DB::table('collections')->where('id', $collectionId)->exists();
+                if (!$collectionExists) {
+                    $this->error('Collection not found.');
+                    return 1;
                 }
-                $progressBar->finish();
-        }else{
-        echo("no cdn specified");
+
+
+                $resources = DamResource::where('collection_id', $collectionId)->get();
+            } else {
+                $resources = DamResource::all();
+            }
+
+            $progressBar = new ProgressBar($this->output, $resources->count());
+
+            foreach ($resources as $resource) {
+                $collectionId = $resource->collection_id;
+                $cdn = $this->cdnService->getCDNInfo($cdnId);
+                $this->cdnService->generateDamResourceHash($cdn, $resource, $collectionId);
+                $progressBar->advance();
+            }
+
+            $progressBar->finish();
+            $this->info(' Hash generation completed successfully.');
+            return 0;
+        } catch (\Exception $e) {
+            $this->error('An error occurred: ' . $e->getMessage());
+            return 1;
         }
+    
     }
 }
