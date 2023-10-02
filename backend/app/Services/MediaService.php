@@ -5,6 +5,7 @@ use App\Enums\MediaType;
 use App\Models\DocumentRendererKey;
 use App\Models\Media;
 use App\Models\PendingVideoCompressionTask;
+use App\Services\Media\MediaSizeImage;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
 use Illuminate\Database\Eloquent\Model;
@@ -79,7 +80,7 @@ class MediaService
                 ? $this->downloadVideo($media->id, $media->file_name, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail)
                 : $this->previewVideo($media->id, $media->file_name, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail);
         } else if($fileType === 'image') {
-            return $this->previewImage($mediaPath, $size);
+            return $this->previewImage($mediaPath,$sizeKey);
         } else {
             return $mediaPath;
         }
@@ -210,30 +211,17 @@ class MediaService
         return VideoStreamer::streamFile($path);
     }
 
-    private function previewImage($mediaPath, $size)
+    private function previewImage($mediaPath, $type = 'raw')
     {
         $manager = new ImageManager(['driver' => 'imagick']);
-        $image = $manager->make($mediaPath);
-
-        if ($size !== 'raw') {
-            $width = $image->width();
-            $height = $image->height();
-            $aspectRatio = $width / $height;
-
-            if ($size['height'] >= $height && $size['width'] >= $width) return $image;
-
-            if ($aspectRatio >= 1.0) { // Horizontal
-                $newWidth = $size['width'];
-                $newHeight = $newWidth / $aspectRatio;
-            } else { // Vertical
-                $newHeight = $size['height'];
-                $newWidth = $newHeight * $aspectRatio;
-            }
-
-            $image->resize($newWidth, $newHeight);
+        $image   = $manager->make($mediaPath);
+        $imageProcess= new MediaSizeImage($type,$mediaPath,$manager,$image);
+        if(!$imageProcess->checkSize())$imageProcess->setSizeDefault();
+        if (!$imageProcess->imageExists()) {
+            $imageProcess->save();
         }
-
-        return $image;
+        $result = $imageProcess->getImage();   
+        return $result;
     }
 
     public function saveVideoSnapshot($thumbPath, $videoSourcePath, $sec = 10)
@@ -280,6 +268,15 @@ class MediaService
             $file_directory = str_replace($media->file_name, '', $mediaPath);
             $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.png';
             $this->saveVideoSnapshot($thumbnail, $mediaPath);
+        }
+        if ($fileType === 'image') {
+            $manager = new ImageManager(['driver' => 'imagick']);
+            $image    = $manager->make($mediaPath);
+            $image2   = $manager->make($mediaPath);
+            $thumb  = new MediaSizeImage('thumbnail',$mediaPath,$manager,$image);
+            $small  = new MediaSizeImage('small',$mediaPath,$manager,$image2);
+            if($thumb->checkSize()) $thumb->save();
+            if($small->checkSize()) $small->save();
         }
         return !empty($mediaList) ? end($mediaList) : [];
     }
