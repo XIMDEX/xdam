@@ -19,6 +19,7 @@ use Solarium\Core\Query\Result\ResultInterface;
 use Illuminate\Database\Eloquent\Model;
 use stdClass;
 use App\Http\Resources\Solr\{ActivitySolrResource, AssessmentSolrResource, BookSolrResource, CourseSolrResource, DocumentSolrResource, MultimediaSolrResource};
+use App\Models\CDN;
 use DOMDocument;
 use GuzzleHttp\Client as GuzzleHttpClient;
 use GuzzleHttp\Exception\RequestException;
@@ -612,9 +613,12 @@ class SolrService
     private function handleJSONResponse($txt, $changeParams, $core)
     {
         $json = json_decode($txt, true);
+        $dam_ids = array_column($json['response']['docs'], 'id');
         $lom_items = $core == 'lom'
-            ? Lom::whereIn('dam_resource_id', array_column($json['response']['docs'], 'id'))->get()
-            : Lomes::whereIn('dam_resource_id', array_column($json['response']['docs'], 'id'))->get();
+            ? Lom::whereIn('dam_resource_id', $dam_ids)->get()
+            : Lomes::whereIn('dam_resource_id', $dam_ids)->get();
+
+        // $cdnAlfresco = CDN::where('name', env('CDN_ALFRESCO_NAME', 'alfrescoCDN'));
 
         $lom_items_id = array_column($lom_items->toArray(), 'dam_resource_id');
         $hideFields = config('solr_facets.lom_hidden.'.env('APP_CLIENT', 'DEFAULT'));
@@ -631,6 +635,18 @@ class SolrService
             //* hide Ximdex fields
             foreach ($hideFields as $field) {
                 unset($json['response']['docs'][$idx][$field]);
+            }
+
+            //* url hash
+            if (isset($doc['data']['cdns_attached'])) {
+                $hasLink = false;
+                foreach ($doc['data']['cdns_attached'] as $index => $cdn_attached) {
+                    if (!$hasLink && $cdn_attached['name'] === env('CDN_ALFRESCO_NAME', 'alfrescoCDN')) {
+                        $doc['url'] =  url(env('DAM_FRONT_URL', 'http://xdamv3.mhe.ximdex.net') . '/resource/' . $cdn_attached['hash'] . '/preview');
+                        break;
+                    }
+                }
+                unset($doc['data']['cdns_attached']);
             }
         }
 
