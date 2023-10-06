@@ -33,15 +33,15 @@ class SolrController extends Controller
         $method = $request->getMethod();
 
         if (!in_array($core, $this->cores_allow)) {
-            return response('', Response::HTTP_NOT_FOUND);
+            return response(json_encode(['e' => $core, 'cores' => $this->cores_allow]), Response::HTTP_NOT_FOUND);
         }
 
         if (!in_array($action, self::ACTIONS_ALLOW)) {
-            return response('', Response::HTTP_METHOD_NOT_ALLOWED);
+            return response('Err2', Response::HTTP_METHOD_NOT_ALLOWED);
         }
 
         if ($request->get('wt', 'json') !== 'json' ) {
-            return response('', Response::HTTP_NOT_ACCEPTABLE);
+            return response('Err3', Response::HTTP_NOT_ACCEPTABLE);
         }
 
         $params = [
