@@ -569,6 +569,7 @@ class SolrService
     private function executeRequest($url, $wt, $changeParams, $core)
     {
         $request = new GuzzleHttpClient();
+        $parsed_body = [];
         try {
             $res = $request->request('GET', "$url");
             header('Content-Type: ' . $res->getHeaderLine('Content-Type'));
@@ -578,7 +579,7 @@ class SolrService
                 ? $this->handleJSONResponse($body, $changeParams, $core)
                 : $this->handleXMLResponse($body, $changeParams, $core);
 
-            echo $parsed_body;
+            // echo $parsed_body;
         } catch (RequestException $exc) {
             $res = $exc->getResponse();
             header('Content-Type: ' . $res->getHeaderLine('Content-Type'));
@@ -588,7 +589,9 @@ class SolrService
                 ? $this->handleJSONResponseFail($body, $changeParams, $core)
                 : $this->handleXMLResponseFail($body, $changeParams, $core);
 
-            echo $parsed_body;
+            // echo $parsed_body;
+        } finally {
+            return json_decode($parsed_body);
         }
     }
 
