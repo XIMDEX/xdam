@@ -3,3 +3,5 @@
 .vscode
 **/vendor/*
 backend/composer.phar
+backend/storage/media-library
+
