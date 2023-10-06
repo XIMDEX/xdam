@@ -22,6 +22,22 @@ class ActivitySolrResource extends BaseSolrResource
         return $categories ?? [''];
     }
 
+    protected function getISBNs() {
+        $array = [];
+        $isbns = $this->data->description->isbn ?? $this->data->description->isbns ?? [];
+        if (is_string($isbns)){
+            $isbns = [$isbns];
+        }
+        foreach ($isbns as $isbnString) {
+            $array = array_merge($array, explode(',', $isbnString));
+        }
+        $isbns_output = [];
+        foreach ($array as $item) {
+            $isbns_output = trim($item);
+        }
+        return $isbns_output;
+    }
+
     protected function getType()
     {
         return $this->data->description->type;
@@ -89,7 +105,7 @@ class ActivitySolrResource extends BaseSolrResource
             'lom'                   => $this->getLOMValues(),
             'lomes'                 => $this->getLOMValues('lomes'),
             'unit'                  => $this->getUnits(),
-            'isbn'                  => $this->data->description->isbn ?? $this->data->description->isbns ?? [],
+            'isbn'                  => $this->getISBNs(),
             'language_default'      => $this->getLanguageDefault(),
             'available_languages'   => $this->getAvailableLanguages(),
             'assessments'           => $this->data->description->assessments ?? [],
