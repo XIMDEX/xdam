@@ -49,7 +49,8 @@ class SolrController extends Controller
             'action' => $action
         ];
 
-        $this->handleQuery($params, $request);
+        $output = $this->handleQuery($params, $request);
+        return response($output, Response::HTTP_OK);
     }
 
     public function handleQuery($params, $request)
@@ -74,7 +75,7 @@ class SolrController extends Controller
 
         $queryParams = implode('&', $array);
         parse_str($queryParams, $request_params);
-        $this->{$params['action']}($request_params, $params['core']);
+        return $this->{$params['action']}($request_params, $params['core']);
     }
 
     public function select($params, $core)

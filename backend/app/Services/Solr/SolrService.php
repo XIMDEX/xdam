@@ -591,7 +591,7 @@ class SolrService
 
             // echo $parsed_body;
         } finally {
-            return json_decode($parsed_body);
+            return $parsed_body;
         }
     }
 
