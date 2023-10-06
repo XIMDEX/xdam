@@ -19,6 +19,11 @@ use Solarium\Core\Query\Result\ResultInterface;
 use Illuminate\Database\Eloquent\Model;
 use stdClass;
 use App\Http\Resources\Solr\{ActivitySolrResource, AssessmentSolrResource, BookSolrResource, CourseSolrResource, DocumentSolrResource, MultimediaSolrResource};
+use DOMDocument;
+use GuzzleHttp\Client as GuzzleHttpClient;
+use GuzzleHttp\Exception\RequestException;
+use Illuminate\Http\Response;
+use Solarium\Core\Client\Adapter\AdapterHelper;
 
 /**
  * Class that is responsible for making crud with Apache Solr and each of its instances
@@ -27,6 +32,8 @@ use App\Http\Resources\Solr\{ActivitySolrResource, AssessmentSolrResource, BookS
  */
 class SolrService
 {
+
+    const LOM = 'lomes';
 
     private FacetManager $facetManager;
     private SolrConfig $solrConfig;
@@ -409,6 +416,7 @@ class SolrService
         $query = $coreHandler->queryCoreSpecifics($facetsFilter);
         $allDocuments = $client->select($query);
         $documentsFound = $allDocuments->getNumFound();
+
         $faceSetFound = $allDocuments->getFacetSet();
         $totalPages = ceil($documentsFound / $limit);
         $currentPageFrom = ($currentPage - 1) * $limit;
@@ -517,6 +525,129 @@ class SolrService
 
     public function getClientCoreAlias() {
         return $this->solrConfig->getClientCoreAlias('lom');
+    }
+
+    public function handleSelect($params, $core)
+    {
+        $client = $this->getClient($core);
+        $query = $client->createSelect();
+        $request_params = array_merge([], $params);
+
+        $request = $client->createRequest($query);
+        $schemaConfig = config('solr_facets.client.'.env('APP_CLIENT', 'DEFAULT'));
+
+        foreach ($params as $pKey => $param) {
+            if (!is_array($param)) $param = [$param];
+            $params_to_add = [];
+            foreach ($param as $param_key => $param_value) {
+                $value_search = strpos($param_value, ':');
+                if (($pKey === 'q' || $pKey === 'qf') && $value_search === false) {
+                    foreach ($client->getOption('schema') as $key_schema => $schema_value) {
+                        $params_to_add[] = $key_schema . ":" . $param_value;
+                    }
+                    $param_value = $this->getJoin($core) . $param_value;
+                } else {
+                    foreach ($schemaConfig as $scKey => $value) {
+                        $param_value = str_replace($value['solr_label'].':', $this->getJoin($core), $param_value);
+                    }
+                }
+                $param[$param_key] = $param_value;
+            }
+            $param = array_merge($param, $params_to_add);
+            if (count($param) === 1) $param = $param[0];
+            $params[$pKey] = $param;
+        }
+
+        $request->setParams($params);
+        $endpoint = $client->getEndpoint();
+        $uri = AdapterHelper::buildUri($request, $endpoint);
+        return $this->executeRequest($uri, $params['wt'] ?? 'json', $request_params, $core);
+
+    }
+
+    private function executeRequest($url, $wt, $changeParams, $core)
+    {
+        $request = new GuzzleHttpClient();
+        try {
+            $res = $request->request('GET', "$url");
+            header('Content-Type: ' . $res->getHeaderLine('Content-Type'));
+            http_response_code($res->getStatusCode());
+            $body = $res->getBody()->getContents();
+            $parsed_body = $wt === 'json'
+                ? $this->handleJSONResponse($body, $changeParams, $core)
+                : $this->handleXMLResponse($body, $changeParams, $core);
+
+            echo $parsed_body;
+        } catch (RequestException $exc) {
+            $res = $exc->getResponse();
+            header('Content-Type: ' . $res->getHeaderLine('Content-Type'));
+            http_response_code($res->getStatusCode());
+            $body = $res->getBody()->getContents();
+            $parsed_body = $wt === 'json'
+                ? $this->handleJSONResponseFail($body, $changeParams, $core)
+                : $this->handleXMLResponseFail($body, $changeParams, $core);
+
+            echo $parsed_body;
+        }
+    }
+
+    private function getJoin()
+    {
+        return "{!join from=dam_resource_id to=id fromIndex=". self::LOM . "}lom_value:";
+    }
+
+    private function handleJSONResponseFail($txt, $changeParams, $core)
+    {
+        $json = json_decode($txt, true);
+        $json['responseHeader']['params'] = $changeParams;
+
+        return json_encode($json);
+    }
+
+    private function handleXMLResponseFail($txt, $changeParams, $core)
+    {
+        return $txt;
+    }
+
+    private function handleJSONResponse($txt, $changeParams, $core)
+    {
+        $json = json_decode($txt, true);
+        $lom_items = $core == 'lom'
+            ? Lom::whereIn('dam_resource_id', array_column($json['response']['docs'], 'id'))->get()
+            : Lomes::whereIn('dam_resource_id', array_column($json['response']['docs'], 'id'))->get();
+
+        $lom_items_id = array_column($lom_items->toArray(), 'dam_resource_id');
+        $hideFields = config('solr_facets.lom_hidden.'.env('APP_CLIENT', 'DEFAULT'));
+        $schemaConfig = config('solr_facets.client.'.env('APP_CLIENT', 'DEFAULT'));
+        // $changeParams = [];
+        foreach ($json['response']['docs'] as $idx => $doc) {
+            $indexLom = array_search($doc['id'], $lom_items_id);
+            foreach ($schemaConfig as $key_schema => $value) {
+                $json['response']['docs'][$idx][$value['solr_label']] = $indexLom !== false
+                    ? $lom_items[$indexLom]->$key_schema
+                    : null;
+            }
+
+            //* hide Ximdex fields
+            foreach ($hideFields as $field) {
+                unset($json['response']['docs'][$idx][$field]);
+            }
+        }
+
+        if (count($changeParams) > 0) {
+            //* change params from request
+            $json['responseHeader']['params'] = $changeParams;
+        }
+
+        return json_encode($json);
+    }
+
+    private function handleXMLResponse($txt, $changeParams, $core)
+    {
+        $dom = new DOMDocument();
+        $dom->loadXML($txt);
+        $hideFields = config('solr_facets.lom_hidden.'.env('APP_CLIENT', 'DEFAULT'));
+        return $dom->saveXML();
     }
 
 }

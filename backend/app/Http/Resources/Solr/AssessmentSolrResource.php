@@ -17,9 +17,9 @@ class AssessmentSolrResource extends BaseSolrResource
         return $tags ?? [''];
     }
 
-    protected function formatCategories($categories)
+    protected function formatCategories($category)
     {
-        return $categories ?? [''];
+        return $category ?? '';
     }
 
     protected function getType()
@@ -30,6 +30,35 @@ class AssessmentSolrResource extends BaseSolrResource
     protected function getCoreResourceType()
     {
         return ResourceType::assessment;
+    }
+
+    protected function getLanguageDefault()
+    {
+        return $this->data->description->language_default ?? getenv('BOOK_DEFAULT_LANGUAGE');
+    }
+
+    protected function getAvailableLanguages()
+    {
+        $available_languages = $this->data->description->available_languages ?? [];
+
+        return array_unique(array_merge([$this->getLanguageDefault()], $available_languages));
+    }
+
+    protected function getUnits()
+    {
+        $data_units = $this->data->description->unit ?? $this->data->description->units ?? [];
+        $units = [];
+
+        foreach ($data_units as $unit) {
+            if (strlen((string) $unit) === 1  && intval($unit) < 10) {
+                $units[] = "0" + (string) $unit;
+            } elseif (strlen((string) $unit) > 2 && str_starts_with($unit, '0')) {
+                $units[] = substr($unit, 1);
+            } else {
+                $untis[] = $unit;
+            }
+        }
+        return $units;
     }
 
     /**
@@ -58,7 +87,13 @@ class AssessmentSolrResource extends BaseSolrResource
             'created_at'            => $this->created_at,
             'updated_at'            => $this->updated_at,
             'lom'                   => $this->getLOMValues(),
-            'lomes'                 => $this->getLOMValues('lomes')
+            'lomes'                 => $this->getLOMValues('lomes'),
+            'unit'                  => $this->getUnits(),
+            'isbn'                  => $this->data->description->isbn ?? $this->data->description->isbns ?? '',
+            'language_default'      => $this->getLanguageDefault(),
+            'available_languages'   => $this->getAvailableLanguages(),
+            'activities'            => $this->data->description->activities ?? [],
+            'xeval_id'              => $this->data->description->xeval_id
         ];
     }
 }

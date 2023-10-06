@@ -48,7 +48,7 @@ class BookSolrResource extends BaseSolrResource
             'collection'            => $this->collection->id,
             'workspaces'            => $this->getWorkspaces(),
             'organization'          => $this->getOrganization(),
-            'units'                 => $this->data->description->units ?? 0,
+            'units'                 => $this->data->description->unit ?? $this->data->description->units ?? 0,
             'isbn'                  => $this->data->description->isbn ?? '',
             'lang'                  => $this->data->description->lang ?? getenv('BOOK_DEFAULT_LANGUAGE'),
             'collections'           => $this->getCollections(),

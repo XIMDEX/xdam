@@ -25,7 +25,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Services\Solr\SolrConfig;
-
+use PhpParser\Node\Stmt\Foreach_;
+use stdClass;
 
 class ResourceService
 {
@@ -411,7 +412,7 @@ class ResourceService
         } else {
             $resource_data['id'] = Str::orderedUuid();
         }
-
+        $newResource = false;
         try {
             $newResource = DamResource::create($resource_data);
             $this->setResourceWorkspace($newResource, $wsp);
@@ -530,10 +531,45 @@ class ResourceService
 
     public function lomesSchema($asArray = false)
     {
-        /*$json_file = file_get_contents(storage_path('/lomes') .'/lomesSchema.json');
-        $schema = json_decode($json_file, $asArray);
-        return $schema;*/
-        return Utils::getLomesSchema($asArray);
+        $lomesSchema =  Utils::getLomesSchema($asArray);
+
+        $lomesSchemaClient = array_keys(config('solr_facets.client.'.env('APP_CLIENT', 'DEFAULT')));
+
+        if (count($lomesSchemaClient) > 0) {
+            $tabsToDel = [];
+            if (!$asArray) {
+                foreach ($lomesSchema->tabs as $index => $keys) {
+                    foreach ($keys->properties as $name => $property) {
+                        if (!in_array($property->data_field, $lomesSchemaClient)) {
+                            unset($lomesSchema->tabs[$index]->properties->$name);
+                        }
+                    }
+                    if (count((array) $keys->properties) === 0) {
+                        $tabsToDel[] = $index;
+                    }
+                }
+                foreach ($tabsToDel as $tabToDel) {
+                    $lomesSchema->tabs[$tabToDel]->hide = true;
+                }
+            } else {
+                foreach ($lomesSchema['tabs'] as $index => $keys) {
+                    foreach ($keys['properties'] as $name => $property) {
+                        if (!in_array($property['data_field'], $lomesSchemaClient)) {
+                            unset($lomesSchema['tabs'][$index]['properties'][$name]);
+                        }
+                    }
+                    if (count($keys['properties']) === 0) {
+                        $tabsToDel[] = $index;
+                    }
+                }
+                foreach ($tabsToDel as $tabToDel) {
+                    $lomesSchema['tabs'][$tabToDel]['hide'] = true;
+                }
+            }
+        }
+        if (count($tabsToDel) > 0) $lomesSchema->tabs = array_values($lomesSchema->tabs);
+
+        return $lomesSchema;
     }
 
     public function lomSchema($asArray = false)
@@ -917,5 +953,12 @@ class ResourceService
                         ->first();
 
         return $collection;
+    }
+
+    public function countResources($type = null)
+    {
+        $query = (null !== $type) ? DamResource::where('type', $type) : DamResource::all();
+        return $query->count();
+
     }
 }

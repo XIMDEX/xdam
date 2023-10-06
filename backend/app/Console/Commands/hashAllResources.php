@@ -45,8 +45,8 @@ class hashAllResources extends Command
     public function handle()
     {
         try {
-            $cdnId = $this->option('cdn')[0];
-            $collectionId = $this->option('collection')[0];
+            $cdnId = $this->option('cdn')[0] ?? null;
+            $collectionId = $this->option('collection')[0] ?? null;
 
             if (empty($cdnId)) {
                 $this->error('No CDN specified.');

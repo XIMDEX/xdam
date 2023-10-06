@@ -101,38 +101,31 @@
                     "title": "Catálogo"
                 },
                 "Entrada": {
-
-                    "type": "string",
+                   "type": "string",
                     "title": "Entrada"
                 },
                 "Contribución": {
-
-                    "type": "string",
+                   "type": "string",
                     "title": "Contribución"
                 },
                 "Tipo": {
-
-                    "type": "string",
+                   "type": "string",
                     "title": "Tipo"
                 },
                 "Entidad": {
-
-                    "type": "string",
+                   "type": "string",
                     "title": "Entidad"
                 },
                 "Fecha": {
-
-                    "type": "string",
+                   "type": "string",
                     "title": "Fecha"
                 },
                 "Esquema de Metadatos": {
-
-                    "type": "string",
+                   "type": "string",
                     "title": "Esquema de Metadatos"
                 },
                 "Idioma": {
-
-                    "type": "string",
+                   "type": "string",
                     "title": "Idioma",
                     "enum": [
                         "es",
@@ -149,62 +142,50 @@
             "key": "4",
             "properties": {
                 "Formato": {
-
-                    "type": "string",
+                   "type": "string",
                     "title": "Formato"
                 },
                 "Tamaño": {
-
-                    "type": "string",
+                   "type": "string",
                     "title": "Tamaño"
                 },
                 "Localización": {
-
-                    "type": "string",
+                   "type": "string",
                     "title": "Localización"
                 },
                 "Requisitos de Instalación": {
-
                     "type": "string",
                     "title": "Requisitos de Instalación"
                 },
                 "Agregador": {
-
                     "type": "string",
                     "title": "Agregador"
                 },
                 "Tipo": {
-
                     "type": "string",
                     "title": "Tipo"
                 },
                 "Nombre": {
-
                     "type": "string",
                     "title": "Nombre"
                 },
                 "Versión Mínima": {
-
-                    "type": "string",
+                   "type": "string",
                     "title": "Versión Mínima"
                 },
                 "Versión Máxima": {
-
                     "type": "string",
                     "title": "Versión Máxima"
                 },
                 "Pautas de Instalación": {
-
                     "type": "string",
                     "title": "Pautas de Instalación"
                 },
                 "Otros Requisitos de Plataforma": {
-
                     "type": "string",
                     "title": "Otros Requisitos de Plataforma"
                 },
                 "Duración": {
-
                     "type": "string",
                     "title": "Duración"
                 }
@@ -215,7 +196,6 @@
             "key": "5",
             "properties": {
                 "Tipo de Interactividad": {
-
                     "type": "string",
                     "title": "Tipo de Interactividad",
                     "enum": [
@@ -225,15 +205,26 @@
                     ]
                 },
                 "Tipo de Recurso Educativo": {
-
                     "type": "string",
                     "title": "Tipo de Recurso Educativo",
                     "enum": [
-                        "no values set"
+                        "Fotografía",
+                        "Ilustración",
+                        "Vídeo",
+                        "Animación",
+                        "Locución",
+                        "Infografía",
+                        "Documento",
+                        "Actividad",
+                        "Presentación",
+                        "Cuestionario",
+                        "Base de datos",
+                        "Programaciones",
+                        "Solucionarios",
+                        "Paquete SCORM"
                     ]
                 },
                 "Nivel de Interactividad": {
-
                     "type": "string",
                     "title": "Nivel de Interactividad",
                     "enum": [
@@ -245,20 +236,19 @@
                     ]
                 },
                 "Densidad Semántica": {
-
-                    "type": "string",
+                   "type": "string",
                     "title": "Densidad Semántica"
                 },
                 "Destinatario": {
-
                     "type": "string",
                     "title": "Destinatario",
                     "enum": [
-                        "no values set"
+                        "Profesor",
+                        "Alumno",
+                        "General"
                     ]
                 },
                 "Contexto": {
-
                     "type": "string",
                     "title": "Contexto",
                     "enum": [
@@ -266,12 +256,10 @@
                     ]
                 },
                 "Rango Típico de Edad": {
-
                     "type": "string",
                     "title": "Rango Típico de Edad"
                 },
                 "Dificultad": {
-
                     "type": "string",
                     "title": "Dificultad",
                     "enum": [
@@ -283,33 +271,32 @@
                     ]
                 },
                 "Tiempo Típico de Aprendizaje": {
-
                     "type": "string",
                     "title": "Tiempo Típico de Aprendizaje"
                 },
                 "Descripción": {
-
                     "type": "string",
                     "title": "Descripción"
                 },
                 "Idioma": {
-
                     "type": "string",
                     "title": "Idioma",
                     "enum": [
                         "es",
-                        "gl",
-                        "ca",
-                        "eu",
-                        "va"
+                        "en",
+                        "ca"
                     ]
                 },
                 "Proceso Cognitivo": {
-
                     "type": "string",
                     "title": "Proceso Cognitivo",
                     "enum": [
-                        "no values set"
+                        "Nivel 1: Recordar",
+                        "Nivel 2: Comprender",
+                        "Nivel 3: Aplicar",
+                        "Nivel 4: Analizar",
+                        "Nivel 5: Evaluar",
+                        "Nivel 6: Crear"
                     ]
                 }
             }
@@ -330,7 +317,11 @@
                     "type": "string",
                     "title": "Derechos de Autor y otras Restricciones",
                     "enum": [
-                        "no values set"
+                        "Propietaria MHE",
+                        "Creative Comnmons",
+                        "De terceros",
+                        "Licencia GFDL",
+                        "Dominio público"
                     ]
                 },
                 "Descripción": {
@@ -432,6 +423,34 @@
                     "title": "Palabras Clave"
                 }
             }
-        }
+        },
+        {
+            "title": "Custom_1",
+            "key": "10",
+            "properties":{
+                "accesibilidad": {
+                    "type": "string",
+                    "title": "Accesibilidad",
+                    "enum": [
+                        "Nivel de accesibilidad AA",
+                        "Nivel de accesibilidad AAA",
+                        "Cumplimiento de la norma WCAG 2.1",
+                        "Cumplimiento de la norma WCAG 2.2"
+                    ]
+                },
+                "nivel educativo": {
+                    "type":"string",
+                    "title": "Nivel Eductativo"
+                },
+                "competencia": {
+                    "type":"string",
+                    "title": "Competencia"
+                },
+                "Disciplina": {
+                    "type":"string",
+                    "title": "Disciplina"
+                }
+            }
+       }
     ]
 }
