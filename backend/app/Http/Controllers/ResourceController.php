@@ -314,8 +314,11 @@ class ResourceController extends Controller
 
         if($fileType == 'video' || $fileType == 'image') {
             $compressed = $this->mediaService->preview($media, $size);
-            return $compressed->response('jpeg', $size === 'raw' ? 100 : $size);
-        }
+            $response = $compressed->response('jpeg', $size === 'raw' ? 100 : $size);
+            $response->header('Cache-Control', 'public, max-age=86400'); // Configura el tiempo de caché en segundos (en este caso, 24 horas)
+            $response->header('Expires', gmdate('D, d M Y H:i:s', time() + 86400) . ' GMT'); // Configura la fecha de expiración
+            return $response;
+	}
 
         return response()->file($this->mediaService->preview($media));
     }
