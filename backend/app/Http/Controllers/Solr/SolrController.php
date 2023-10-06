@@ -50,7 +50,7 @@ class SolrController extends Controller
         ];
 
         $output = $this->handleQuery($params, $request);
-        return response($output, Response::HTTP_OK);
+        return response()->json(json_decode($output), Response::HTTP_OK);
     }
 
     public function handleQuery($params, $request)
