@@ -34,7 +34,7 @@ class UpdateResourceRequest extends FormRequest
             'extra.link' => 'string',
             'extra.hover' => 'string',
             'extra.content' => 'string',
-            'lang' => 'sometimes|nullable|in:cat,en,es'
+            'lang' => 'sometimes|nullable|in:cat,en,es,eu,gl'
         ];
     }
 

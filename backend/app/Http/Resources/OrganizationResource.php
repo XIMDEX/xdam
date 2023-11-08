@@ -19,7 +19,7 @@ class OrganizationResource extends JsonResource
         $org_resource_count = 0;
         $collections = $this->collections()->get();
         foreach ($collections as $coll) {
-            $org_resource_count += count($coll->resources()->get());
+            $org_resource_count += $coll->resources()->count();
         }
         //return parent::toArray($request);
         return [

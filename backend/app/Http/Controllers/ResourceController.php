@@ -343,6 +343,8 @@ class ResourceController extends Controller
             if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small', 'thumbnail']))) {
                 $response = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
                 $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
+                $response->header('Cache-Control', 'public, max-age=86400'); // Configura el tiempo de caché en segundos (en este caso, 24 horas)
+                $response->header('Expires', gmdate('D, d M Y H:i:s', time() + 86400) . ' GMT'); // Configura la fecha de expiración
                 Cache::put("{$mediaId}__$size", $response);
                 return $response;
             }
@@ -375,7 +377,7 @@ class ResourceController extends Controller
         $sizes = [
             'image' => [
                 'allowed_sizes' => ['thumbnail', 'small', 'medium', 'raw', 'default'],
-                'sizes' => [                    
+                'sizes' => [
                     'thumbnail' => array('width' => 256, 'height' => 144),
                     'small'     => array('width' => 426, 'height' => 240),
                     'medium'    => array('width' => 854, 'height' => 480),

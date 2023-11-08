@@ -16,7 +16,7 @@ class CollectionCountResource extends BaseResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'coll_resource_count' => count($this->resources()->get()),
+            'coll_resource_count' => $this->resources()->count(),
             'resource_type' => $this->accept,
         ];
     }
