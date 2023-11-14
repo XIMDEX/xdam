@@ -650,6 +650,8 @@ class SolrService
                     }
                 }
                 unset($doc['data']['cdns_attached']);
+            } else {
+                $doc['url'] =  url(env('DAM_FRONT_URL', 'http://xdamv3.mhe.ximdex.net'));
             }
         }
 
