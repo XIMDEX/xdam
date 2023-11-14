@@ -645,13 +645,13 @@ class SolrService
                 $hasLink = false;
                 foreach ($doc['data']['cdns_attached'] as $index => $cdn_attached) {
                     if (!$hasLink && $cdn_attached['name'] === env('CDN_ALFRESCO_NAME', 'alfrescoCDN')) {
-                        $doc['url'] =  url(env('DAM_FRONT_URL', 'http://xdamv3.mhe.ximdex.net') . '/resource/' . $cdn_attached['hash'] . '/preview');
+                        $json['response']['docs'][$idx]['url'] =  url(env('DAM_FRONT_URL', 'http://xdamv3.mhe.ximdex.net') . '/resource/' . $cdn_attached['hash'] . '/preview');
                         break;
                     }
                 }
                 unset($doc['data']['cdns_attached']);
             } else {
-                $doc['url'] =  url(env('DAM_FRONT_URL', 'http://xdamv3.mhe.ximdex.net'));
+                $json['response']['docs'][$idx]['url'] = url(env('DAM_FRONT_URL', 'http://xdamv3.mhe.ximdex.net'));
             }
         }
 
