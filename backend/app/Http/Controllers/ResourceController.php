@@ -491,6 +491,8 @@ class ResourceController extends Controller
             if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small', 'thumbnail']))) {
                 $response = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
                 $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"', $mediaFileName));
+                $response->header('Cache-Control', 'public, max-age=86400'); // Configura el tiempo de caché en segundos (en este caso, 24 horas)
+                $response->header('Expires', gmdate('D, d M Y H:i:s', time() + 86400) . ' GMT'); // Configura la fecha de expiración
                 return $response;
             }
 
@@ -607,7 +609,7 @@ class ResourceController extends Controller
         return $mimeType;
     }
 
-    public function renderCDNResource(CDNRequest $request)
+    public function renderCDNResourceFile(CDNRequest $request)
     {
         $method = request()->method();
         $ipAddress = $_SERVER['REMOTE_ADDR'];
@@ -647,6 +649,37 @@ class ResourceController extends Controller
         return $this->renderResource($responseJson->files[0]->dam_url, $method, $request->size, $request->size, true);
     }
 
+    public function renderCDNResource(CDNRequest $request){
+        $method = request()->method();
+        $ipAddress = $_SERVER['REMOTE_ADDR'];
+        $originURL = $request->headers->get('referer');
+
+        $resource = $this->cdnService->getAttachedDamResource($request->damResourceHash);
+        if ($resource === null) {
+            return response(['error' => 'Error! No resource found.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $cdnInfo = $this->cdnService->getCDNAttachedToDamResource($request->damResourceHash, $resource);
+        if ($cdnInfo === null) {
+            return response(['error' => 'This CDN doesn\'t exist!'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $accessCheck = $this->checkAccess($request, $resource, $cdnInfo, $ipAddress, $originURL);
+        if (!$accessCheck) {
+            return response()->json(['error' => 'You can\'t access this CDN.'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        if (!$this->cdnService->isCollectionAccessible($resource, $cdnInfo)) {
+            return response(['error' => 'Forbidden access!'], Response::HTTP_BAD_REQUEST);
+        }
+
+        return (new ResourceResource($resource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+
+    }
+
+
     public function setWorkspace(SetResourceWorkspaceRequest $request)
     {
         if (!$request->checkResourceWorkspaceChangeData())
@@ -677,5 +710,20 @@ class ResourceController extends Controller
     public function getFilesCount(DamResource $damResource)
     {
         return response(['files_count' => $damResource->getNumberOfFilesAttached()], Response::HTTP_OK);
+    }
+
+    public function checkAccess($request, $resource, $cdnInfo, $ipAddress, $originURL) {
+        $resourceResponse = new ResourceResource($resource);
+        $responseJson = json_decode($resourceResponse->toJson());
+
+        if (isset($request->size) && $this->getFileType($responseJson->files[0]->dam_url) === 'application/pdf') {
+            return true;
+        }
+
+        if ($cdnInfo->checkAccessRequirements($ipAddress, $originURL)) {
+            return true;
+        }
+
+        return false;
     }
 }

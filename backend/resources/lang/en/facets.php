@@ -18,7 +18,10 @@ return [
         'type' => 'Type',
         'types' => 'Types',
         'units' => 'Units',
+        'unit' => 'Unit',
         'language' => 'Language',
+        'language_default' => 'Language default',
+        'available_languages' => 'Available languages',
         'is_deleted' => 'Is deleted?',
         'corporations' => 'Organizations',
         'workspaces' => 'Workspaces',
@@ -28,7 +31,11 @@ return [
         'yes' => 'true',
         'no' => 'false',
         'lom' => 'LOM',
-        'lomes' => 'LOMES'
+        'lomes' => 'LOMES',
+        'activities' => 'Activities',
+        'assessments' => 'Assessments',
+        'language_default' => 'Language default',
+        'available_languages' => 'Available languages'
     ],
     'MHE' => [
         'active' => 'Active',
@@ -47,6 +54,7 @@ return [
         'type' => 'Type',
         'types' => 'Types',
         'units' => 'Units',
+        'unit' => 'Unit',
         'language' => 'Language',
         'is_deleted' => 'Is deleted?',
         'corporations' => 'Organizations',
@@ -57,7 +65,11 @@ return [
         'yes' => 'true',
         'no' => 'false',
         'lom' => 'LOM',
-        'lomes' => 'LOMES'
+        'lomes' => 'LOMES',
+        'activities' => 'Activities',
+        'assessments' => 'Assessments',
+        'language_default' => 'Language default',
+        'available_languages' => 'Available languages'
     ],
     'SEK' => []
 ];
