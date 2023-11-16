@@ -1,137 +1,141 @@
 {
     "active": {
-      "name": "active",
-      "type": "boolean",
-      "omitNorms": true,
-      "omitTermFreqAndPositions": true,
-      "indexed": true,
-      "stored": true,
-      "uninvertible": true,
-      "sortMissingLast": true,
-      "omitPositions": true
+        "name": "active",
+        "type": "boolean",
+        "omitNorms": true,
+        "omitTermFreqAndPositions": true,
+        "indexed": true,
+        "stored": true,
+        "uninvertible": true,
+        "sortMissingLast": true,
+        "omitPositions": true
     },
     "categories": {
-      "name": "categories",
-      "type": "text_general"
+        "name": "categories",
+        "type": "text_general"
     },
     "category": {
-      "name": "category",
-      "type": "string",
-      "omitNorms": true,
-      "omitTermFreqAndPositions": true,
-      "indexed": true,
-      "stored": true,
-      "uninvertible": true,
-      "sortMissingLast": true,
-      "docValues": true,
-      "multiValued": true
+        "name": "category",
+        "type": "string",
+        "omitNorms": true,
+        "omitTermFreqAndPositions": true,
+        "indexed": true,
+        "stored": true,
+        "uninvertible": true,
+        "sortMissingLast": true,
+        "docValues": true,
+        "multiValued": true
     },
     "data": {
-      "name": "data",
-      "type": "text_es_custom",
-      "omitNorms": true,
-      "omitTermFreqAndPositions": true,
-      "indexed": true,
-      "stored": true,
-      "uninvertible": true,
-      "sortMissingLast": true,
-      "docValues": false,
-      "omitPositions": true
+        "name": "data",
+        "type": "text_es_custom",
+        "omitNorms": true,
+        "omitTermFreqAndPositions": true,
+        "indexed": true,
+        "stored": true,
+        "uninvertible": true,
+        "sortMissingLast": true,
+        "docValues": false,
+        "omitPositions": true
     },
     "files": {
-      "name": "files",
-      "type": "text_general"
+        "name": "files",
+        "type": "text_general"
     },
     "id": {
-      "name": "id",
-      "type": "string",
-      "multiValued": false,
-      "indexed": true,
-      "required": true,
-      "stored": true
+        "name": "id",
+        "type": "string",
+        "multiValued": false,
+        "indexed": true,
+        "required": true,
+        "stored": true
     },
     "xeval_id": {
-      "name": "xeval_id",
-      "type": "string",
-      "multiValued": false,
-      "indexed": true,
-      "required": true,
-      "stored": true
+        "name": "xeval_id",
+        "type": "string",
+        "multiValued": false,
+        "indexed": true,
+        "required": true,
+        "stored": true
     },
     "name": {
-      "name": "name",
-      "type": "text_es_custom"
+        "name": "name",
+        "type": "text_es_custom"
     },
     "previews": {
-      "name": "previews",
-      "type": "strings",
-      "omitNorms": true,
-      "omitTermFreqAndPositions": true,
-      "indexed": true,
-      "stored": true,
-      "uninvertible": true,
-      "sortMissingLast": true,
-      "docValues": false,
-      "omitPositions": true,
-      "multiValued": true
+        "name": "previews",
+        "type": "strings",
+        "omitNorms": true,
+        "omitTermFreqAndPositions": true,
+        "indexed": true,
+        "stored": true,
+        "uninvertible": true,
+        "sortMissingLast": true,
+        "docValues": false,
+        "omitPositions": true,
+        "multiValued": true
     },
     "type": {
-      "name": "type",
-      "type": "string",
-      "omitNorms": true,
-      "omitTermFreqAndPositions": true,
-      "indexed": true,
-      "stored": true,
-      "uninvertible": true,
-      "sortMissingLast": true,
-      "docValues": true,
-      "omitPositions": true
+        "name": "type",
+        "type": "string",
+        "omitNorms": true,
+        "omitTermFreqAndPositions": true,
+        "indexed": true,
+        "stored": true,
+        "uninvertible": true,
+        "sortMissingLast": true,
+        "docValues": true,
+        "omitPositions": true
     },
     "organization": {
-      "name": "organization",
-      "type": "strings"
+        "name": "organization",
+        "type": "strings"
     },
     "workspaces": {
-      "name": "workspaces",
-      "type": "string",
-      "multiValued": true
+        "name": "workspaces",
+        "type": "string",
+        "multiValued": true
     },
     "lom": {
-      "name": "lom",
-      "type": "text_general"
+        "name": "lom",
+        "type": "text_general"
     },
     "lomes": {
-      "name": "lomes",
-      "type": "text_general"
+        "name": "lomes",
+        "type": "text_general"
     },
     "isbn": {
-      "name": "isbn",
-      "type": "text_general",
-      "indexed": true,
-      "multiValued": true
+        "name": "isbn",
+        "type": "text_general",
+        "indexed": true,
+        "multiValued": true
     },
     "unit": {
-      "name": "unit",
-      "type": "text_general",
-      "indexed": true,
-      "multiValued": true
+        "name": "unit",
+        "type": "text_general",
+        "indexed": true,
+        "multiValued": true
     },
     "language_default": {
-      "name": "language_default",
-      "type": "text_general",
-      "indexed": true,
-      "multiValued": false
+        "name": "language_default",
+        "type": "text_general",
+        "indexed": true,
+        "multiValued": false
     },
     "available_languages": {
-      "name": "available_languages",
-      "type": "text_general",
-      "indexed": true,
-      "multiValued": true
+        "name": "available_languages",
+        "type": "text_general",
+        "indexed": true,
+        "multiValued": true
     },
     "assessments": {
-      "name": "assessments",
-      "type": "pint",
-      "indexed": true,
-      "multiValued": true
+        "name": "assessments",
+        "type": "pint",
+        "indexed": true,
+        "multiValued": true
+    },
+    "semantic_tags": {
+        "name": "semantic_tags",
+        "type": "text_general"
     }
-  }
+}

@@ -3,19 +3,50 @@
   "properties": {
     "description": {
       "type": "object",
-      "required": ["active", "partials", "name"],
+      "required": ["active", "title", "body", "id", "uuid"],
       "properties": {
-        "name": {
+        "title": {
+          "type": "string",
+          "format": "string",
+          "default": ""
+        },
+        "body": {
           "type": "string",
           "format": "string"
+        },
+        "id": {
+          "title": "ID",
+          "type": "string",
+          "format": "string",
+          "default": ""
+        },
+        "uuid": {
+          "title": "UUID",
+          "type": "string",
+          "format": "string",
+          "default": ""
+        },
+        "category": {
+          "title": "Category",
+          "type": "string",
+          "format": "string",
+          "default": "Other"
         },
         "external_url": {
           "type": "string",
           "format": "string"
         },
-        "description": {
+        "image": {
           "type": "string",
           "format": "string"
+        },
+        "language": {
+          "type": "string",
+          "enum": [
+            "es",
+            "en"
+          ],
+          "default": "es"
         },
         "tags": {
             "title": "tags",
@@ -25,26 +56,42 @@
                 "type":"string"
             }
         },
-          "categories": {
-            "title": "categories",
-            "type": "array",
-            "format": "string",
-            "items": {
-              "type":"string"
-            }
+        "active": {
+          "type": "boolean"
         },
-        "partials": {
-          "type": "object",
-          "properties": {
-            "pages": {
-              "type": "integer",
-              "format": "integer"
+        "semantic_tags": {
+          "title": "Semantic Tags",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "string"
+                },
+                "solr_language": {
+                  "type": "string",
+                  "format": "string"
+                },
+                "vocabulary": {
+                    "type": "string",
+                    "format": "string"
+                },
+                "label": {
+                    "type": "string",
+                    "format": "string"
+                }
             }
           }
         },
-        "active": {
-          "type": "boolean"
-        }
+        "categories": {
+          "title": "categories",
+          "type": "array",
+          "format": "string",
+          "items": {
+            "type":"string"
+          }
+       }
       }
     }
   },

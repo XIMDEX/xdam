@@ -10,12 +10,17 @@ use App\Models\DamResource;
 use App\Models\DamResourceUse;
 use App\Models\Media;
 use App\Models\Workspace;
+use App\Services\ExternalApis\Xowl\XowlQueue;
 use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Services\Solr\SolrService;
 use App\Services\ExternalApis\KakumaService;
+use App\Services\ExternalApis\Xowl\XtagsCleaner;
 use App\Services\ExternalApis\XTagsService;
+use App\Services\ExternalApis\Xowl\XowlImageService;
+use App\Services\ExternalApis\XowlTextService;
 use App\Utils\Texts;
 use App\Utils\Utils;
+use App\Utils\DamUrlUtil;
 use DirectoryIterator;
 use Exception;
 use Illuminate\Http\Request;
@@ -25,6 +30,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Services\Solr\SolrConfig;
+use Illuminate\Support\Facades\Storage;
 use PhpParser\Node\Stmt\Foreach_;
 use stdClass;
 
@@ -63,6 +69,14 @@ class ResourceService
      */
     private XTagsService $xtagService;
 
+     /**
+
+     * @var XowlImageService
+     */
+    private XowlImageService $xowlImageService;
+
+
+
     const PAGE_SIZE = 30;
 
     /**
@@ -72,7 +86,8 @@ class ResourceService
      * @param CategoryService $categoryService
      */
     public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService,
-                                KakumaService $kakumaService, XTagsService $xtagService, SolrConfig $solrConfig)
+                                KakumaService $kakumaService, XTagsService $xtagService, XowlImageService $xowlImageService,SolrConfig $solrConfig)
+
     {
         $this->mediaService = $mediaService;
         $this->categoryService = $categoryService;
@@ -80,6 +95,7 @@ class ResourceService
         $this->workspaceService = $workspaceService;
         $this->kakumaService = $kakumaService;
         $this->xtagService = $xtagService;
+        $this->xowlImageService = $xowlImageService;
         $this->solrConfig = $solrConfig;
     }
 
@@ -293,6 +309,7 @@ class ResourceService
     public function update(DamResource $resource, $params): DamResource
     {
         $params['data'] = json_decode($params['data']);
+
         if (array_key_exists("type", $params) && $params["type"]) {
             $resource->update(
                 [
@@ -300,10 +317,17 @@ class ResourceService
                 ]
             );
         }
-
         if (array_key_exists("data", $params) && !empty($params["data"])) {
 
             $this->setDefaultLanguageIfNeeded($params);
+            if (isset($params['data']->description->entities_linked) || isset($params['data']->description->entities_non_linked)) {
+                if (isset($params['data']->description->entities_linked)) {
+                    unset($params['data']->description->entities_linked);
+                }
+                if (isset($params['data']->description->entities_non_linked)) {
+                    unset($params['data']->description->entities_non_linked);
+                }
+            }
 
             $resource->update(
                 [
@@ -312,6 +336,7 @@ class ResourceService
                     'name' => $params['data']->description->name ?? 'name not found'
                 ]
             );
+
             $this->linkCategoriesFromJson($resource, $params['data']);
             $this->linkTagsFromJson($resource, $params['data']);
         }
@@ -336,7 +361,7 @@ class ResourceService
             /*foreach ($semantic_tags as $semantic_tag) {
                 $lom_params['Taxon Path'][] = [
                     'Id' => $semantic_tag->id,
-                    'Entry' => $semantic_tag->label
+                    'Entry' => $semantic_tag->name
                 ];
             }
 
@@ -356,6 +381,50 @@ class ResourceService
         $this->saveAssociatedFiles($resource, $params);
         $resource = $resource->fresh();
         $this->solr->saveOrUpdateDocument($resource);
+        if (isset($params['File'][0]) || isset($params['Preview'])) {
+            $XowlQueue = new XowlQueue($this->mediaService, $this->xowlImageService);
+        }
+        if (isset($params['File'][0])) {
+            $mediaFiles = $resource->getMedia('File');
+            $XowlQueue->addDocumentToQueue($mediaFiles);
+            $XowlQueue->addImageToQueue($mediaFiles);
+        }
+        if (isset($params['Preview'])) {
+            $mediaFiles = $resource->getMedia('Preview');
+            $XowlQueue->addImageToQueue($mediaFiles);
+        }
+        $mediaFiles = $resource->getMedia('Preview');
+
+        return $resource;
+    }
+
+      /**
+     * @param DamResource $resource
+     * @param $params
+     * @return DamResource
+     * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
+     */
+    public function patch(DamResource $resource, $params): DamResource
+    {
+        if (array_key_exists("type", $params) && $params["type"]) {
+            $resource->update(
+                [
+                    'type' => ResourceType::fromKey($params["type"])->value,
+                ]
+            );
+            unset($params["type"]);
+        }
+
+        if (array_key_exists("data", $params) && gettype($params["data"]) == "string") {
+            $params["data"] = json_decode($params["data"]);
+        }
+
+        $resource->update($params);
+
+
+        $this->saveAssociatedFiles($resource, $params);
+        $resource = $resource->fresh();
+        $this->solr->saveOrUpdateDocument($resource);
         return $resource;
     }
 
@@ -367,7 +436,8 @@ class ResourceService
     public function store(
         $params,
         $toWorkspaceId = null,
-        $fromBatchType = null
+        $fromBatchType = null,
+        $launchThrow = true
     ): DamResource
 
     {
@@ -376,53 +446,63 @@ class ResourceService
             $wid cannot be null
         */
         $wsp = null;
-
-        if($toWorkspaceId) {
-            $wsp = Workspace::find($toWorkspaceId);
-        } else {
-            $wsp = Workspace::find(Auth::user()->selected_workspace);
-        }
-
-        if($wsp === null) {
-            throw new Exception("Undefined workspace");
-        }
-
-        if(!$wsp->organization()->first()) {
-            throw new Exception("The workspace doesn't belong to an organization");
-        }
-
+        $paramsData =  is_array($params['data']) ?  Utils::arrayToObject($params['data']) : $params['data'];
+        $exceptionStrings = ['notWorkspace' => 'Undefined workspace','notOrganization' => 'The workspace doesn\'t belong to an organization'];
+        $wsp  = $toWorkspaceId ? Workspace::find($toWorkspaceId) : Workspace::find(Auth::user()->selected_workspace);
         $name = array_key_exists('name', $params) ? $params["name"] : "";
         $type = $fromBatchType ?? ResourceType::fromKey($params["type"])->value;
+        $idResourceData = ($type == ResourceType::course) ? $params['kakuma_id'] : Str::orderedUuid() ;
+        $nameResource   = $paramsData->description->name ?? $name;
 
-        if(is_array($params['data'])) {
-            $params['data'] = Utils::arrayToObject($params['data']);
-        }
+        if($wsp === null) throw new Exception($exceptionStrings['notWorkspace']);
+        if(!$wsp->organization()->first()) throw new Exception($exceptionStrings['notOrganization']);
 
         $this->setDefaultLanguageIfNeeded($params);
 
         $resource_data = [
-            'data' => $params['data'],
-            'name' => $params['data']->description->name ?? $name,
+            'id'   => $idResourceData,
+            'data' => $paramsData,
+            'name' => $nameResource,
             'type' => $type,
-            'active' => $params['data']->description->active,
+            'active' =>  $paramsData->description->active,
             'user_owner_id' => Auth::user()->id,
             'collection_id' => $params['collection_id'] ?? null
         ];
+        //TODO: Improve this part
 
-        if ($type == ResourceType::course) {
-            $resource_data['id'] = $params['kakuma_id'];
-        } else {
-            $resource_data['id'] = Str::orderedUuid();
-        }
+        // ($type == ResourceType::document && isset($params->description->uuid) && null != $params->description->uuid) $resource_data['id'] = $params['data']['description']->uuid;
+
         $newResource = false;
         try {
+
             $newResource = DamResource::create($resource_data);
+            // $_newResource = $newResource;
+
             $this->setResourceWorkspace($newResource, $wsp);
-            $this->linkCategoriesFromJson($newResource, $params['data']);
-            $this->linkTagsFromJson($newResource, $params['data']);
+            $this->linkCategoriesFromJson($newResource,$paramsData );
+            $this->linkTagsFromJson($newResource,$paramsData);
             $this->saveAssociatedFiles($newResource, $params);
             $newResource = $newResource->fresh();
             $this->solr->saveOrUpdateDocument($newResource);
+
+
+            if (isset($params['File'][0]) || isset($params['Preview'])) {
+                $mediaService = new MediaService();
+                $xowlImageService = new XowlImageService('ES');
+                $XowlQueue = new XowlQueue($mediaService, $xowlImageService);
+            }
+
+            if (isset($params['File'][0])) {
+                $mediaFiles = $newResource->getMedia('File');
+                $XowlQueue->addDocumentToQueue($mediaFiles);
+                $XowlQueue->addImageToQueue($mediaFiles);
+            }
+
+            if (isset($params['Preview'])) {
+                $mediaFiles = $newResource->getMedia('Preview');
+                $XowlQueue->addImageToQueue($mediaFiles);
+            }
+            $_newResource = false;
             return $newResource;
         } catch (\Exception $th) {
             $this->solr->deleteDocument($newResource);
@@ -961,6 +1041,5 @@ class ResourceService
     {
         $query = (null !== $type) ? DamResource::where('type', $type) : DamResource::all();
         return $query->count();
-
     }
 }

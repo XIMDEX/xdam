@@ -70,8 +70,10 @@ class Kernel extends HttpKernel
         'download.resource' => \App\Http\Middleware\ResourcePermissions\DownloadResource::class,
         'update.resource' => \App\Http\Middleware\ResourcePermissions\UpdateResource::class,
         'delete.resource' => \App\Http\Middleware\ResourcePermissions\DeleteResource::class,
+        'collection.automatic' => \App\Http\Middleware\AddAutomaticCollection::class,
         'update.resource.card' => \App\Http\Middleware\ResourcePermissions\UpdateResourceCard::class,
         'delete.resource.card' => \App\Http\Middleware\ResourcePermissions\DeleteResourceCard::class,
+        'collection.automatic' => \App\Http\Middleware\AddAutomaticCollection::class,
 
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,

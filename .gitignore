@@ -1,6 +1,8 @@
 .DS_Store
 .idea
 .vscode
+backend/composer.phar
+backend/storage/semantic/
 **backend/node_modules/*
 **/vendor/*
 backend/composer.phar

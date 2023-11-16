@@ -59,6 +59,18 @@ class DocumentSolrResource extends BaseSolrResource
         return $types;
     }
 
+
+    protected function formatSemanticTags($tags)
+    {
+        $toSolr = [];
+        foreach ($tags as $tag) {
+            try {
+                $toSolr[] = $tag->name;
+            } catch (\Throwable $th) {}
+        }
+        return $toSolr;
+    }
+
     private function getConversions()
     {
         $conversions = [];
@@ -76,6 +88,30 @@ class DocumentSolrResource extends BaseSolrResource
         return $conversions;
     }
 
+    protected function getSemanticTags()
+    {
+        $semantic_tags = $this->data->description->semantic_tags ?? [];
+        return $semantic_tags;
+    }
+
+
+    protected function getData($tags = null, $categories = null, $semanticTags = null)
+    {
+        $data = $this->data;
+        $data = (!is_object($data) ? json_decode($data) : $data);
+        $data->id = $this->id;
+        $data->description->id = $this->id;
+        $data->description->name = $this->name;
+        $data->description->semantic_tags = $this->formatSemanticTags($this->getSemanticTags());
+        $data->description->tags = $tags;
+        $data->description->categories = $categories;
+        $data->lom = $this->getLOMRawValues('lom');
+        $data->lomes = $this->getLOMRawValues('lomes');
+        $finalData = $data;
+        $finalData = is_object($finalData) ? json_encode($finalData) : $finalData;
+        return $finalData;
+    }
+
     protected function getCoreResourceType()
     {
         return ResourceType::document;
@@ -90,16 +126,19 @@ class DocumentSolrResource extends BaseSolrResource
     public function toArray($request)
     {
         $files = $this->getFiles();
-
+        $tags = $this->getTags();
+        $semanticTags = $this->getSemanticTags();
+        $categories = $this->getCategories();
         return [
             'id'                    => $this->getID(),
             'name'                  => $this->getName(),
-            'data'                  => $this->getData(),
+            'data'                  => $this->getData($tags, $categories, $semanticTags),
             'active'                => $this->getActive(),
             'type'                  => $this->getType(),
             'types'                 => $this->getTypes($files),
             'tags'                  => $this->formatTags($this->getTags()),
             'categories'            => $this->formatCategories($this->getCategories()),
+            'semantic_tags'         => $this->formatSemanticTags($semanticTags),
             'files'                 => $files,
             'conversions'           => $this->getConversions(),
             'previews'              => $this->getPreviews(),

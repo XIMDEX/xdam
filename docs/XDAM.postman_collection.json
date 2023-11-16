@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f59ea9c7-e1f0-4bdc-8344-6f9d8bc31657",
+		"_postman_id": "a498a473-68aa-4f21-84ae-da8fa144e05f",
 		"name": "XDAM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -2319,723 +2319,316 @@
 			]
 		},
 		{
-			"name": "BOOKS",
+			"name": "SEMANTIC",
 			"item": [
 				{
-					"name": "RETRIVE BOOK UNIT LINK",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{url}}{{api}}/resource/book/123456/5/links",
-							"host": [
-								"{{url}}{{api}}"
-							],
-							"path": [
-								"resource",
-								"book",
-								"123456",
-								"5",
-								"links"
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "✔ Unit with a link associated",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{url}}{{api}}/resource/book/123456/5/links",
-									"host": [
-										"{{url}}{{api}}"
-									],
-									"path": [
-										"resource",
-										"book",
-										"123456",
-										"5",
-										"links"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Date",
-									"value": "Fri, 29 Apr 2022 10:52:36 GMT"
-								},
-								{
-									"key": "Server",
-									"value": "Apache/2.4.53 (Unix) OpenSSL/1.1.1n PHP/7.4.28 mod_perl/2.0.12 Perl/v5.34.1"
-								},
-								{
-									"key": "Vary",
-									"value": "Authorization,Origin"
-								},
-								{
-									"key": "X-Powered-By",
-									"value": "PHP/7.4.28"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, private"
-								},
-								{
-									"key": "X-RateLimit-Limit",
-									"value": "1800"
-								},
-								{
-									"key": "X-RateLimit-Remaining",
-									"value": "1795"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								},
-								{
-									"key": "Access-Control-Allow-Credentials",
-									"value": "true"
-								},
-								{
-									"key": "Access-Control-Allow-Methods",
-									"value": "GET, POST, PUT, DELETE, OPTIONS"
-								},
-								{
-									"key": "Content-Length",
-									"value": "24"
-								},
-								{
-									"key": "Keep-Alive",
-									"value": "timeout=5, max=99"
-								},
-								{
-									"key": "Connection",
-									"value": "Keep-Alive"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"link\": \"LINK UNIDAD 5\"\n}"
-						},
-						{
-							"name": "✖ Unit has not a link associated",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{url}}{{api}}/resource/book/123456/5/links",
-									"host": [
-										"{{url}}{{api}}"
-									],
-									"path": [
-										"resource",
-										"book",
-										"123456",
-										"5",
-										"links"
-									]
-								}
-							},
-							"status": "Bad Request",
-							"code": 400,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Date",
-									"value": "Fri, 29 Apr 2022 10:52:09 GMT"
-								},
-								{
-									"key": "Server",
-									"value": "Apache/2.4.53 (Unix) OpenSSL/1.1.1n PHP/7.4.28 mod_perl/2.0.12 Perl/v5.34.1"
-								},
-								{
-									"key": "Vary",
-									"value": "Authorization,Origin"
-								},
-								{
-									"key": "X-Powered-By",
-									"value": "PHP/7.4.28"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, private"
-								},
-								{
-									"key": "X-RateLimit-Limit",
-									"value": "1800"
-								},
-								{
-									"key": "X-RateLimit-Remaining",
-									"value": "1797"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								},
-								{
-									"key": "Access-Control-Allow-Credentials",
-									"value": "true"
-								},
-								{
-									"key": "Access-Control-Allow-Methods",
-									"value": "GET, POST, PUT, DELETE, OPTIONS"
-								},
-								{
-									"key": "Content-Length",
-									"value": "33"
-								},
-								{
-									"key": "Connection",
-									"value": "close"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"error\": \"Unit 5 link not found\"\n}"
-						}
-					]
-				},
-				{
-					"name": "RETRIVE BOOK ALL UNITS LINK",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{url}}{{api}}/resource/book/123456/links",
-							"host": [
-								"{{url}}{{api}}"
-							],
-							"path": [
-								"resource",
-								"book",
-								"123456",
-								"links"
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "✔ Units with some links",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{url}}{{api}}/resource/book/123456/links",
-									"host": [
-										"{{url}}{{api}}"
-									],
-									"path": [
-										"resource",
-										"book",
-										"123456",
-										"links"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Date",
-									"value": "Fri, 29 Apr 2022 10:50:40 GMT"
-								},
-								{
-									"key": "Server",
-									"value": "Apache/2.4.53 (Unix) OpenSSL/1.1.1n PHP/7.4.28 mod_perl/2.0.12 Perl/v5.34.1"
-								},
-								{
-									"key": "Vary",
-									"value": "Authorization,Origin"
-								},
-								{
-									"key": "X-Powered-By",
-									"value": "PHP/7.4.28"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, private"
-								},
-								{
-									"key": "X-RateLimit-Limit",
-									"value": "1800"
-								},
-								{
-									"key": "X-RateLimit-Remaining",
-									"value": "1797"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								},
-								{
-									"key": "Access-Control-Allow-Credentials",
-									"value": "true"
-								},
-								{
-									"key": "Access-Control-Allow-Methods",
-									"value": "GET, POST, PUT, DELETE, OPTIONS"
-								},
-								{
-									"key": "Content-Length",
-									"value": "61"
-								},
-								{
-									"key": "Keep-Alive",
-									"value": "timeout=5, max=99"
-								},
-								{
-									"key": "Connection",
-									"value": "Keep-Alive"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"0\": \"LINK UNIDAD 0\",\n    \"1\": \"LINK UNIDAD 1\",\n    \"5\": \"LINK UNIDAD 5\"\n}"
-						},
-						{
-							"name": "✔ Units without links",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{url}}{{api}}/resource/book/123456/links",
-									"host": [
-										"{{url}}{{api}}"
-									],
-									"path": [
-										"resource",
-										"book",
-										"123456",
-										"links"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Date",
-									"value": "Fri, 29 Apr 2022 10:51:49 GMT"
-								},
-								{
-									"key": "Server",
-									"value": "Apache/2.4.53 (Unix) OpenSSL/1.1.1n PHP/7.4.28 mod_perl/2.0.12 Perl/v5.34.1"
-								},
-								{
-									"key": "Vary",
-									"value": "Authorization,Origin"
-								},
-								{
-									"key": "X-Powered-By",
-									"value": "PHP/7.4.28"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, private"
-								},
-								{
-									"key": "X-RateLimit-Limit",
-									"value": "1800"
-								},
-								{
-									"key": "X-RateLimit-Remaining",
-									"value": "1798"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								},
-								{
-									"key": "Access-Control-Allow-Credentials",
-									"value": "true"
-								},
-								{
-									"key": "Access-Control-Allow-Methods",
-									"value": "GET, POST, PUT, DELETE, OPTIONS"
-								},
-								{
-									"key": "Content-Length",
-									"value": "2"
-								},
-								{
-									"key": "Keep-Alive",
-									"value": "timeout=5, max=99"
-								},
-								{
-									"key": "Connection",
-									"value": "Keep-Alive"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								}
-							],
-							"cookie": [],
-							"body": "[]"
-						}
-					]
-				},
-				{
-					"name": "UPDATE BOOKS UNIT LINKS",
+					"name": "ENHANCE",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"links\": {\n        \"0\": \"LINK UNIDAD 0\",\n        \"1\": \"LINK UNIDAD 1\",\n        \"5\": \"LINK UNIDAD 5\"\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "enhancer",
+									"value": "DBpedia",
+									"type": "text"
+								},
+								{
+									"key": "text",
+									"value": "Lewis Hamilton es un piloto de Fórmula 1",
+									"type": "text"
 								}
-							}
+							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/book/123456/links",
+							"raw": "{{url}}{{api}}/semantic/enhance",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
-								"resource",
-								"book",
-								"123456",
-								"links"
+								"semantic",
+								"enhance"
 							]
 						}
 					},
-					"response": [
-						{
-							"name": "✔ Update book units link",
-							"originalRequest": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"links\": {\n        \"0\": \"LINK UNIDAD 0\",\n        \"1\": \"LINK UNIDAD 1\",\n        \"5\": \"LINK UNIDAD 5\"\n    }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{url}}{{api}}/resource/book/123456/links",
-									"host": [
-										"{{url}}{{api}}"
-									],
-									"path": [
-										"resource",
-										"book",
-										"123456",
-										"links"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "html",
-							"header": [
-								{
-									"key": "Date",
-									"value": "Fri, 29 Apr 2022 10:29:28 GMT"
-								},
-								{
-									"key": "Server",
-									"value": "Apache/2.4.53 (Unix) OpenSSL/1.1.1n PHP/7.4.28 mod_perl/2.0.12 Perl/v5.34.1"
-								},
-								{
-									"key": "Vary",
-									"value": "Authorization,Origin"
-								},
-								{
-									"key": "X-Powered-By",
-									"value": "PHP/7.4.28"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, private"
-								},
-								{
-									"key": "X-RateLimit-Limit",
-									"value": "1800"
-								},
-								{
-									"key": "X-RateLimit-Remaining",
-									"value": "1797"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								},
-								{
-									"key": "Access-Control-Allow-Credentials",
-									"value": "true"
-								},
-								{
-									"key": "Access-Control-Allow-Methods",
-									"value": "GET, POST, PUT, DELETE, OPTIONS"
-								},
-								{
-									"key": "Content-Length",
-									"value": "0"
-								},
-								{
-									"key": "Keep-Alive",
-									"value": "timeout=5, max=98"
-								},
-								{
-									"key": "Connection",
-									"value": "Keep-Alive"
-								},
-								{
-									"key": "Content-Type",
-									"value": "text/html; charset=UTF-8"
-								}
-							],
-							"cookie": [],
-							"body": null
-						}
-					]
+					"response": []
 				},
 				{
-					"name": "DELETE BOOK UNIT LINKS",
+					"name": "AUTOMATIC ENHANCE",
 					"request": {
-						"method": "DELETE",
+						"method": "GET",
+						"header": [],
+						"url": null
+					},
+					"response": []
+				},
+				{
+					"name": "INES GET DOCUMENT",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": null
+					},
+					"response": []
+				},
+				{
+					"name": "FETCH DOCUMENT BY ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}{{api}}/semantic/documents/fetch?ids=drupal8JdA-316366&type=noticia",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"semantic",
+								"documents",
+								"fetch"
+							],
+							"query": [
+								{
+									"key": "ids",
+									"value": "drupal8JdA-316366"
+								},
+								{
+									"key": "type",
+									"value": "noticia"
+								},
+								{
+									"key": "enhance",
+									"value": "All",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FETCH DOCUMENT BY UUID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}{{api}}/semantic/documents/fetch-uuid?uuids=000260b4-85a0-442a-bc0e-a3ea86b61972,2e56c592-8f02-41bf-83b7-4df6594fbfb6&type=asunto&enhance=DBpedia",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"semantic",
+								"documents",
+								"fetch-uuid"
+							],
+							"query": [
+								{
+									"key": "uuids",
+									"value": "000260b4-85a0-442a-bc0e-a3ea86b61972,2e56c592-8f02-41bf-83b7-4df6594fbfb6"
+								},
+								{
+									"key": "type",
+									"value": "asunto"
+								},
+								{
+									"key": "enhance",
+									"value": "DBpedia"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE",
+					"request": {
+						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"units\": [0, 2]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "enhance",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "collection_id",
+									"value": "6",
+									"type": "text"
+								},
+								{
+									"key": "_method",
+									"value": "PUT",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "document",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"value": "{\"description\":{\"id\":\"drupal8JdA-316366\",\"uuid\":\"000260b4-85a0-442a-bc0e-a3ea86b61972\",\"language\":\"es\",\"title\":\"Un retrabajo sobre comportamientos en salud en la Sierra de C\\u00e1diz, publicado en una revista internacional\\u00a0\",\"body\":\"Un trabajo sobre comportamientos en salud de la Sierra de C\\u00e1diz y elaborado por una enfermera del Dispositivo de Cuidados Cr\\u00edticos y Urgencias (DCCU de Olvera) de la Sierra de C\\u00e1diz, en el \\u00c1rea de Gesti\\u00f3n Sanitaria de Jerez, Costa Noroeste y Sierra de C\\u00e1diz, ha sido publicado en la Revista Internacional Journal of Tissue Viability, cuyo factor de impacto hace que est\\u00e9 situada en el ranking de los primeros puestos.\\u00a0Adem\\u00e1s de ser enfermera en este DCCU, Mar\\u00eda de los Santos O\\u00f1ate Tenorio, es tambi\\u00e9n profesora asociada de la Facultad de Enfermer\\u00eda y Fisioterapia en la Universidad de C\\u00e1diz, y ha realizado esta publicaci\\u00f3n junto a la vicerrectora en Ciencias de la Salud, Ana Mar\\u00eda Garc\\u00eda Ba\\u00f1\\u00f3n, y a Antonio O\\u00f1ate Tenorio, doctorando en Ciencias Sociales.\\u00a0El estudio tiene como objetivo conocer si existen mitos y creencias en salud, describirlos, indagar si perduran y recopilar los m\\u00e1s comunes en la Sierra de C\\u00e1diz.As\\u00ed, el art\\u00edculo proviene de la tesis doctoral realizada y dirigida respectivamente por O\\u00f1ate Tenorio y Garc\\u00eda Ba\\u00f1\\u00f3n, basada en el estudio de la relaci\\u00f3n entre salud y medio rural. Como explican las dos autoras en el trabajo, a lo largo de la historia y del tiempo ha existido la pr\\u00e1ctica y persistencia de conductas y comportamientos en salud basados en la medicina tradicional, ya que toda persona que sufre un padecimiento siente el anhelo de sanar y mitigar sus manifestaciones negativas, es por ello que el ser humano adem\\u00e1s de hacer uso de la ciencia de la medicina, busca en otros conocimientos y hace uso del saber popular, remedios caseros, creencias, mitos, conductas o modos de proceder para obtener alivio de su malestar.En este proyecto se realiza un estudio descriptivo, observacional y transversal en el que participan 45 profesionales sanitarios de la zona de estudio, llevando a cabo un an\\u00e1lisis cuantitativo y cualitativo de los datos obtenidos, utilizando para ello una metodolog\\u00eda mixta de investigaci\\u00f3n.Entre los resultados m\\u00e1s destacados cabe subrayar que un 73,3% de la poblaci\\u00f3n tiene mitos o creencias sobre la salud, siendo el m\\u00e1s destacado la asistencia a curanderas y el remedio del herpes en un 70%, as\\u00ed como mitos y creencias referentes a la alimentaci\\u00f3n.Como conclusi\\u00f3n, este estudio detalla todos y cada uno de los mitos y creencias relativos a la salud y alimentaci\\u00f3n de la Sierra de C\\u00e1diz descritos por los profesionales de la salud, y abre e incentiva nuevas l\\u00edneas de investigaci\\u00f3n poniendo de manifiesto la necesidad de desarrollar campa\\u00f1as de educaci\\u00f3n e implementar programas de educaci\\u00f3n sanitaria en lo que a medicina tradicional se refiere.Adem\\u00e1s de haber sido publicado en esta revista, en el enlace https:\\/\\/www.sciencedirect.com\\/science\\/article\\/abs\\/pii\\/S0965206X2200002X?v=s5, el trabajo est\\u00e1 indexado en las principales bases de datos internacionales.\\u00a0\",\"image\":\"https:\\/\\/www.juntadeandalucia.es\\/sites\\/default\\/files\\/2020-11\\/imagen_noticia_por_defecto.png\",\"external_url\":\"https:\\/\\/www.juntadeandalucia.es\\/servicios\\/actualidad\\/noticias\\/detalle\\/277532.html\",\"category\":\"Noticia\",\"enhanced_interactive\":true,\"enhanced\":true,\"request_data\":{\"enhancer\":\"DBpedia\",\"text\":\"Un trabajo sobre comportamientos en salud de la Sierra de C\\u00e1diz y elaborado por una enfermera del Dispositivo de Cuidados Cr\\u00edticos y Urgencias (DCCU de Olvera) de la Sierra de C\\u00e1diz, en el \\u00c1rea de Gesti\\u00f3n Sanitaria de Jerez, Costa Noroeste y Sierra de C\\u00e1diz, ha sido publicado en la Revista Internacional Journal of Tissue Viability, cuyo factor de impacto hace que est\\u00e9 situada en el ranking de los primeros puestos.\\u00a0Adem\\u00e1s de ser enfermera en este DCCU, Mar\\u00eda de los Santos O\\u00f1ate Tenorio, es tambi\\u00e9n profesora asociada de la Facultad de Enfermer\\u00eda y Fisioterapia en la Universidad de C\\u00e1diz, y ha realizado esta publicaci\\u00f3n junto a la vicerrectora en Ciencias de la Salud, Ana Mar\\u00eda Garc\\u00eda Ba\\u00f1\\u00f3n, y a Antonio O\\u00f1ate Tenorio, doctorando en Ciencias Sociales.\\u00a0El estudio tiene como objetivo conocer si existen mitos y creencias en salud, describirlos, indagar si perduran y recopilar los m\\u00e1s comunes en la Sierra de C\\u00e1diz.As\\u00ed, el art\\u00edculo proviene de la tesis doctoral realizada y dirigida respectivamente por O\\u00f1ate Tenorio y Garc\\u00eda Ba\\u00f1\\u00f3n, basada en el estudio de la relaci\\u00f3n entre salud y medio rural. Como explican las dos autoras en el trabajo, a lo largo de la historia y del tiempo ha existido la pr\\u00e1ctica y persistencia de conductas y comportamientos en salud basados en la medicina tradicional, ya que toda persona que sufre un padecimiento siente el anhelo de sanar y mitigar sus manifestaciones negativas, es por ello que el ser humano adem\\u00e1s de hacer uso de la ciencia de la medicina, busca en otros conocimientos y hace uso del saber popular, remedios caseros, creencias, mitos, conductas o modos de proceder para obtener alivio de su malestar.En este proyecto se realiza un estudio descriptivo, observacional y transversal en el que participan 45 profesionales sanitarios de la zona de estudio, llevando a cabo un an\\u00e1lisis cuantitativo y cualitativo de los datos obtenidos, utilizando para ello una metodolog\\u00eda mixta de investigaci\\u00f3n.Entre los resultados m\\u00e1s destacados cabe subrayar que un 73,3% de la poblaci\\u00f3n tiene mitos o creencias sobre la salud, siendo el m\\u00e1s destacado la asistencia a curanderas y el remedio del herpes en un 70%, as\\u00ed como mitos y creencias referentes a la alimentaci\\u00f3n.Como conclusi\\u00f3n, este estudio detalla todos y cada uno de los mitos y creencias relativos a la salud y alimentaci\\u00f3n de la Sierra de C\\u00e1diz descritos por los profesionales de la salud, y abre e incentiva nuevas l\\u00edneas de investigaci\\u00f3n poniendo de manifiesto la necesidad de desarrollar campa\\u00f1as de educaci\\u00f3n e implementar programas de educaci\\u00f3n sanitaria en lo que a medicina tradicional se refiere.Adem\\u00e1s de haber sido publicado en esta revista, en el enlace https:\\/\\/www.sciencedirect.com\\/science\\/article\\/abs\\/pii\\/S0965206X2200002X?v=s5, el trabajo est\\u00e1 indexado en las principales bases de datos internacionales.\\u00a0\",\"options\":{\"0\":{\"confidence\":1,\"extra_links\":true},\"extra_links\":true},\"interactive\":\"1\",\"filename\":null,\"extra_links\":\"1\"},\"active\":true,\"entities_linked\":[{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":48,\"end\":64,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"Urgencias\",\"confidence\":0.9999999857968761,\"type\":\"Other\",\"start\":133,\"end\":142,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina_de_emergencia\"},{\"name\":\"Olvera\",\"confidence\":1,\"type\":\"Place\",\"start\":152,\"end\":158,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Olvera\"},{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":166,\"end\":182,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"Jerez\",\"confidence\":0.9999845327709157,\"type\":\"Place\",\"start\":218,\"end\":223,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Jerez_de_la_Frontera\"},{\"name\":\"Costa Noroeste\",\"confidence\":0.9999903927045969,\"type\":\"Place\",\"start\":225,\"end\":239,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Costa_Noroeste_de_C\\u00e1diz\"},{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":242,\"end\":258,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"factor de impacto\",\"confidence\":1,\"type\":\"Other\",\"start\":339,\"end\":356,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Factor_de_impacto\"},{\"name\":\"O\\u00f1ate\",\"confidence\":0.9977452825509624,\"type\":\"Place\",\"start\":476,\"end\":482,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/O\\u00f1ate\"},{\"name\":\"Enfermer\\u00eda\",\"confidence\":0.9995344910403624,\"type\":\"Other\",\"start\":539,\"end\":550,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Enfermer\\u00eda\"},{\"name\":\"Fisioterapia\",\"confidence\":1,\"type\":\"Other\",\"start\":552,\"end\":564,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Fisioterapia\"},{\"name\":\"Universidad de C\\u00e1diz\",\"confidence\":0.9999999995484359,\"type\":\"Organization\",\"start\":571,\"end\":592,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Universidad_de_C\\u00e1diz\"},{\"name\":\"Ba\\u00f1\\u00f3n\",\"confidence\":0.9479056560975558,\"type\":\"Place\",\"start\":691,\"end\":698,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Ba\\u00f1\\u00f3n\"},{\"name\":\"O\\u00f1ate\",\"confidence\":0.9977452825509624,\"type\":\"Place\",\"start\":710,\"end\":716,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/O\\u00f1ate\"},{\"name\":\"O\\u00f1ate\",\"confidence\":0.9994277594828974,\"type\":\"Place\",\"start\":1008,\"end\":1014,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/O\\u00f1ate\"},{\"name\":\"Ba\\u00f1\\u00f3n\",\"confidence\":0.9479056560975558,\"type\":\"Place\",\"start\":1031,\"end\":1038,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Ba\\u00f1\\u00f3n\"},{\"name\":\"medicina tradicional\",\"confidence\":0.9999956956386865,\"type\":\"Other\",\"start\":1278,\"end\":1298,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina_tradicional\"},{\"name\":\"ciencia\",\"confidence\":0.9999999993001438,\"type\":\"Other\",\"start\":1469,\"end\":1476,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Ciencia\"},{\"name\":\"medicina\",\"confidence\":0.9999999997985469,\"type\":\"Other\",\"start\":1483,\"end\":1491,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina\"},{\"name\":\"estudio descriptivo\",\"confidence\":1,\"type\":\"Other\",\"start\":1684,\"end\":1703,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Estudio_descriptivo\"},{\"name\":\"herpes\",\"confidence\":0.9960802530483894,\"type\":\"Other\",\"start\":2131,\"end\":2137,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Herpes_simple\"},{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":2327,\"end\":2343,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"medicina tradicional\",\"confidence\":0.9999956956386865,\"type\":\"Other\",\"start\":2570,\"end\":2590,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina_tradicional\"},{\"name\":\"abs\",\"confidence\":0.9999668760473954,\"type\":\"Other\",\"start\":2709,\"end\":2712,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sistema_antibloqueo_de_ruedas\"},{\"name\":\"bases de datos\",\"confidence\":0.9999999992703579,\"type\":\"Other\",\"start\":2785,\"end\":2799,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Base_de_datos\"}],\"entities_non_linked\":[]}}",
+									"type": "text"
 								}
-							}
+							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/book/123456/links",
+							"raw": "{{url}}{{api}}/semantic/documents/000260b4-85a0-442a-bc0e-a3ea86b61972",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
-								"resource",
-								"book",
-								"123456",
-								"links"
+								"semantic",
+								"documents",
+								"000260b4-85a0-442a-bc0e-a3ea86b61972"
 							]
 						}
 					},
-					"response": [
-						{
-							"name": "✔ Delete some units",
-							"originalRequest": {
-								"method": "DELETE",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"units\": [0, 2]\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{url}}{{api}}/resource/book/123456/links",
-									"host": [
-										"{{url}}{{api}}"
-									],
-									"path": [
-										"resource",
-										"book",
-										"123456",
-										"links"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "html",
-							"header": [
-								{
-									"key": "Date",
-									"value": "Fri, 29 Apr 2022 10:53:28 GMT"
-								},
-								{
-									"key": "Server",
-									"value": "Apache/2.4.53 (Unix) OpenSSL/1.1.1n PHP/7.4.28 mod_perl/2.0.12 Perl/v5.34.1"
-								},
-								{
-									"key": "Vary",
-									"value": "Authorization,Origin"
-								},
-								{
-									"key": "X-Powered-By",
-									"value": "PHP/7.4.28"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, private"
-								},
-								{
-									"key": "X-RateLimit-Limit",
-									"value": "1800"
-								},
-								{
-									"key": "X-RateLimit-Remaining",
-									"value": "1799"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								},
-								{
-									"key": "Access-Control-Allow-Credentials",
-									"value": "true"
-								},
-								{
-									"key": "Access-Control-Allow-Methods",
-									"value": "GET, POST, PUT, DELETE, OPTIONS"
-								},
-								{
-									"key": "Content-Length",
-									"value": "0"
-								},
-								{
-									"key": "Keep-Alive",
-									"value": "timeout=5, max=100"
-								},
-								{
-									"key": "Connection",
-									"value": "Keep-Alive"
-								},
-								{
-									"key": "Content-Type",
-									"value": "text/html; charset=UTF-8"
-								}
-							],
-							"cookie": [],
-							"body": null
-						}
-					]
+					"response": []
 				},
 				{
-					"name": "DELETE BOOK ALL UNIT LINKS",
+					"name": "PATCH",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "_method",
+									"value": "PATCH",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "Esto es una prueba",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"value": "{\"description\":{\"id\":\"drupal8JdA-316366\",\"uuid\":\"000260b4-85a0-442a-bc0e-a3ea86b61972\",\"language\":\"es\",\"title\":\"Un retrabajo sobre comportamientos en salud en la Sierra de C\\u00e1diz, publicado en una revista internacional\\u00a0\",\"body\":\"Un trabajo sobre comportamientos en salud de la Sierra de C\\u00e1diz y elaborado por una enfermera del Dispositivo de Cuidados Cr\\u00edticos y Urgencias (DCCU de Olvera) de la Sierra de C\\u00e1diz, en el \\u00c1rea de Gesti\\u00f3n Sanitaria de Jerez, Costa Noroeste y Sierra de C\\u00e1diz, ha sido publicado en la Revista Internacional Journal of Tissue Viability, cuyo factor de impacto hace que est\\u00e9 situada en el ranking de los primeros puestos.\\u00a0Adem\\u00e1s de ser enfermera en este DCCU, Mar\\u00eda de los Santos O\\u00f1ate Tenorio, es tambi\\u00e9n profesora asociada de la Facultad de Enfermer\\u00eda y Fisioterapia en la Universidad de C\\u00e1diz, y ha realizado esta publicaci\\u00f3n junto a la vicerrectora en Ciencias de la Salud, Ana Mar\\u00eda Garc\\u00eda Ba\\u00f1\\u00f3n, y a Antonio O\\u00f1ate Tenorio, doctorando en Ciencias Sociales.\\u00a0El estudio tiene como objetivo conocer si existen mitos y creencias en salud, describirlos, indagar si perduran y recopilar los m\\u00e1s comunes en la Sierra de C\\u00e1diz.As\\u00ed, el art\\u00edculo proviene de la tesis doctoral realizada y dirigida respectivamente por O\\u00f1ate Tenorio y Garc\\u00eda Ba\\u00f1\\u00f3n, basada en el estudio de la relaci\\u00f3n entre salud y medio rural. Como explican las dos autoras en el trabajo, a lo largo de la historia y del tiempo ha existido la pr\\u00e1ctica y persistencia de conductas y comportamientos en salud basados en la medicina tradicional, ya que toda persona que sufre un padecimiento siente el anhelo de sanar y mitigar sus manifestaciones negativas, es por ello que el ser humano adem\\u00e1s de hacer uso de la ciencia de la medicina, busca en otros conocimientos y hace uso del saber popular, remedios caseros, creencias, mitos, conductas o modos de proceder para obtener alivio de su malestar.En este proyecto se realiza un estudio descriptivo, observacional y transversal en el que participan 45 profesionales sanitarios de la zona de estudio, llevando a cabo un an\\u00e1lisis cuantitativo y cualitativo de los datos obtenidos, utilizando para ello una metodolog\\u00eda mixta de investigaci\\u00f3n.Entre los resultados m\\u00e1s destacados cabe subrayar que un 73,3% de la poblaci\\u00f3n tiene mitos o creencias sobre la salud, siendo el m\\u00e1s destacado la asistencia a curanderas y el remedio del herpes en un 70%, as\\u00ed como mitos y creencias referentes a la alimentaci\\u00f3n.Como conclusi\\u00f3n, este estudio detalla todos y cada uno de los mitos y creencias relativos a la salud y alimentaci\\u00f3n de la Sierra de C\\u00e1diz descritos por los profesionales de la salud, y abre e incentiva nuevas l\\u00edneas de investigaci\\u00f3n poniendo de manifiesto la necesidad de desarrollar campa\\u00f1as de educaci\\u00f3n e implementar programas de educaci\\u00f3n sanitaria en lo que a medicina tradicional se refiere.Adem\\u00e1s de haber sido publicado en esta revista, en el enlace https:\\/\\/www.sciencedirect.com\\/science\\/article\\/abs\\/pii\\/S0965206X2200002X?v=s5, el trabajo est\\u00e1 indexado en las principales bases de datos internacionales.\\u00a0\",\"image\":\"https:\\/\\/www.juntadeandalucia.es\\/sites\\/default\\/files\\/2020-11\\/imagen_noticia_por_defecto.png\",\"external_url\":\"https:\\/\\/www.juntadeandalucia.es\\/servicios\\/actualidad\\/noticias\\/detalle\\/277532.html\",\"category\":\"Noticia\",\"enhanced_interactive\":true,\"enhanced\":true,\"request_data\":{\"enhancer\":\"DBpedia\",\"text\":\"Un trabajo sobre comportamientos en salud de la Sierra de C\\u00e1diz y elaborado por una enfermera del Dispositivo de Cuidados Cr\\u00edticos y Urgencias (DCCU de Olvera) de la Sierra de C\\u00e1diz, en el \\u00c1rea de Gesti\\u00f3n Sanitaria de Jerez, Costa Noroeste y Sierra de C\\u00e1diz, ha sido publicado en la Revista Internacional Journal of Tissue Viability, cuyo factor de impacto hace que est\\u00e9 situada en el ranking de los primeros puestos.\\u00a0Adem\\u00e1s de ser enfermera en este DCCU, Mar\\u00eda de los Santos O\\u00f1ate Tenorio, es tambi\\u00e9n profesora asociada de la Facultad de Enfermer\\u00eda y Fisioterapia en la Universidad de C\\u00e1diz, y ha realizado esta publicaci\\u00f3n junto a la vicerrectora en Ciencias de la Salud, Ana Mar\\u00eda Garc\\u00eda Ba\\u00f1\\u00f3n, y a Antonio O\\u00f1ate Tenorio, doctorando en Ciencias Sociales.\\u00a0El estudio tiene como objetivo conocer si existen mitos y creencias en salud, describirlos, indagar si perduran y recopilar los m\\u00e1s comunes en la Sierra de C\\u00e1diz.As\\u00ed, el art\\u00edculo proviene de la tesis doctoral realizada y dirigida respectivamente por O\\u00f1ate Tenorio y Garc\\u00eda Ba\\u00f1\\u00f3n, basada en el estudio de la relaci\\u00f3n entre salud y medio rural. Como explican las dos autoras en el trabajo, a lo largo de la historia y del tiempo ha existido la pr\\u00e1ctica y persistencia de conductas y comportamientos en salud basados en la medicina tradicional, ya que toda persona que sufre un padecimiento siente el anhelo de sanar y mitigar sus manifestaciones negativas, es por ello que el ser humano adem\\u00e1s de hacer uso de la ciencia de la medicina, busca en otros conocimientos y hace uso del saber popular, remedios caseros, creencias, mitos, conductas o modos de proceder para obtener alivio de su malestar.En este proyecto se realiza un estudio descriptivo, observacional y transversal en el que participan 45 profesionales sanitarios de la zona de estudio, llevando a cabo un an\\u00e1lisis cuantitativo y cualitativo de los datos obtenidos, utilizando para ello una metodolog\\u00eda mixta de investigaci\\u00f3n.Entre los resultados m\\u00e1s destacados cabe subrayar que un 73,3% de la poblaci\\u00f3n tiene mitos o creencias sobre la salud, siendo el m\\u00e1s destacado la asistencia a curanderas y el remedio del herpes en un 70%, as\\u00ed como mitos y creencias referentes a la alimentaci\\u00f3n.Como conclusi\\u00f3n, este estudio detalla todos y cada uno de los mitos y creencias relativos a la salud y alimentaci\\u00f3n de la Sierra de C\\u00e1diz descritos por los profesionales de la salud, y abre e incentiva nuevas l\\u00edneas de investigaci\\u00f3n poniendo de manifiesto la necesidad de desarrollar campa\\u00f1as de educaci\\u00f3n e implementar programas de educaci\\u00f3n sanitaria en lo que a medicina tradicional se refiere.Adem\\u00e1s de haber sido publicado en esta revista, en el enlace https:\\/\\/www.sciencedirect.com\\/science\\/article\\/abs\\/pii\\/S0965206X2200002X?v=s5, el trabajo est\\u00e1 indexado en las principales bases de datos internacionales.\\u00a0\",\"options\":{\"0\":{\"confidence\":1,\"extra_links\":true},\"extra_links\":true},\"interactive\":\"1\",\"filename\":null,\"extra_links\":\"1\"},\"active\":true,\"entities_linked\":[{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":48,\"end\":64,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"Urgencias\",\"confidence\":0.9999999857968761,\"type\":\"Other\",\"start\":133,\"end\":142,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina_de_emergencia\"},{\"name\":\"Olvera\",\"confidence\":1,\"type\":\"Place\",\"start\":152,\"end\":158,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Olvera\"},{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":166,\"end\":182,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"Jerez\",\"confidence\":0.9999845327709157,\"type\":\"Place\",\"start\":218,\"end\":223,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Jerez_de_la_Frontera\"},{\"name\":\"Costa Noroeste\",\"confidence\":0.9999903927045969,\"type\":\"Place\",\"start\":225,\"end\":239,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Costa_Noroeste_de_C\\u00e1diz\"},{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":242,\"end\":258,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"factor de impacto\",\"confidence\":1,\"type\":\"Other\",\"start\":339,\"end\":356,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Factor_de_impacto\"},{\"name\":\"O\\u00f1ate\",\"confidence\":0.9977452825509624,\"type\":\"Place\",\"start\":476,\"end\":482,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/O\\u00f1ate\"},{\"name\":\"Enfermer\\u00eda\",\"confidence\":0.9995344910403624,\"type\":\"Other\",\"start\":539,\"end\":550,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Enfermer\\u00eda\"},{\"name\":\"Fisioterapia\",\"confidence\":1,\"type\":\"Other\",\"start\":552,\"end\":564,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Fisioterapia\"},{\"name\":\"Universidad de C\\u00e1diz\",\"confidence\":0.9999999995484359,\"type\":\"Organization\",\"start\":571,\"end\":592,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Universidad_de_C\\u00e1diz\"},{\"name\":\"Ba\\u00f1\\u00f3n\",\"confidence\":0.9479056560975558,\"type\":\"Place\",\"start\":691,\"end\":698,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Ba\\u00f1\\u00f3n\"},{\"name\":\"O\\u00f1ate\",\"confidence\":0.9977452825509624,\"type\":\"Place\",\"start\":710,\"end\":716,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/O\\u00f1ate\"},{\"name\":\"O\\u00f1ate\",\"confidence\":0.9994277594828974,\"type\":\"Place\",\"start\":1008,\"end\":1014,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/O\\u00f1ate\"},{\"name\":\"Ba\\u00f1\\u00f3n\",\"confidence\":0.9479056560975558,\"type\":\"Place\",\"start\":1031,\"end\":1038,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Ba\\u00f1\\u00f3n\"},{\"name\":\"medicina tradicional\",\"confidence\":0.9999956956386865,\"type\":\"Other\",\"start\":1278,\"end\":1298,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina_tradicional\"},{\"name\":\"ciencia\",\"confidence\":0.9999999993001438,\"type\":\"Other\",\"start\":1469,\"end\":1476,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Ciencia\"},{\"name\":\"medicina\",\"confidence\":0.9999999997985469,\"type\":\"Other\",\"start\":1483,\"end\":1491,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina\"},{\"name\":\"estudio descriptivo\",\"confidence\":1,\"type\":\"Other\",\"start\":1684,\"end\":1703,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Estudio_descriptivo\"},{\"name\":\"herpes\",\"confidence\":0.9960802530483894,\"type\":\"Other\",\"start\":2131,\"end\":2137,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Herpes_simple\"},{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":2327,\"end\":2343,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"medicina tradicional\",\"confidence\":0.9999956956386865,\"type\":\"Other\",\"start\":2570,\"end\":2590,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina_tradicional\"},{\"name\":\"abs\",\"confidence\":0.9999668760473954,\"type\":\"Other\",\"start\":2709,\"end\":2712,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sistema_antibloqueo_de_ruedas\"},{\"name\":\"bases de datos\",\"confidence\":0.9999999992703579,\"type\":\"Other\",\"start\":2785,\"end\":2799,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Base_de_datos\"}],\"entities_non_linked\":[]}}",
+									"type": "text"
+								},
+								{
+									"key": "collection_id",
+									"value": "6",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"value": "{\"description\": {\"language\": \"fr\"}}",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/semantic/documents/000260b4-85a0-442a-bc0e-a3ea86b61972",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"semantic",
+								"documents",
+								"000260b4-85a0-442a-bc0e-a3ea86b61972"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{url}}{{api}}/resource/book/123456/links/all",
+							"raw": "{{url}}{{api}}/semantic/documents/000260b4-85a0-442a-bc0e-a3ea86b61972",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
-								"resource",
-								"book",
-								"123456",
-								"links",
-								"all"
+								"semantic",
+								"documents",
+								"000260b4-85a0-442a-bc0e-a3ea86b61972"
 							]
 						}
 					},
-					"response": [
-						{
-							"name": "✔ Delete all units",
-							"originalRequest": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{url}}{{api}}/resource/book/123456/links/all",
-									"host": [
-										"{{url}}{{api}}"
-									],
-									"path": [
-										"resource",
-										"book",
-										"123456",
-										"links",
-										"all"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "html",
-							"header": [
-								{
-									"key": "Date",
-									"value": "Fri, 29 Apr 2022 10:54:02 GMT"
-								},
-								{
-									"key": "Server",
-									"value": "Apache/2.4.53 (Unix) OpenSSL/1.1.1n PHP/7.4.28 mod_perl/2.0.12 Perl/v5.34.1"
-								},
-								{
-									"key": "Vary",
-									"value": "Authorization,Origin"
-								},
-								{
-									"key": "X-Powered-By",
-									"value": "PHP/7.4.28"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, private"
-								},
-								{
-									"key": "X-RateLimit-Limit",
-									"value": "1800"
-								},
-								{
-									"key": "X-RateLimit-Remaining",
-									"value": "1798"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								},
-								{
-									"key": "Access-Control-Allow-Credentials",
-									"value": "true"
-								},
-								{
-									"key": "Access-Control-Allow-Methods",
-									"value": "GET, POST, PUT, DELETE, OPTIONS"
-								},
-								{
-									"key": "Content-Length",
-									"value": "0"
-								},
-								{
-									"key": "Keep-Alive",
-									"value": "timeout=5, max=100"
-								},
-								{
-									"key": "Connection",
-									"value": "Keep-Alive"
-								},
-								{
-									"key": "Content-Type",
-									"value": "text/html; charset=UTF-8"
-								}
+					"response": []
+				},
+				{
+					"name": "GET ALL",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": null
+					},
+					"response": []
+				},
+				{
+					"name": "GET",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": null
+					},
+					"response": []
+				},
+				{
+					"name": "STORE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}{{api}}/semantic/documents",
+							"host": [
+								"{{url}}{{api}}"
 							],
-							"cookie": [],
-							"body": null
+							"path": [
+								"semantic",
+								"documents"
+							]
 						}
-					]
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE WITH ENHANCEMENT",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "options",
+									"value": "test",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}{{api}}/semantic/documents/000260b4-85a0-442a-bc0e-a3ea86b61972/enhance?enhancer=All",
+							"host": [
+								"{{url}}{{api}}"
+							],
+							"path": [
+								"semantic",
+								"documents",
+								"000260b4-85a0-442a-bc0e-a3ea86b61972",
+								"enhance"
+							],
+							"query": [
+								{
+									"key": "enhancer",
+									"value": "All"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -3167,7 +2760,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiODAyNWMyNjRmMmU0YjVkNWQxODFmMzEwNmQ4NmM2ZDU2M2U5OGRlY2Q5ZDY5MDFlYzk0YzhmNThiNGViYTI4NWY4OGFmMTU3Yjk5NTc4NjEiLCJpYXQiOiIxNjUwNTQwMzI0LjMxOTMxMSIsIm5iZiI6IjE2NTA1NDAzMjQuMzE5MzE2IiwiZXhwIjoiMTY2NjM1MTUyNC4yMTc5MjAiLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.EiDyxfUlxyA-kVIu2ZPZ6rYrP35OOHzCEOsvMHnD5c5-iy3vvLvc8ifDqskdFQ70EfgYHb2M_QX2tHdBZ6tD4y5XyMQ-HQ82TZUPXhD0Q0xhvnrSDEkWZcxhlIY4y5181nJIhr8QwBkcY_abcB-EMcEsiuuHu3epy5Z_hPBriwaqsukKU8uarY53yLrvC9fcgWzIAVQGw9BSGsDSB2n5Y3-qkR9Udk9cYbTh1yaQbIKm5pDX5lXpZRN49M4AJBZDQUEaTosqf3ca00CRhn2hCcm6gQZ_1c-DSnwHtkR6LhU0_TNJNYShHEEqcjG3-DFiKBrvDgSmBc3mc41qdtTDMHaYOYthxDOUFoFDmRiSmp668fvgM2M77hBgDB6zPceJrD_jx4VeM2IW_hmEHbyzvMA0bfRho2ML-DH_mBkvz0cxG1t78H7-T9fnkp7PlVqU78MHbcKzV9X-sKUKE46DHGR5-89bSkj6_BtbTBrKnILNU2NMSHQ59tVSP5AtxD12_J4D1z1TRP02jmpiet-VvcCdZ4nG4Nw7FXB2-uFrBh_IVsp7XkGMHKi0D7wThvoHE9-ZDUzyCww4Ig2AN1z7pDZhqAOMtzXe7cqz4L2ENMrOM4tyYKBCNaQu5K8tVvUL9mHpEJjVhrOnIP5lv0x4n7Q5bqH2uOXiyzkzFA62u-c",
+				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiMjU4N2FkZmFkYzkyMWE1NTBkZTgwMDk1NTc4YjM2OTcxMDI4M2NkZTFjM2FkZjlmNGIyYjA4OGMzMTI4OGRkNDg0ZmQzNmY2NmM3N2YwZTciLCJpYXQiOiIxNjQzMjc1NzU1Ljg5ODg3NSIsIm5iZiI6IjE2NDMyNzU3NTUuODk4ODk1IiwiZXhwIjoiMTY1ODkxNDE1NS4wNTY1ODkiLCJzdWIiOiI2Iiwic2NvcGVzIjpbXX0.jIVdT2jYmIrL2LuF7-jrMWnehg5CMP5ZnlXVc_mLU8aSVyS6nvyW9f6TZey0bEePz1UxNvz1rw8v9nXep9E1aUKqxJ6TMDY9dVUY1H2v1NGFxF2uSztlqfE46NTStcKoGoLDLVJeXXDp9-UQucMDXpzpQkujGQ_fnHi58r2Ac84CcULxpgI_kWtla1PyZtgenD97mDr8Wfb9-7y-hL-mX03kbJc-IQKkniC_hLOPMpTNxPQRcTNQlrQe6Cnpk6HdnWN3QhhxkMXaz_6gDZiMdypIaPiReA0hRpDoYa0Wu8urovwvqk0wFhs34Y-HSxP3TA0RCM0o42-woqWvmPK3nsafql9T7HdCNs89vK1_YVT9X0dzvv9E1_tnRTThmu6MRugc_jIMvOjAHi5jDX58pqE7FopwH8SjgbMZl8MXtXYpg3BpAsbotzvvjgAlpSA5iadFhGdFVo7svzkOtVciB9-aIKJoTniQK2xaOBhy-7la2_Ycl_qtWI8CMNCGO48Mx6M7CQryBYZoCjn_nbesIa9ey5f3b7Dn7lCaHl85w3Yu0vRHWWLZhDmO3IsB_EDXdi-0_-XGXAqopThKRQ7lll8BCb5HOH-alatIYU7QhoT9oSyrRTExowk9AoS_8vsPqRkf7ZhamD86yg38BWpaxRUYvB_AoR5DB8hZAvhy8q4",
 				"type": "string"
 			}
 		]
@@ -3209,7 +2802,7 @@
 		},
 		{
 			"key": "url",
-			"value": "http://localhost/projects/xdam/backend/public"
+			"value": "http://localhost:8001/xdam/backend/public"
 		},
 		{
 			"key": "url",
