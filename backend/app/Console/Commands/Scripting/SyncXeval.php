@@ -70,7 +70,7 @@ class SyncXeval extends Command
             $this->line('Init sync XEVAL resources');
             if ($type === self::ACTIVITY || $type === strtoupper(self::ACTIVITY) || $type == null || $type == 'ALL') {
                 $this->line('Sync resources of type '.self::ACTIVITY);
-                $this->handleActivity($superAdmin);
+                $this-> handleActivity($superAdmin);
             }
             if ($type === self::ASSESSMENT || $type === strtoupper(self::ASSESSMENT) || $type == null || $type == 'ALL') {
                 $this->line('Sync resources of type '.self::ASSESSMENT);
@@ -190,6 +190,7 @@ class SyncXeval extends Command
     {
         foreach ($data as $resource) {
             $damResource = DamResource::where('external_id', $resource['external_id'])->first();
+            $resourceJson = json_encode((array)$resource);
             if ($damResource) {
                 $this->resourceService->update($damResource, $resource);
             } else {
