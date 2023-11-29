@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Solr\SolrController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +16,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return response()->json(['status' => 'OK', 'message' => 'contact with your provider']);
+});
+
+
+Route::group(['prefix' => 'solr'], function() {
+    Route::any('/{core}/{action}', [SolrController::class, 'handle'])->name('solr.handleQuerySolr');
 });

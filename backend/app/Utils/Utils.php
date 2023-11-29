@@ -3,6 +3,8 @@
 namespace App\Utils;
 
 use App\Models\Workspace;
+use Exception;
+use Illuminate\Support\Facades\File;
 
 class Utils
 {
@@ -62,6 +64,14 @@ class Utils
         return $full_array;
     }
 
+    public static function getJsonFile($path, $associative = false, $error_message = false)
+    {
+        if (!File::exists($path)) {
+            throw new Exception($error_message ? $error_message : 'missing file at ' . $path);
+        }
+
+        return json_decode(file_get_contents($path), $associative);
+    }
     public static function getLomSchema($asArray = false)
     {
         $json_file = file_get_contents(storage_path('/lom') . '/lomSchema.json');

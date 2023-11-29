@@ -6,7 +6,7 @@ use Carbon\Carbon;
 
 trait AuthTrait{
 
-	protected function token($personalAccessToken, $message = null, $code = 200, $user_id): array
+	protected function token($personalAccessToken, $user_id, $code = 200,$message = null): array
 	{
 		$tokenData = [
 			'access_token' => $personalAccessToken->accessToken,

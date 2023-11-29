@@ -22,14 +22,59 @@ class ActivitySolrResource extends BaseSolrResource
         return $categories ?? [''];
     }
 
+    protected function getISBNs() {
+        $array = [];
+        $isbns = $this->data->description->isbn ?? $this->data->description->isbns ?? [];
+        if (is_string($isbns)){
+            $isbns = [$isbns];
+        }
+        foreach ($isbns as $isbnString) {
+            $array = array_merge($array, explode(',', $isbnString));
+        }
+        $isbns_output = [];
+        foreach ($array as $item) {
+            $isbns_output = trim($item);
+        }
+        return $isbns_output;
+    }
+
     protected function getType()
     {
-        return ResourceType::activity;
+        return $this->data->description->type;
     }
 
     protected function getCoreResourceType()
     {
         return ResourceType::activity;
+    }
+
+    protected function getLanguageDefault()
+    {
+        return $this->data->description->language_default ?? getenv('BOOK_DEFAULT_LANGUAGE');
+    }
+
+    protected function getAvailableLanguages()
+    {
+        $available_languages = $this->data->description->available_languages ?? [];
+
+        return array_unique(array_merge([$this->getLanguageDefault()], $available_languages));
+    }
+
+    protected function getUnits()
+    {
+        $data_units = $this->data->description->unit ?? $this->data->description->units ?? [];
+        $units = [];
+
+        foreach ($data_units as $unit) {
+            if (strlen((string) $unit) === 1  && intval($unit) < 10) {
+                $units[] = "0" + (string) $unit;
+            } elseif (strlen((string) $unit) > 2 && str_starts_with($unit, '0')) {
+                $units[] = substr($unit, 1);
+            } else {
+                $untis[] = $unit;
+            }
+        }
+        return $units;
     }
 
     /**
@@ -40,6 +85,7 @@ class ActivitySolrResource extends BaseSolrResource
      */
     public function toArray($request)
     {
+        $semanticTags = $this->getSemanticTags();
         return [
             'id'                    => $this->getID(),
             'name'                  => $this->getName(),
@@ -55,10 +101,17 @@ class ActivitySolrResource extends BaseSolrResource
             'organization'          => $this->getOrganization(),
             'collections'           => $this->getCollections(),
             'core_resource_type'    => $this->getCoreResourceType(),
+            'semantic_tags'         => $this->formatSemanticTags($semanticTags),
             'created_at'            => $this->created_at,
             'updated_at'            => $this->updated_at,
             'lom'                   => $this->getLOMValues(),
-            'lomes'                 => $this->getLOMValues('lomes')
+            'lomes'                 => $this->getLOMValues('lomes'),
+            'unit'                  => $this->getUnits(),
+            'isbn'                  => $this->getISBNs(),
+            'language_default'      => $this->getLanguageDefault(),
+            'available_languages'   => $this->getAvailableLanguages(),
+            'assessments'           => $this->data->description->assessments ?? [],
+            'xeval_id'              => $this->data->description->xeval_id
         ];
     }
 }

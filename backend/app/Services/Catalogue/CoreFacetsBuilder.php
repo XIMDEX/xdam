@@ -7,6 +7,7 @@ class CoreFacetsBuilder {
     private $and_facets = []; //add here facets with AND operator behaviour. Example ['tags']; The default operator is OR
     private $formedList;
 
+
     public function __construct()
     {
         $this->coreList = [
@@ -27,7 +28,7 @@ class CoreFacetsBuilder {
                 "currency",
                 "cost",
                 // "lom",
-                // "lomes"
+                "lomes"
             ],
             "multimedia" => [
                 "categories",
@@ -35,32 +36,43 @@ class CoreFacetsBuilder {
                 "type",
                 "tags",
                 "workspaces",
+                //"semantic_tags",
                 // "lom",
-                // "lomes"
+                "lomes"
             ],
             "document" => [
                 "categories",
                 "active",
                 "type",
-                "types",
+                "semantic_tags",
+               // "types",
                 "tags",
                 "workspaces",
                 // "lom",
-                // "lomes"
+                "lomes"
             ],
             "activity" => [
                 "categories",
                 "active",
+                "isbn",
+                "unit",
+                "language_default",
+                "available_languages",
+                "assessments",
                 "workspaces",
+                "type",
                 // "lom",
-                // "lomes"
+                "lomes"
             ],
             "assessment" => [
                 "categories",
                 "active",
                 "workspaces",
+                "isbn",
+                "unit",
+                "activities",
                 // "lom",
-                // "lomes"
+                "lomes"
             ],
             "book" => [
                 "categories",
@@ -68,10 +80,11 @@ class CoreFacetsBuilder {
                 "tags",
                 "workspaces",
                 "isbn",
-                "units",
+                "unit",
+                'units',
                 "lang",
                 // "lom",
-                // "lomes"
+                "lomes"
             ]
         ];
     }

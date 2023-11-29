@@ -13,12 +13,12 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\CorporationController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\ResourceJsonController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SemanticController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkspaceController;
 
-
-use App\Services\Solr\SolrService;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,7 +32,7 @@ use App\Services\Solr\SolrService;
 */
 
 Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
-    Route::get('temp', function() { 
+    Route::get('temp', function() {
         return response()->json(['status' => 'OK']);
     });
 
@@ -71,6 +71,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
         });
 
         Route::group(['prefix' => 'resource'], function() {
+            Route::get('/{damResourceHash}/render',        [ResourceController::class, 'renderCDNResourceFile'])->name('damResource.renderCDNResource');
             Route::get('/{damResourceHash}',        [ResourceController::class, 'renderCDNResource'])->name('damResource.renderCDNResource');
             Route::get('/{damResourceHash}/{size}', [ResourceController::class, 'renderCDNResource'])->name('damResource.renderCDNResourceWithSize');
         });
@@ -89,11 +90,12 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
             Route::get('/{damResource}',            [ResourceController::class, 'get'])->name('damResource.get');
             Route::get('/lastCreated/{collection}', [CollectionController::class, 'getLastResourceCreated'])->name('collection.get.lastCreated');
             Route::get('/lastUpdated/{collection}', [CollectionController::class, 'getLastResourceUpdated'])->name('collection.get.lastUpdated');
+            Route::get('/json/{damResource}',       [ResourceJsonController::class, 'getJsonFile'])->name('damResource.getJson');
         });
     });
 
     Route::get('/exploreCourses', [ResourceController::class, 'exploreCourses'])->name('damResource.exploreCourses');
-    Route::get('/corporation/getDefault',                           [CorporationController::class, 'getDefault'])->name('corporation.getAll');
+    Route::get('/corporation/getDefault',                           [CorporationController::class, 'getDefault'])->name('corporation.getDefault');
 
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/ini_pms', function() {
@@ -284,5 +286,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
             Route::post('/',        [TagController::class, 'store'])->name('tag.store');
             Route::delete('/{id}',  [TagController::class, 'delete'])->name('tag.delete');
         });
+        
     });
+    
 });

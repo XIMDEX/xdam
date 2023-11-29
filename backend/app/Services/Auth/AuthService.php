@@ -16,7 +16,7 @@ class AuthService
         if (!Auth::attempt($credentials)) {
             return $this->error('Invalid credentials', 422);
         }
-        return $this->token($this->getPersonalAccessToken(), null, 200, Auth::user()->id);
+        return $this->token($this->getPersonalAccessToken(),  200, Auth::user()->id,null);
     }
 
     public function signup($credentials)
@@ -27,7 +27,7 @@ class AuthService
             'password' => Hash::make($credentials['password'])
         ]);
         Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']]);
-        return $this->token($this->getPersonalAccessToken(), 'User Created', 200, $user->id);
+        return $this->token($this->getPersonalAccessToken(), 200, $user->id,'User Created');
     }
 
     public function logout()

@@ -65,16 +65,17 @@ return [
             'classHandler'  => 'BookHandler',
             'accepts_types' => [ResourceType::book]
         ],
-        'document'  => [
-            'endpoint'      => [
-                'scheme'    => 'http', # or https
-                'host'      => env('SOLR_HOST', 'localhost'),
-                'port'      => env('SOLR_PORT', '8983'),
-                'path'      => env('SOLR_PATH', '/'),
-                'core'      => 'document',
+
+        'document' => [
+            'endpoint' => [
+                'scheme' => 'http', # or https
+                'host' => env('SOLR_HOST', 'localhost'),
+                'port' => env('SOLR_PORT', '8983'),
+                'path' => env('SOLR_PATH', '/'),
+                'core' => 'document',
             ],
-            'resource'      => 'DocumentSolrResource',
-            'classHandler'  => 'DocumentHandler',
+            'resource' => 'DocumentSolrResource',
+            'classHandler' => 'DocumentHandler',
             'accepts_types' => [ResourceType::document]
         ],
         'lom'   => [
@@ -98,8 +99,55 @@ return [
             ],
             'resource'      => 'LOMSolrResource',
             'classHandler'  => 'LOMHandler'
-        ]
+        ],
     ],
-    'solr_validators_folder'    => env('SOLR_VALIDATORS_FOLDER', ''),
-    'solr_schemas_folder'       => env('SOLR_SCHEMAS_FOLDER', ''),
+    'solr_validators_folder' => env('SOLR_VALIDATORS_FOLDER', ''),
+    'solr_schemas_folder' => env('SOLR_SCHEMAS_FOLDER', ''),
+    'solr_core_allow_external'  => explode(',', env('SOLR_CORES_ALLOW', 'multimedia,activity,assessment,book,course')),
+    'facets' => [
+        "course" => [
+            "categories",
+            "active",
+            "workspaces",
+            "tags",
+            "internal",
+            "aggregated",
+            "duration",
+            "isFree",
+            "currency",
+            "cost",
+            "skills"
+        ],
+        "multimedia" => [
+            "categories",
+            "active",
+            "type",
+            "types",
+            "tags",
+            "workspaces"
+        ],
+        "activity" => [
+            "categories",
+            "active",
+            "workspaces"
+        ],
+        "assessment" => [
+            "categories",
+            "active",
+            "workspaces"
+        ],
+        "book" => [
+            "categories",
+            "active",
+            "tags",
+            "workspaces"
+        ],
+        "document" => [
+            "category",
+            "enhanced",
+            "langcode",
+            "entities_linked",
+            "entities_non_linked"
+        ]
+    ]
 ];
