@@ -192,9 +192,9 @@ class SyncXeval extends Command
             $damResource = DamResource::where('external_id', $resource['external_id'])->first();
             $resourceJson = json_encode((array)$resource);
             if ($damResource) {
-                $this->resourceService->update($damResource, $resource);
+                $this->resourceService->update($damResource, $resourceJson);
             } else {
-                $this->resourceService->store($resource);
+                $this->resourceService->store($resourceJson);
             }
             $progressBar->advance();
         }
