@@ -72,7 +72,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
 
         Route::group(['prefix' => 'resource'], function() {
             Route::get('/{damResourceHash}/render',        [ResourceController::class, 'renderCDNResourceFile'])->name('damResource.renderCDNResource');
-            Route::get('/{damResourceHash}',        [ResourceController::class, 'renderCDNResource'])->name('damResource.renderCDNResource');
+            Route::get('/{damResourceHash}',        [ResourceController::class, 'renderCDNResource'])->name('damResource.previewCDNResource');
             Route::get('/{damResourceHash}/{size}', [ResourceController::class, 'renderCDNResource'])->name('damResource.renderCDNResourceWithSize');
         });
     });
@@ -286,7 +286,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
             Route::post('/',        [TagController::class, 'store'])->name('tag.store');
             Route::delete('/{id}',  [TagController::class, 'delete'])->name('tag.delete');
         });
-        
+
     });
-    
+
 });
