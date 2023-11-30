@@ -208,7 +208,7 @@ class SolrConfig
 
             $isValid = false;
             foreach ($aliasClient[$clientCoreName] as $auxClientCoreName) {
-                $isValid = !$isValid && !array_key_exists($auxClientCoreName, config('solarium.connections', []));
+                $isValid = !$isValid && array_key_exists($auxClientCoreName, config('solarium.connections', []));
             }
             if (!$isValid) {
                 echo "Client detected not valid for xdam \n";
