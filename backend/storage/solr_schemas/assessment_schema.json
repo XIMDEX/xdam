@@ -111,7 +111,7 @@
       "multiValued": true
     },
     "unit": {
-      "name": "text_general",
+      "name": "unit",
       "type": "pint",
       "indexed": true,
       "multiValued": true
