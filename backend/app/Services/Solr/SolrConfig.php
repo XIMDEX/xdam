@@ -5,6 +5,7 @@ namespace App\Services\Solr;
 
 
 use Exception;
+use GuzzleHttp\Client as GuzzleHttpClient;
 use Illuminate\Support\Facades\Log;
 use Solarium\Client;
 use Solarium\Core\Client\Adapter\Curl;
@@ -47,8 +48,11 @@ class SolrConfig
      */
     private function getSolariumClients($solrVersion = null): array
     {
-        $adapter = new Curl();
-        $adapter->setTimeout(0);
+        // create a PSR-18 adapter instance
+        $httpClient = new GuzzleHttpClient();
+        $factory = new \Nyholm\Psr7\Factory\Psr17Factory();
+        $adapter = new \Solarium\Core\Client\Adapter\Psr18Adapter($httpClient, $factory, $factory);
+        //$adapter->setTimeout(100000);
         $eventDispatcher = new EventDispatcher();
         $clients = [];
 
@@ -69,7 +73,6 @@ class SolrConfig
 
             if ($solrVersion !== null) $solrConfig['endpoint']['localhost']['core'] = $auxCore;
             $clients[$endpointCore] = new Client($adapter, $eventDispatcher, $solrConfig);
-            //$clients[$config['endpoint']['core']] = new Client($adapter, $eventDispatcher, $solrConfig);
         }
 
         return $clients;
@@ -290,7 +293,7 @@ class SolrConfig
         } else {
             echo "Aborted \n";
             die();
-    }
+        }
 
         $request->setRawData($json_field_type);
         $res = json_decode($client->executeRequest($request)->getBody(), true);
