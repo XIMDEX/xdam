@@ -24,7 +24,7 @@
         "phan/phan": "^5.4",
         "ralouphie/mimey": "^1.0",
         "silber/bouncer": "^1.0",
-        "solarium/solarium": "^6.1",
+        "solarium/solarium": "^6.3.5",
         "spatie/laravel-medialibrary": "^10.12"
     },
     "require-dev": {
