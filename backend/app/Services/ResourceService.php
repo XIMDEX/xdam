@@ -14,6 +14,7 @@ use App\Services\ExternalApis\Xowl\XowlQueue;
 use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Services\Solr\SolrService;
 use App\Services\ExternalApis\KakumaService;
+use App\Services\ExternalApis\XevalSyncActivityService;
 use App\Services\ExternalApis\Xowl\XtagsCleaner;
 use App\Services\ExternalApis\XTagsService;
 use App\Services\ExternalApis\Xowl\XowlImageService;
@@ -75,6 +76,11 @@ class ResourceService
      */
     private XowlImageService $xowlImageService;
 
+    /** 
+      * @var XevalSyncActivityService
+      */
+    private XevalSyncActivityService $xevalSyncActivityService;
+
 
 
     const PAGE_SIZE = 30;
@@ -86,7 +92,7 @@ class ResourceService
      * @param CategoryService $categoryService
      */
     public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService,
-                                KakumaService $kakumaService, XTagsService $xtagService, XowlImageService $xowlImageService,SolrConfig $solrConfig)
+                                KakumaService $kakumaService, XTagsService $xtagService, XowlImageService $xowlImageService,SolrConfig $solrConfig,XevalSyncActivityService $xevalSyncActivityService)
 
     {
         $this->mediaService = $mediaService;
@@ -97,6 +103,7 @@ class ResourceService
         $this->xtagService = $xtagService;
         $this->xowlImageService = $xowlImageService;
         $this->solrConfig = $solrConfig;
+        $this->xevalSyncActivityService =  $xevalSyncActivityService;
     }
 
     private function saveAssociateFile($type, $params, $model)
@@ -394,7 +401,12 @@ class ResourceService
             $XowlQueue->addImageToQueue($mediaFiles);
         }
         $mediaFiles = $resource->getMedia('Preview');
-
+        if( $params['type'] === "activity"){
+            $parseActivity = $this->xevalSyncActivityService->parseActivityData($resource->id,$params['data'],$params['collection_id']);
+            $res = $this->xevalSyncActivityService->syncActivity($resource->id,$parseActivity);
+        }
+        
+        //update xeval.
         return $resource;
     }
 
