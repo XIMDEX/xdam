@@ -15,11 +15,10 @@ class XevalSyncActivityService extends BaseApi{
         $this->VERSION = config('xeval.version');
     }
 
-    public function syncActivity($id,$data){
+    public function syncActivity($data){
         $client = new Client();
-        $res = $client->request(strtoupper("PUT"),("{$this->BASE_URL}/activities/$id"),[
-            $data
-        ]);
+        $xeval_id = $data["xeval_id"];
+        $res = $client->request(strtoupper("PUT"),("{$this->BASE_URL}/api/v1.0/activities/{$xeval_id}"),['json' => $data]);
         return $res;
     }
 
@@ -29,29 +28,30 @@ class XevalSyncActivityService extends BaseApi{
         $data = [
             'external_id' => $id,
             'collection_id' => $collection_id,
-            'type' => self::ACTIVITY,
-            'data' => new stdClass(),
-            'status' => $description->active ?? false
+            //'type' => self::ACTIVITY,
+            //'data' => new stdClass(),
+            //'status' => $activity->status === 'ACTIVE'
+            ...get_object_vars($description)
         ];
         $assessments = [];
         $_assessments = array_column($description->assessments, 'id');
         foreach ($_assessments as $assessment_id) {
             $assessments[] = intval($assessment_id);
         }
-        $data['data']->description = new stdClass();
-        $data['data']->description->xeval_id = $id;
-        $data['data']->description->name = $description->name ?? "Un-named ID {$id}";
-        $data['data']->description->description = $description->description;
+       /* $data['data']->description = new stdClass();
+        $data['data']->description->xeval_id = $description->xeval_id;
+        $data['data']->name = $description->name ?? "Un-named ID {$id}";
+        $data['data']->description = $description->description;
         $data['data']->description->type = $description->type;
         $data['data']->description->language_default = $description->language_default;
-        $data['data']->description->available_languages = $description->available_languages;
-        $data['data']->description->isbn = $description->isbn ?? [];
+        $data['data']->available_languages = $description->available_languages;
+        $data['data']->isbn = $description->isbn ?? [];
         $data['data']->description->unit = $description->units ?? [];
         $data['data']->description->active = $description->active;
         $data['data']->description->assessments = $assessments;
         if (isset($description->tags)) {
             $data['data']->description->tags = $description->tags;
-        }
+        }*/
         return $data;
     }
 }

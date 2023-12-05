@@ -403,7 +403,7 @@ class ResourceService
         $mediaFiles = $resource->getMedia('Preview');
         if( $params['type'] === "activity"){
             $parseActivity = $this->xevalSyncActivityService->parseActivityData($resource->id,$params['data'],$params['collection_id']);
-            $res = $this->xevalSyncActivityService->syncActivity($resource->id,$parseActivity);
+            $res = $this->xevalSyncActivityService->syncActivity($parseActivity);
         }
         
         //update xeval.
