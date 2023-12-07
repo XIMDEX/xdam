@@ -8,7 +8,7 @@ class XevalSyncActivityService extends BaseApi{
     const ACTIVITY = 'activity';
     const BASE_URL = "";
     const VERSION  = "";
-    //update xeval: /activities/<int:id>
+
     public function __construct()
     {
         $this->BASE_URL = config('xeval.base_url');
@@ -28,30 +28,14 @@ class XevalSyncActivityService extends BaseApi{
         $data = [
             'external_id' => $id,
             'collection_id' => $collection_id,
-            //'type' => self::ACTIVITY,
-            //'data' => new stdClass(),
-            //'status' => $activity->status === 'ACTIVE'
-            ...get_object_vars($description)
+            ...get_object_vars($description),
+            'units' => $description->unit
         ];
         $assessments = [];
         $_assessments = array_column($description->assessments, 'id');
         foreach ($_assessments as $assessment_id) {
             $assessments[] = intval($assessment_id);
         }
-       /* $data['data']->description = new stdClass();
-        $data['data']->description->xeval_id = $description->xeval_id;
-        $data['data']->name = $description->name ?? "Un-named ID {$id}";
-        $data['data']->description = $description->description;
-        $data['data']->description->type = $description->type;
-        $data['data']->description->language_default = $description->language_default;
-        $data['data']->available_languages = $description->available_languages;
-        $data['data']->isbn = $description->isbn ?? [];
-        $data['data']->description->unit = $description->units ?? [];
-        $data['data']->description->active = $description->active;
-        $data['data']->description->assessments = $assessments;
-        if (isset($description->tags)) {
-            $data['data']->description->tags = $description->tags;
-        }*/
         return $data;
     }
 }
