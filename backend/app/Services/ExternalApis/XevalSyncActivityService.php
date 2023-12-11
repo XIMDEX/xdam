@@ -15,7 +15,7 @@ class XevalSyncActivityService extends BaseApi{
         $this->VERSION = config('xeval.version');
     }
 
-    public function syncActivity($data){
+    public function syncActivityOnXeval($data){
         $client = new Client();
         $xeval_id = $data["xeval_id"];
         $res = $client->request(strtoupper("PUT"),("{$this->BASE_URL}/api/v1.0/activities/{$xeval_id}"),['json' => $data]);

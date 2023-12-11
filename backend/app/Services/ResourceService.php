@@ -815,6 +815,12 @@ class ResourceService
     public function delete($resourceId)
     {
         $resource = DamResource::withTrashed()->findOrFail($resourceId);
+        if($resource->type === "activity"){
+            $data = $resource->data;
+            $data->description->status_id = 3;
+            $parseActivity = $this->xevalSyncActivityService->parseActivityData($resource->id,$data,$resource->collection_id);
+            $res = $this->xevalSyncActivityService->syncActivityOnXeval($parseActivity);
+        }
         try {
             $this->solr->deleteDocument($resource);
             $resource->forceDelete();
