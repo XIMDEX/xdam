@@ -35,6 +35,7 @@ use Mimey\MimeTypes;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Cache;
 
+
 class ResourceController extends Controller
 {
     /**
@@ -157,6 +158,14 @@ class ResourceController extends Controller
         return (new ResourceResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function updateFromXeval($xevalId,UpdateResourceRequest $request){
+        $damResource =$resource = DamResource::whereJsonContains('data->description', ['xeval_id' => $xevalId])->first();
+        $resource = $this->resourceService->update( $damResource, $request->all());
+        return (new ResourceResource($resource))
+        ->response()
+        ->setStatusCode(Response::HTTP_OK);
     }
 
     /**

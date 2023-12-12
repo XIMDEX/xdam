@@ -222,6 +222,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
                 Route::get('/{damResource}/getMaxFiles',                    [ResourceController::class, 'getMaxFiles'])->name('damResource.getMaxFiles');
                 Route::get('/{damResource}/getFilesCount',                  [ResourceController::class, 'getFilesCount'])->name('damResource.getFilesCount');
                 Route::post('/{damResource}/update',                        [ResourceController::class, 'update'])->name('damResource.update');
+                Route::post('/{xevalID}/updateFromXeval',               [ResourceController::class, 'updateFromXeval'])->name('damResource.updateFromXeval');
                 Route::post('/{damResource}/updateAsLastCreated',           [ResourceController::class, 'updateAsLastCreated'])->name('resource.updateAsLastCreated');
                 Route::post('/{damResource}/updateAsLastUpdated',           [ResourceController::class, 'updateAsLastUpdated'])->name('resource.updateAsLastUpdated');
                 Route::post('/{damResource}/updateAsOther/{otherResource}', [ResourceController::class, 'updateAsOther'])->name('resource.updateAsOther');
