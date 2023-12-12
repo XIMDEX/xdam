@@ -160,9 +160,14 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function updateFromXeval($xevalId,UpdateResourceRequest $request){
+    /**
+     * @param string $damResource
+     * @param UpdateResourceRequest $request
+     * @return \Illuminate\Http\JsonResponse|object
+     */
+    public function updateFromXeval(string $xevalId,UpdateResourceRequest $request){
         $damResource =$resource = DamResource::whereJsonContains('data->description', ['xeval_id' => $xevalId])->first();
-        $resource = $this->resourceService->update( $damResource, $request->all());
+        $resource = $this->resourceService->updateFromXeval( $damResource, $request->all());
         return (new ResourceResource($resource))
         ->response()
         ->setStatusCode(Response::HTTP_OK);
