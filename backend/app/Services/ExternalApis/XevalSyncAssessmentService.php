@@ -34,9 +34,10 @@ class XevalSyncAssessmentService extends BaseApi
         ];
         $activities = [];
         $_activities = array_column($description->activities, 'id');
-        foreach ($_activities as $activity_id) {
-            $activities[] = intval($activity_id);
+        foreach ($description->activities as $index=> $activity) {
+            $activities[] = ["id" =>$activity,"order" =>$index, 'weight' =>100];
         }
+        $data['activities'] = $activities;
         return $data;
     }
 
