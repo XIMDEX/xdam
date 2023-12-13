@@ -15,6 +15,7 @@ use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Services\Solr\SolrService;
 use App\Services\ExternalApis\KakumaService;
 use App\Services\ExternalApis\XevalSyncActivityService;
+use App\Services\ExternalApis\XevalSyncAssessmentService;
 use App\Services\ExternalApis\Xowl\XtagsCleaner;
 use App\Services\ExternalApis\XTagsService;
 use App\Services\ExternalApis\Xowl\XowlImageService;
@@ -82,6 +83,11 @@ class ResourceService
       */
     private XevalSyncActivityService $xevalSyncActivityService;
 
+    /** 
+      * @var XevalSyncAssessmentService
+      */
+    private XevalSyncAssessmentService $xevalSyncAssessmentService;
+
 
 
     const PAGE_SIZE = 30;
@@ -93,7 +99,7 @@ class ResourceService
      * @param CategoryService $categoryService
      */
     public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService,
-                                KakumaService $kakumaService, XTagsService $xtagService, XowlImageService $xowlImageService,SolrConfig $solrConfig,XevalSyncActivityService $xevalSyncActivityService)
+                                KakumaService $kakumaService, XTagsService $xtagService, XowlImageService $xowlImageService,SolrConfig $solrConfig,XevalSyncActivityService $xevalSyncActivityService, XevalSyncAssessmentService $xevalSyncAssessmentService)
 
     {
         $this->mediaService = $mediaService;
@@ -105,6 +111,7 @@ class ResourceService
         $this->xowlImageService = $xowlImageService;
         $this->solrConfig = $solrConfig;
         $this->xevalSyncActivityService =  $xevalSyncActivityService;
+        $this->xevalSyncAssessmentService = $xevalSyncAssessmentService;
     }
 
     private function saveAssociateFile($type, $params, $model)
@@ -408,14 +415,63 @@ class ResourceService
                 $parseActivity = $this->xevalSyncActivityService->parseActivityData($resource->id,$params['data'],$params['collection_id']);
                 $res = $this->xevalSyncActivityService->syncActivityOnXeval($parseActivity);
             }
+            if ($params['type'] === "assessment") {
+                $parseAssessment =  $this->xevalSyncAssessmentService->parseAssessmentData($resource->id,$params['data'],$params['collection_id']);
+                $res = $this->xevalSyncAssessmentService->syncAssessmentOnXeval( $parseAssessment);
+            }
             DB::commit();
-            //update xeval.
             return $resource;
         } catch (\Throwable $th) {
             DB::rollback();
             throw $th;
         }
        
+    }
+
+    public function updateFromXeval(DamResource $resource,$params){
+        DB::beginTransaction();
+        try {
+            $params['data'] = json_decode($params['data']);
+
+            if (array_key_exists("type", $params) && $params["type"]) {
+                $resource->update(
+                    [
+                        'type' => ResourceType::fromKey($params["type"])->value,
+                    ]
+                );
+            }
+            if (array_key_exists("data", $params) && !empty($params["data"])) {
+    
+                $this->setDefaultLanguageIfNeeded($params);
+    
+                $resource->update(
+                    [
+                        'data' => $params['data'],
+                        'active' => $params['data']->description->active,
+                        'name' => $params['data']->description->name ?? 'name not found'
+                    ]
+                );
+    
+                $this->linkCategoriesFromJson($resource, $params['data']);
+                $this->linkTagsFromJson($resource, $params['data']);
+            }
+            if (isset($params['data']->description->semantic_tags)) {
+                $lom_params = [
+                    'Taxon Path'=> [],
+                    '_tab_key' => "9"
+                ];
+                $this->setLomData($resource, $lom_params);
+            }
+            $this->saveAssociatedFiles($resource, $params);
+            $resource = $resource->fresh();
+            $this->solr->saveOrUpdateDocument($resource);
+           
+            DB::commit();
+            return $resource;
+        } catch (\Throwable $th) {
+            DB::rollback();
+            throw $th;
+        }
     }
 
       /**
