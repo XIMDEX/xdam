@@ -30,6 +30,7 @@ class XevalSyncAssessmentService extends BaseApi
             'type' => self::ASSESSMENT,
             'title' => $description->name,
             ...get_object_vars($description),
+            'from' => 'xdam'
         ];
         $activities = [];
         $_activities = array_column($description->activities, 'id');

@@ -29,7 +29,8 @@ class XevalSyncActivityService extends BaseApi{
             'external_id' => $id,
             'collection_id' => $collection_id,
             ...get_object_vars($description),
-            'units' => $description->unit
+            'units' => $description->unit,
+            'from' => "xdam"
         ];
         $assessments = [];
         $_assessments = array_column($description->assessments, 'id');

@@ -432,7 +432,6 @@ class ResourceService
         DB::beginTransaction();
         try {
             $params['data'] = json_decode($params['data']);
-
             if (array_key_exists("type", $params) && $params["type"]) {
                 $resource->update(
                     [
@@ -444,6 +443,11 @@ class ResourceService
     
                 $this->setDefaultLanguageIfNeeded($params);
     
+             
+                $json_data_xdam = $resource->data;
+                $json_data_xeval = $params['data']->description;
+                $merged_json = (object) array_merge((array) $json_data_xdam, (array) $json_data_xeval);
+                $params['data']->description = $merged_json;
                 $resource->update(
                     [
                         'data' => $params['data'],
@@ -451,7 +455,6 @@ class ResourceService
                         'name' => $params['data']->description->name ?? 'name not found'
                     ]
                 );
-    
                 $this->linkCategoriesFromJson($resource, $params['data']);
                 $this->linkTagsFromJson($resource, $params['data']);
             }
