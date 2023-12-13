@@ -444,7 +444,7 @@ class ResourceService
                 $this->setDefaultLanguageIfNeeded($params);
     
              
-                $json_data_xdam = $resource->data;
+                $json_data_xdam = $resource->data->description;
                 $json_data_xeval = $params['data']->description;
                 $merged_json = (object) array_merge((array) $json_data_xdam, (array) $json_data_xeval);
                 $params['data']->description = $merged_json;
