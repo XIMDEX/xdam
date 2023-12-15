@@ -331,6 +331,7 @@ class ResourceController extends Controller
         $mediaFileName = explode('/', $media->getPath());
         $mediaFileName = $mediaFileName[count($mediaFileName) - 1];
         $size = ($size === null ? 'default' : $size);
+        if ($size === 'raw') $size = 'default';
 
         $mimeType = $media->mime_type;
         $fileType = explode('/', $mimeType)[0];
