@@ -29,14 +29,15 @@ class XevalSyncActivityService extends BaseApi{
             'external_id' => $id,
             'collection_id' => $collection_id,
             ...get_object_vars($description),
-            'units' => $description->unit,
+            'units' => $description->unit ?? [],
             'from' => "xdam"
         ];
         $assessments = [];
-        $_assessments = array_column($description->assessments, 'id');
-        foreach ($_assessments as $assessment_id) {
+        //$_assessments = array_column($description->assessments, 'id');
+        /*foreach ($_assessments as $assessment_id) {
             $assessments[] = intval($assessment_id);
         }
+        $data['assessments'] = $assessments;*/
         return $data;
     }
 }
