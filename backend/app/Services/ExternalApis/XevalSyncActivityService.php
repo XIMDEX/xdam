@@ -32,6 +32,9 @@ class XevalSyncActivityService extends BaseApi{
             'units' => $description->unit ?? [],
             'from' => "xdam"
         ];
+        $feedbacks = $data["feedbacks"];
+        $feedbacks = str_replace("'", "\"", $feedbacks);
+        $data['feedbacks'] = json_decode($feedbacks, true);
         $assessments = [];
         //$_assessments = array_column($description->assessments, 'id');
         /*foreach ($_assessments as $assessment_id) {
