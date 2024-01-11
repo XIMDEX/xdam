@@ -45,7 +45,7 @@ class ProcessXowlImage implements ShouldQueue
 
     private function getCaptionFromImage($url){
         $result = ["imageCaptionAi" => ""];
-        $caption = $this->xowlImageService->getCaptionFromImage("https://cf.bstatic.com/xdata/images/hotel/max1024x768/200579300.jpg?k=ad127946b5410f06fa1ccd78af7f635606ab71782a855936f43b52a0dc52e7e6&o=&hp=1");
+        $caption = $this->xowlImageService->getCaptionFromImage($url);
         if (isset($caption)) $result = ["imageCaptionAi" => $caption,"vocabulary" => "AiImageCaption"];
         return $result;
     }
