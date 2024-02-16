@@ -393,6 +393,7 @@ class CDNService
         } else {
             $resource = DamResource::where('id', $hash)
                             ->first();
+            return $resource;
         }
 
         return null;
