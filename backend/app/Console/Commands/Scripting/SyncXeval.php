@@ -70,7 +70,7 @@ class SyncXeval extends Command
             $this->line('Init sync XEVAL resources');
             if ($type === self::ACTIVITY || $type === strtoupper(self::ACTIVITY) || $type == null || $type == 'ALL') {
                 $this->line('Sync resources of type '.self::ACTIVITY);
-                $this->handleActivity($superAdmin);
+                $this-> handleActivity($superAdmin);
             }
             if ($type === self::ASSESSMENT || $type === strtoupper(self::ASSESSMENT) || $type == null || $type == 'ALL') {
                 $this->line('Sync resources of type '.self::ASSESSMENT);
@@ -92,7 +92,7 @@ class SyncXeval extends Command
             $countActivitiesDAM = $this->resourceService->countResources(self::ACTIVITY);
             $countActivitiesXEVAL = $this->getActivitiesFromXeval(1, 0);
             $countActivitiesXEVAL = $countActivitiesXEVAL['total'];
-
+            
             $this->syncBatchs('getActivitiesFromXeval', 'parseActivityData', self::ACTIVITY, $countActivitiesDAM, $countActivitiesXEVAL, $collection);
         } catch (\Throwable $th) {
             throw $th;
@@ -153,6 +153,7 @@ class SyncXeval extends Command
 
     private function syncBatchs($requestMethod, $parseDataMethod, $type, $countDAM, $countXEVAL, $collection)
     {
+        echo("countXEVAL: ".$countXEVAL."  countDam: $countDAM");
         if ($countXEVAL === 0 || $countDAM >= $countXEVAL) return;
 
         $page = 1;
@@ -160,10 +161,11 @@ class SyncXeval extends Command
         $pagesDAM = floor($countDAM / $this->page_size);
         if ($pagesDAM <= $pagesXEVAL) $page = $pagesDAM;
         if ($page == 0 || $this->force) $page = 1;
-
+     
         $this->line("<fg=green>Synchronized $countDAM of $countXEVAL $type</>");
         $progressBar = $this->output->createProgressBar($countXEVAL);
         $progressBar->advance($countDAM);
+       
         try {
             $batch = 1;
             while (!$this->stopSync() || null !== $page) {
@@ -190,12 +192,15 @@ class SyncXeval extends Command
     {
         foreach ($data as $resource) {
             $damResource = DamResource::where('external_id', $resource['external_id'])->first();
+                $resource['data'] = json_encode((array)$resource['data']);
             if ($damResource) {
                 $this->resourceService->update($damResource, $resource);
             } else {
                 $this->resourceService->store($resource);
             }
             $progressBar->advance();
+           
+          
         }
     }
 

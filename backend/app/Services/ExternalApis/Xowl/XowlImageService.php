@@ -12,14 +12,14 @@ class XowlImageService extends BaseApi
     private string $lang;
 
     public function __construct(){
-        $this->BASE_URL = config('ximdex.XOWL_URL');
-        $this->lang = 'ES'; 
+        $this->BASE_URL = config('ximdex.XOWL_URL', 'https://xowl.ines.ximdex.net');
+        $this->lang = 'ES';
     }
 
 
     public function getCaptionFromImage($mediaUrl)
     {
-       
+
         try {
             $XWOLPetition = $this->BASE_URL . "/caption". "?url=" . urlencode($mediaUrl);
 
@@ -46,7 +46,7 @@ class XowlImageService extends BaseApi
         if (!Storage::disk('semantic')->exists($uuidParent."/".$uuid . "json")) {
             Storage::disk('semantic')->put($uuidParent."/".$uuid . ".json", json_encode($result));
         }
- 
+
     }*/
 
 
@@ -61,7 +61,7 @@ class XowlImageService extends BaseApi
 
     public function getCaptionImage(string $url, string $lang = "")
     {
-        //ambiguous name 
+        //ambiguous name
         $XWOLPetition = $this->BASE_URL . self::CAPTION . "?url=" . urlencode($url);
 
         if ($lang) {
