@@ -14,6 +14,8 @@ use App\Services\ExternalApis\Xowl\XowlQueue;
 use App\Services\OrganizationWorkspace\WorkspaceService;
 use App\Services\Solr\SolrService;
 use App\Services\ExternalApis\KakumaService;
+use App\Services\ExternalApis\XevalSyncActivityService;
+use App\Services\ExternalApis\XevalSyncAssessmentService;
 use App\Services\ExternalApis\Xowl\XtagsCleaner;
 use App\Services\ExternalApis\XTagsService;
 use App\Services\ExternalApis\Xowl\XowlImageService;
@@ -30,6 +32,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Services\Solr\SolrConfig;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use PhpParser\Node\Stmt\Foreach_;
 use stdClass;
@@ -75,6 +78,16 @@ class ResourceService
      */
     private XowlImageService $xowlImageService;
 
+    /** 
+      * @var XevalSyncActivityService
+      */
+    private XevalSyncActivityService $xevalSyncActivityService;
+
+    /** 
+      * @var XevalSyncAssessmentService
+      */
+    private XevalSyncAssessmentService $xevalSyncAssessmentService;
+
 
 
     const PAGE_SIZE = 30;
@@ -86,7 +99,7 @@ class ResourceService
      * @param CategoryService $categoryService
      */
     public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService,
-                                KakumaService $kakumaService, XTagsService $xtagService, XowlImageService $xowlImageService,SolrConfig $solrConfig)
+                                KakumaService $kakumaService, XTagsService $xtagService, XowlImageService $xowlImageService,SolrConfig $solrConfig,XevalSyncActivityService $xevalSyncActivityService, XevalSyncAssessmentService $xevalSyncAssessmentService)
 
     {
         $this->mediaService = $mediaService;
@@ -97,6 +110,8 @@ class ResourceService
         $this->xtagService = $xtagService;
         $this->xowlImageService = $xowlImageService;
         $this->solrConfig = $solrConfig;
+        $this->xevalSyncActivityService =  $xevalSyncActivityService;
+        $this->xevalSyncAssessmentService = $xevalSyncAssessmentService;
     }
 
     private function saveAssociateFile($type, $params, $model)
@@ -308,94 +323,158 @@ class ResourceService
      */
     public function update(DamResource $resource, $params): DamResource
     {
-        $params['data'] = json_decode($params['data']);
+        DB::beginTransaction();
+        try {
+            $params['data'] = json_decode($params['data']);
 
-        if (array_key_exists("type", $params) && $params["type"]) {
-            $resource->update(
-                [
-                    'type' => ResourceType::fromKey($params["type"])->value,
-                ]
-            );
-        }
-        if (array_key_exists("data", $params) && !empty($params["data"])) {
-
-            $this->setDefaultLanguageIfNeeded($params);
-            if (isset($params['data']->description->entities_linked) || isset($params['data']->description->entities_non_linked)) {
-                if (isset($params['data']->description->entities_linked)) {
-                    unset($params['data']->description->entities_linked);
-                }
-                if (isset($params['data']->description->entities_non_linked)) {
-                    unset($params['data']->description->entities_non_linked);
-                }
-            }
-
-            $resource->update(
-                [
-                    'data' => $params['data'],
-                    'active' => $params['data']->description->active,
-                    'name' => $params['data']->description->name ?? 'name not found'
-                ]
-            );
-
-            $this->linkCategoriesFromJson($resource, $params['data']);
-            $this->linkTagsFromJson($resource, $params['data']);
-        }
-
-        if (array_key_exists("FilesToRemove", $params)) {
-            foreach ($params["FilesToRemove"] as $mediaID) {
-                $mediaResult = Media::where('id', $mediaID)->first();
-
-                if ($mediaResult !== null) {
-                    $this->deleteAssociatedFile($resource, $mediaResult);
-                }
-            }
-        }
-
-        // TODO save all languages label on taxon path
-        if (isset($params['data']->description->semantic_tags)) {
-            $semantic_tags = $params['data']->description->semantic_tags;
-            $lom_params = [
-                'Taxon Path'=> [],
-                '_tab_key' => "9"
-            ];
-            /*foreach ($semantic_tags as $semantic_tag) {
-                $lom_params['Taxon Path'][] = [
-                    'Id' => $semantic_tag->id,
-                    'Entry' => $semantic_tag->name
-                ];
-            }
-
-            // TODO save on xTags
-            $lang = App::getLocale();
-            if (isset($resource->data->description->semantic_tags)) {
-                $this->xtagService->saveXTagsResource(
-                    $resource->id,
-                    'semantic_tags',
-                    $lang,
-                    $resource->data->description->semantic_tags
+            if (array_key_exists("type", $params) && $params["type"]) {
+                $resource->update(
+                    [
+                        'type' => ResourceType::fromKey($params["type"])->value,
+                    ]
                 );
-            }*/
-            $this->setLomData($resource, $lom_params);
-        }
-
-        $this->saveAssociatedFiles($resource, $params);
-        $resource = $resource->fresh();
-        $this->solr->saveOrUpdateDocument($resource);
-        if (isset($params['File'][0]) || isset($params['Preview'])) {
-            $XowlQueue = new XowlQueue($this->mediaService, $this->xowlImageService);
-        }
-        if (isset($params['File'][0])) {
-            $mediaFiles = $resource->getMedia('File');
-            $XowlQueue->addDocumentToQueue($mediaFiles);
-            $XowlQueue->addImageToQueue($mediaFiles);
-        }
-        if (isset($params['Preview'])) {
+            }
+            if (array_key_exists("data", $params) && !empty($params["data"])) {
+    
+                $this->setDefaultLanguageIfNeeded($params);
+                if (isset($params['data']->description->entities_linked) || isset($params['data']->description->entities_non_linked)) {
+                    if (isset($params['data']->description->entities_linked)) {
+                        unset($params['data']->description->entities_linked);
+                    }
+                    if (isset($params['data']->description->entities_non_linked)) {
+                        unset($params['data']->description->entities_non_linked);
+                    }
+                }
+    
+                $resource->update(
+                    [
+                        'data' => $params['data'],
+                        'active' => $params['data']->description->active,
+                        'name' => $params['data']->description->name ?? 'name not found'
+                    ]
+                );
+    
+                $this->linkCategoriesFromJson($resource, $params['data']);
+                $this->linkTagsFromJson($resource, $params['data']);
+            }
+    
+            if (array_key_exists("FilesToRemove", $params)) {
+                foreach ($params["FilesToRemove"] as $mediaID) {
+                    $mediaResult = Media::where('id', $mediaID)->first();
+    
+                    if ($mediaResult !== null) {
+                        $this->deleteAssociatedFile($resource, $mediaResult);
+                    }
+                }
+            }
+    
+            // TODO save all languages label on taxon path
+            if (isset($params['data']->description->semantic_tags)) {
+                $semantic_tags = $params['data']->description->semantic_tags;
+                $lom_params = [
+                    'Taxon Path'=> [],
+                    '_tab_key' => "9"
+                ];
+                /*foreach ($semantic_tags as $semantic_tag) {
+                    $lom_params['Taxon Path'][] = [
+                        'Id' => $semantic_tag->id,
+                        'Entry' => $semantic_tag->name
+                    ];
+                }
+    
+                // TODO save on xTags
+                $lang = App::getLocale();
+                if (isset($resource->data->description->semantic_tags)) {
+                    $this->xtagService->saveXTagsResource(
+                        $resource->id,
+                        'semantic_tags',
+                        $lang,
+                        $resource->data->description->semantic_tags
+                    );
+                }*/
+                $this->setLomData($resource, $lom_params);
+            }
+    
+            $this->saveAssociatedFiles($resource, $params);
+            $resource = $resource->fresh();
+            $this->solr->saveOrUpdateDocument($resource);
+            if (isset($params['File'][0]) || isset($params['Preview'])) {
+                $XowlQueue = new XowlQueue($this->mediaService, $this->xowlImageService);
+            }
+            if (isset($params['File'][0])) {
+                $mediaFiles = $resource->getMedia('File');
+                $XowlQueue->addDocumentToQueue($mediaFiles);
+                $XowlQueue->addImageToQueue($mediaFiles);
+            }
+            if (isset($params['Preview'])) {
+                $mediaFiles = $resource->getMedia('Preview');
+                $XowlQueue->addImageToQueue($mediaFiles);
+            }
             $mediaFiles = $resource->getMedia('Preview');
-            $XowlQueue->addImageToQueue($mediaFiles);
+            if( $params['type'] === "activity"){
+                $parseActivity = $this->xevalSyncActivityService->parseActivityData($resource->id,$params['data'],$params['collection_id']);
+                $res = $this->xevalSyncActivityService->syncActivityOnXeval($parseActivity);
+            }
+            if ($params['type'] === "assessment") {
+                $parseAssessment =  $this->xevalSyncAssessmentService->parseAssessmentData($resource->id,$params['data'],$params['collection_id']);
+                $res = $this->xevalSyncAssessmentService->syncAssessmentOnXeval( $parseAssessment);
+            }
+            DB::commit();
+            return $resource;
+        } catch (\Throwable $th) {
+            DB::rollback();
+            throw $th;
         }
-        $mediaFiles = $resource->getMedia('Preview');
+       
+    }
 
-        return $resource;
+    public function updateFromXeval(DamResource $resource,$params){
+        DB::beginTransaction();
+        try {
+            $params['data'] = json_decode($params['data']);
+            if (array_key_exists("type", $params) && $params["type"]) {
+                $resource->update(
+                    [
+                        'type' => ResourceType::fromKey($params["type"])->value,
+                    ]
+                );
+            }
+            if (array_key_exists("data", $params) && !empty($params["data"])) {
+    
+                $this->setDefaultLanguageIfNeeded($params);
+    
+             
+                $json_data_xdam = $resource->data->description;
+                $json_data_xeval = $params['data']->description;
+                $merged_json = (object) array_merge((array) $json_data_xdam, (array) $json_data_xeval);
+                $params['data']->description = $merged_json;
+                $resource->update(
+                    [
+                        'data' => $params['data'],
+                        'active' => $params['data']->description->active,
+                        'name' => $params['data']->description->name ?? 'name not found'
+                    ]
+                );
+                $this->linkCategoriesFromJson($resource, $params['data']);
+                $this->linkTagsFromJson($resource, $params['data']);
+            }
+            if (isset($params['data']->description->semantic_tags)) {
+                $lom_params = [
+                    'Taxon Path'=> [],
+                    '_tab_key' => "9"
+                ];
+                $this->setLomData($resource, $lom_params);
+            }
+            $this->saveAssociatedFiles($resource, $params);
+            $resource = $resource->fresh();
+            $this->solr->saveOrUpdateDocument($resource);
+           
+            DB::commit();
+            return $resource;
+        } catch (\Throwable $th) {
+            DB::rollback();
+            throw $th;
+        }
     }
 
       /**
@@ -795,6 +874,12 @@ class ResourceService
     public function delete($resourceId)
     {
         $resource = DamResource::withTrashed()->findOrFail($resourceId);
+        if($resource->type === "activity"){
+            $data = $resource->data;
+            $data->description->status_id = 3;
+            $parseActivity = $this->xevalSyncActivityService->parseActivityData($resource->id,$data,$resource->collection_id);
+            $res = $this->xevalSyncActivityService->syncActivityOnXeval($parseActivity);
+        }
         try {
             $this->solr->deleteDocument($resource);
             $resource->forceDelete();
