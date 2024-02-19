@@ -70,7 +70,7 @@ class SyncXeval extends Command
             $this->line('Init sync XEVAL resources');
             if ($type === self::ACTIVITY || $type === strtoupper(self::ACTIVITY) || $type == null || $type == 'ALL') {
                 $this->line('Sync resources of type '.self::ACTIVITY);
-                $this-> handleActivity($superAdmin);
+                $this->handleActivity($superAdmin);
             }
             if ($type === self::ASSESSMENT || $type === strtoupper(self::ASSESSMENT) || $type == null || $type == 'ALL') {
                 $this->line('Sync resources of type '.self::ASSESSMENT);

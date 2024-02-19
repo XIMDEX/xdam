@@ -16,7 +16,7 @@ class AuthService
         if (!Auth::attempt($credentials)) {
             return $this->error('Invalid credentials', 422);
         }
-        return $this->token($this->getPersonalAccessToken(),Auth::user()->id,200,null);
+        return $this->token($this->getPersonalAccessToken(),  Auth::user()->id,200,'User Created');
     }
 
     public function signup($credentials)

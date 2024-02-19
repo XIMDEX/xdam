@@ -47,10 +47,10 @@ class CDNService
             } catch (Exception $e) {
                 return false;
             }
-            
+
             return true;
         }
-        
+
         return false;
     }
 
@@ -385,9 +385,13 @@ class CDNService
     {
         $match = CDNHash::where('resource_hash', $hash)
                     ->first();
-        
+
         if ($match !== null) {
             $resource = DamResource::where('id', $match->resource_id)
+                            ->first();
+            return $resource;
+        } else {
+            $resource = DamResource::where('id', $hash)
                             ->first();
             return $resource;
         }

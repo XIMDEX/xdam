@@ -10,12 +10,12 @@ class BookHandler extends BaseHandler
     {
         parent::__construct($query);
     }
-    
+
     public function defaultBehaviour()
     {
         parent::defaultBehaviour();
 
         /*DEFAULT BEHAVIOUR: Order by updated_at desc */
-        $this->query->addSort('updated_at', $this->query::SORT_DESC);
+        // $this->query->addSort('updated_at', $this->query::SORT_DESC);
     }
 }
