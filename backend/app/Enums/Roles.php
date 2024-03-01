@@ -25,7 +25,11 @@ class Roles
 
     public function __construct()
     {
-        $this->system_default_roles = Role::where(['organization_id' => null, 'system_default' => 1])->get();
+        try {
+            $this->system_default_roles = Role::where(['organization_id' => null, 'system_default' => 1])->get();
+        } catch (\Exception $exc) {
+            $this->system_default_roles = [];
+        }
     }
 
     public function getId($role_name) {

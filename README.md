@@ -281,3 +281,14 @@ SOLR_CORES_VERSION="10".
 Bastaría con modificar en la base de datos, dentro de la tabla collections, la solr_connection por la nueva conexión.
 
 Una vez hecho esto habría que ejecutar un php artisan solr:reindex, que se encargaría de reindexar todos los recursos a las conexiones actuales.
+
+# UPDATE - 01/03/2024 
+
+## Instalation from zero
+
+1. Cambiar a la rama `develop` (modo desarrollo)
+2. Ejecutar `composer install`, a tener en cuenta:
+    * El `composer.lock` está erróneo y no actualizado con la nueva versión, he tenido que borrarlo para que tome las nuevas versiones.
+    * Había un error en el código en `backend/app/Enums/Roles.php` en el constructor donde se buscaban los roles en la tabla Roles de la bbdd cuando aún no se ha hecho la migración por lo que fallaba en el `post-autoload-dump`, he modificado el constructor para que si da fallo la query por no existir tablas, cargue un array vacio de roles
+3. Crear tablas y poblar la bbdd ejecutando `php artisan migrate --seed`
+4. Generar una passport key con `php artisan passport:install`

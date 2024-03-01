@@ -87,7 +87,8 @@ return [
                 'core'      => 'lom',
             ],
             'resource'      => 'LOMSolrResource',
-            'classHandler'  => 'LOMHandler'
+            'classHandler'  => 'LOMHandler',
+            'accepts_types' => [null]
         ],
         'lomes' => [
             'endpoint'      => [
@@ -98,7 +99,8 @@ return [
                 'core'      => 'lomes',
             ],
             'resource'      => 'LOMSolrResource',
-            'classHandler'  => 'LOMHandler'
+            'classHandler'  => 'LOMHandler',
+            'accepts_types' => [null]
         ],
     ],
     'solr_validators_folder' => env('SOLR_VALIDATORS_FOLDER', ''),
