@@ -26,10 +26,11 @@
     "required": false,
     "stored": true
   },
-  "langcode":{
-    "name": "langcode",
+  "lang":{
+    "name": "lang",
     "type": "string",
     "indexed": true,
+    "multiValued": false,
     "stored": true
   },
   "categories": {
@@ -133,5 +134,17 @@
   "lomes": {
     "name": "lomes",
     "type": "text_general"
+  },
+  "type": {
+      "name": "type",
+      "type": "string",
+      "omitNorms": true,
+      "omitTermFreqAndPositions": true,
+      "indexed": true,
+      "stored": true,
+      "uninvertible": true,
+      "sortMissingLast": true,
+      "docValues": true,
+      "omitPositions": true
   }
 }

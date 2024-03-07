@@ -50,7 +50,12 @@ class SolrController extends Controller
         ];
 
         $output = $this->handleQuery($params, $request);
-        return response()->json(json_decode($output), Response::HTTP_OK);
+        try {
+            $json_output = json_decode($output);
+            return response()->json($json_output, Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            return response('Err4', Response::HTTP_FAILED_DEPENDENCY);
+        }
     }
 
     public function handleQuery($params, $request)

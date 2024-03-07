@@ -29,7 +29,7 @@ class DocumentSolrResource extends BaseSolrResource
         // If the resource does not have a preview, but has an associated file, take the first one as preview
         if (empty($previews) && !empty($files))
         {
-            $previews[] = $files[0];
+            $previews[] = config('ximdex.DOCUMENT_PLACEHOLDER_IMAGE');
         }
 
         return $previews;
@@ -49,7 +49,7 @@ class DocumentSolrResource extends BaseSolrResource
             $mediaId = DamUrlUtil::decodeUrl($dam_url);
             $media = Media::findOrFail($mediaId);
             $mimeType = $media->mime_type;
-            $fileType = explode('/', $mimeType)[0];
+            $fileType = explode('/', $mimeType)[1];
             if (!in_array($fileType, $types))
             {
                 $types[] = $fileType;
@@ -129,7 +129,7 @@ class DocumentSolrResource extends BaseSolrResource
         $tags = $this->getTags();
         $semanticTags = $this->getSemanticTags();
         $categories = $this->getCategories();
-        return [
+        $output = [
             'id'                    => $this->getID(),
             'name'                  => $this->getName(),
             'data'                  => $this->getData($tags, $categories, $semanticTags),
@@ -149,7 +149,9 @@ class DocumentSolrResource extends BaseSolrResource
             'created_at'            => $this->created_at,
             'updated_at'            => $this->updated_at,
             'lom'                   => $this->getLOMValues(),
-            'lomes'                 => $this->getLOMValues('lomes')
+            'lomes'                 => $this->getLOMValues('lomes'),
+            'lang'                  => $this->data->description->lang
         ];
+        return $output;
     }
 }

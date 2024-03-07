@@ -3,50 +3,16 @@
   "properties": {
     "description": {
       "type": "object",
-      "required": ["active", "title", "body", "id", "uuid"],
+      "required": ["active", "name", "lang"],
       "properties": {
-        "title": {
+        "name": {
           "type": "string",
           "format": "string",
           "default": ""
         },
-        "body": {
-          "type": "string",
-          "format": "string"
-        },
-        "id": {
-          "title": "ID",
-          "type": "string",
-          "format": "string",
-          "default": ""
-        },
-        "uuid": {
-          "title": "UUID",
-          "type": "string",
-          "format": "string",
-          "default": ""
-        },
-        "category": {
-          "title": "Category",
-          "type": "string",
-          "format": "string",
-          "default": "Other"
-        },
-        "external_url": {
-          "type": "string",
-          "format": "string"
-        },
-        "image": {
-          "type": "string",
-          "format": "string"
-        },
-        "language": {
-          "type": "string",
-          "enum": [
-            "es",
-            "en"
-          ],
-          "default": "es"
+        "lang": {
+          "title": "lang",
+          "type": "string"
         },
         "tags": {
             "title": "tags",

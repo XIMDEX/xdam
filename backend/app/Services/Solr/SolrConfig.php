@@ -71,7 +71,9 @@ class SolrConfig
                 'classHandler' => "\\App\\Services\\Solr\\CoreHandlers\\" . $config['classHandler']
             ];
 
-            if ($solrVersion !== null) $solrConfig['endpoint']['localhost']['core'] = $auxCore;
+            if ($endpointCore !== $auxCore) {
+                $solrConfig['endpoint']['localhost']['core'] = $auxCore;
+            }
             $clients[$endpointCore] = new Client($adapter, $eventDispatcher, $solrConfig);
         }
 
