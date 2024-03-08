@@ -15,6 +15,8 @@ use App\Utils\Utils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Solarium\Client;
+use App\Enums\AccessPermission;
+
 
 class CatalogueController extends Controller
 {
@@ -296,8 +298,35 @@ class CatalogueController extends Controller
                 for ($j = 0; $j < count($cdns); $j++) {
                     $currentCDN = $cdns[$j];
                     $auxCDN = clone $currentCDN;
-                    $auxCDN->setHash($this->cdnService->generateDamResourceHash($auxCDN, $resource, $collection->id));
-                    if ($auxCDN->getHash() !== null) $response->data[$i]['data']->cdns_attached[] = $auxCDN;
+                    $hash = $this->cdnService->generateDamResourceHash($auxCDN, $resource, $collection->id);
+                    $hasWorkspaceAccessPermission = $this->cdnService->hasAccessPersmission(AccessPermission::workspace, $currentCDN->id);
+                    
+                    if ($hasWorkspaceAccessPermission) {
+                        $workspaces = $resource->workspaces()->get();
+                        $categories = $resource->categories()->get();
+                        $isDownloadble = false;
+                        $areaIDs = [
+                            ['id' => 0, 'label' => 'Accesible all center']
+                        ];
+                        $tokens = [];
+                        foreach ($workspaces as $wsp) {
+                            foreach ($areaIDs as $area) {
+                                if ($area['id'] == 0) {
+                                    $tokens['wsp'.$wsp->id] = $this->cdnService->encodeHash($hash,$wsp->id, $area['id'], $isDownloadble);
+                                } else {
+                                    $label_area = 'area'.$area['id'];
+                                    if (!in_array($tokens[$label_area])) $tokens[$label_area] = [];
+                                    $tokens[$label_area][] = $this->cdnService->encodeHash($hash,$wsp->id, $area['id'], $isDownloadble);
+                                }
+
+                            }
+                        }
+                        $auxCDN->setHash($tokens);  
+                        if ($auxCDN->getHash() !== null) $response->data[$i]['data']->cdns_attached[] = $auxCDN;
+                    } else {
+                        $auxCDN->setHash($hash);
+                        if ($auxCDN->getHash() !== null) $response->data[$i]['data']->cdns_attached[] = $auxCDN;
+                    }
                 }
             }
         }

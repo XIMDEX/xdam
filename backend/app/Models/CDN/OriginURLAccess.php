@@ -11,8 +11,11 @@ class OriginURLAccess extends DefaultCDNAccess
         parent::__construct($rules);
     }
 
-    public function areRequirementsMet($ipAddress = null, $originURL = null)
+    public function areRequirementsMet($params )
     {
+        $params = array_merge(['ipAddress' => null, 'originURL' => null], $params);
+        list('ipAddress' => $ipAddress, 'originUrl' => $originUrl) = $params;
+
         foreach ($this->rules as $rule) {
             if ($this->checkOriginURL($rule, $originURL)) return true;
         }

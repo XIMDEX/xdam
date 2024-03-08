@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{{ $title ?? 'PDF Viewer' }}</title>
-        <script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>
+        <!-- <script src="//mozilla.github.io/pdf.js/build/pdf.js"></script> -->
         <style>
             body {
                 background-color: #cfcfcf;
@@ -29,7 +29,7 @@
         </style>
     </head>
     <body>
-        <iframe id="viewer-frame" src="/ViewerJS/index.html?title={{ $title }}#{{ $url }}"></iframe>
+    <iframe id="viewer-frame" src="{{asset('viewerPDF/web/viewer.html')}}?title={{ $title }}#{{ $url }}"></iframe>
         <script>
             document.getElementById('viewer-frame').onload = function() {
                 function delay(time) {

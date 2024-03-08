@@ -16,6 +16,7 @@ use \Exception;
 class CDNService
 {
     private $cdnInfo;
+    const SEPARATOR_TOKEN = '#x#';
 
     /**
      * CDNService constructor.
@@ -435,5 +436,46 @@ class CDNService
         }
 
         return $cdns;
+    }
+
+    public function decodeHash($hash): Array
+    {
+        $decode_hash = base64_decode($hash);
+        $token = urldecode($decode_hash);
+        $data = explode(SELF::SEPARATOR_TOKEN, $token);
+
+
+        return [
+            'damResourceHash' => $data[0],
+            'workspaceID' => $data[1] ?? false,
+            'areaID' => $data[2] ?? false,
+            'isDownloadable' => $data[3] ?? false
+        ];
+    }
+
+    public function encodeHash($damResourceHash, $workspaceID, $tagAreaID, $isDownloable): String
+    {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $resource = $this->getAttachedDamResource($damResourceHash);
+        // $userAbilities = $resource->getUserAbilities(null);
+        $workspaces = $resource->workspaces()->get();
+
+        $token_data = [$damResourceHash, $workspaceID, $tagAreaID, $isDownloable ? 1 : 0];
+        $token_decoded = join(self::SEPARATOR_TOKEN, $token_data);
+
+        return base64_encode(urlencode($token_decoded));
+    }
+
+    public function hasAccessPersmission($permission, $cdnID)
+    {
+        $access_permissions = $this->getAccessPermissionRules($cdnID);
+        $hasPermission = false;
+        foreach ($access_permissions as $access_permission) {
+            if ($access_permission['type'] === $permission) {
+                $hasPermission = true;
+                break;
+            }
+        }
+        return $hasPermission;
     }
 }
