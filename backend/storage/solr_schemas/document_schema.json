@@ -146,5 +146,9 @@
       "sortMissingLast": true,
       "docValues": true,
       "omitPositions": true
+  },
+  "can_download": {
+      "name": "active",
+      "type": "boolean"
   }
 }

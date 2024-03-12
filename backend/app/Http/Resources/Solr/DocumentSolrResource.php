@@ -117,6 +117,11 @@ class DocumentSolrResource extends BaseSolrResource
         return ResourceType::document;
     }
 
+    private function getCanDownload()
+    {
+        return $this->data->can_download ?? false;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -134,6 +139,7 @@ class DocumentSolrResource extends BaseSolrResource
             'name'                  => $this->getName(),
             'data'                  => $this->getData($tags, $categories, $semanticTags),
             'active'                => $this->getActive(),
+            'can_download'          => $this->getCanDownload(),
             'type'                  => $this->getType(),
             'types'                 => $this->getTypes($files),
             'tags'                  => $this->formatTags($this->getTags()),

@@ -25,6 +25,9 @@
         "active": {
           "type": "boolean"
         },
+        "can_download": {
+          "type": "boolean"
+        },
         "semantic_tags": {
           "title": "Semantic Tags",
           "type": "array",
