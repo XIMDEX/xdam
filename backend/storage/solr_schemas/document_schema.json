@@ -1,116 +1,153 @@
 {
-  "active": {
-    "name": "active",
-    "type": "boolean",
-    "omitNorms": true,
-    "omitTermFreqAndPositions": true,
-    "indexed": true,
-    "stored": true,
-    "uninvertible": true,
-    "sortMissingLast": true,
-    "omitPositions": true
-  },
-  "categories": {
-    "name": "categories",
-    "type": "text_general"
-  },
-  "category": {
-    "name": "category",
-    "type": "string",
-    "omitNorms": true,
-    "omitTermFreqAndPositions": true,
-    "indexed": true,
-    "stored": true,
-    "uninvertible": true,
-    "sortMissingLast": true,
-    "docValues": true,
-    "multiValued": true
-  },
-  "data": {
-    "name": "data",
-    "type": "text_es_custom",
-    "omitNorms": true,
-    "omitTermFreqAndPositions": true,
-    "indexed": true,
-    "stored": true,
-    "uninvertible": true,
-    "sortMissingLast": true,
-    "docValues": false,
-    "omitPositions": true
-  },
-  "files": {
-    "name": "files",
-    "type": "text_general"
-  },
-  "id": {
-    "name": "id",
-    "type": "string",
-    "multiValued": false,
-    "indexed": true,
-    "required": true,
-    "stored": true
-  },
-  "name": {
-    "name": "name",
-    "type": "text_es_custom"
-  },
-  "conversions": {
-    "name": "conversions",
-    "type": "strings",
-    "omitNorms": true,
-    "omitTermFreqAndPositions": true,
-    "indexed": true,
-    "stored": true,
-    "uninvertible": true,
-    "sortMissingLast": true,
-    "docValues": false,
-    "omitPositions": true,
-    "multiValued": true
-  },
-  "previews": {
-    "name": "previews",
-    "type": "strings",
-    "omitNorms": true,
-    "omitTermFreqAndPositions": true,
-    "indexed": true,
-    "stored": true,
-    "uninvertible": true,
-    "sortMissingLast": true,
-    "docValues": false,
-    "omitPositions": true,
-    "multiValued": true
-  },
-  "type": {
-    "name": "type",
-    "type": "string",
-    "omitNorms": true,
-    "omitTermFreqAndPositions": true,
-    "indexed": true,
-    "stored": true,
-    "uninvertible": true,
-    "sortMissingLast": true,
-    "docValues": true,
-    "omitPositions": true
-  },
-  "tags": {
-    "name": "tags",
-    "type": "text_general"
-  },
-  "organization": {
-    "name": "organization",
-    "type": "strings"
-  },
-  "workspaces": {
-    "name": "workspaces",
-    "type": "string",
-    "multiValued": true
-  },
-  "lom": {
-    "name": "lom",
-    "type": "text_general"
-  },
-  "lomes": {
-    "name": "lomes",
-    "type": "text_general"
+    "active": {
+      "name": "active",
+      "type": "boolean",
+      "omitNorms": true,
+      "omitTermFreqAndPositions": true,
+      "indexed": true,
+      "stored": true,
+      "uninvertible": true,
+      "sortMissingLast": true,
+      "omitPositions": true
+    },
+    "id": {
+        "name": "id",
+        "type": "text_general",
+        "multiValued": false,
+        "indexed": true,
+        "required": true,
+        "stored": true
+      },
+    "external_id": {
+      "name": "external_id",
+      "type": "string",
+      "multiValued": false,
+      "indexed": true,
+      "required": false,
+      "stored": true
+    },
+    "langcode":{
+      "name": "langcode",
+      "type": "string",
+      "indexed": true,
+      "stored": true
+    },
+    "categories": {
+      "name": "categories",
+      "type": "text_general"
+    },
+    "category": {
+      "name": "category",
+      "type": "string",
+      "omitNorms": true,
+      "omitTermFreqAndPositions": true,
+      "indexed": true,
+      "stored": true,
+      "uninvertible": true,
+      "sortMissingLast": true,
+      "docValues": true,
+      "multiValued": true
+    },
+    "data": {
+      "name": "data",
+      "type": "text_es_custom",
+      "omitNorms": true,
+      "omitTermFreqAndPositions": true,
+      "indexed": true,
+      "stored": true,
+      "uninvertible": true,
+      "sortMissingLast": true,
+      "docValues": false,
+      "omitPositions": true
+    },
+    "files": {
+      "name": "files",
+      "type": "text_general"
+    },
+    "name": {
+      "name": "name",
+      "type": "text_es_custom"
+    },
+    "title": {
+      "name": "title",
+      "type": "string",
+      "omitNorms": true,
+      "omitTermFreqAndPositions": true,
+      "indexed": true,
+      "stored": true,
+      "uninvertible": true,
+      "docValues": true,
+      "sortMissingLast": true,
+      "omitPositions": true
+    },
+    "body": {
+      "name": "body",
+      "type": "string",
+      "omitNorms": true,
+      "omitTermFreqAndPositions": true,
+      "indexed": true,
+      "stored": true,
+      "uninvertible": true,
+      "sortMissingLast": true,
+      "docValues": false,
+      "omitPositions": true
+    },
+    "conversions": {
+      "name": "conversions",
+      "type": "strings",
+      "omitNorms": true,
+      "omitTermFreqAndPositions": true,
+      "indexed": true,
+      "stored": true,
+      "uninvertible": true,
+      "sortMissingLast": true,
+      "docValues": false,
+      "omitPositions": true,
+      "multiValued": true
+    },
+    "previews": {
+      "name": "previews",
+      "type": "strings",
+      "omitNorms": true,
+      "omitTermFreqAndPositions": true,
+      "indexed": true,
+      "stored": true,
+      "uninvertible": true,
+      "sortMissingLast": true,
+      "docValues": false,
+      "omitPositions": true,
+      "multiValued": true
+    },
+    "tags": {
+      "name": "tags",
+      "type": "text_general"
+    },
+    "semantic_tags": {
+      "name": "semantic_tags",
+      "type": "strings"
+    },
+    "lom": {
+      "name": "lom",
+      "type": "text_general"
+    },
+    "lomes": {
+      "name": "lomes",
+      "type": "text_general"
+    },
+    "type": {
+        "name": "type",
+        "type": "string",
+        "omitNorms": true,
+        "omitTermFreqAndPositions": true,
+        "indexed": true,
+        "stored": true,
+        "uninvertible": true,
+        "sortMissingLast": true,
+        "docValues": true,
+        "omitPositions": true
+    },
+    "can_download": {
+        "name": "active",
+        "type": "boolean"
+    }
   }
-}

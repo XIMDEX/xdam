@@ -35,7 +35,8 @@ return [
         'activities' => 'Jarduerak',
         'assessments' => 'Ebaluazioak',
         'language_default' => 'Hizkuntza lehenetsia',
-        'available_languages' => 'Hizkuntza erabilgarri'
+        'available_languages' => 'Hizkuntza erabilgarri',
+        'can_download' => 'Jeitsi dezake?'
     ],
     'MHE' => [
         'active' => 'Aktibo',
@@ -69,7 +70,8 @@ return [
         'activities' => 'Jarduerak',
         'assessments' => 'Ebaluazioak',
         'language_default' => 'Hizkuntza lehenetsia',
-        'available_languages' => 'Hizkuntza erabilgarri'
+        'available_languages' => 'Hizkuntza erabilgarri',
+        'can_download' => 'Jeitsi dezake?'
     ],
     'SEK' => []
 ];
