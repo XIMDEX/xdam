@@ -12,6 +12,7 @@ use stdClass;
 use App\Utils\Texts;
 use App\Services\Solr\SolrConfig;
 
+
 class CatalogueService
 {
     /**
@@ -90,6 +91,8 @@ class CatalogueService
 
                     $newValues['name'] = $this->getWorkspaceName($workspaceID);
                     $newValues['canBeEdit'] = $this->getWorkspaceCanBeEdit($defaultWorkspace, $workspaceID);
+                    $newValues['canDelete'] = $this->getWorkspaceCanBeEdit($defaultWorkspace, $workspaceID);
+                    $newValues['route_delete'] = route('v1wsp.delete',['workspace_id' => $workspaceID]);
                     $response->facets[$facetKey]['values'][$workspaceID] = $newValues;
                 }
             }
