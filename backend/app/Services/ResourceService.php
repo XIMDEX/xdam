@@ -326,7 +326,14 @@ class ResourceService
         DB::beginTransaction();
         try {
             $params['data'] = json_decode($params['data']);
-
+            if (array_key_exists("FilesToRemove", $params)) {
+                foreach ($params["FilesToRemove"] as $mediaID) {
+                    $mediaResult = Media::where('id', $mediaID)->first();
+                    if ($mediaResult !== null) {
+                        $this->deleteAssociatedFile($resource, $mediaResult);
+                    }
+                }
+            }
             if (array_key_exists("type", $params) && $params["type"]) {
                 $resource->update(
                     [
@@ -358,16 +365,6 @@ class ResourceService
                 $this->linkTagsFromJson($resource, $params['data']);
             }
     
-            if (array_key_exists("FilesToRemove", $params)) {
-                foreach ($params["FilesToRemove"] as $mediaID) {
-                    $mediaResult = Media::where('id', $mediaID)->first();
-    
-                    if ($mediaResult !== null) {
-                        $this->deleteAssociatedFile($resource, $mediaResult);
-                    }
-                }
-            }
-    
             // TODO save all languages label on taxon path
             if (isset($params['data']->description->semantic_tags)) {
                 $semantic_tags = $params['data']->description->semantic_tags;
@@ -396,6 +393,7 @@ class ResourceService
             }
     
             $this->saveAssociatedFiles($resource, $params);
+          
             $resource = $resource->fresh();
             $this->solr->saveOrUpdateDocument($resource);
             if (isset($params['File'][0]) || isset($params['Preview'])) {
