@@ -12,7 +12,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Silber\Bouncer\BouncerFacade as Bouncer;
 
-class UserSeeder extends Seeder
+class EditorUserSeeder extends Seeder
 {
 
     protected $adminService;
