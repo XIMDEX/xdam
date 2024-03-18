@@ -88,4 +88,18 @@ class Roles
     {
         return $this->getId(self::RESOURCE_OWNER);
     }
+
+    public static function getAllRoleNames()
+    {
+        return [
+            self::SUPER_ADMIN,
+            self::ORGANIZATION_ADMIN,
+            self::ORGANIZATION_MANAGER,
+            self::ORGANIZATION_USER,
+            self::WORKSPACE_MANAGER,
+            self::WORKSPACE_EDITOR,
+            self::WORKSPACE_READER,
+            self::CORPORATE_WORKSPACE_MANAGEMENT
+        ];
+    }
 }

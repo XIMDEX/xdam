@@ -16,7 +16,7 @@ class FacetManager
     // "name to display" => "name faceted"
     private $facetLists;
     const UNLIMITED_FACETS_VALUES = -1;
-    const RADIO_FACETS = ['active', 'aggregated', 'internal', 'internal', 'external', 'isFree', 'is_deleted'];
+    const RADIO_FACETS = ['active', 'aggregated', 'internal', 'internal', 'external', 'isFree', 'is_deleted', 'can_download'];
 
     /**
      * @var SolrConfig

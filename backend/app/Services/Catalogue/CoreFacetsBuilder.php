@@ -43,6 +43,7 @@ class CoreFacetsBuilder {
             "document" => [
                 "categories",
                 "active",
+                "can_download",
                 // "type",
                 "semantic_tags",
                 "types",

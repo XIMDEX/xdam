@@ -26,6 +26,7 @@
           "type": "boolean"
         },
         "can_download": {
+          "title": "Can download?",
           "type": "boolean"
         },
         "semantic_tags": {
