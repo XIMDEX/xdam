@@ -148,7 +148,7 @@
       "omitPositions": true
   },
   "can_download": {
-      "name": "active",
+      "name": "can_download",
       "type": "boolean"
   }
 }
