@@ -119,7 +119,7 @@ class DocumentSolrResource extends BaseSolrResource
 
     private function getCanDownload()
     {
-        return $this->data->can_download ?? false;
+        return $this->data->description->can_download ?? false;
     }
 
     /**
