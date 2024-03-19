@@ -38,7 +38,7 @@ class DocumentSolrResource extends BaseSolrResource
     protected function getType()
     {
         $files = $this->getFiles();
-        return (is_array($files) && count($files) === 0 ? 'image' : $this->type);
+        return (is_array($files) && count($files) === 0 ? 'document' : $this->type);
     }
 
     private function getTypes($files)
