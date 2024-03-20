@@ -312,7 +312,7 @@ class CatalogueController extends Controller
                         foreach ($workspaces as $wsp) {
                             foreach ($areaIDs as $area) {
                                 if ($area['id'] == 0) {
-                                    $tokens['wsp'.$wsp->id] = $this->cdnService->encodeHash($hash,$wsp->id, $area['id'], $isDownloadble);
+                                    $tokens["$wsp->name ($wsp->id)"] = $this->cdnService->encodeHash($hash,$wsp->id, $area['id'], $isDownloadble);
                                 } else {
                                     $label_area = 'area'.$area['id'];
                                     if (!in_array($tokens[$label_area])) $tokens[$label_area] = [];
