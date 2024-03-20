@@ -2364,7 +2364,7 @@ class FileAttachmentAnnotationElement extends AnnotationElement {
     this.container.classList.add("highlightArea");
   }
   #download() {
-    // this.downloadManager?.openOrDownloadData(this.content, this.filename);
+    if (window.dx) this.downloadManager?.openOrDownloadData(this.content, this.filename);
   }
 }
 class AnnotationLayer {

@@ -341,7 +341,7 @@ class ResourceController extends Controller
         return $this->renderResource($mediaId, $method, $size, null, false);
     }
 
-    private function renderResource($mediaId, $method = null, $size = null, $renderKey = null, $isCDN = false)
+    private function renderResource($mediaId, $method = null, $size = null, $renderKey = null, $isCDN = false, $can_download = false)
     {
         $media = Media::findOrFail($mediaId);
         $mediaFileName = explode('/', $media->getPath());
@@ -376,9 +376,10 @@ class ResourceController extends Controller
 
             return view('pdfViewer', [
                 'title' => $mediaFileName,
-                'url'   => base64_encode($url . '?key=' . $key)
+                'url'   => base64_encode($url . '?key=' . $key . '&dx=' . ($can_download ? 1 : 0))
             ]);
         } else if ($mimeType == 'application/pdf' && $renderKey != null && $isCDN) {
+            
             if ($this->mediaService->checkRendererKey($renderKey, $method)) {
                 // file lo hace con streaming de datos
                 // $response = response()->file($this->mediaService->preview($media, []));
@@ -695,7 +696,7 @@ class ResourceController extends Controller
         if (Cache::has("{$mediaId}__{$size}")) {
             return Cache::get("{$mediaId}__$size");
         }
-        return $this->renderResource($mediaId, $method, $size, $request->key, true);
+        return $this->renderResource($mediaId, $method, $size, $request->key, true, $resource->data->description->can_download);
 
     }
 

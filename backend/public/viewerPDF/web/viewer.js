@@ -5083,10 +5083,12 @@
 						if (cmd === 1 || cmd === 8) {
 							switch (evt.keyCode) {
 								case 83:
-									// eventBus.dispatch("download", {
-									// 	source: window,
-									// });
-									// handled = true;
+									if (window.dx) {
+										eventBus.dispatch("download", {
+											source: window,
+										});
+										handled = true;
+									}
 									break;
 								case 79:
 									{
@@ -5562,6 +5564,13 @@
             const queryparams = new URLSearchParams(window.location.search);
             const hash = window.location.hash.substring(1);
 			console.log('## LOAD XIMDEX PDF ##')
+			const qp = new URLSearchParams(atob(hash))
+			if (qp.has('dx') && qp.get('dx') == 1) {
+				window.dx = true
+				const $download_button = document.querySelector('#download')
+				$download_button.style.display = 'inherit'
+
+			}
 		    if (queryparams.has("title") && hash!== null) {
                 defaultOptions.defaultUrl = {
                     value: atob(hash),
@@ -5807,18 +5816,20 @@
 					)[0];
 
 					function download(blobUrl, filename) {
-						// const a = document.createElement("a");
-						// if (!a.click) {
-						// 	throw new Error('DownloadManager: "a.click()" is not supported.');
-						// }
-						// a.href = blobUrl;
-						// a.target = "_parent";
-						// if ("download" in a) {
-						// 	a.download = filename;
-						// }
-						// (document.body || document.documentElement).append(a);
-						// a.click();
-						// a.remove();
+						if (window.dx) {
+							const a = document.createElement("a");
+							if (!a.click) {
+								throw new Error('DownloadManager: "a.click()" is not supported.');
+							}
+							a.href = blobUrl;
+							a.target = "_parent";
+							if ("download" in a) {
+								a.download = filename;
+							}
+							(document.body || document.documentElement).append(a);
+							a.click();
+							a.remove();
+						}
 					}
 					class DownloadManager {
 						#openBlobUrls = new WeakMap();
