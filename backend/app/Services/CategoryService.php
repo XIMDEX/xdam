@@ -66,10 +66,11 @@ class CategoryService
      */
     public function store($params) : Category
     {
-        return Category::create([
-            'name' => $this->satinizeCategoryName($params["name"]),
-            'type' => ResourceType::fromKey($params["type"])->value,
+        $category = Category::firstOrCreate([
+            'name' => $this->satinizeCategoryName($params["name"]), 
+            'type' => $params["type"]
         ]);
+        return $category;
     }
 
     /**
