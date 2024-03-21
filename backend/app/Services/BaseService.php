@@ -35,7 +35,9 @@ class BaseService
                 : $model::all();
             $values_names = array_keys(get_object_vars($values));
             $fillables = $model_instance->getFillable();
-            $required = defined("{$resourceName}::REQUIRED_FILLABLES") ? $model::REQUIRED_FILLABLES : $fillables;
+
+            $model_class = $model::class;
+            $required = defined("{$model_class}::REQUIRED_FILLABLES") ? $model::REQUIRED_FILLABLES : $fillables;
 
             foreach ($required as $key) {
                 $type = $model_instance->getConnection()->getSchemaBuilder()->getColumnType($model_instance->getTable(), $key);

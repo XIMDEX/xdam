@@ -11,7 +11,7 @@ class DocumentService extends BaseService
 
     public function __construct() {
         parent::__construct();
-        self::$array = ['categories' => 'Category'];
+        self::$array = ['categories' => 'Category', 'workspaces' => 'Workspace'];
         self::$type_service = ResourceType::document;
     }
 
@@ -50,7 +50,8 @@ class DocumentService extends BaseService
                     $model_instance = new $model();
                 }
                 $fillables = $model_instance->getFillable();
-                $required = defined("{$resourceName}::REQUIRED_FILLABLES") ? $model::REQUIRED_FILLABLES : $fillables;
+                $model_class = $model::class;
+                $required = defined("{$model_class}::REQUIRED_FILLABLES") ? $model::REQUIRED_FILLABLES : $fillables;
 
                 foreach ($required as $key) {
                     $type = $model_instance->getConnection()->getSchemaBuilder()->getColumnType($model_instance->getTable(), $key);
@@ -66,8 +67,13 @@ class DocumentService extends BaseService
                 }
                 if ($facet['key'] === 'categories') {
                     $route = 'v1category.store';
+                    $facets[$index]['route'] = route($route);
                 }
-                $facets[$index]['route'] = route($route);
+                if ($facet['key'] === 'workspaces') {
+                    $route = 'v1wsp.create';
+                }
+
+                if ($route) $facets[$index]['route'] = route($route);
             }
         }
 
