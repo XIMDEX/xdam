@@ -11,6 +11,8 @@ use Solarium\Client;
 use \Error;
 use Intervention\Image\Exception\NotFoundException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use App\Enums\ResourceType;
+
 
 class BookService extends BaseService
 {
@@ -21,6 +23,8 @@ class BookService extends BaseService
 
     public function __construct(SolrService $solr)
     {
+        parent::__construct();
+        self::$type_service = ResourceType::book;
         $this->client = $solr->getClient(self::CLIENT_NAME);
         $this->solrSerice = $solr;
     }

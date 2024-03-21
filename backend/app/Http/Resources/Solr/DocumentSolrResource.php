@@ -105,6 +105,7 @@ class DocumentSolrResource extends BaseSolrResource
         $data->description->semantic_tags = $this->formatSemanticTags($this->getSemanticTags());
         $data->description->tags = $tags;
         $data->description->categories = $categories;
+        $data->description->can_download = $this->data->description->can_download ?? false;
         $data->lom = $this->getLOMRawValues('lom');
         $data->lomes = $this->getLOMRawValues('lomes');
         $finalData = $data;

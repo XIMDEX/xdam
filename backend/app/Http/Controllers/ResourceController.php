@@ -38,6 +38,7 @@ use App\Enums\AccessPermission;
 
 
 
+
 class ResourceController extends Controller
 {
     /**
@@ -182,8 +183,7 @@ class ResourceController extends Controller
     public function store(StoreResourceRequest $request)
     {
         $resource = $this->resourceService->store($request->all());
-        return (new ResourceResource($resource))
-            ->response()
+        return response(new ResourceResource($resource))
             ->setStatusCode(Response::HTTP_OK);
     }
 
@@ -392,6 +392,9 @@ class ResourceController extends Controller
             } else {
                 return response(['error' => 'Error! You don\'t have permission to view this file.'], Response::HTTP_BAD_REQUEST);
             }
+        }
+        if (!$can_download) {
+            return response(['error' => 'Error! You don\'t have permission to download this file.'], Response::HTTP_BAD_REQUEST);
         }
         return response()->file($this->mediaService->preview($media, []));
     }
@@ -696,7 +699,9 @@ class ResourceController extends Controller
         if (Cache::has("{$mediaId}__{$size}")) {
             return Cache::get("{$mediaId}__$size");
         }
-        return $this->renderResource($mediaId, $method, $size, $request->key, true, $resource->data->description->can_download);
+
+        $can_download = $resource->type == ResourceType::document ? ($resource->data->description->can_download ?? false) : true;
+        return $this->renderResource($mediaId, $method, $size, $request->key, true, $can_download);
 
     }
 

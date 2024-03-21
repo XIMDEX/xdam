@@ -40,7 +40,7 @@ class ProcessXowlDocument implements ShouldQueue
      */
     public function handle()
     {
-        $this->save();
+        // $this->save();
     }
 
     private function getSemanticData()
