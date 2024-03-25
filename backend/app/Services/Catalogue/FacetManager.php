@@ -133,7 +133,7 @@ class FacetManager
                         $facetItem->key = $facetKey['name'];
                         $facetItem->label = Texts::facets($facetLabel);
                         $isSelected = false;
-
+        
                         // if it exists in the parameter filter, mark it as selected
                         if (array_key_exists($facetKey['name'], $facetsFilter)) {
                             if (is_array($facetsFilter[$facetKey['name']])) {
@@ -153,10 +153,20 @@ class FacetManager
                             $valueFaceSet = Texts::facets($valueFaceSet);
                         }
 
+
                         // return the occurrence count and if it is selected or not
                         $property->$valueFaceSet = ["count" => $count, "selected" => $isSelected, "radio" => in_array($facetKey['name'], self::RADIO_FACETS)];
                         //$property->$valueFaceSet = ["count" => $count, "selected" => $isSelected];
                         $facetItem->values = $property;
+                    if($isBoolean && !isset($values['false'])){
+                        $facetItem->values->{Texts::facets('false')} = ['count' => 0, 'selected' => false, 'radio' => true];
+                        $values['false']=0;
+                    }
+                    if($isBoolean && !isset($values['true'])){
+                        $facetItem->values->{Texts::facets('true')} = ['count' => 0, 'selected' => false, 'radio' => true];
+                        $values['true']=0;
+                    }
+                    
                     if ($isBoolean && count($values) == 2) {
                         $all_count = $values['false'] + $values['true'];
                         $facetItem->values->{Texts::facets('all')} = ['count' => $all_count, 'selected' => true, 'radio' => true];
