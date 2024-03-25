@@ -41,16 +41,19 @@ class ProcessTextSemanticCommand extends Command
      */
     public function handle(ResourceService $resourceService)
     {
-        $resources = $resourceService->getAll('document');
-        foreach ($resources as $media) {
-            $media2 = $media->getMedia('File');
-            foreach ($media2 as $media3) {
-                if (pathinfo($media3->getPath())['extension'] === "pdf" || pathinfo($media3->getPath())['extension'] === "txt") {
-                    $file = new ResourceResource($media3);
-                    $path = $media3->getPath();
-                    ProcessXowlDocument::dispatch($file,  $path);
+        if(env('XOWL_AI')){
+            $resources = $resourceService->getAll('document');
+            foreach ($resources as $media) {
+                $media2 = $media->getMedia('File');
+                foreach ($media2 as $media3) {
+                    if (pathinfo($media3->getPath())['extension'] === "pdf" || pathinfo($media3->getPath())['extension'] === "txt") {
+                        $file = new ResourceResource($media3);
+                        $path = $media3->getPath();
+                        ProcessXowlDocument::dispatch($file,  $path);
+                    }
                 }
             }
         }
+        
     }
 }

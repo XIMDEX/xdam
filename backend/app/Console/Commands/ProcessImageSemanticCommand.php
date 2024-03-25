@@ -43,15 +43,18 @@ class ProcessImageSemanticCommand extends Command
      */
     public function handle(ResourceService $resourceService, XowlImageService  $xowlImageService, MediaService $mediaService)
     {
-        $resources = $resourceService->getAll('document');
-        foreach ($resources as $media) {
-            $media2 = $media->getMedia('File'); //['jpg', 'jpeg', 'png']
-            foreach ($media2 as $media3) {
-                if (pathinfo($media3->getPath())['extension'] === "jpg" || pathinfo($media3->getPath())['extension'] === "jpeg" || pathinfo($media3->getPath())['extension'] === "png") {
-                    $file = new ResourceResource($media3);
-                    ProcessXowlImage::dispatch($xowlImageService,$file,  $mediaService);
+        if(env('XOWL_AI')){
+            $resources = $resourceService->getAll('document');
+            foreach ($resources as $media) {
+                $media2 = $media->getMedia('File'); //['jpg', 'jpeg', 'png']
+                foreach ($media2 as $media3) {
+                    if (pathinfo($media3->getPath())['extension'] === "jpg" || pathinfo($media3->getPath())['extension'] === "jpeg" || pathinfo($media3->getPath())['extension'] === "png") {
+                        $file = new ResourceResource($media3);
+                        ProcessXowlImage::dispatch($xowlImageService,$file,  $mediaService);
+                    }
                 }
             }
         }
+        
     }
 }
