@@ -2,6 +2,9 @@
 
 return [
     'DEFAULT' => [],
-    'MHE' => [],
+    'MHE' => [
+        'yes' => 'true',
+        'no'  => 'false'
+    ],
     'SEK' => []
 ];
