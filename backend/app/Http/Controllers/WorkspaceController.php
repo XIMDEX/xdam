@@ -16,6 +16,7 @@ use App\Http\Resources\WorkspaceResource;
 use App\Models\Collection;
 use App\Models\Organization;
 use App\Models\User;
+use App\Models\Workspace;
 use App\Services\OrganizationWorkspace\WorkspaceService;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection as JsonResourceCollection;
@@ -74,10 +75,17 @@ class WorkspaceController extends Controller
 
     public function update(UpdateWorkspaceRequest $request)
     {
+        $existingWorkspace = Workspace::where('name', $request->name)->where('id', '!=', $request->workspace_id)->first();
+
+        if ($existingWorkspace) {
+            return response()->json(['message' => 'Workspace with this name already exists.'], 400);
+        }
+
         $wsp = $this->workspaceService->update($request->workspace_id, $request->name);
-        return (new JsonResource($wsp))
-            ->response()
-            ->setStatusCode(Response::HTTP_OK);
+
+    return (new JsonResource($wsp))
+        ->response()
+        ->setStatusCode(Response::HTTP_OK);
     }
 
     public function getResources(GetWorkspaceRequest $request)
