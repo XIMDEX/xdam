@@ -4,11 +4,18 @@ namespace App\Services\Media;
 use App\Models\MediaConversion;
 use App\Models\Media;
 use App\Models\DamResource;
+use App\Services\Solr\SolrService;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 class VideoCompressionService
 {
+    private SolrService $solr;
+    public function __construct(SolrService $solr)
+    {
+        $this->solr = $solr;
+    }
+
     public function compressVideo($task)
     {
         $path = explode('/', $task->dest_path);
@@ -42,7 +49,7 @@ class VideoCompressionService
         $media = Media::where('id', $task->media_id)->first();
         $resource = DamResource::where('id', $media->model_id)->first();
         // Assuming there's a method to handle Solr document update
-        // $this->updateSolrDocument($resource);
+        $this->solr->saveOrUpdateDocument($resource);
         $task->delete();
     }
 }
