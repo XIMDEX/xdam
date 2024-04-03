@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\PendingVideoCompressionTask;
+
 use App\Services\Media\VideoCompressionService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -16,7 +16,7 @@ class ProcessVideoCompression implements ShouldQueue
 
     protected $task;
 
-    public function __construct(PendingVideoCompressionTask $task)
+    public function __construct( $task)
     {
         $this->task = $task;
     }
