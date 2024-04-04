@@ -176,22 +176,6 @@ class MediaService
                     'media_conversion_name_id' => $validSizes[$sizeKey]['name']
                 ]);
                 ProcessVideoCompression::dispatch($task);
-               /* $task = PendingVideoCompressionTask::where('media_id', $mediaID)
-                            ->where('resolution', $validSizes[$sizeKey]['width'] . ':' . $validSizes[$sizeKey]['height'])
-                            ->where('src_path', $mediaPath)
-                            ->where('dest_path', $validSizes[$sizeKey]['path'])
-                            ->where('media_conversion_name_id', $validSizes[$sizeKey]['name'])
-                            ->first();
-
-                if ($task === null) {
-                    $task = PendingVideoCompressionTask::create([
-                        'media_id' => $mediaID,
-                        'resolution' => $validSizes[$sizeKey]['width'] . ':' . $validSizes[$sizeKey]['height'],
-                        'src_path' => $mediaPath,
-                        'dest_path' => $validSizes[$sizeKey]['path'],
-                        'media_conversion_name_id' => $validSizes[$sizeKey]['name']
-                    ]);
-                }*/
 
                 $validSizesKeys = array_keys($validSizes);
 
