@@ -324,6 +324,7 @@ class CatalogueController extends Controller
                         $auxCDN->setHash($tokens);  
                         if ($auxCDN->getHash() !== null) $response->data[$i]['data']->cdns_attached[] = $auxCDN;
                     } else {
+                        $hash = $this->cdnService->encodeHash($hash, false, false, false);
                         $auxCDN->setHash($hash);
                         if ($auxCDN->getHash() !== null) $response->data[$i]['data']->cdns_attached[] = $auxCDN;
                     }
