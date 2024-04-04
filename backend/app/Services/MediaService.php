@@ -167,13 +167,13 @@ class MediaService
             if (!array_key_exists($sizeKey, $validSizes)) {
                 return $this->getVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey, 'raw', $thumbnail, $isDownload);
             }
-            if (!file_exists($validSizes['standard']['path'])) {
+            if (!file_exists($validSizes[$sizeKey]['path'])) {
                 $task = (object)([
                     'media_id' => $mediaID,
-                    'resolution' => $validSizes['standard']['width'] . ':' . $validSizes['standard']['height'],
+                    'resolution' => $validSizes[$sizeKey]['width'] . ':' . $validSizes[$sizeKey]['height'],
                     'src_path' => $mediaPath,
-                    'dest_path' => $validSizes['standard']['path'],
-                    'media_conversion_name_id' => $validSizes['standard']['name']
+                    'dest_path' => $validSizes[$sizeKey]['path'],
+                    'media_conversion_name_id' => $validSizes[$sizeKey]['name']
                 ]);
                 ProcessVideoCompression::dispatch($task);
                /* $task = PendingVideoCompressionTask::where('media_id', $mediaID)
