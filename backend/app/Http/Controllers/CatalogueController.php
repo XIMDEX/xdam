@@ -315,7 +315,7 @@ class CatalogueController extends Controller
                                     $tokens["$wsp->name ($wsp->id)"] = $this->cdnService->encodeHash($hash,$wsp->id, $area['id'], $isDownloadble);
                                 } else {
                                     $label_area = 'area'.$area['id'];
-                                    if (!in_array($tokens[$label_area])) $tokens[$label_area] = [];
+                                    if (!isset($tokens[$label_area])) $tokens[$label_area] = [];
                                     $tokens[$label_area][] = $this->cdnService->encodeHash($hash,$wsp->id, $area['id'], $isDownloadble);
                                 }
 
