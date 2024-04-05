@@ -91,7 +91,7 @@ class CatalogueService
 
                     $newValues['name'] = $this->getWorkspaceName($workspaceID);
                     $newValues['canBeEdit'] = $this->getWorkspaceCanBeEdit($defaultWorkspace, $workspaceID);
-                    $newValues['canDelete'] = $this->getWorkspaceCanBeEdit($defaultWorkspace, $workspaceID);
+                    $newValues['canDelete'] = false;
                     $newValues['route_delete'] = route('v1wsp.delete',['workspace_id' => $workspaceID]);
                     $response->facets[$facetKey]['values'][$workspaceID] = $newValues;
                 }

@@ -40,7 +40,9 @@ class ProcessXowlDocument implements ShouldQueue
      */
     public function handle()
     {
-        // $this->save();
+        if(env('XOWL_AI')){
+            $this->save($this->file,$this->getSemanticData());
+        }
     }
 
     private function getSemanticData()
@@ -60,11 +62,9 @@ class ProcessXowlDocument implements ShouldQueue
         }
     }
 
-    private function save()
+    private function save($file,$result)
     {
-        $file = $this->file;
         if (!Storage::disk('semantic')->exists($this->uuidParent . "/" . $file->id . ".json")) {
-            $result = $this->getSemanticData();
             Storage::disk('semantic')->put($this->uuidParent . "/" . $file->id . ".json", json_encode($result));
         }
     }
