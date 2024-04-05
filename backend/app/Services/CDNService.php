@@ -107,6 +107,20 @@ class CDNService
         return true;
     }
 
+    public function addCDNCollections(array $cdnIDs, int $collectionID)
+    {
+            array_map(function ($cdnID) use ($collectionID) {
+                $this->addCDNCollection($cdnID, $collectionID);
+            }, $cdnIDs);
+    }
+
+    public function removeCDNCollections(array $cdnIDs, int $collectionID)
+    {
+            array_map(function ($cdnID) use ($collectionID) {
+                $this->removeCDNCollection($cdnID, $collectionID);
+            }, $cdnIDs);
+    }
+
     /**
      * Deattaches a collection from a CDN
      * @param int $cdnID
