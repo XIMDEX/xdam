@@ -676,9 +676,9 @@ class ResourceService
             );
 
             $params = [
-                'data' => [
+                'data' => json_encode([
                     'description' => $description
-                ],
+                ]),
                 'collection_id' => $collection->id,
                 'File' => [$file],
                 'Preview' => $this->searchPreviewImage($data, $name),
