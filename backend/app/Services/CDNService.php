@@ -478,4 +478,8 @@ class CDNService
         }
         return $hasPermission;
     }
+    public function getCDNs()
+    {
+        return CDN::all();
+    }
 }

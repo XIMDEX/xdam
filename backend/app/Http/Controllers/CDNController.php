@@ -315,4 +315,10 @@ class CDNController extends Controller
         $res = $this->cdnService->getAccessPermissionRules($request->cdn_id);
         return response([$key => true, 'data' => $res]);
     }
+
+    public function getCDNs()
+    {
+        $cdns = $this->cdnService->getCDNs();
+        return response()->json(['cdns' => $cdns], 200);;
+    }
 }

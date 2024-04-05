@@ -714,23 +714,19 @@ class ResourceController extends Controller
         $data = $this->cdnService->decodeHash($request->damResourceHash);
         $damResourceHash = $data['damResourceHash'];
         $resource = $this->cdnService->getAttachedDamResource($damResourceHash);
-
-        if ($resource === null) {
-            return response(['error' => 'Error! No resource found.'], Response::HTTP_BAD_REQUEST);
-        }
-
         $cdnInfo = $this->cdnService->getCDNAttachedToDamResource($damResourceHash, $resource);
-        if ($cdnInfo === null) {
-            return response(['error' => 'This CDN doesn\'t exist!'], Response::HTTP_BAD_REQUEST);
-        }
-
         $accessCheck = $this->checkAccess($request, $resource, $cdnInfo, $ipAddress, $originURL);
-        if (!$accessCheck) {
-            return response()->json(['error' => 'You can\'t access this CDN.'], Response::HTTP_UNAUTHORIZED);
-        }
-
-        if (!$this->cdnService->isCollectionAccessible($resource, $cdnInfo)) {
-            return response(['error' => 'Forbidden access!'], Response::HTTP_BAD_REQUEST);
+        $errorResponses = [
+            $resource === null => ['error' => 'Error! No resource found.'],
+            $cdnInfo === null => ['error' => 'This CDN doesn\'t exist!'],
+            !$accessCheck => ['error' => 'You can\'t access this CDN.'],
+            !$this->cdnService->isCollectionAccessible($resource, $cdnInfo) => ['error' => 'Forbidden access!'],
+        ];
+        
+        foreach ($errorResponses as $condition => $response) {
+            if ($condition) {
+                return response($response, Response::HTTP_BAD_REQUEST);
+            }
         }
 
         return (new ResourceResource($resource))
