@@ -49,9 +49,6 @@ class CDNController extends Controller
      */
     public function createCDN(CDNRequest $request)
     {
-        if (!isset($request->name))
-            return response(['error' => 'The name hasn\'t been provided.']);
-        
         if ($this->cdnService->createCDN($request->name))
             return response(['created' => true], Response::HTTP_OK);
 

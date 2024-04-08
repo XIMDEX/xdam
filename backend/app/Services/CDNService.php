@@ -33,26 +33,24 @@ class CDNService
      */
     public function createCDN(string $name)
     {
-        $cdn = CDN::create([
-            'uuid' => Str::uuid(),
-            'name' => $name]
-        );
-        $res = $cdn->save();
-
-        if ($res) {
-            try {
-                $accessPermission = CDNAccessPermission::create([
+        try {
+            $cdn = CDN::create([
+                'uuid' => Str::uuid(),
+                'name' => $name
+            ]);
+    
+            if ($cdn) {
+                CDNAccessPermission::create([
                     'cdn_id' => $cdn->id,
                     'type' => AccessPermission::default
                 ]);
-            } catch (Exception $e) {
-                return false;
+                return $cdn->id; // Return ID if CDN creation is successful
+            } else {
+                throw new Exception('CDN creation failed');
             }
-
-            return true;
+        } catch (Exception $e) {
+            return $e->getMessage(); // Return error message if an exception occurs
         }
-
-        return false;
     }
 
     /**
