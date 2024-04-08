@@ -69,21 +69,8 @@ class CDNHashController extends Controller
     public function generateCollectionDamResourcesHash($request)
     {
         $cdn = $this->cdnService->getCDNInfo($request->cdn_code);
-        $results = $this->cdnService->generateMultipleDamResourcesHash($cdn, $request->resource_ids, $request->collection_id);
-        return $results;
+        $results = $this->cdnService->generateCollectionDamResourcesHash($cdn, $request->resource_ids, $request->collection_id);
+        return response(['resources' => $results], Response::HTTP_OK);
     }
-
-
-    private function manageMultipleResourcesHashCreation(CDNHashResourceRequest $request, bool $fromCollection)
-    {
-        $result = [];
-
-        if ($fromCollection) {
-            $result = $this->cdnService->generateCollectionDamResourcesHash($cdn, $collection);
-        } else {
-            $result = $this->cdnService->generateMultipleDamResourcesHash($cdn, $request->resource_ids, $request->collection_id);
-        }
-
-        return response(['resources' => $result], Response::HTTP_OK);
-    }
+    
 }
