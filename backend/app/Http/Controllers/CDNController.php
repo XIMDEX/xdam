@@ -8,8 +8,10 @@ use App\Models\Collection;
 use App\Services\CDNService;
 use App\Services\ResourceService;
 use App\Services\UserService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class CDNController extends Controller
@@ -49,10 +51,18 @@ class CDNController extends Controller
      */
     public function createCDN(CDNRequest $request)
     {
-        if ($this->cdnService->createCDN($request->name))
-            return response(['created' => true], Response::HTTP_OK);
-
-        return response(['cdn_created' => false], Response::HTTP_OK);
+        try {
+            $cdnId = $this->cdnService->createCDN($request->name);
+    
+            if ($cdnId) {
+                return response(['cdn' => $cdnId], Response::HTTP_CREATED);
+            } else {
+                return response(['error' => 'CDN creation failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception $e) {
+            Log::error('Error creating CDN: ' . $e->getMessage());
+            return response(['error' => 'An error occurred while creating CDN'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
