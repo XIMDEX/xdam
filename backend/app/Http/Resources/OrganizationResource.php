@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Organization;
+use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,13 +22,18 @@ class OrganizationResource extends JsonResource
         foreach ($collections as $coll) {
             $org_resource_count += $coll->resources()->count();
         }
-        //return parent::toArray($request);
+        
+        /**
+         * @var User $user
+         */
+        $user = Auth::user();
+        
         return [
             'id' => $this->id,
             'name' => $this->name,
             'org_resource_count' => $org_resource_count,
             // 'workspaces' => WorkspaceResource::collection($this->workspaces()->get()),
-            'abilities' => Auth::user()->abilitiesOnEntity($this->id, Organization::class),
+            'abilities' => $user->abilitiesOnEntity($this->id, Organization::class),
             'collections' => CollectionCountResource::collection($collections)
         ];
     }
