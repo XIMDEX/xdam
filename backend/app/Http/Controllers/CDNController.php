@@ -70,7 +70,7 @@ class CDNController extends Controller
      * @param CDNRequest $request
      * @return ResponseFactory
      */
-    public function removeCDN(CDNRequest $request)
+    public function removeCDN(Request $request)
     {
         try {
             if (!$this->cdnService->existsCDN($request->cdn_id)) {
@@ -147,7 +147,7 @@ class CDNController extends Controller
      * @param CDNRequest $request
      * @return ResponseFactory
      */
-    public function addCollection(CDNRequest $request)
+    public function addCollection(Request $request)
     {
         return $this->manageCDNCollection($request, CDNControllerAction::ADD_COLLECTION);
     }
@@ -188,7 +188,7 @@ class CDNController extends Controller
      * @param string $action
      * @return ResponseFactory
      */
-    private function manageCDNCollection(CDNRequest $request, string $action)
+    private function manageCDNCollection(Request $request, string $action)
     {
         if ($action !== CDNControllerAction::LIST_COLLECTIONS) {
             if (!isset($request->cdn_id) || !isset($request->collection_id))

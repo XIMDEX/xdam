@@ -66,6 +66,13 @@ class CDNHashController extends Controller
 
     }
 
+    public function generateCollectionDamResourcesHash($request)
+    {
+        $cdn = $this->cdnService->getCDNInfo($request->cdn_code);
+        $results = $this->cdnService->generateMultipleDamResourcesHash($cdn, $request->resource_ids, $request->collection_id);
+        return $results;
+    }
+
 
     private function manageMultipleResourcesHashCreation(CDNHashResourceRequest $request, bool $fromCollection)
     {
