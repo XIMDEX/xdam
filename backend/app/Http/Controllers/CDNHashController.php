@@ -34,12 +34,12 @@ class CDNHashController extends Controller
         $this->cdnService = $cdnService;
         $this->resourceService = $resourceService;
     }
-    public function createCDNResourceHash(CDNHashResourceRequest $request,CDN $cdn)
+    public function createCDNResourceHash(CDNHashResourceRequest $request)
     {
-        if (!isset($request->resource_id)) {
-            return response(['error' => 'The resource ID and the collection ID must be provided.'], Response::HTTP_BAD_REQUEST);
+        if (($cdn = $this->cdnService->getCDNInfo($request->cdn_code)) === null){
+            return response(['error' => 'The CDN doesn\'t exist.']);
         }
-    
+
         $resource = $this->resourceService->getResource($request->resource_id, $request->collection_id);
         if ($resource === null) {
             return response(['error' => 'The resource doesn\'t exist.'], Response::HTTP_NOT_FOUND);

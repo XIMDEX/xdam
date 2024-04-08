@@ -25,11 +25,6 @@ class CDN extends Model
     protected $fillable = ['uuid', 'name'];
     private $resource_hash = null;
 
-    public function getRouteKeyName()
-    {
-        return 'cdn_code';
-    }
-
     public function getID()
     {
         return $this->attributes['id'];

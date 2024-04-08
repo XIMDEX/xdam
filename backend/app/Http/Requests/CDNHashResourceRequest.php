@@ -11,7 +11,7 @@ class CDNHashResourceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,6 @@ class CDNHashResourceRequest extends FormRequest
         return [
             'resource_id' => 'required',
             'collection_id' => 'required',
-            'cdn_code' => 'required|exists:cdns',
         ];
     }
 }
