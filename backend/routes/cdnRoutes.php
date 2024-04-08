@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CDNController;
+use App\Http\Controllers\CDNHashController;
 use App\Http\Controllers\ResourceController;
 use Illuminate\Support\Facades\Route;
 
@@ -12,7 +13,7 @@ Route::group(['prefix' => 'admin'], function() {
             ->name('cdn.removeCDN');
 
     Route::group(['prefix' => '{cdn_code}', 'middleware' => 'cdn.validCDN'], function () {
-        Route::post('/generate_resource_hash',              [CDNController::class, 'createCDNResourceHash'])->name('cdn.createCDNResourceHash');
+        Route::post('/generate_resource_hash',              [CDNHashController::class, 'createCDNResourceHash'])->name('cdn.createCDNResourceHash');
         Route::post('/generate_multiple_resources_hash',    [CDNController::class, 'createMultipleCDNResourcesHash'])->name('cdn.createMultipleCDNResourcesHash');
         Route::post('/generate_collection_resources_hash',  [CDNController::class, 'createCDNCollectionResourcesHash'])->name('cdn.createCDNCollectionResourcesHash');
     });
