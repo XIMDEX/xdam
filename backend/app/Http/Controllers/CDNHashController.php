@@ -55,7 +55,8 @@ class CDNHashController extends Controller
 
     public function createMultipleCDNResourcesHash(CDNHashResourceRequest $request)
     {
-        $result = $this->cdnService->generateMultipleDamResourcesHash($request->cdn_code, $request->resource_id, $request->collection_id);
+        $cdn = $this->cdnService->getCDNInfo($request->cdn_code);
+        $result = $this->cdnService->generateMultipleDamResourcesHash($cdn , $request->resource_id, $request->collection_id);
     
         if ($result === null) {
             return response(['error' => 'Failed to generate resource hash.'], Response::HTTP_INTERNAL_SERVER_ERROR);

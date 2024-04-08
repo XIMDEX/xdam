@@ -14,7 +14,7 @@ Route::group(['prefix' => 'admin'], function() {
 
     Route::group(['prefix' => '{cdn_code}', 'middleware' => 'cdn.validCDN'], function () {
         Route::post('/generate_resource_hash',              [CDNHashController::class, 'createCDNResourceHash'])->name('cdn.createCDNResourceHash');
-        Route::post('/generate_multiple_resources_hash',    [CDNController::class, 'createMultipleCDNResourcesHash'])->name('cdn.createMultipleCDNResourcesHash');
+        Route::post('/generate_multiple_resources_hash',    [CDNHashController::class, 'createMultipleCDNResourcesHash'])->name('cdn.createMultipleCDNResourcesHash');
         Route::post('/generate_collection_resources_hash',  [CDNController::class, 'createCDNCollectionResourcesHash'])->name('cdn.createCDNCollectionResourcesHash');
     });
 
