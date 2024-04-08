@@ -71,8 +71,7 @@ class CDNService
      */
     public function existsCDN(int $cdnID)
     {
-        $cdn = CDN::where('id', $cdnID)->first();
-        return $cdn !== null;
+        return CDN::where('id', $cdnID)->exists();
     }
 
     /**

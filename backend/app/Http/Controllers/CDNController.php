@@ -72,14 +72,18 @@ class CDNController extends Controller
      */
     public function removeCDN(CDNRequest $request)
     {
-        if (!isset($request->cdn_id))
-            return response(['error' => 'The CDN ID hasn\'t been provided.']);
-        
-        if (!$this->cdnService->existsCDN($request->cdn_id))
-            return response(['error' => 'The CDN doesn\'t exist.']);
-        
-        $res = $this->cdnService->removeCDN($request->cdn_id);
-        return response(['cdn_removed' => $res], Response::HTTP_OK);
+        try {
+            if (!$this->cdnService->existsCDN($request->cdn_id)) {
+                return response(['error' => 'The CDN doesn\'t exist.'], Response::HTTP_NOT_FOUND);
+            }
+
+            $result = $this->cdnService->removeCDN($request->cdn_id);
+
+            return response(['cdn_removed' => $result], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error('Error removing CDN: ' . $e->getMessage());
+            return response(['error' => 'An error occurred while removing CDN'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     public function createCDNResourceHash(CDNRequest $request)
