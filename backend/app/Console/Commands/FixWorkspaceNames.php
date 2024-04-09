@@ -50,13 +50,15 @@ class FixWorkspaceNames extends Command
 
     public function handle()
     {
-        $wsps = [];
+        $wsps = ['Batches_1' => ['first' => 8480, 'ids' => []]];
         $workspaces = Workspace::all();
         $sadmin = User::where('email', 'superadmin@xdam.com')->first();
 
         Auth::login($sadmin);
 
         $batches_org = [];
+        $wsp_not_delete = [8480];
+        $wsp_to_delete = [];
 
         foreach ($workspaces as $workspace) {
             $wsp_name = $workspace->name;
@@ -71,51 +73,55 @@ class FixWorkspaceNames extends Command
                     $wsp_id = $new_wsp_batch->id;
                 }
             }
-
             if (!isset($wsps[$wsp_name])) {
                 $wsps[$wsp_name] = ['first' => $wsp_id, 'ids' => []];
+                $wsp_not_delete[] = $wsp_id; 
+
             }
             
             if (isset($wsps[$wsp_name]) && $wsp_id !== $wsps[$wsp_name]['first']) {
                 $wsps[$wsp_name]['ids'][] = $wsp_id;
+                $wsp_to_delete[] = $wsp_id;
             }
         }
 
-        $wsp_not_delete = [];
-        $this->withProgressBar($wsps, function ($wsp) {
-        // foreach ($wsps as $wsp) {
+        foreach ($wsps as $name => $wsp) {
+            $this->line('Workspace Name: '. $name);
+            if (count($wsp['ids']) === 0) continue;
 
-            
-            $wsp_not_delete[] = $wsp['first'];
-            if (count($wsp['ids']) === 0) return;
-            $dam_resources_wsps = DamResourceWorkspace::whereIn('workspace_id', $wsp['ids'])->get();
-            //     ->update(['workspace_id' => $wsp['first']]);
-            foreach ($dam_resources_wsps as $drw) {
+            $dam_resources_wsps = DamResourceWorkspace::whereIn('workspace_id', $wsp['ids']);
+            $dam_resources_wsps->update(['workspace_id' => $wsp['first']]);
+            $this->withProgressBar($dam_resources_wsps->get(), function ($drw) use ($wsp) {
                 /**
                  * @var DamResource $resource
                  */
                 $resource = DamResource::find($drw->dam_resource_id);
-                $resource->workspaces()->detach($wsp['ids']);
-                $resource->workspaces()->attach($wsp['first']);
+                $hasWsp = $resource->workspaces()->find($wsp['first']);
+                if (!$hasWsp) {
+                    $resource->workspaces()->detach($wsp['ids']);
+                    $resource->workspaces()->attach($wsp['first']);
 
-                $resource->save();
-                $this->solrService->saveOrUpdateDocument($resource);
-                
-            }
-
+                    $resource->save();
+                    $this->solrService->saveOrUpdateDocument($resource);
+                } 
+            });
             Ability::where('entity_type', 'App\Models\Workspace')
                 ->whereIn('entity_id', $wsp['ids'])
                 ->update(['entity_id' => $wsp['first']]);
 
             User::whereIn('selected_workspace', $wsp['ids'])
                 ->update(['selected_workspace' => $wsp['first']]);
-
             WorkspaceUser::whereIn('workspace_id', $wsp['ids'])
                 ->update(['workspace_id' => $wsp['first']]);
-            
+            $this->line("");
+        }
+        $interseccion = array_intersect($wsp_not_delete, $wsp_to_delete);
+        $error = !empty($interseccion);
 
-        });
-
-        Workspace::whereNotIn('id', $wsp_not_delete)->delete();
+        if ($error) {
+            $this->error("Err9.0: i can't delete worspaces, any wsp repetead on delete and not delete");
+        } else {
+            Workspace::whereIn('id', $wsp_to_delete)->delete();
+        }
     }
 }
