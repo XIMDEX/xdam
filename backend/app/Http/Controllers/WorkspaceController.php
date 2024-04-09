@@ -12,6 +12,7 @@ use App\Http\Requests\Workspace\GetMultipleWorkspacesRequest;
 use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\ResourceResource;
 use App\Http\Resources\WorkspaceCollection;
+use App\Http\Resources\WorkspaceInfoResource;
 use App\Http\Resources\WorkspaceResource;
 use App\Models\Collection;
 use App\Models\Organization;
@@ -44,7 +45,12 @@ class WorkspaceController extends Controller
     public function index(ListWorkspacesRequest $request)
     {
         $wsps = $this->workspaceService->index($request->org);
-        return (new WorkspaceCollection($wsps))
+        if ($request->boolean('lite', false)) {
+            return WorkspaceInfoResource::collection($wsps)
+                ->response()
+                ->setStatusCode(Response::HTTP_OK);
+        }
+        return WorkspaceResource::collection($wsps)
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
