@@ -520,7 +520,7 @@ class ResourceService
     ): DamResource
 
     {
-        $params['data'] = json_decode($params['data']);
+        if (is_string($params['data'] )) $params['data'] = json_decode($params['data']);
         /*
             $wid cannot be null
         */
