@@ -23,18 +23,23 @@ class OrganizationResource extends JsonResource
             $org_resource_count += $coll->resources()->count();
         }
         
-        /**
-         * @var User $user
-         */
-        $user = Auth::user();
-        
-        return [
+        $output =  [
             'id' => $this->id,
             'name' => $this->name,
             'org_resource_count' => $org_resource_count,
             // 'workspaces' => WorkspaceResource::collection($this->workspaces()->get()),
-            'abilities' => $user->abilitiesOnEntity($this->id, Organization::class),
             'collections' => CollectionCountResource::collection($collections)
         ];
+
+        if (!$request->boolean('lite')) {
+            /**
+             * @var User $user
+             */
+            $user = Auth::user();
+
+            $output['abilities'] = $user->abilitiesOnEntity($this->id, Organization::class);
+        }
+
+        return $output;
     }
 }
