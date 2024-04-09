@@ -59,13 +59,19 @@ class WorkspaceService
     {
         try {
             $org = Organization::find($oid);
+            $wsp = Workspace::where('name', $wsp_name);
             if ($org) {
-                $wsp = Workspace::create([
-                    'name' => $wsp_name,
-                    'type' => WorkspaceType::generic,
-                    'organization_id' => $org->id
-                ]);
-                $this->adminService->setWorkspaces(Auth::user()->id, $wsp->id, (new Roles)->WORKSPACE_MANAGER_ID());
+                if (!$wsp) {
+                    $wsp = Workspace::create([
+                        'name' => $wsp_name,
+                        'type' => WorkspaceType::generic,
+                        'organization_id' => $org->id
+                    ]);
+                    $this->adminService->setWorkspaces(Auth::user()->id, $wsp->id, (new Roles)->WORKSPACE_MANAGER_ID());
+                } else {
+                    $wsp = $wsp->first();
+                }
+
                 return $wsp;
             }
         } catch (\Throwable $th) {
