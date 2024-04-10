@@ -355,14 +355,20 @@ class ResourceController extends Controller
         if ($fileType == 'video' || $fileType == 'image') {
             $sizeValue = $this->getResourceSize($fileType, $size);
             $availableSizes = $this->getAvailableResourceSizes();
+            /**
+             * @var \Intervention\Image\Image $compressed
+             */
             $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue);
 
+            
             if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small', 'thumbnail']))) {
-                $response = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
+                $response = response()->file($compressed->basePath());
+                // $response = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
                 $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
-                $response->header('Cache-Control', 'public, max-age=86400'); // Configura el tiempo de caché en segundos (en este caso, 24 horas)
-                $response->header('Expires', gmdate('D, d M Y H:i:s', time() + 86400) . ' GMT'); // Configura la fecha de expiración
-                Cache::put("{$mediaId}__$size", $response);
+                
+                $response->headers->set('Cache-Control', 'public, max-age=86400');
+                $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + 86400) . ' GMT');
+                // Cache::put("{$mediaId}__$size", serialize($response));
                 return $response;
             }
 
