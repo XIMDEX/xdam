@@ -59,7 +59,7 @@ class WorkspaceService
     {
         try {
             $org = Organization::find($oid);
-            $wsp = Workspace::where('name', $wsp_name);
+            $wsp = Workspace::where('name', $wsp_name)->first();
             if ($org) {
                 if (!$wsp) {
                     $wsp = Workspace::create([
