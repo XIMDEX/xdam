@@ -393,7 +393,7 @@ class ResourceController extends Controller
                 return response(['error' => 'Error! You don\'t have permission to view this file.'], Response::HTTP_BAD_REQUEST);
             }
         }
-        if (!$can_download) {
+        if ($fileType !== 'audio' && !$can_download) {
             return response(['error' => 'Error! You don\'t have permission to download this file.'], Response::HTTP_BAD_REQUEST);
         }
         return response()->file($this->mediaService->preview($media, []));
