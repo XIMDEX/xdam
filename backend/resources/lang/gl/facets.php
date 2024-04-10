@@ -35,7 +35,8 @@ return [
         'activities' => 'Actividades',
         'assessments' => 'Avaliacións',
         'language_default' => 'Idioma predeterminado',
-        'available_languages' => 'Idiomas dispoñibles'
+        'available_languages' => 'Idiomas dispoñibles',
+        'can_download' => 'Pódese descargar?',
     ],
     'MHE' => [
         'active' => 'Activo',
@@ -69,7 +70,8 @@ return [
         'activities' => 'Actividades',
         'assessments' => 'Avaliacións',
         'language_default' => 'Idioma predeterminado',
-        'available_languages' => 'Idiomas dispoñibles'
+        'available_languages' => 'Idiomas dispoñibles',
+        'can_download' => 'Pódese descargar?',
     ],
     'SEK' => [],
 ];

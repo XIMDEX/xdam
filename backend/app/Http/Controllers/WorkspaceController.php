@@ -12,10 +12,12 @@ use App\Http\Requests\Workspace\GetMultipleWorkspacesRequest;
 use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\ResourceResource;
 use App\Http\Resources\WorkspaceCollection;
+use App\Http\Resources\WorkspaceInfoResource;
 use App\Http\Resources\WorkspaceResource;
 use App\Models\Collection;
 use App\Models\Organization;
 use App\Models\User;
+use App\Models\Workspace;
 use App\Services\OrganizationWorkspace\WorkspaceService;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection as JsonResourceCollection;
@@ -43,7 +45,12 @@ class WorkspaceController extends Controller
     public function index(ListWorkspacesRequest $request)
     {
         $wsps = $this->workspaceService->index($request->org);
-        return (new WorkspaceCollection($wsps))
+        if ($request->boolean('lite', false)) {
+            return WorkspaceInfoResource::collection($wsps)
+                ->response()
+                ->setStatusCode(Response::HTTP_OK);
+        }
+        return WorkspaceResource::collection($wsps)
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
@@ -74,10 +81,17 @@ class WorkspaceController extends Controller
 
     public function update(UpdateWorkspaceRequest $request)
     {
+        $existingWorkspace = Workspace::where('name', $request->name)->where('id', '!=', $request->workspace_id)->first();
+
+        if ($existingWorkspace) {
+            return response()->json(['message' => 'Workspace with this name already exists.'], 400);
+        }
+
         $wsp = $this->workspaceService->update($request->workspace_id, $request->name);
-        return (new JsonResource($wsp))
-            ->response()
-            ->setStatusCode(Response::HTTP_OK);
+
+    return (new JsonResource($wsp))
+        ->response()
+        ->setStatusCode(Response::HTTP_OK);
     }
 
     public function getResources(GetWorkspaceRequest $request)

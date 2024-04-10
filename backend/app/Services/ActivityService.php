@@ -4,8 +4,14 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Enums\ResourceType;
+
 class ActivityService extends BaseService
 {
+    public function __construct() {
+        parent::__construct();
+        self::$type_service = ResourceType::activity;
+    }
 
     public static function handleSchema($schema)
     {

@@ -38,18 +38,30 @@ class DocumentSolrResource extends BaseSolrResource
     protected function getType()
     {
         $files = $this->getFiles();
-        return (is_array($files) && count($files) === 0 ? 'image' : $this->type);
+        return (is_array($files) && count($files) === 0 ? 'document' : $this->type);
     }
 
     private function getTypes($files)
     {
+        $mimeTypesMap = array(
+            'application/pdf' => 'PDF',
+            'application/msword' => 'Documento',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'Documento',
+            'application/vnd.ms-powerpoint' => 'Presentación',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'Presentación',
+            'application/vnd.ms-excel' => 'Hoja de cálculo',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'Hoja de cálculo',
+            // Agrega más tipos MIME y sus correspondientes tipos aquí
+        );
+
         $types = [];
 
         foreach ($files as $dam_url) {
             $mediaId = DamUrlUtil::decodeUrl($dam_url);
             $media = Media::findOrFail($mediaId);
             $mimeType = $media->mime_type;
-            $fileType = explode('/', $mimeType)[1];
+            $fileType_raw = explode('/', $mimeType)[1];
+            $fileType = $mimeTypesMap[$mimeType] ?? $fileType_raw;
             if (!in_array($fileType, $types))
             {
                 $types[] = $fileType;
@@ -105,6 +117,7 @@ class DocumentSolrResource extends BaseSolrResource
         $data->description->semantic_tags = $this->formatSemanticTags($this->getSemanticTags());
         $data->description->tags = $tags;
         $data->description->categories = $categories;
+        $data->description->can_download = $this->data->description->can_download ?? false;
         $data->lom = $this->getLOMRawValues('lom');
         $data->lomes = $this->getLOMRawValues('lomes');
         $finalData = $data;
@@ -115,6 +128,11 @@ class DocumentSolrResource extends BaseSolrResource
     protected function getCoreResourceType()
     {
         return ResourceType::document;
+    }
+
+    private function getCanDownload()
+    {
+        return $this->data->description->can_download ?? false;
     }
 
     /**
@@ -134,6 +152,7 @@ class DocumentSolrResource extends BaseSolrResource
             'name'                  => $this->getName(),
             'data'                  => $this->getData($tags, $categories, $semanticTags),
             'active'                => $this->getActive(),
+            'can_download'          => $this->getCanDownload(),
             'type'                  => $this->getType(),
             'types'                 => $this->getTypes($files),
             'tags'                  => $this->formatTags($this->getTags()),

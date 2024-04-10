@@ -43,9 +43,11 @@ class CoreFacetsBuilder {
             "document" => [
                 "categories",
                 "active",
-                "type",
+                "can_download",
+                // "type",
                 "semantic_tags",
-               // "types",
+                "types",
+                "lang",
                 "tags",
                 "workspaces",
                 // "lom",

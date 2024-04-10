@@ -14,6 +14,8 @@ class Workspace extends Model
 
     protected $table = "workspaces";
 
+    const REQUIRED_FILLABLES = ["name"];
+
     /**
      * The attributes that are mass assignable.
      *

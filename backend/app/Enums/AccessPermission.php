@@ -10,6 +10,7 @@ final class AccessPermission extends Enum
     const ipAddress = "ip_address";
     const lti = "lti";
     const originUrl = "origin_url";
+    const workspace = 'workspace';
 
     public static function existsAccessPermissionType($typeToCheck)
     {

@@ -25,30 +25,9 @@
         "active": {
           "type": "boolean"
         },
-        "semantic_tags": {
-          "title": "Semantic Tags",
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-                "id": {
-                  "type": "string",
-                  "format": "string"
-                },
-                "solr_language": {
-                  "type": "string",
-                  "format": "string"
-                },
-                "vocabulary": {
-                    "type": "string",
-                    "format": "string"
-                },
-                "label": {
-                    "type": "string",
-                    "format": "string"
-                }
-            }
-          }
+        "can_download": {
+          "title": "Can download?",
+          "type": "boolean"
         },
         "categories": {
           "title": "categories",

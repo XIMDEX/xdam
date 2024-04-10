@@ -2,6 +2,7 @@
 
 namespace App\Services;
 use App\Enums\MediaType;
+use App\Jobs\ProcessVideoCompression;
 use App\Models\DocumentRendererKey;
 use App\Models\Media;
 use App\Models\PendingVideoCompressionTask;
@@ -166,24 +167,15 @@ class MediaService
             if (!array_key_exists($sizeKey, $validSizes)) {
                 return $this->getVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey, 'raw', $thumbnail, $isDownload);
             }
-
             if (!file_exists($validSizes[$sizeKey]['path'])) {
-                $task = PendingVideoCompressionTask::where('media_id', $mediaID)
-                            ->where('resolution', $validSizes[$sizeKey]['width'] . ':' . $validSizes[$sizeKey]['height'])
-                            ->where('src_path', $mediaPath)
-                            ->where('dest_path', $validSizes[$sizeKey]['path'])
-                            ->where('media_conversion_name_id', $validSizes[$sizeKey]['name'])
-                            ->first();
-
-                if ($task === null) {
-                    $task = PendingVideoCompressionTask::create([
-                        'media_id' => $mediaID,
-                        'resolution' => $validSizes[$sizeKey]['width'] . ':' . $validSizes[$sizeKey]['height'],
-                        'src_path' => $mediaPath,
-                        'dest_path' => $validSizes[$sizeKey]['path'],
-                        'media_conversion_name_id' => $validSizes[$sizeKey]['name']
-                    ]);
-                }
+                $task = (object)([
+                    'media_id' => $mediaID,
+                    'resolution' => $validSizes[$sizeKey]['width'] . ':' . $validSizes[$sizeKey]['height'],
+                    'src_path' => $mediaPath,
+                    'dest_path' => $validSizes[$sizeKey]['path'],
+                    'media_conversion_name_id' => $validSizes[$sizeKey]['name']
+                ]);
+                ProcessVideoCompression::dispatch($task);
 
                 $validSizesKeys = array_keys($validSizes);
 

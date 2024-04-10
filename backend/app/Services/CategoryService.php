@@ -52,10 +52,11 @@ class CategoryService
      */
     public function update(Category $category, $data)
     {
-        return $category->update([
+        $updated = $category->update([
             'name' => $this->satinizeCategoryName($data["name"]),
             'type' => ResourceType::fromKey($data["type"])->value
         ]);
+        return $category;
     }
 
     /**
@@ -65,10 +66,11 @@ class CategoryService
      */
     public function store($params) : Category
     {
-        return Category::create([
-            'name' => $this->satinizeCategoryName($params["name"]),
-            'type' => ResourceType::fromKey($params["type"])->value,
+        $category = Category::firstOrCreate([
+            'name' => $this->satinizeCategoryName($params["name"]), 
+            'type' => $params["type"]
         ]);
+        return $category;
     }
 
     /**

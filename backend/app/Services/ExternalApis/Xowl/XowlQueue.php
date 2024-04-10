@@ -4,6 +4,8 @@ namespace App\Services\ExternalApis\Xowl;
 
 use App\Jobs\Xowl\ProcessXowlImage;
 use App\Jobs\Xowl\ProcessXowlDocument;
+use App\Services\ExternalApis\Xowl\XowlImageService;
+use App\Services\MediaService;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Process\Process;
 
@@ -11,10 +13,10 @@ class XowlQueue
 {
     //For the future, make a XowlQueue for each file type
     private array $documentExtensions = ['pdf', 'txt'];
-    private  \App\Services\MediaService $mediaService;
-    private  \App\Services\ExternalApis\Xowl\XowlImageService $xowlImageService;
+    private  MediaService $mediaService;
+    private  XowlImageService $xowlImageService;
 
-    public function __construct(\App\Services\MediaService $mediaService, \App\Services\ExternalApis\Xowl\XowlImageService $xowlImageService )
+    public function __construct(MediaService $mediaService, XowlImageService $xowlImageService )
     {
         $this->mediaService = $mediaService;    
         $this->xowlImageService = $xowlImageService;
@@ -33,9 +35,8 @@ class XowlQueue
         }
     }
 
-    public function addImageToQueue($mediaFiles){
-
-     
+    public function addImageToQueue($mediaFiles) 
+    {
         $regex = '/\.(' . implode('|', ['jpg', 'jpeg', 'png']) . ')$/';
         foreach ($mediaFiles as $media) {
             $files = Storage::allFiles("public/{$media->id}");
@@ -50,13 +51,13 @@ class XowlQueue
     private function dispatchDocumentJobs($files, $media)
     {
         array_map(function($file) use ($media) {
-            ProcessXowlDocument::dispatch($media, Storage::path($file));
+            ProcessXowlDocument::dispatchAfterResponse($media, Storage::path($file));
         }, $files);        
     }
 
     private function dispatchImageJobs($imageFiles,$media){
         array_map(function() use ($media) {
-            ProcessXowlImage::dispatch($this->xowlImageService, $media, $this->mediaService);
+            ProcessXowlImage::dispatchAfterResponse($this->xowlImageService, $media, $this->mediaService);
         }, $imageFiles);
     }
 

@@ -34,6 +34,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Mimey\MimeTypes;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Cache;
+use App\Enums\AccessPermission;
+
+
 
 
 class ResourceController extends Controller
@@ -180,8 +183,7 @@ class ResourceController extends Controller
     public function store(StoreResourceRequest $request)
     {
         $resource = $this->resourceService->store($request->all());
-        return (new ResourceResource($resource))
-            ->response()
+        return response(new ResourceResource($resource))
             ->setStatusCode(Response::HTTP_OK);
     }
 
@@ -336,10 +338,10 @@ class ResourceController extends Controller
             return Cache::get("{$mediaId}__$size");
         }
         $method = request()->method();
-        return $this->renderResource($mediaId, $method, $size, $size);
+        return $this->renderResource($mediaId, $method, $size, null, false);
     }
 
-    private function renderResource($mediaId, $method = null, $size = null, $renderKey = null, $isCDN = false)
+    private function renderResource($mediaId, $method = null, $size = null, $renderKey = null, $isCDN = false, $can_download = false)
     {
         $media = Media::findOrFail($mediaId);
         $mediaFileName = explode('/', $media->getPath());
@@ -374,16 +376,26 @@ class ResourceController extends Controller
 
             return view('pdfViewer', [
                 'title' => $mediaFileName,
-                'url'   => $url . '/' . $key
+                'url'   => base64_encode($url . '?key=' . $key . '&dx=' . ($can_download ? 1 : 0))
             ]);
         } else if ($mimeType == 'application/pdf' && $renderKey != null && $isCDN) {
+            
             if ($this->mediaService->checkRendererKey($renderKey, $method)) {
-                return response()->file($this->mediaService->preview($media, []));
+                // file lo hace con streaming de datos
+                // $response = response()->file($this->mediaService->preview($media, []));
+                // download lo hace sin streaming de datos
+                $response = response()->download($this->mediaService->preview($media, []));
+                $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
+                $response->headers->set('Pragma', 'no-cache');
+                $response->headers->set('Expires', '0');
+                return $response;
             } else {
                 return response(['error' => 'Error! You don\'t have permission to view this file.'], Response::HTTP_BAD_REQUEST);
             }
         }
-
+        if (!$can_download) {
+            return response(['error' => 'Error! You don\'t have permission to download this file.'], Response::HTTP_BAD_REQUEST);
+        }
         return response()->file($this->mediaService->preview($media, []));
     }
 
@@ -629,12 +641,16 @@ class ResourceController extends Controller
         $method = request()->method();
         $ipAddress = $_SERVER['REMOTE_ADDR'];
         $originURL = $request->headers->get('referer');
-        $resource = $this->cdnService->getAttachedDamResource($request->damResourceHash);
+
+        $data = $this->cdnService->decodeHash($request->damResourceHash);
+        $damResourceHash = $data['damResourceHash'];
+
+        $resource = $this->cdnService->getAttachedDamResource($damResourceHash);
 
         if ($resource === null)
             return response(['error' => 'Error! No resource found.'], Response::HTTP_BAD_REQUEST);
 
-        $cdnInfo = $this->cdnService->getCDNAttachedToDamResource($request->damResourceHash, $resource);
+        $cdnInfo = $this->cdnService->getCDNAttachedToDamResource($damResourceHash, $resource);
 
         if ($cdnInfo === null)
             return response(['error' => 'This CDN doesn\'t exist!'], Response::HTTP_BAD_REQUEST);
@@ -646,7 +662,23 @@ class ResourceController extends Controller
         if (isset($request->size) && $this->getFileType($responseJson->files[0]->dam_url) === 'application/pdf')
             $accessCheck = true;
 
-        if ($cdnInfo->checkAccessRequirements($ipAddress, $originURL))
+        $checkData = [
+            'ipAddress' => $ipAddress, 
+            'originURL' => $originURL
+        ];
+
+        if ($this->cdnService->hasAccessPersmission(AccessPermission::workspace, $cdnInfo->id)) {
+            $extra_data = [
+                'data_token' => $data,
+                'data_resource' => [
+                    'workspaces' => $resource->workspaces()->get(),
+                    'categories' => $resource->categories()->get()
+                ]
+            ];
+            $checkData = array_merge($checkData, $extra_data);
+        }
+    
+        if ($cdnInfo->checkAccessRequirements($checkData))
             $accessCheck = true;
 
         if (!$accessCheck)
@@ -661,7 +693,16 @@ class ResourceController extends Controller
         if (count($responseJson->files) == 0)
             return response(['error' => 'No files attached!']);
 
-        return $this->renderResource($responseJson->files[0]->dam_url, $method, $request->size, $request->size, true);
+            
+        $mediaId = DamUrlUtil::decodeUrl($responseJson->files[0]->dam_url);
+        $size = $request->size;
+        if (Cache::has("{$mediaId}__{$size}")) {
+            return Cache::get("{$mediaId}__$size");
+        }
+
+        $can_download = $resource->type == ResourceType::document ? ($resource->data->description->can_download ?? false) : true;
+        return $this->renderResource($mediaId, $method, $size, $request->key, true, $can_download);
+
     }
 
     public function renderCDNResource(CDNRequest $request){
@@ -669,12 +710,16 @@ class ResourceController extends Controller
         $ipAddress = $_SERVER['REMOTE_ADDR'];
         $originURL = $request->headers->get('referer');
 
-        $resource = $this->cdnService->getAttachedDamResource($request->damResourceHash);
+
+        $data = $this->cdnService->decodeHash($request->damResourceHash);
+        $damResourceHash = $data['damResourceHash'];
+        $resource = $this->cdnService->getAttachedDamResource($damResourceHash);
+
         if ($resource === null) {
             return response(['error' => 'Error! No resource found.'], Response::HTTP_BAD_REQUEST);
         }
 
-        $cdnInfo = $this->cdnService->getCDNAttachedToDamResource($request->damResourceHash, $resource);
+        $cdnInfo = $this->cdnService->getCDNAttachedToDamResource($damResourceHash, $resource);
         if ($cdnInfo === null) {
             return response(['error' => 'This CDN doesn\'t exist!'], Response::HTTP_BAD_REQUEST);
         }
@@ -734,8 +779,25 @@ class ResourceController extends Controller
         if (isset($request->size) && $this->getFileType($responseJson->files[0]->dam_url) === 'application/pdf') {
             return true;
         }
+        
+        $checkData = [
+            'ipAddress' => $ipAddress, 
+            'originURL' => $originURL
+        ];
 
-        if ($cdnInfo->checkAccessRequirements($ipAddress, $originURL)) {
+        if ($this->cdnService->hasAccessPersmission(AccessPermission::workspace, $cdnInfo->id)) {
+            $data = $this->cdnService->decodeHash($request->damResourceHash);
+            $extra_data = [
+                'data_token' => $data,
+                'data_resource' => [
+                    'workspaces' => $resource->workspaces()->get(),
+                    'categories' => $resource->categories()->get()
+                ]
+            ];
+            $checkData = array_merge($checkData, $extra_data);
+        }
+    
+        if ($cdnInfo->checkAccessRequirements($checkData)){
             return true;
         }
 

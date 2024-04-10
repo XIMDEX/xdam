@@ -31,7 +31,8 @@ return [
         'yes' => 'true',
         'no' => 'false',
         'lom' => 'LOM',
-        'lomes' => 'LOMES'
+        'lomes' => 'LOMES',
+        'can_download' => '¿Se puede descargar?',
     ],
     'MHE' => [
         'active' => 'Activo',
@@ -61,7 +62,8 @@ return [
         'yes' => 'true',
         'no' => 'false',
         'lom' => 'LOM',
-        'lomes' => 'LOMES'
+        'lomes' => 'LOMES',
+        'can_download' => '¿Se puede descargar?',
     ],
     'SEK' => [],
 ];

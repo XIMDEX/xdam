@@ -22,8 +22,8 @@ class DocumentRendererKey extends Model
     }
 
     private function downloadAllowed_v1()
-    {
-        return $this->usages <= 10;
+    {   
+        return $this->usages <= env('DOCUMENT_RENDERER_KEY_MAX_USAGES', 1);
     }
 
     private function downloadAllowed_v2()
@@ -33,7 +33,8 @@ class DocumentRendererKey extends Model
 
     public function downloadAllowed()
     {
-        return $this->downloadAllowed_v2();
+        return $this->downloadAllowed_v1();
+        // return $this->downloadAllowed_v2();
     }
 
     private function reachedUsagesLimit_v1()
