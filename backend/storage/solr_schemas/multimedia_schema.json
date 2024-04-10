@@ -54,6 +54,19 @@
     "name": "name",
     "type": "text_es_custom"
   },
+  "conversions": {
+    "name": "conversions",
+    "type": "strings",
+    "omitNorms": true,
+    "omitTermFreqAndPositions": true,
+    "indexed": true,
+    "stored": true,
+    "uninvertible": true,
+    "sortMissingLast": true,
+    "docValues": false,
+    "omitPositions": true,
+    "multiValued": true
+  },
   "previews": {
     "name": "previews",
     "type": "strings",
@@ -91,5 +104,13 @@
     "name": "workspaces",
     "type": "string",
     "multiValued": true
+  },
+  "lom": {
+    "name": "lom",
+    "type": "text_general"
+  },
+  "lomes": {
+    "name": "lomes",
+    "type": "text_general"
   }
 }

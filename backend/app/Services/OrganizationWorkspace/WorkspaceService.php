@@ -9,6 +9,7 @@ use App\Models\DamResource;
 use App\Models\DamResourceWorkspace;
 use App\Models\Organization;
 use App\Models\Workspace;
+use App\Models\WorkspaceUser;
 use App\Models\WorkspaceResource;
 use App\Services\Admin\AdminService;
 use App\Services\Solr\SolrService;
@@ -58,13 +59,19 @@ class WorkspaceService
     {
         try {
             $org = Organization::find($oid);
+            $wsp = Workspace::where('name', $wsp_name)->first();
             if ($org) {
-                $wsp = Workspace::create([
-                    'name' => $wsp_name,
-                    'type' => WorkspaceType::generic,
-                    'organization_id' => $org->id
-                ]);
-                $this->adminService->setWorkspaces(Auth::user()->id, $wsp->id, (new Roles)->WORKSPACE_MANAGER_ID());
+                if (!$wsp) {
+                    $wsp = Workspace::create([
+                        'name' => $wsp_name,
+                        'type' => WorkspaceType::generic,
+                        'organization_id' => $org->id
+                    ]);
+                    $this->adminService->setWorkspaces(Auth::user()->id, $wsp->id, (new Roles)->WORKSPACE_MANAGER_ID());
+                } else {
+                    $wsp = $wsp->first();
+                }
+
                 return $wsp;
             }
         } catch (\Throwable $th) {
@@ -226,6 +233,66 @@ class WorkspaceService
         return $collection;
     }
 
+    public function setResourceWorkspace($user, DamResource $resource, $workspaces)
+    {
+        $newWorkspaces = [];
+        $workspaces = json_decode($workspaces);
+        $collection = $resource->collection()->first();
+        $currentOrganization = $collection->organization()->first();
+
+        foreach ($workspaces as $workspaceInfo) {
+            $workspace = null;
+            $workspaceToCreate = false;
+
+            if (!isset($workspaceInfo->id)) {
+                $workspaceToCreate = true;
+            } else if ($workspaceInfo->id == -1 || $workspaceInfo->id == null || $workspaceInfo->id == false) {
+                $workspaceToCreate = true;
+            }
+
+            if ($workspaceToCreate) {
+                $workspace = $this->create($currentOrganization->id, $workspaceInfo->name);
+                
+                if ($workspace !== null)
+                    $newWorkspaces[] = $workspace;
+            } else {
+                $workspace = Workspace::where('id', $workspaceInfo->id)
+                                ->where('name', $workspaceInfo->name)
+                                ->first();
+
+                if ($workspace !== null) {
+                    if ($workspace->isAccessibleByUser($user)) {
+                        $newWorkspaces[] = $workspace;
+                    }
+                }
+            }
+        }
+
+        if (!empty($newWorkspaces)) {
+            $workspacesToAdd = $resource->getWorkspacesToAdd($newWorkspaces);
+            $workspacesToRemove = $resource->getWorkspacesToRemove($newWorkspaces);
+
+            foreach ($workspacesToRemove as $rWorkspace) {
+                DamResourceWorkspace::where('dam_resource_id', $resource->id)
+                    ->where('workspace_id', $rWorkspace->id)
+                    ->delete();
+            }
+
+            foreach ($workspacesToAdd as $aWorkspace) {
+                DamResourceWorkspace::create([
+                    'dam_resource_id'   => $resource->id,
+                    'workspace_id'      => $aWorkspace->id
+                ]);
+            }
+
+            $this->solrService->saveOrUpdateDocument($resource);
+        } else {
+            return ['error' => 'No workspace has been set.'];
+        }
+
+        return ['status' => true, 'resource' => $resource];
+    }
+
     /**
      * @param User $user
      * @param int $resourceID
@@ -233,7 +300,7 @@ class WorkspaceService
      * @param string $workspaceName
      * @return array
      */
-    public function setResourceWorkspace($user, $resourceID, $workspaceID, $workspaceName)
+    public function addResourceWorkspace($user, $resourceID, $workspaceID, $workspaceName)
     {
         $resource = DamResource::find($resourceID);
         $collection = $resource->collection()->first();

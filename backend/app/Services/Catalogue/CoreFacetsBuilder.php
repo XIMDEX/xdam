@@ -7,39 +7,74 @@ class CoreFacetsBuilder {
     private $and_facets = []; //add here facets with AND operator behaviour. Example ['tags']; The default operator is OR
     private $formedList;
 
+
     public function __construct()
     {
         $this->coreList = [
             "course" => [
-                "categories",
                 "active",
-                "workspaces",
+                "is_deleted",
+                "language",
+                "categories",
+                "semantic_tags",
                 "tags",
+                "skills",
+                "corporations",
+                "workspaces",
                 "internal",
                 "aggregated",
                 "duration",
                 "isFree",
                 "currency",
                 "cost",
-                "skills"
+                // "lom",
+                "lomes"
             ],
             "multimedia" => [
                 "categories",
                 "active",
                 "type",
-                "types",
                 "tags",
-                "workspaces"
+                "workspaces",
+                //"semantic_tags",
+                // "lom",
+                "lomes"
+            ],
+            "document" => [
+                "categories",
+                "active",
+                "can_download",
+                // "type",
+                "semantic_tags",
+                "types",
+                "lang",
+                "tags",
+                "workspaces",
+                // "lom",
+                "lomes"
             ],
             "activity" => [
                 "categories",
                 "active",
-                "workspaces"
+                "isbn",
+                "unit",
+                "language_default",
+                "available_languages",
+                "assessments",
+                "workspaces",
+                "type",
+                // "lom",
+                "lomes"
             ],
             "assessment" => [
                 "categories",
                 "active",
-                "workspaces"
+                "workspaces",
+                "isbn",
+                "unit",
+                "activities",
+                // "lom",
+                "lomes"
             ],
             "book" => [
                 "categories",
@@ -47,8 +82,11 @@ class CoreFacetsBuilder {
                 "tags",
                 "workspaces",
                 "isbn",
-                "units",
-                "lang"
+                "unit",
+                'units',
+                "lang",
+                // "lom",
+                "lomes"
             ]
         ];
     }

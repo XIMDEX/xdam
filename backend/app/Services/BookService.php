@@ -11,15 +11,20 @@ use Solarium\Client;
 use \Error;
 use Intervention\Image\Exception\NotFoundException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use App\Enums\ResourceType;
 
-class BookService
+
+class BookService extends BaseService
 {
     const CLIENT_NAME = 'book';
 
     private Client $client;
+    private $solrSerice;
 
     public function __construct(SolrService $solr)
     {
+        parent::__construct();
+        self::$type_service = ResourceType::book;
         $this->client = $solr->getClient(self::CLIENT_NAME);
         $this->solrSerice = $solr;
     }
@@ -88,7 +93,7 @@ class BookService
         });
 
         if (count($books) > 1) {
-            throw new Error("Several books found with isbn ${isbn}");
+            throw new Error("Several books found with isbn $isbn");
         }
 
         return DamResource::find($results[0]["id"]);
@@ -123,7 +128,7 @@ class BookService
         $dataForUpdate = $book->data;
 
         if(!property_exists($dataForUpdate->description->links, "$unit")) {
-            throw new ResourceNotFoundException("Unit ${unit} does not have any link");
+            throw new ResourceNotFoundException("Unit $unit does not have any link");
         }
 
         unset($dataForUpdate->description->links->{$unit});

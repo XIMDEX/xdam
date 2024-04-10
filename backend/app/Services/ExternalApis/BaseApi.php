@@ -24,29 +24,34 @@ class BaseApi
         string $method = "get",
         string $body = "",
         bool $requiredAuth = false,
-        array &$headers = []
+        array &$headers = [],
+        bool $isKakuma = true,
+        $authorization_token = false,
+        $auth_type = false
     ) {
+        $authType = $auth_type ? $auth_type : $this->AUTH_TYPE;
         try {
-            if ($requiredAuth && !array_key_exists("Authorization", $headers)) {
+            if ($isKakuma && $requiredAuth && !array_key_exists("Authorization", $headers)) {
                 $kakuma_token = Auth::user()->kakuma_token ?? config('kakuma.token');
-                $headers['Authorization'] = "$this->AUTH_TYPE $kakuma_token";
+                $headers['Authorization'] = "$authType $kakuma_token";
+            }
+
+            if ($authorization_token) {
+                $headers['Authorization'] = "$authType $authorization_token";
             }
 
             if ($body) {
-                return Http::withHeaders(
-                    $headers
-                )->withBody($body, 'application/json')->$method(
-                    $url,
-                    $params
-                )->throw()->json();
+                return Http::withHeaders($headers)
+                    ->withBody($body, 'application/json')
+                    ->$method($url, $params)
+                    ->throw()
+                    ->json();
             }
 
-            return Http::withHeaders(
-                $headers
-            )->$method(
-                $url,
-                $params
-            )->throw()->json();
+            return Http::withHeaders($headers)
+                ->$method($url, $params)
+                ->throw()
+                ->json();
         } catch (\Throwable $th) {
             throw new Exception($th);
         }

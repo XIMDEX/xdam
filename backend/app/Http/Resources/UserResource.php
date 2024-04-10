@@ -15,14 +15,15 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
-
-        return [
+        $organization_sel = Workspace::find($this->selected_workspace)->organization()->first();
+        return  [
             'id' => $this->id,
             'email' => $this->email,
             'name' => $this->name,
             'current_workspace' => $this->selected_workspace,
-            'selected_org_data' => new OrganizationResource(Workspace::find($this->selected_workspace)->organization()->first()),
+            'selected_org_data' => new OrganizationResource($organization_sel),
             'organizations' => OrganizationResource::collection($this->organizations()->get()),
+            'workspaces' => WorkspaceInfoResource::collection(Workspace::where('organization_id', $organization_sel->id)->get())
         ];
     }
 }

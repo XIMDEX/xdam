@@ -16,18 +16,38 @@ class ExploreCoursesResource extends JsonResource
      */
     public function toArray($request)
     {
-        // $res = CoursePreviewResource::collection();
+        $facets = $request->get('facets', []);
+        $corporations = $facets['corporations'] ?? [];
         return [
-            "categoryId" => $this->id,
-            "categorytitle" => $this->name,
-            "courses" => $this->courses(),
+            "categoryId" => $this['id'],
+            "categorytitle" => $this['name'],
+            "courses" => $this->serializeCourses(explode(',',$request->lang), $corporations),
         ];
+
+
     }
 
-    public function courses(): array
+    public function serializeCourses($lang, $corporations): array
     {
         $courses = [];
-        foreach ($this->resources as $r) {
+        try {
+            $resources = $this->resources();
+            if ($lang[0] !== "") {
+                $resources->whereIn('data->description->language', $lang);
+            }
+            if (count($corporations) > 0) {
+                $resources->where(function($query) use ($corporations) {
+                    foreach ($corporations as $corporation) {
+                        $query->orWhereJsonContains('data->description->corporations', $corporation);
+                    }
+                });
+            }
+            $resources = $resources->get();
+        } catch (\Throwable $th) {
+            $resources = $this['resources'];
+        }
+
+        foreach ($resources as $r) {
             $name = "";
             $image = "";
             $introduction = "";

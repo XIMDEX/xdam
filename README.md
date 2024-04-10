@@ -30,23 +30,7 @@ Para añadir más rutas donde se copiará esta copia de seguridad o bien para ca
 
 
 ## FRONTEND:
-
-#### 	DESCRIPCIÓN:
-
-Es el frontend de galería de XDAM, escrito en Angular, que consume la API de backend.
-
-#### 	INSTALACIÓN:
-
-Ejecutamos la instalación de las dependencias de npm, con `npm install`.
-
-Podemos leventar un servidor de desarrollo para ver la app en funcionamiento con:
-```shell
-npm run start
-```
-
-Las rutas hacia la api de DAM se encuentran bajo el fichero
-`/src/app/mappers/endpoints.config.json`
-
+El FRONTEND de XDAM está ahora en un repositorio separado. Mirar su documentación.
 
 ## BACKEND:
 
@@ -133,19 +117,32 @@ sudo su - solr -c "/opt/solr/bin/solr create -c book -n data_driven_schema_confi
 y nos dirigimos a la carpeta backend, en su interior ejecutamos:
 ```shell
 composer install
+npm install
 ```
 
 Copiamos el fichero de ejemplo .env.example a .env
 
 Modificamos el fichero .env para añadir los parámetros de conexión a nuestra base de datos Mysql o MariaDB.
 
+Configuramos sistema de tokens con:
+```shell
+php artisan passport:install
+```
+
 Instalamos los optimizadores de imagen que requiere la librería media-library, con la que se gestionan los ficheros.
 
 ###### En Linux:
 
 ```shell
-sudo apt install jpegoptim optipng pngquant gifsicle
+sudo apt install jpegoptim optipng pngquant gifsicle ffmpeg
 npm install -g svgo
+```
+
+También es necesario instalar el modulo ImageMagick para la versión de php que tengamos y activarlo en el php.ini añadiendo o descomentando `extension=imagick.so`
+
+Ejemplo si es php 7.4.3
+```shell
+sudo apt install php7.4-imagick
 ```
 
 ###### En MACOS:
@@ -268,9 +265,30 @@ Hay también un comando especial, php artisan solr:clean que borra todos los doc
 
 ### New
 Se ha añadido un nuevo comando `php artisan solr:update --query=""` que permite actualizar recursos presentes en la base de datos a partir de una query SQL.
+Se ha añadido un nuevo comando de gestión de Cores: `php artisan solrCoresMaintenace`, este comando accepta los parámetros:
+* `--action=` -> `DELETE`, `CREATE`, `REINDEX` y `ALL`
+* `--core=` -> cores separados por comas de los que se quiere realizar la acción
+* `--exclude=` -> contrario del parámetro core, excluirá los cores indicados
+* `--y` -> no pedirá confirmación en las acciones
+
+**_Ejemplo_**: 
+	
+		para crear los cores en su versión número 10 ejecutaríamos `sudo php artisan solrCores:maintenance --action=CREATE --coreVersion=10$`. En el .env del backend hay que añadir el parámetro con la versión a la que apuntamos: 
+SOLR_CORES_VERSION="10".
 
 ## ¿COMO MOVER RECURSOS DE UN SOLR/CORE A OTRO?
 
 Bastaría con modificar en la base de datos, dentro de la tabla collections, la solr_connection por la nueva conexión.
 
 Una vez hecho esto habría que ejecutar un php artisan solr:reindex, que se encargaría de reindexar todos los recursos a las conexiones actuales.
+
+# UPDATE - 01/03/2024 
+
+## Instalation from zero
+
+1. Cambiar a la rama `develop` (modo desarrollo)
+2. Ejecutar `composer install`, a tener en cuenta:
+    * El `composer.lock` está erróneo y no actualizado con la nueva versión, he tenido que borrarlo para que tome las nuevas versiones.
+    * Había un error en el código en `backend/app/Enums/Roles.php` en el constructor donde se buscaban los roles en la tabla Roles de la bbdd cuando aún no se ha hecho la migración por lo que fallaba en el `post-autoload-dump`, he modificado el constructor para que si da fallo la query por no existir tablas, cargue un array vacio de roles
+3. Crear tablas y poblar la bbdd ejecutando `php artisan migrate --seed`
+4. Generar una passport key con `php artisan passport:install`

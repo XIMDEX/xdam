@@ -1,0 +1,50 @@
+{
+    "dam_collection_id": {
+        "name": "dam_collection_id",
+        "type": "string",
+        "multiValued": false,
+        "indexed": true,
+        "required": true,
+        "stored": true
+    },
+    "dam_resource_id": {
+        "name": "dam_resource_id",
+        "type": "string",
+        "multiValued": false,
+        "indexed": true,
+        "required": true,
+        "stored": true
+    },
+    "lang": {
+        "name": "lang",
+        "type": "string",
+        "multiValued": false,
+        "indexed": true,
+        "required": true,
+        "stored": true
+    },
+    "lom_key": {
+        "name": "lom_key",
+        "type": "string",
+        "multiValued": false,
+        "indexed": true,
+        "required": true,
+        "stored": true
+    },
+    "lom_subkey": {
+        "name": "lom_subkey",
+        "type": "string",
+        "multiValued": false,
+        "indexed": true,
+        "required": false,
+        "stored": true
+    },
+    "lom_value": {
+        "name": "lom_value",
+        "type": "string",
+        "multiValued": false,
+        "indexed": true,
+        "required": true,
+        "stored": true
+    }
+}

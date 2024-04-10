@@ -1,0 +1,44 @@
+{
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "object",
+      "required": ["active", "name", "lang"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "format": "string",
+          "default": ""
+        },
+        "lang": {
+          "title": "lang",
+          "type": "string"
+        },
+        "tags": {
+            "title": "tags",
+            "type": "array",
+            "format": "string",
+            "items": {
+                "type":"string"
+            }
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "can_download": {
+          "title": "Can download?",
+          "type": "boolean"
+        },
+        "categories": {
+          "title": "categories",
+          "type": "array",
+          "format": "string",
+          "items": {
+            "type":"string"
+          }
+       }
+      }
+    }
+  },
+  "required": ["description"]
+}

@@ -3,6 +3,8 @@
 namespace App\Utils;
 
 use App\Models\Workspace;
+use Exception;
+use Illuminate\Support\Facades\File;
 
 class Utils
 {
@@ -60,5 +62,34 @@ class Utils
     {
         $full_array = json_decode(json_encode($object), true);
         return $full_array;
+    }
+
+    public static function getJsonFile($path, $associative = false, $error_message = false)
+    {
+        if (!File::exists($path)) {
+            throw new Exception($error_message ? $error_message : 'missing file at ' . $path);
+        }
+
+        return json_decode(file_get_contents($path), $associative);
+    }
+    public static function getLomSchema($asArray = false)
+    {
+        $json_file = file_get_contents(storage_path('/lom') . '/lomSchema.json');
+        $schema = json_decode($json_file, $asArray);
+        return $schema;
+    }
+
+    public static function getLomesSchema($asArray = false)
+    {
+        $json_file = file_get_contents(storage_path('/lomes') .'/lomesSchema.json');
+        $schema = json_decode($json_file, $asArray);
+        return $schema;
+    }
+
+    public static function getRepetitiveString($character, $times)
+    {
+        $string = '';
+        for ($i = 0; $i < $times; $i++) $string .= $character;
+        return $string;
     }
 }

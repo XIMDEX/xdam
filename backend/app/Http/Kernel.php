@@ -2,7 +2,6 @@
 
 namespace App\Http;
 
-use Fruitcake\Cors\HandleCors;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -15,10 +14,8 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
-        HandleCors::class,
         // \App\Http\Middleware\TrustHosts::class,
-        \App\Http\Middleware\TrustProxies::class,
-        \Fruitcake\Cors\HandleCors::class,
+        \Illuminate\Http\Middleware\HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
@@ -60,6 +57,9 @@ class Kernel extends HttpKernel
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
 
+        'cdn.validCDN' => \App\Http\Middleware\CDN\CDNIsValid::class,
+        'cdn.checkCDNAccess' => \App\Http\Middleware\CDN\CheckCDNAccess::class,
+
         'manage.organizations' => \App\Http\Middleware\CanManageOrganization::class,
         'manage.roles' => \App\Http\Middleware\CanManageRoles::class,
         'manage.workspaces' => \App\Http\Middleware\CanManageWorkspace::class,
@@ -70,8 +70,10 @@ class Kernel extends HttpKernel
         'download.resource' => \App\Http\Middleware\ResourcePermissions\DownloadResource::class,
         'update.resource' => \App\Http\Middleware\ResourcePermissions\UpdateResource::class,
         'delete.resource' => \App\Http\Middleware\ResourcePermissions\DeleteResource::class,
+        'collection.automatic' => \App\Http\Middleware\AddAutomaticCollection::class,
         'update.resource.card' => \App\Http\Middleware\ResourcePermissions\UpdateResourceCard::class,
         'delete.resource.card' => \App\Http\Middleware\ResourcePermissions\DeleteResourceCard::class,
+        'collection.automatic' => \App\Http\Middleware\AddAutomaticCollection::class,
 
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,

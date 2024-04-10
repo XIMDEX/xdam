@@ -25,7 +25,11 @@ class Roles
 
     public function __construct()
     {
-        $this->system_default_roles = Role::where(['organization_id' => null, 'system_default' => 1])->get();
+        try {
+            $this->system_default_roles = Role::where(['organization_id' => null, 'system_default' => 1])->get();
+        } catch (\Exception $exc) {
+            $this->system_default_roles = [];
+        }
     }
 
     public function getId($role_name) {
@@ -83,5 +87,19 @@ class Roles
     public function RESOURCE_OWNER_ID($oid)
     {
         return $this->getId(self::RESOURCE_OWNER);
+    }
+
+    public static function getAllRoleNames()
+    {
+        return [
+            self::SUPER_ADMIN,
+            self::ORGANIZATION_ADMIN,
+            self::ORGANIZATION_MANAGER,
+            self::ORGANIZATION_USER,
+            self::WORKSPACE_MANAGER,
+            self::WORKSPACE_EDITOR,
+            self::WORKSPACE_READER,
+            self::CORPORATE_WORKSPACE_MANAGEMENT
+        ];
     }
 }

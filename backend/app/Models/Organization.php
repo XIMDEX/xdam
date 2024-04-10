@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\OrganizationType;
 use App\Enums\WorkspaceType;
+use App\Models\CDN;
 use App\Traits\OnCreateOrganization;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

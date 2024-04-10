@@ -80,7 +80,7 @@ class StoreResourceRequest extends FormRequest
                 'extra.link' => 'string',
                 'extra.hover' => 'string',
                 'extra.content' => 'string',
-                'lang' => 'sometimes|nullable|in:cat,en,es',
+                'lang' => 'sometimes|nullable|in:cat,en,es,eu,gl',
             ];
         }
     }
@@ -88,7 +88,7 @@ class StoreResourceRequest extends FormRequest
     public function validationData()
     {
         $all = $this->all();
-
+        $all['data'] = json_decode($all['data']);
         if(property_exists($all['data']->description, 'extra')) {
             $all['extra'] = (array) $all['data']->description->extra;
         }
@@ -104,12 +104,12 @@ class StoreResourceRequest extends FormRequest
 
     public function prepareForValidation()
     {
-        $all = $this->all();
+     /*   $all = $this->all();
         $castedData = [];
         if (array_key_exists("data", $all)) {
             $castedData = json_decode($all["data"]);
         }
-        return $this->merge(["data" => $castedData])->all();
+        return $this->merge(["data" => $castedData])->all();*/
     }
 
     public function withValidator($factory)

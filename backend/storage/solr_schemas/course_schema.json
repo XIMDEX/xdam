@@ -97,6 +97,20 @@
     "name": "tags",
     "type": "text_general"
   },
+  "semantic_tags": {
+    "name": "semantic_tags",
+    "type": "text_general"
+  },
+  "language": {
+    "name": "language",
+    "type": "string",
+    "indexed": true,
+    "multiValued": false
+  },
+  "corporations": {
+    "name": "corporations",
+    "type": "text_general"
+  },
   "organization": {
     "name": "organization",
     "type": "strings"
@@ -128,6 +142,14 @@
   },
   "preparations": {
     "name": "preparations",
+    "type": "text_general"
+  },
+  "lom": {
+    "name": "lom",
+    "type": "text_general"
+  },
+  "lomes": {
+    "name": "lomes",
     "type": "text_general"
   }
 }

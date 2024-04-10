@@ -2,7 +2,7 @@
 
 return [
     'DEFAULT' => [
-        'languages' => ['es', 'en', 'cat'],
+        'languages' => ['es', 'en', 'cat', 'eu','gl'],
         'defaultLanguage' => 'es'
     ],
     'MHE' => [],

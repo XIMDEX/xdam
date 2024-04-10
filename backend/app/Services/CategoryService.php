@@ -20,7 +20,7 @@ class CategoryService
     /**
      * @return Category[]
      */
-    public function getAll()
+    public static function getAll()
     {
         return Category::all();
     }
@@ -52,10 +52,11 @@ class CategoryService
      */
     public function update(Category $category, $data)
     {
-        return $category->update([
+        $updated = $category->update([
             'name' => $this->satinizeCategoryName($data["name"]),
             'type' => ResourceType::fromKey($data["type"])->value
         ]);
+        return $category;
     }
 
     /**
@@ -65,10 +66,11 @@ class CategoryService
      */
     public function store($params) : Category
     {
-        return Category::create([
-            'name' => $this->satinizeCategoryName($params["name"]),
-            'type' => ResourceType::fromKey($params["type"])->value,
+        $category = Category::firstOrCreate([
+            'name' => $this->satinizeCategoryName($params["name"]), 
+            'type' => $params["type"]
         ]);
+        return $category;
     }
 
     /**
@@ -78,5 +80,10 @@ class CategoryService
     public function delete(Category $category)
     {
         $category->delete();
+    }
+
+    public static function where($column, $value, $operator = '=')
+    {
+        return Category::where($column, $value, $operator)->get();
     }
 }
