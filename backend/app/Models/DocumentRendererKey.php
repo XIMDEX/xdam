@@ -21,20 +21,18 @@ class DocumentRendererKey extends Model
         $this->update();
     }
 
-    private function downloadAllowed_v1()
-    {   
-        return $this->usages <= env('DOCUMENT_RENDERER_KEY_MAX_USAGES', 1);
-    }
-
-    private function downloadAllowed_v2()
-    {
-        return time() <= $this->expiration_date;
+    public function allowed($type)
+    {        
+        return match ($type) {
+            'explration_date' => time() <= $this->expiration_date,
+            'usages' => $this->usages <= env('DOCUMENT_RENDERER_KEY_MAX_USAGES', 1),
+            'default' => false
+        };
     }
 
     public function downloadAllowed()
     {
-        return $this->downloadAllowed_v1();
-        // return $this->downloadAllowed_v2();
+        return $this->allowed('usages');
     }
 
     private function reachedUsagesLimit_v1()

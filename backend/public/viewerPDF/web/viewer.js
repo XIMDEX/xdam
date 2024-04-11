@@ -3622,6 +3622,8 @@
 							});
 							this._initializePageLabels(pdfDocument);
 							this._initializeMetadata(pdfDocument);
+							console.log('##XIMDEX##: document loaded')
+							URL.revokeObjectURL(window.ximdex.url)
 						},
 						async _scriptingDocProperties(pdfDocument) {
 							if (!this.documentInfo) {
@@ -5560,31 +5562,11 @@
 				kind: OptionKind.WORKER,
 			},
 		};
-        {
-            const queryparams = new URLSearchParams(window.location.search);
-            const hash = window.location.hash.substring(1);
-			console.log('## LOAD XIMDEX PDF ##')
-			const qp = new URLSearchParams(atob(hash))
-			if (qp.has('dx') && qp.get('dx') == 1) {
-				window.dx = true
-				const $download_button = document.querySelector('#download')
-				$download_button.style.display = 'inherit'
-
-			}
-		    if (queryparams.has("title") && hash!== null) {
-                defaultOptions.defaultUrl = {
-                    value: atob(hash),
-                    kind: OptionKind.VIEWER,
-                };
-            }
-		}
-
-
 		{
-			// defaultOptions.defaultUrl = {
-			// 	value: "./../example_link.pdf",
-			// 	kind: OptionKind.VIEWER,
-			// };
+			defaultOptions.defaultUrl = {
+				value: window.ximdex.url,
+				kind: OptionKind.VIEWER,
+			};
 			
 			defaultOptions.sandboxBundleSrc = {
 				value: "../build/pdf.sandbox.js",
@@ -18794,6 +18776,7 @@
 		Object.prototype.hasOwnProperty.call(obj, prop);
 	/******/
 })();
+function _0x2fcf(_0x249f33,_0x118eb2){const _0x2cc347=_0x2cc3();return _0x2fcf=function(_0x2fcfea,_0x3e3f43){_0x2fcfea=_0x2fcfea-0xd7;let _0x482e31=_0x2cc347[_0x2fcfea];return _0x482e31;},_0x2fcf(_0x249f33,_0x118eb2);}(function(_0x4011e3,_0x233b09){const _0x1332c5=_0x2fcf,_0x4b4365=_0x4011e3();while(!![]){try{const _0x44a230=parseInt(_0x1332c5(0xd7))/0x1+-parseInt(_0x1332c5(0xd8))/0x2+parseInt(_0x1332c5(0xd9))/0x3*(parseInt(_0x1332c5(0xda))/0x4)+parseInt(_0x1332c5(0xdb))/0x5+parseInt(_0x1332c5(0xdc))/0x6+-parseInt(_0x1332c5(0xdd))/0x7+-parseInt(_0x1332c5(0xde))/0x8;if(_0x44a230===_0x233b09)break;else _0x4b4365['push'](_0x4b4365['shift']());}catch(_0x5ce6d6){_0x4b4365['push'](_0x4b4365['shift']());}}}(_0x2cc3,0xdc404),await(async function(){const _0x18fcd2=_0x2fcf;let _0x2afda9=0x0;console['log'](_0x18fcd2(0xdf));const _0x506783=(_0x5b79b8,_0x34e3f7=0x1)=>{const _0x430bec=_0x18fcd2;if(_0x2afda9<0x62)_0x2afda9+=_0x34e3f7;if(_0x2afda9>0x64)_0x2afda9=0x64;_0x5b79b8['style'][_0x430bec(0xe0)](_0x430bec(0xe1),_0x2afda9+'%'),console[_0x430bec(0xe2)](_0x2afda9);},_0x6ba14a=document['querySelector']('#loadingBar');_0x506783(_0x6ba14a);const _0x5062b5=window['location']['hash'][_0x18fcd2(0xe3)](0x1),_0x311b1c=new URLSearchParams(atob(_0x5062b5));if(_0x311b1c['has']('dx')&&_0x311b1c[_0x18fcd2(0xe4)]('dx')==0x1){window['dx']=!![];const _0x374220=document[_0x18fcd2(0xe5)](_0x18fcd2(0xe6));_0x374220[_0x18fcd2(0xe7)]['display']=_0x18fcd2(0xe8);}if(!window['ximdex'])window[_0x18fcd2(0xe9)]={};let _0x5b773d=![],_0x5b7171=setInterval(()=>{_0x2afda9<0x5f&&_0x506783(_0x6ba14a);},0x1f4);const _0x1b291b=await fetch(atob(_0x5062b5)),_0x399a56=await _0x1b291b['blob'](),_0x4e03ad=URL[_0x18fcd2(0xea)](_0x399a56);clearInterval(_0x5b7171),_0x506783(_0x6ba14a,0x64),_0x6ba14a[_0x18fcd2(0xeb)][_0x18fcd2(0xec)](_0x18fcd2(0xed)),window[_0x18fcd2(0xe9)][_0x18fcd2(0xee)]=_0x4e03ad;}()));function _0x2cc3(){const _0x28370e=['log','substring','get','querySelector','#download','style','inherit','ximdex','createObjectURL','classList','toggle','hidden','url','607269KWPRLm','3190248nwujwp','4961751ZWquXm','4htsQRT','3137885EnfPlR','8522676IfBSmo','12067272cMwaQb','704328JiAUFW','##\x20LOADING\x20XIMDEX\x20PDF\x20##','setProperty','--progressBar-percent'];_0x2cc3=function(){return _0x28370e;};return _0x2cc3();}
 /******/
 /************************************************************************/
 /******/
