@@ -177,7 +177,7 @@ class CDNController extends Controller
      * @param CDNRequest $request
      * @return ResponseFactory
      */
-    public function listCollections(CDNRequest $request)
+    public function listCollections(Request $request)
     {
         return $this->manageCDNCollection($request, CDNControllerAction::LIST_COLLECTIONS);
     }
