@@ -157,7 +157,7 @@ class CDNController extends Controller
      * @param CDNRequest $request
      * @return ResponseFactory
      */
-    public function removeCollection(CDNRequest $request)
+    public function removeCollection(Request $request)
     {
         return $this->manageCDNCollection($request, CDNControllerAction::REMOVE_COLLECTION);
     }

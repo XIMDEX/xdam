@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'admin'], function() {
     Route::post('/create',  [CDNController::class, 'createCDN'])
             ->name('cdn.createCDN');
-    Route::post('/remove',  [CDNController::class, 'removeCDN'])
+    Route::delete('/remove',  [CDNController::class, 'removeCDN'])
             ->name('cdn.removeCDN');
 
     Route::group(['prefix' => '{cdn_code}', 'middleware' => 'cdn.validCDN'], function () {
@@ -20,7 +20,7 @@ Route::group(['prefix' => 'admin'], function() {
 
     Route::group(['prefix' => 'collection'], function() {
         Route::post('/add',     [CDNController::class, 'addCollection'])->name('cdn.addCDNCollection');
-        Route::post('/remove',  [CDNController::class, 'removeCollection'])->name('cdn.removeCDNCollection');
+        Route::delete('/remove',  [CDNController::class, 'removeCollection'])->name('cdn.removeCDNCollection');
         Route::post('/check',   [CDNController::class, 'checkCollection'])->name('cdn.checkCDNCollection');
         Route::post('/list',    [CDNController::class, 'listCollections'])->name('cdn.listCDNCollections');
     });
@@ -30,7 +30,7 @@ Route::group(['prefix' => 'admin'], function() {
 
         Route::group(['prefix' => 'rule'], function() {
             Route::post('/add',     [CDNController::class, 'addAccessPermissionRule'])->name('cdn.addCDNAccessPermissionRule');
-            Route::post('/remove',  [CDNController::class, 'removeAccessPermissionRule'])->name('cdn.removeCDNAccessPermissionRule');
+            Route::delete('/remove',  [CDNController::class, 'removeAccessPermissionRule'])->name('cdn.removeCDNAccessPermissionRule');
             Route::post('/list',    [CDNController::class, 'listAccessPermissionRules'])->name('cdn.listCDNAccessPermissionRules');
         });
     });
