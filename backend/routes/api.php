@@ -206,6 +206,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
 
             Route::group(['middleware' => 'create.resource'], function() {
                 Route::post('/',                        [ResourceController::class, 'store'])->name('damResource.store');
+                Route::get('/{damResource}/duplicate', [ResourceController::class, 'duplicate'])->name('damResource.duplicate');
                 Route::post('/createBatch',             [ResourceController::class, 'storeBatch'])->name('damResource.store.batch');
                 Route::post('/{collection_id}/create',  [ResourceController::class, 'store'])->name('collection.damResource.store');
                 Route::post('/{damResource}/lomes',     [ResourceController::class, 'setLomesData'])->name('resources.setLomesData');

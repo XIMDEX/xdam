@@ -187,6 +187,12 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    public function duplicate(DamResource $damResource){
+        $duplicatedResource =  $this->resourceService->duplicateResource($damResource);
+        return response(new ResourceResource($duplicatedResource))
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
     public function storeBatch(Request $request)
     {
         $resources = $this->resourceService->storeBatch($request->all());

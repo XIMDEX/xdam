@@ -590,7 +590,23 @@ class ResourceService
         }
     }
 
+    public function duplicateResource($data): DamResource
+    {
+        $newResourceData = $data->toArray();
+        $newResourceData['id'] = Str::orderedUuid(); 
+       // $workspace = Workspace::find(Auth::user()->selected_workspace);
+       
+        $newData = $newResourceData['data'];
+        $newData->description->name = $newResourceData['name']."_copy";
+        $newResourceData['data'] =  $newData;
+        $newResource = DamResource::create($newResourceData);
+        //$this->setResourceWorkspace($newResource, $workspace);
 
+        // Optionally, copy associated data like files, categories, etc.
+        $newResource = $this->duplicateAssociatedData($data, $newResource);
+
+        return $newResource;
+    }
     public function resourcesSchema ()
     {
         $path = storage_path('solr_validators');
@@ -1126,5 +1142,53 @@ class ResourceService
     {
         $query = (null !== $type) ? DamResource::where('type', $type) : DamResource::all();
         return $query->count();
+    }
+
+    protected function duplicateAssociatedData(DamResource $originalResource, DamResource $newResource)
+    {
+        foreach ($originalResource->getMedia('File') as $mediaFile) {
+            $path_parts = pathinfo($mediaFile->file_name);
+            $newFileName = $path_parts['filename'] . '_copy.' . $path_parts['extension'];
+            $newMediaFilePath = $path_parts['dirname'] . '/' . $newFileName;
+            
+            if (!file_exists($newMediaFilePath)) {
+                // Copy the file to the new location
+                copy($mediaFile->getPath(), $newMediaFilePath);
+            }
+
+            $mediaFile->name = $newFileName;
+            $newResource->addMedia($newMediaFilePath)
+                        ->usingName($newFileName)
+                        ->preservingOriginal()
+                        ->toMediaCollection('File');
+        }
+
+        foreach ($originalResource->getMedia('Preview') as $mediaFile) {
+            $path_parts = pathinfo($mediaFile->file_name);
+            $newFileName = $path_parts['filename'] . '_copy.' . $path_parts['extension'];
+            $newMediaFilePath = $path_parts['dirname'] . '/' . $newFileName;
+            
+            if (!file_exists($newMediaFilePath)) {
+                // Copy the file to the new location
+                copy($mediaFile->getPath(), $newMediaFilePath);
+            }
+
+            $mediaFile->name = $newFileName;
+            $newResource->addMedia($newMediaFilePath)
+                        ->usingName($newFileName)
+                        ->preservingOriginal()
+                        ->toMediaCollection('Preview');
+        }
+
+        foreach ($originalResource->categories as $category) {
+            $newResource->categories()->attach($category);
+        }
+        
+        foreach ($originalResource->tags as $tag) {
+            $newResource->tags()->attach($tag);
+        }
+        $newResource = $newResource->fresh();
+        $this->solr->saveOrUpdateDocument($newResource);
+        return $newResource;
     }
 }
