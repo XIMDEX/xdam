@@ -188,7 +188,15 @@ class ResourceController extends Controller
     }
 
     public function duplicate(DamResource $damResource){
+    
         $duplicatedResource =  $this->resourceService->duplicateResource($damResource);
+        $lom = $this->resourceService->getLomData($damResource);
+        foreach ($lom as $value) {
+            $data = array_merge($value['formData'], ['_tab_key' => $value['key']]);
+            $resource = $this->resourceService->setLomData($duplicatedResource, $data);
+        }
+       
+        
         return response(new ResourceResource($duplicatedResource))
             ->setStatusCode(Response::HTTP_OK);
     }

@@ -602,7 +602,7 @@ class ResourceService
         $newResource = DamResource::create($newResourceData);
         //$this->setResourceWorkspace($newResource, $workspace);
 
-        // Optionally, copy associated data like files, categories, etc.
+
         $newResource = $this->duplicateAssociatedData($data, $newResource);
 
         return $newResource;
