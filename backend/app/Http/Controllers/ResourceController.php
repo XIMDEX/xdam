@@ -195,6 +195,11 @@ class ResourceController extends Controller
             $data = array_merge($value['formData'], ['_tab_key' => $value['key']]);
             $resource = $this->resourceService->setLomData($duplicatedResource, $data);
         }
+        $lomes = $this->resourceService->getLomesData($damResource);
+        foreach ($lomes as $value) {
+            $data = array_merge($value['formData'], ['_tab_key' => $value['key']]);
+            $resource = $this->resourceService->setLomesData($duplicatedResource, $data);
+        }
        
         
         return response(new ResourceResource($duplicatedResource))
