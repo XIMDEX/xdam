@@ -601,10 +601,16 @@ class ResourceService
         $newResourceData['data'] =  $newData;
         $newResource = DamResource::create($newResourceData);
         //$this->setResourceWorkspace($newResource, $workspace);
+        $originalWorkspaces = $data->workspaces()->get();
+        $wsp = Workspace::find(Auth::user()->selected_workspace);
+        foreach ($originalWorkspaces as $workspace) {
+            $this->setResourceWorkspace($newResource, $workspace);
+        }
 
 
         $newResource = $this->duplicateAssociatedData($data, $newResource);
 
+       
         return $newResource;
     }
     public function resourcesSchema ()
@@ -711,9 +717,9 @@ class ResourceService
         $lomesSchema =  Utils::getLomesSchema($asArray);
 
         $lomesSchemaClient = array_keys(config('solr_facets.client.'.env('APP_CLIENT', 'DEFAULT')));
-
+        $tabsToDel = [];
         if (count($lomesSchemaClient) > 0) {
-            $tabsToDel = [];
+           
             if (!$asArray) {
                 foreach ($lomesSchema->tabs as $index => $keys) {
                     foreach ($keys->properties as $name => $property) {
@@ -772,7 +778,11 @@ class ResourceService
     {
         $dam_lomes = $damResource->lomes()->firstOrCreate();
         $updateArray = [];
-        $formData = $params->all();
+        if ($params instanceof Request) {
+            $formData = $params->all();
+        } else {
+            $formData = $params;
+        }
         $tabKey = $formData['_tab_key'];
         $lomesSchema = $this->lomesSchema(true);
         $tabSchema = $this->searchForAssociativeKey('key', $tabKey, $lomesSchema['tabs']);
