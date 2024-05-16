@@ -609,7 +609,15 @@ class ResourceService
 
 
         $newResource = $this->duplicateAssociatedData($data, $newResource);
+        $newCopy = new \App\Models\Copy([
+            'id' => (string) Str::uuid(),  
+            'parent_id' => null,  
+            'hash_new' => $newResourceData['id'], 
+            'hash_old' => $data->id,  
+            'status' => 'pending'  
+        ]);
 
+        $newCopy->save();   
        
         return $newResource;
     }
@@ -1167,10 +1175,20 @@ class ResourceService
             }
 
             $mediaFile->name = $newFileName;
-            $newResource->addMedia($newMediaFilePath)
+            $newMedia = $newResource->addMedia($newMediaFilePath)
                         ->usingName($newFileName)
                         ->preservingOriginal()
                         ->toMediaCollection('File');
+            
+            $newCopy = new \App\Models\Copy([
+                'id' => (string) Str::uuid(),  
+                'parent_id' => $originalResource->id,  
+                'hash_new' => $newMedia->uuid, 
+                'hash_old' => $mediaFile->uuid,  
+                'status' => 'pending'  
+            ]);
+
+            $newCopy->save();             
         }
 
         foreach ($originalResource->getMedia('Preview') as $mediaFile) {
@@ -1188,6 +1206,17 @@ class ResourceService
                         ->usingName($newFileName)
                         ->preservingOriginal()
                         ->toMediaCollection('Preview');
+            
+            $newCopy = new \App\Models\Copy([
+                'id' => (string) Str::uuid(),  
+                'parent_id' => $originalResource->id,  
+                'hash_new' => $newMedia->uuid, 
+                'hash_old' => $mediaFile->uuid,  
+                'status' => 'pending'  
+            ]);
+            
+            $newCopy->save();   
+            
         }
 
         foreach ($originalResource->categories as $category) {
