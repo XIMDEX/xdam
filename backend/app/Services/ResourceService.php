@@ -621,6 +621,18 @@ class ResourceService
        
         return $newResource;
     }
+
+    public function processDuplicateExtraData(DamResource $damResource, $dataToProcess,$type){
+        foreach ($dataToProcess as $value) {
+            $data = array_merge($value['formData'], ['_tab_key' => $value['key']]);
+            if($type==="lom"){
+                $this->setLomData($damResource, $data);
+            }else if($type==="lomes"){
+                $this->setLomesData($damResource, $data);
+            }           
+        }
+    }
+    
     public function resourcesSchema ()
     {
         $path = storage_path('solr_validators');
