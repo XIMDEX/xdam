@@ -13,8 +13,12 @@ class Copy extends Model
     public $incrementing = false; // Ensure Eloquent doesn't expect an auto-incrementing integer key
 
     protected $fillable = [
-        'id', 'parent_id', 'hash_new', 'hash_old', 'status'
+        'id', 'parent_id', 'hash_new', 'hash_old', 'status','message'
     ]; // Allow mass assignment for these fields
+
+    protected $hidden = [
+        'created_at', 'updated_at'
+    ]; // Hide these fields from the API response
 
     /**
      * Indicates if the model should use timestamp fields.

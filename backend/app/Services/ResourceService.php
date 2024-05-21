@@ -6,6 +6,7 @@ use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use App\Models\Category;
 use App\Models\Collection as ModelsCollection;
+use App\Models\Copy;
 use App\Models\DamResource;
 use App\Models\DamResourceUse;
 use App\Models\Media;
@@ -614,12 +615,23 @@ class ResourceService
             'parent_id' => null,  
             'hash_new' => $newResourceData['id'], 
             'hash_old' => $data->id,  
-            'status' => 'pending'  
+            'status' => 'completed'  
         ]);
 
         $newCopy->save();   
        
         return $newResource;
+    }
+
+    public function duplicateUpdateStatus($copy,$data){
+        $copy->status =  $data['status'];
+        if(isset($data['message'])) $copy->message = $data['message'];
+        $copy->save();
+        return $copy;
+    }
+
+    public function getCopy(Copy $copy){
+        return $copy;
     }
 
     public function processDuplicateExtraData(DamResource $damResource, $dataToProcess,$type){
@@ -1191,15 +1203,18 @@ class ResourceService
                         ->usingName($newFileName)
                         ->preservingOriginal()
                         ->toMediaCollection('File');
-            
+            $status = ($path_parts['extension'] === 'zip') ? 'pending' : 'completed';
+
             $newCopy = new \App\Models\Copy([
                 'id' => (string) Str::uuid(),  
                 'parent_id' => $originalResource->id,  
-                'hash_new' => $newMedia->uuid, 
-                'hash_old' => $mediaFile->uuid,  
-                'status' => 'pending'  
+                'hash_new' => $newMedia->id, 
+                'hash_old' => $mediaFile->id,  
+                'status' =>  $status
             ]);
-
+            if($status === "pending"){
+                //llamada a scorm
+            }
             $newCopy->save();             
         }
 
