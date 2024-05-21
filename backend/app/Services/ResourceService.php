@@ -624,13 +624,15 @@ class ResourceService
     }
 
     public function duplicateUpdateStatus($copy,$data){
+        $copy = Copy::where('hash_new', $copy)->first();
         $copy->status =  $data['status'];
         if(isset($data['message'])) $copy->message = $data['message'];
         $copy->save();
         return $copy;
     }
 
-    public function getCopy(Copy $copy){
+    public function getCopy(String $copy){
+        $copy = Copy::where('hash_new', $copy)->first();
         return $copy;
     }
 

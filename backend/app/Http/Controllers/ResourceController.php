@@ -195,16 +195,15 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function copyStatus(Copy $copy,Request $request ){
+    public function copyStatus($copy,Request $request ){
         $resource = $this->resourceService->duplicateUpdateStatus($copy,$request->all());
-        return response(new ResourceResource($resource))
+        return response(new JsonResource($resource))
             ->setStatusCode(Response::HTTP_OK);
     }
 
     public function copyGetStatus($copy){
-        $copy = Copy::where('hash_new', $copy)->first();
-        //$resource = $this->resourceService->getCopy($copy);
-        return response(new JsonResource($copy))
+        $resource = $this->resourceService->getCopy($copy);
+        return response(new JsonResource($resource))
             ->setStatusCode(Response::HTTP_OK);
     }
 
