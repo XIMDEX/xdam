@@ -623,17 +623,33 @@ class ResourceService
         return $newResource;
     }
 
-    public function duplicateUpdateStatus($copy,$data){
-        $copy = Copy::where('hash_new', $copy)->first();
-        $copy->status =  $data['status'];
-        if(isset($data['message'])) $copy->message = $data['message'];
-        $copy->save();
-        return $copy;
+    public function duplicateUpdateStatus($copy, $data) {
+        try {
+            $copy = Copy::where('hash_new', $copy)->first();
+            if (!$copy) {
+                throw new Exception("Copy not found.");
+            }
+            $copy->status = $data['status'];
+            if (isset($data['message'])) {
+                $copy->message = $data['message'];
+            }
+            $copy->save();
+            return $copy;
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
-
-    public function getCopy(String $copy){
-        $copy = Copy::where('hash_new', $copy)->first();
-        return $copy;
+    
+    public function getCopy(String $copy) {
+        try {
+            $copy = Copy::where('hash_new', $copy)->first();
+            if (!$copy) {
+                throw new Exception("Copy not found.");
+            }
+            return $copy;
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     public function processDuplicateExtraData(DamResource $damResource, $dataToProcess,$type){
