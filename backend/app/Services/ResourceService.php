@@ -615,7 +615,7 @@ class ResourceService
             'parent_id' => null,  
             'hash_new' => $newResourceData['id'], 
             'hash_old' => $data->id,  
-            'status' => 'completed'  
+            'status' => 'pending'  
         ]);
 
         $newCopy->save();   
@@ -1221,18 +1221,16 @@ class ResourceService
                         ->usingName($newFileName)
                         ->preservingOriginal()
                         ->toMediaCollection('File');
-            $status = ($path_parts['extension'] === 'zip') ? 'pending' : 'completed';
+
 
             $newCopy = new \App\Models\Copy([
                 'id' => (string) Str::uuid(),  
                 'parent_id' => $originalResource->id,  
                 'hash_new' => $newMedia->id, 
                 'hash_old' => $mediaFile->id,  
-                'status' =>  $status
+                'status' =>  "completed"
             ]);
-            if($status === "pending"){
-                //llamada a scorm
-            }
+        
             $newCopy->save();             
         }
 
@@ -1257,7 +1255,7 @@ class ResourceService
                 'parent_id' => $originalResource->id,  
                 'hash_new' => $newMedia->uuid, 
                 'hash_old' => $mediaFile->uuid,  
-                'status' => 'pending'  
+                'status' => 'completed'  
             ]);
             
             $newCopy->save();   
