@@ -696,8 +696,8 @@ class ResourceService
 
         $lomesSchemaClient = array_keys(config('solr_facets.client.'.env('APP_CLIENT', 'DEFAULT')));
 
+        $tabsToDel = [];
         if (count($lomesSchemaClient) > 0) {
-            $tabsToDel = [];
             if (!$asArray) {
                 foreach ($lomesSchema->tabs as $index => $keys) {
                     foreach ($keys->properties as $name => $property) {
