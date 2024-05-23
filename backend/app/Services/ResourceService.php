@@ -6,6 +6,7 @@ use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use App\Models\Category;
 use App\Models\Collection as ModelsCollection;
+use App\Models\Copy;
 use App\Models\DamResource;
 use App\Models\DamResourceUse;
 use App\Models\Media;
@@ -590,7 +591,78 @@ class ResourceService
         }
     }
 
+    public function duplicateResource($data): DamResource
+    {
+        $newResourceData = $data->toArray();
+        $newResourceData['id'] = Str::orderedUuid(); 
+       // $workspace = Workspace::find(Auth::user()->selected_workspace);
+       
+        $newData = $newResourceData['data'];
+        $newData->description->name = $newResourceData['name']."_copy";
+        $newResourceData['data'] =  $newData;
+        $newResource = DamResource::create($newResourceData);
+        //$this->setResourceWorkspace($newResource, $workspace);
+        $originalWorkspaces = $data->workspaces()->get();
+        $wsp = Workspace::find(Auth::user()->selected_workspace);
+        foreach ($originalWorkspaces as $workspace) {
+            $this->setResourceWorkspace($newResource, $workspace);
+        }
 
+
+        $newResource = $this->duplicateAssociatedData($data, $newResource);
+        $newCopy = new \App\Models\Copy([
+            'id' => (string) Str::uuid(),  
+            'parent_id' => null,  
+            'hash_new' => $newResourceData['id'], 
+            'hash_old' => $data->id,  
+            'status' => 'pending'  
+        ]);
+
+        $newCopy->save();   
+       
+        return $newResource;
+    }
+
+    public function duplicateUpdateStatus($copy, $data) {
+        try {
+            $copy = Copy::where('hash_new', $copy)->first();
+            if (!$copy) {
+                throw new Exception("Copy not found.");
+            }
+            $copy->status = $data['status'];
+            if (isset($data['message'])) {
+                $copy->message = $data['message'];
+            }
+            $copy->save();
+            return $copy;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+    
+    public function getCopy(String $copy) {
+        try {
+            $copy = Copy::where('hash_new', $copy)->first();
+            if (!$copy) {
+                throw new Exception("Copy not found.");
+            }
+            return $copy;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function processDuplicateExtraData(DamResource $damResource, $dataToProcess,$type){
+        foreach ($dataToProcess as $value) {
+            $data = array_merge($value['formData'], ['_tab_key' => $value['key']]);
+            if($type==="lom"){
+                $this->setLomData($damResource, $data);
+            }else if($type==="lomes"){
+                $this->setLomesData($damResource, $data);
+            }           
+        }
+    }
+    
     public function resourcesSchema ()
     {
         $path = storage_path('solr_validators');
@@ -756,7 +828,11 @@ class ResourceService
     {
         $dam_lomes = $damResource->lomes()->firstOrCreate();
         $updateArray = [];
-        $formData = $params->all();
+        if ($params instanceof Request) {
+            $formData = $params->all();
+        } else {
+            $formData = $params;
+        }
         $tabKey = $formData['_tab_key'];
         $lomesSchema = $this->lomesSchema(true);
         $tabSchema = $this->searchForAssociativeKey('key', $tabKey, $lomesSchema['tabs']);
@@ -1126,5 +1202,75 @@ class ResourceService
     {
         $query = (null !== $type) ? DamResource::where('type', $type) : DamResource::all();
         return $query->count();
+    }
+
+    protected function duplicateAssociatedData(DamResource $originalResource, DamResource $newResource)
+    {
+        foreach ($originalResource->getMedia('File') as $mediaFile) {
+            $path_parts = pathinfo($mediaFile->file_name);
+            $newFileName = $path_parts['filename'] . '_copy.' . $path_parts['extension'];
+            $newMediaFilePath = $path_parts['dirname'] . '/' . $newFileName;
+            
+            if (!file_exists($newMediaFilePath)) {
+                // Copy the file to the new location
+                copy($mediaFile->getPath(), $newMediaFilePath);
+            }
+
+            $mediaFile->name = $newFileName;
+            $newMedia = $newResource->addMedia($newMediaFilePath)
+                        ->usingName($newFileName)
+                        ->preservingOriginal()
+                        ->toMediaCollection('File');
+
+
+            $newCopy = new \App\Models\Copy([
+                'id' => (string) Str::uuid(),  
+                'parent_id' => $originalResource->id,  
+                'hash_new' => $newMedia->id, 
+                'hash_old' => $mediaFile->id,  
+                'status' =>  "completed"
+            ]);
+        
+            $newCopy->save();             
+        }
+
+        foreach ($originalResource->getMedia('Preview') as $mediaFile) {
+            $path_parts = pathinfo($mediaFile->file_name);
+            $newFileName = $path_parts['filename'] . '_copy.' . $path_parts['extension'];
+            $newMediaFilePath = $path_parts['dirname'] . '/' . $newFileName;
+            
+            if (!file_exists($newMediaFilePath)) {
+                // Copy the file to the new location
+                copy($mediaFile->getPath(), $newMediaFilePath);
+            }
+
+            $mediaFile->name = $newFileName;
+            $newResource->addMedia($newMediaFilePath)
+                        ->usingName($newFileName)
+                        ->preservingOriginal()
+                        ->toMediaCollection('Preview');
+            
+            $newCopy = new \App\Models\Copy([
+                'id' => (string) Str::uuid(),  
+                'parent_id' => $originalResource->id,  
+                'hash_new' => $newMedia->uuid, 
+                'hash_old' => $mediaFile->uuid,  
+                'status' => 'completed'  
+            ]);
+            
+            $newCopy->save();   
+            
+        }
+
+        foreach ($originalResource->categories as $category) {
+            $newResource->categories()->attach($category);
+        }
+        
+        foreach ($originalResource->tags as $tag) {
+            $newResource->tags()->attach($tag);
+        }
+        $newResource = $newResource->fresh();
+        $this->solr->saveOrUpdateDocument($newResource);
+        return $newResource;
     }
 }

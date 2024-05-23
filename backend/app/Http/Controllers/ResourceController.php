@@ -35,9 +35,7 @@ use Mimey\MimeTypes;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Cache;
 use App\Enums\AccessPermission;
-
-
-
+use App\Models\Copy;
 
 class ResourceController extends Controller
 {
@@ -184,6 +182,28 @@ class ResourceController extends Controller
     {
         $resource = $this->resourceService->store($request->all());
         return response(new ResourceResource($resource))
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function duplicate(DamResource $damResource){
+    
+        $duplicatedResource =  $this->resourceService->duplicateResource($damResource);
+        $this->resourceService->processDuplicateExtraData($duplicatedResource,$this->resourceService->getLomData($damResource),"lom" );
+        $this->resourceService->processDuplicateExtraData($duplicatedResource,$this->resourceService->getLomesData($damResource),"lomes" );
+        
+        return response(new ResourceResource($duplicatedResource))
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function copyStatus($copy,Request $request ){
+        $resource = $this->resourceService->duplicateUpdateStatus($copy,$request->all());
+        return response(new JsonResource($resource))
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function copyGetStatus($copy){
+        $resource = $this->resourceService->getCopy($copy);
+        return response(new JsonResource($resource))
             ->setStatusCode(Response::HTTP_OK);
     }
 
