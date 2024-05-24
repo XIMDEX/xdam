@@ -1224,6 +1224,7 @@ class ResourceService
             $newMedia = $newResource->addMedia($newMediaFilePath)
                         ->usingName($newFileName)
                         ->preservingOriginal()
+                        ->withCustomProperties(['parent_id' => $originalResource->id])
                         ->toMediaCollection('File');
 
 
@@ -1251,6 +1252,7 @@ class ResourceService
             $mediaFile->name = $newFileName;
             $newResource->addMedia($newMediaFilePath)
                         ->usingName($newFileName)
+                        ->withCustomProperties(['parent_id' => $originalResource->id])
                         ->preservingOriginal()
                         ->toMediaCollection('Preview');
             
