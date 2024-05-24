@@ -36,6 +36,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Cache;
 use App\Enums\AccessPermission;
 use App\Models\Copy;
+use App\Services\ExternalApis\ScormService;
 
 class ResourceController extends Controller
 {
@@ -63,6 +64,11 @@ class ResourceController extends Controller
      * @var UserService
      */
     private $userService;
+    
+    /**
+     * @var ScormService
+     */
+    private $scormService;
 
     /**
      * CategoryController constructor.
@@ -71,16 +77,18 @@ class ResourceController extends Controller
      * @param CDNService $cdnService
      * @param WorkspaceService $workspaceService
      * @param UserService $userService
+     * @param ScormService $scormService
      */
     public function __construct(ResourceService $resourceService, MediaService $mediaService,
                                 CDNService $cdnService, WorkspaceService $workspaceService,
-                                UserService $userService)
+                                UserService $userService, ScormService $scormService)
     {
         $this->resourceService = $resourceService;
         $this->mediaService = $mediaService;
         $this->cdnService = $cdnService;
         $this->workspaceService = $workspaceService;
         $this->userService = $userService;
+        $this->scormService = $scormService;
     }
 
     public function resourcesSchema ()
@@ -186,11 +194,24 @@ class ResourceController extends Controller
     }
 
     public function duplicate(DamResource $damResource){
-    
-        $duplicatedResource =  $this->resourceService->duplicateResource($damResource);
-        $this->resourceService->processDuplicateExtraData($duplicatedResource,$this->resourceService->getLomData($damResource),"lom" );
-        $this->resourceService->processDuplicateExtraData($duplicatedResource,$this->resourceService->getLomesData($damResource),"lomes" );
-        
+        $duplicated = false;
+        try {
+            $duplicatedResource =  $this->resourceService->duplicateResource($damResource);
+            $this->resourceService->processDuplicateExtraData($duplicatedResource,$this->resourceService->getLomData($damResource),"lom" );
+            $this->resourceService->processDuplicateExtraData($duplicatedResource,$this->resourceService->getLomesData($damResource),"lomes" );
+            $duplicated = true;
+            $this->scormService->cloneBook($duplicatedResource->id);
+        } catch (\Exception $exc) {
+            $this->resourceService->duplicateUpdateStatus($duplicatedResource->id, ['message' => $exc->getMessage(), 'status' => 'error']);
+            $message = $exc->getMessage();
+            if ($duplicated) {
+                $message = 'Book cloned in XDAM but with errors: ' . $message;
+            }
+            return response()->json([
+                'error' => $message
+            ])->setStatusCode($duplicated ? Response::HTTP_OK : Response::HTTP_BAD_GATEWAY);
+        }
+
         return response(new ResourceResource($duplicatedResource))
             ->setStatusCode(Response::HTTP_OK);
     }
@@ -828,5 +849,18 @@ class ResourceController extends Controller
         }
 
         return false;
+    }
+
+    public function retryClone($copy) {
+        try {
+            $this->scormService->cloneBook($copy);
+        } catch (\Exception $exc) {
+            $this->resourceService->duplicateUpdateStatus($copy, ['message' => $exc->getMessage(), 'status' => 'error']);
+            $message = $exc->getMessage();
+          
+            return response()->json([
+                'error' => $message
+            ])->setStatusCode(Response::HTTP_BAD_GATEWAY);
+        }
     }
 }

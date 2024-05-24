@@ -89,8 +89,6 @@ class ResourceService
       */
     private XevalSyncAssessmentService $xevalSyncAssessmentService;
 
-
-
     const PAGE_SIZE = 30;
 
     /**
@@ -625,11 +623,17 @@ class ResourceService
 
     public function duplicateUpdateStatus($copy, $data) {
         try {
+            if ($data['status'] === 'OK') $data['status'] = 'completed';
+            if ($data['status'] === 'KO') $data['status'] = 'error';
+
             $copy = Copy::where('hash_new', $copy)->first();
             if (!$copy) {
                 throw new Exception("Copy not found.");
             }
             $copy->status = $data['status'];
+            if ($data['status'] == 'completed' && !isset($data['message'])) {
+                $copy->message = '';
+            } 
             if (isset($data['message'])) {
                 $copy->message = $data['message'];
             }
