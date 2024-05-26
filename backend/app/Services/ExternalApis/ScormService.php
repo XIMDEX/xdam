@@ -17,7 +17,7 @@ class ScormService extends BaseApi
 
     public function cloneBook($id) {
         try {
-            $response = $this->call($this->BASE_URL . $this->VERSION . "api/book/". $id ."/clone", [], "post", json_encode(['token' => $this->TOKEN]));
+            $response = $this->call($this->BASE_URL . $this->VERSION . "/api/book/". $id ."/clone", [], "post", json_encode(['token' => $this->TOKEN]));
             return $response;
         } catch (\Exception $exc) {
             throw new \Exception('Error book processing');
