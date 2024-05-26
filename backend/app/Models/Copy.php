@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Copy extends Model
 {
+    use SoftDeletes;
     protected $table = 'copies'; 
 
     protected $primaryKey = 'id'; // Set the primary key field

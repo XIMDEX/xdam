@@ -960,6 +960,18 @@ class ResourceService
             $parseActivity = $this->xevalSyncActivityService->parseActivityData($resource->id,$data,$resource->collection_id);
             $res = $this->xevalSyncActivityService->syncActivityOnXeval($parseActivity);
         }
+        if(Copy::where('hash_new', $resourceId)->exists()){
+            $copy = Copy::where('hash_new', $resourceId)->first();
+            $copy->status = 'deleted';
+            $copy->save();
+            $copy->delete();
+            foreach ($resource->getMedia('File') as $mediaFile){
+                $copy_child =  Copy::where('hash_new', $mediaFile->id)->first();
+                $copy_child->status = 'deleted';
+                $copy_child->save();
+                $copy_child->delete();
+            }
+        }
         try {
             $this->solr->deleteDocument($resource);
             $resource->forceDelete();
@@ -981,7 +993,18 @@ class ResourceService
         if ($resource->type == ResourceType::course && !$onlyLocal) {
             $this->kakumaService->softDeleteCourse($resource->id, $force);
         }
-
+        if(Copy::where('hash_new', $resource->id)->exists()){
+            $copy = Copy::where('hash_new', $resource->id)->first();
+            $copy->status = 'deleted';
+            $copy->save();
+            $copy->delete();
+            foreach ($resource->getMedia('File') as $mediaFile){
+                $copy_child =  Copy::where('hash_new', $mediaFile->id)->first();
+                $copy_child->status = 'deleted';
+                $copy_child->save();
+                $copy_child->delete();
+            }
+        }
         $resource->delete();
         $this->solr->saveOrUpdateDocument($resource);
 
@@ -1154,6 +1177,13 @@ class ResourceService
         foreach ($ids as $id) {
             $media = Media::findOrFail($id);
             $media->delete();
+            if(Copy::where('hash_new', $id)->exists()){
+                $copy = Copy::where('hash_new', $id)->first();
+                $copy->status = 'deleted';
+                $copy->save();
+                $copy->delete();
+            }
+            
         }
         $this->solr->saveOrUpdateDocument($resource);
         return $resource->refresh();
@@ -1168,6 +1198,12 @@ class ResourceService
     public function deleteAssociatedFile(DamResource $resource, Media $media): DamResource
     {
         $media->delete();
+        if(Copy::where('hash_new', $media->id)->exists()){
+            $copy = Copy::where('hash_new', $media->id)->first();
+            $copy->status = 'deleted';
+            $copy->save();
+            $copy->delete();
+        }
         $this->solr->saveOrUpdateDocument($resource);
         return $resource->refresh();
     }
