@@ -596,7 +596,8 @@ class ResourceService
        // $workspace = Workspace::find(Auth::user()->selected_workspace);
        
         $newData = $newResourceData['data'];
-        $newData->description->name = $newResourceData['name']."_copy";
+        $newData->description->name = $newData->description->name."_copy";
+        $newResourceData['name'] = $newData->description->name;
         $newResourceData['data'] =  $newData;
         $newResource = DamResource::create($newResourceData);
         //$this->setResourceWorkspace($newResource, $workspace);
