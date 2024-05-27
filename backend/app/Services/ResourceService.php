@@ -6,6 +6,7 @@ use App\Enums\MediaType;
 use App\Enums\ResourceType;
 use App\Models\Category;
 use App\Models\Collection as ModelsCollection;
+use App\Models\Copy;
 use App\Models\DamResource;
 use App\Models\DamResourceUse;
 use App\Models\Media;
@@ -87,8 +88,6 @@ class ResourceService
       * @var XevalSyncAssessmentService
       */
     private XevalSyncAssessmentService $xevalSyncAssessmentService;
-
-
 
     const PAGE_SIZE = 30;
 
@@ -590,7 +589,85 @@ class ResourceService
         }
     }
 
+    public function duplicateResource($data): DamResource
+    {
+        $newResourceData = $data->toArray();
+        $newResourceData['id'] = Str::orderedUuid(); 
+       // $workspace = Workspace::find(Auth::user()->selected_workspace);
+       
+        $newData = $newResourceData['data'];
+        $newData->description->name = $newData->description->name."_copy";
+        $newResourceData['name'] = $newData->description->name;
+        $newResourceData['data'] =  $newData;
+        $newResource = DamResource::create($newResourceData);
+        //$this->setResourceWorkspace($newResource, $workspace);
+        $originalWorkspaces = $data->workspaces()->get();
+        $wsp = Workspace::find(Auth::user()->selected_workspace);
+        foreach ($originalWorkspaces as $workspace) {
+            $this->setResourceWorkspace($newResource, $workspace);
+        }
 
+
+        $newResource = $this->duplicateAssociatedData($data, $newResource);
+        $newCopy = new \App\Models\Copy([
+            'id' => (string) Str::uuid(),  
+            'parent_id' => null,  
+            'hash_new' => $newResourceData['id'], 
+            'hash_old' => $data->id,  
+            'status' => 'pending'  
+        ]);
+
+        $newCopy->save();   
+       
+        return $newResource;
+    }
+
+    public function duplicateUpdateStatus($copy, $data) {
+        try {
+            if ($data['status'] === 'OK') $data['status'] = 'completed';
+            if ($data['status'] === 'KO') $data['status'] = 'error';
+
+            $copy = Copy::where('hash_new', $copy)->first();
+            if (!$copy) {
+                throw new Exception("Copy not found.");
+            }
+            $copy->status = $data['status'];
+            if ($data['status'] == 'completed' && !isset($data['message'])) {
+                $copy->message = '';
+            } 
+            if (isset($data['message'])) {
+                $copy->message = $data['message'];
+            }
+            $copy->save();
+            return $copy;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+    
+    public function getCopy(String $copy) {
+        try {
+            $copy = Copy::where('hash_new', $copy)->first();
+            if (!$copy) {
+                throw new Exception("Copy not found.");
+            }
+            return $copy;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function processDuplicateExtraData(DamResource $damResource, $dataToProcess,$type){
+        foreach ($dataToProcess as $value) {
+            $data = array_merge($value['formData'], ['_tab_key' => $value['key']]);
+            if($type==="lom"){
+                $this->setLomData($damResource, $data);
+            }else if($type==="lomes"){
+                $this->setLomesData($damResource, $data);
+            }           
+        }
+    }
+    
     public function resourcesSchema ()
     {
         $path = storage_path('solr_validators');
@@ -696,8 +773,8 @@ class ResourceService
 
         $lomesSchemaClient = array_keys(config('solr_facets.client.'.env('APP_CLIENT', 'DEFAULT')));
 
+        $tabsToDel = [];
         if (count($lomesSchemaClient) > 0) {
-            $tabsToDel = [];
             if (!$asArray) {
                 foreach ($lomesSchema->tabs as $index => $keys) {
                     foreach ($keys->properties as $name => $property) {
@@ -756,7 +833,11 @@ class ResourceService
     {
         $dam_lomes = $damResource->lomes()->firstOrCreate();
         $updateArray = [];
-        $formData = $params->all();
+        if ($params instanceof Request) {
+            $formData = $params->all();
+        } else {
+            $formData = $params;
+        }
         $tabKey = $formData['_tab_key'];
         $lomesSchema = $this->lomesSchema(true);
         $tabSchema = $this->searchForAssociativeKey('key', $tabKey, $lomesSchema['tabs']);
@@ -880,6 +961,18 @@ class ResourceService
             $parseActivity = $this->xevalSyncActivityService->parseActivityData($resource->id,$data,$resource->collection_id);
             $res = $this->xevalSyncActivityService->syncActivityOnXeval($parseActivity);
         }
+        if(Copy::where('hash_new', $resourceId)->exists()){
+            $copy = Copy::where('hash_new', $resourceId)->first();
+            $copy->status = 'deleted';
+            $copy->save();
+            $copy->delete();
+            foreach ($resource->getMedia('File') as $mediaFile){
+                $copy_child =  Copy::where('hash_new', $mediaFile->id)->first();
+                $copy_child->status = 'deleted';
+                $copy_child->save();
+                $copy_child->delete();
+            }
+        }
         try {
             $this->solr->deleteDocument($resource);
             $resource->forceDelete();
@@ -901,7 +994,18 @@ class ResourceService
         if ($resource->type == ResourceType::course && !$onlyLocal) {
             $this->kakumaService->softDeleteCourse($resource->id, $force);
         }
-
+        if(Copy::where('hash_new', $resource->id)->exists()){
+            $copy = Copy::where('hash_new', $resource->id)->first();
+            $copy->status = 'deleted';
+            $copy->save();
+            $copy->delete();
+            foreach ($resource->getMedia('File') as $mediaFile){
+                $copy_child =  Copy::where('hash_new', $mediaFile->id)->first();
+                $copy_child->status = 'deleted';
+                $copy_child->save();
+                $copy_child->delete();
+            }
+        }
         $resource->delete();
         $this->solr->saveOrUpdateDocument($resource);
 
@@ -1074,6 +1178,13 @@ class ResourceService
         foreach ($ids as $id) {
             $media = Media::findOrFail($id);
             $media->delete();
+            if(Copy::where('hash_new', $id)->exists()){
+                $copy = Copy::where('hash_new', $id)->first();
+                $copy->status = 'deleted';
+                $copy->save();
+                $copy->delete();
+            }
+            
         }
         $this->solr->saveOrUpdateDocument($resource);
         return $resource->refresh();
@@ -1088,6 +1199,12 @@ class ResourceService
     public function deleteAssociatedFile(DamResource $resource, Media $media): DamResource
     {
         $media->delete();
+        if(Copy::where('hash_new', $media->id)->exists()){
+            $copy = Copy::where('hash_new', $media->id)->first();
+            $copy->status = 'deleted';
+            $copy->save();
+            $copy->delete();
+        }
         $this->solr->saveOrUpdateDocument($resource);
         return $resource->refresh();
     }
@@ -1126,5 +1243,77 @@ class ResourceService
     {
         $query = (null !== $type) ? DamResource::where('type', $type) : DamResource::all();
         return $query->count();
+    }
+
+    protected function duplicateAssociatedData(DamResource $originalResource, DamResource $newResource)
+    {
+        foreach ($originalResource->getMedia('File') as $mediaFile) {
+            $path_parts = pathinfo($mediaFile->file_name);
+            $newFileName = $path_parts['filename'] . '_copy.' . $path_parts['extension'];
+            $newMediaFilePath = $path_parts['dirname'] . '/' . $newFileName;
+            
+            if (!file_exists($newMediaFilePath)) {
+                // Copy the file to the new location
+                copy($mediaFile->getPath(), $newMediaFilePath);
+            }
+
+            $mediaFile->name = $newFileName;
+            $newMedia = $newResource->addMedia($newMediaFilePath)
+                        ->usingName($newFileName)
+                        ->preservingOriginal()
+                        ->withCustomProperties(['parent_id' => $originalResource->id])
+                        ->toMediaCollection('File');
+
+
+            $newCopy = new \App\Models\Copy([
+                'id' => (string) Str::uuid(),  
+                'parent_id' => $originalResource->id,  
+                'hash_new' => $newMedia->id, 
+                'hash_old' => $mediaFile->id,  
+                'status' =>  "completed"
+            ]);
+        
+            $newCopy->save();             
+        }
+
+        foreach ($originalResource->getMedia('Preview') as $mediaFile) {
+            $path_parts = pathinfo($mediaFile->file_name);
+            $newFileName = $path_parts['filename'] . '_copy.' . $path_parts['extension'];
+            $newMediaFilePath = $path_parts['dirname'] . '/' . $newFileName;
+            
+            if (!file_exists($newMediaFilePath)) {
+                // Copy the file to the new location
+                copy($mediaFile->getPath(), $newMediaFilePath);
+            }
+
+            $mediaFile->name = $newFileName;
+            $newResource->addMedia($newMediaFilePath)
+                        ->usingName($newFileName)
+                        ->withCustomProperties(['parent_id' => $originalResource->id])
+                        ->preservingOriginal()
+                        ->toMediaCollection('Preview');
+            
+            $newCopy = new \App\Models\Copy([
+                'id' => (string) Str::uuid(),  
+                'parent_id' => $originalResource->id,  
+                'hash_new' => $newMedia->uuid, 
+                'hash_old' => $mediaFile->uuid,  
+                'status' => 'completed'  
+            ]);
+            
+            $newCopy->save();   
+            
+        }
+
+        foreach ($originalResource->categories as $category) {
+            $newResource->categories()->attach($category);
+        }
+        
+        foreach ($originalResource->tags as $tag) {
+            $newResource->tags()->attach($tag);
+        }
+        $newResource = $newResource->fresh();
+        $this->solr->saveOrUpdateDocument($newResource);
+        return $newResource;
     }
 }
