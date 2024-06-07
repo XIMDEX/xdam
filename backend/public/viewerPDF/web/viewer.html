@@ -28,6 +28,23 @@ See https://github.com/adobe-type-tools/cmap-resources
   <meta name="google" content="notranslate">
   <title>PDF.js viewer</title>
 
+  <style>
+    @media print {
+      html, body {
+        display: none !important;
+        -webkit-user-select: none !important; /* Safari */
+        -ms-user-select: none !important; /* IE 10 and IE 11 */
+        user-select: none !important; /* Standard syntax */ 
+      }
+    }
+    
+    html, body {
+        -webkit-user-select: none !important; /* Safari */
+        -ms-user-select: none !important; /* IE 10 and IE 11 */
+        user-select: none !important; /* Standard syntax */ 
+      }
+  </style>
+
   <!-- This snippet is used in production (included from viewer.html) -->
   <link rel="resource" type="application/l10n" href="locale/locale.json">
   <script src="../build/pdf.js" type="module"></script>
