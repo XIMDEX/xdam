@@ -7,9 +7,17 @@ use App\Utils\DamUrlUtil;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Lib\Xrole\Services\PermissionService;
 
 class ShowResource
 {
+
+
+    private PermissionService $permissionService;
+    public function __construct(PermissionService $permissionService){
+        $this->permissionService = $permissionService;
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -17,11 +25,12 @@ class ShowResource
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next, PermissionService $permissionService)
     {
-        // provisionally everyone has access to render resources
-        return $next($request);
-
+        if($permissionService->canRead() || $this->permissionService->isAdmin() || $this->permissionService->isSuperAdmin() ){
+            return $next($request);
+        }
+        return response()->json(['error' => 'Unauthorized.'], 401);
         $damResource = isset($request->damUrl) ? DamUrlUtil::getResourceFromUrl($request->damUrl) : $request->damResource;
         return $damResource->userIsAuthorized(Auth::user(), Abilities::READ_RESOURCE) ? $next($request) : response()->json([Abilities::REMOVE_RESOURCE => 'Error: Unauthorized.'], 401);
 

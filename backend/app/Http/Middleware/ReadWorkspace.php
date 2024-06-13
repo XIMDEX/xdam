@@ -3,14 +3,19 @@
 namespace App\Http\Middleware;
 
 use App\Enums\Abilities;
-use App\Enums\Roles;
 use App\Models\Workspace;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Lib\Xrole\Models\Permissions;
+use Lib\Xrole\Services\PermissionService;
 
 class ReadWorkspace
 {
+    protected $permissionService;
+    public function __construct(PermissionService $permissionService){
+        $this->permissionService = $permissionService;
+    }
     /**
      * Handle an incoming request.
      *
@@ -23,10 +28,10 @@ class ReadWorkspace
 
         $user = Auth::user();
 
-        if ($user->isA(Roles::SUPER_ADMIN)) {
+        if ($this->permissionService->canRead()|| $this->permissionService->isAdmin() || $this->permissionService->isSuperAdmin()) {
             return $next($request);
         }
-
+        return response()->json(['error' => 'Unauthorized.'], 401);
         if(!$workspace = Workspace::find($user->selected_workspace)) {
             return response()->json(['Error' => 'No workspace selected.'], 401);
         }

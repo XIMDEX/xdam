@@ -1,0 +1,22 @@
+{
+    "name": "ximdex/xrole",
+    "description": "A PHP library for bitwise permissions management.",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Ximdex\\Xrole\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "juandz13",
+            "email": "jdiaz@ximdex.com"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^11.1"
+    },
+    "require": {
+        "firebase/php-jwt": "^6.10"
+    }
+}
