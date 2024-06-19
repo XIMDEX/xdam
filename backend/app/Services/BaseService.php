@@ -20,6 +20,7 @@ class BaseService
     public static function handleFacetCard($facets)
     {
         return $facets;
+
     }
 
     public static function handleFacetValues($values, $facet)
@@ -79,7 +80,6 @@ class BaseService
                 }
                 $values->{$name}['route'] = route($route, $opt);
                 $values->{$name}['route_delete'] = route($route_delete, $opt);
-
             }
         }
 
@@ -89,5 +89,44 @@ class BaseService
     protected static function parseTypeBBDD($type) {
         if ($type === 'enum') return 'string';
         return $type;
+    }
+
+    protected static function addWorkspace($type,$facets,$array){
+        foreach ($facets as $index => $facet) {
+            if (in_array($facet['key'], $array)) {
+                $facets[$index]['canAdd'] = true;
+                $resourceName = self::$array[$facet['key']];
+                if (class_exists("App\\Models\\{$resourceName}")) {
+                    $model = app("App\\Models\\{$resourceName}");
+                    $model_instance = new $model();
+                }
+                $fillables = $model_instance->getFillable();
+                $model_class = $model::class;
+                $required = defined("{$model_class}::REQUIRED_FILLABLES") ? $model::REQUIRED_FILLABLES : $fillables;
+
+                foreach ($required as $key) {
+                    $type = $model_instance->getConnection()->getSchemaBuilder()->getColumnType($model_instance->getTable(), $key);
+                    $field_add = [
+                        'key' => $key,
+                        'label' => str_replace('_', ' ', ucfirst($key)),
+                        'type' => in_array($type, self::TYPES_ALLOWS) ? self::parseTypeBBDD($type) : false
+                    ];
+                    if ($facet['key'] === 'categories' && $key === 'type') {
+                        $field_add['value'] = $type;
+                    }
+                    $facets[$index]['fields'][] = $field_add;
+                }
+                if ($facet['key'] === 'categories') {
+                    $route = 'v1category.store';
+                    $facets[$index]['route'] = route($route);
+                }
+                if ($facet['key'] === 'workspaces') {
+                    $route = 'v1wsp.create';
+                }
+
+                if ($route) $facets[$index]['route'] = route($route);
+            }
+        }
+        return $facets;
     }
 }
