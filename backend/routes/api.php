@@ -97,7 +97,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
     Route::get('/exploreCourses', [ResourceController::class, 'exploreCourses'])->name('damResource.exploreCourses');
     Route::get('/corporation/getDefault',                           [CorporationController::class, 'getDefault'])->name('corporation.getDefault');
 
-    Route::group(['middleware' => 'auth:api'], function () {
+    Route::group(['middleware' => 'custom.auth'], function () {
         Route::get('/ini_pms', function() {
             return [
                 'pms' => ini_get('post_max_size'),
@@ -171,6 +171,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
             Route::post('logout',   [AuthController::class, 'logout'])->name('user.logout');
             Route::get('/me',       [UserController::class, 'userInfo'])->name('user.get.me');
             Route::get('/',         [UserController::class, 'user'])->name('user.get');
+            Route::get('/additional',     [UserController::class, 'getAdditionalData'])->name('user.getAdditional');
 
             Route::group(['prefix' => 'resource'], function(){
                 Route::get('/',                          [UserController::class, 'resources'])->name('user.get.resources');

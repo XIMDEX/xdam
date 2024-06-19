@@ -5,12 +5,14 @@ namespace App\Services;
 use App\Enums\OrganizationType;
 use App\Models\DamResource;
 use App\Models\Organization;
+use App\Models\User;
 use App\Models\Workspace;
 use App\Utils\Utils;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\Token;
 use Lcobucci\JWT\Decoder;
 use Lcobucci\JWT\Token\Parser;
+use Lib\Xrole\Services\JwtService;
 
 class UserService
 {
@@ -92,5 +94,11 @@ class UserService
         //TODO: attach to some collection
 
         return $resource;
+    }
+
+    public function getAdditionalData($token){
+    
+        return $token; 
+        $user = User::find($token->id);
     }
 }

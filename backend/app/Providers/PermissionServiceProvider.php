@@ -17,8 +17,6 @@ class PermissionServiceProvider extends ServiceProvider
     {
         // Bind JwtService into the service container as a singleton
         $this->app->singleton(JwtService::class, function ($app) {
-            // Assuming JwtService requires a public key path or other dependencies
-            //$publicKeyPath = $app['config']->get('services.jwt.public_key');
             $publicKeyPath = '/../../../lib/xrole/oauth-public.key';
             $firebase = new FirebaseJwt($publicKeyPath);
             return new JwtService($firebase);
@@ -30,12 +28,12 @@ class PermissionServiceProvider extends ServiceProvider
             $token = $jwtService->verifyToken(request()->bearerToken());
 
             if ($token) {
-                $permissions = new Permissions('00000010');
+                $permissions = new Permissions('00000000');
                 return new PermissionService($permissions);
             }
 
             // Handle the case where there is no token or return a default PermissionService
-            return new PermissionService(new Permissions(0b00000011));
+            return new PermissionService(new Permissions(0b00000000));
         });
     }
 
