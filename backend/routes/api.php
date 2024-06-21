@@ -18,7 +18,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SemanticController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkspaceController;
-
+use App\Http\Controllers\XdirController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +35,8 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
     Route::get('temp', function() {
         return response()->json(['status' => 'OK']);
     });
+
+    Route::get('xdir',[XdirController::class, 'action'])->name('xdir.action');
 
     Route::group(['prefix' => 'cdn'], function() {
         // Route::get('/workspace_test/{workspace}',   [CatalogueController::class, 'getCatalogueByWorkspace'])

@@ -17,8 +17,9 @@ class PermissionServiceProvider extends ServiceProvider
     {
         // Bind JwtService into the service container as a singleton
         $this->app->singleton(JwtService::class, function ($app) {
-            $publicKeyPath = '/../../../lib/xrole/oauth-public.key';
-            $firebase = new FirebaseJwt($publicKeyPath);
+            $publicKeyPath = base_path('lib/xrole/oauth-public.key'); 
+            $publicKeyContents = file_get_contents($publicKeyPath);
+            $firebase = new FirebaseJwt($publicKeyContents);
             return new JwtService($firebase);
         });
         // Bind a factory method for PermissionService into the service container
