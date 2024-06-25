@@ -22,18 +22,22 @@ class PermissionServiceProvider extends ServiceProvider
             $firebase = new FirebaseJwt($publicKeyContents);
             return new JwtService($firebase);
         });
-        // Bind a factory method for PermissionService into the service container
+
         $this->app->bind(PermissionService::class, function ($app) {
-            // Assuming you have JwtService bound in the container
+            if(!request()->bearerToken()) {
+                return new PermissionService(new Permissions(0b00000000));
+            }
             $jwtService = $app->make(JwtService::class);
             $token = $jwtService->verifyToken(request()->bearerToken());
-
-            if ($token) {
-                $permissions = new Permissions('00000000');
+            $permission = (array) $token['p'] ?? [];
+            if ($permission) {
+                $parts = explode('#', $permission["FA08"][0]);
+                $number = (int) $parts[0];
+                $permissions = new Permissions($number);
                 return new PermissionService($permissions);
             }
 
-            // Handle the case where there is no token or return a default PermissionService
+
             return new PermissionService(new Permissions(0b00000000));
         });
     }
