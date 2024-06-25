@@ -36,7 +36,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
         return response()->json(['status' => 'OK']);
     });
 
-    Route::get('xdir',[XdirController::class, 'action'])->name('xdir.action');
+    Route::post('xdir',[XdirController::class, 'action'])->name('xdir.action');
 
     Route::group(['prefix' => 'cdn'], function() {
         // Route::get('/workspace_test/{workspace}',   [CatalogueController::class, 'getCatalogueByWorkspace'])
