@@ -25,9 +25,10 @@ class ShowResource
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle(Request $request, Closure $next, PermissionService $permissionService)
+    public function handle(Request $request, Closure $next)
     {
-        if($permissionService->canRead() || $this->permissionService->isAdmin() || $this->permissionService->isSuperAdmin() ){
+       // return $next($request);
+        if($this->permissionService->canRead() || $this->permissionService->isAdmin() || $this->permissionService->isSuperAdmin() ){
             return $next($request);
         }
         return response()->json(['error' => 'Unauthorized.'], 401);
