@@ -192,6 +192,19 @@ Este comando lo que hace es recorrer cada una de las conexiones de solr y hacer 
 
 Una vez ejecutado el sistema ya estará preparado para añadir recursos.
 
+## Configuración de la Clave Pública de XDIR
+
+Para configurar la clave pública de XDIR en su aplicación, siga los pasos detallados a continuación:
+
+### Paso 1: Colocar la Clave Pública
+
+Primero, se debe obtener la clave pública de XDIR. Una vez que se tenga, colocar en un directorio. 
+Por ejemplo, puede usar el directorio `lib/xrole`. 
+
+En .env, añadir: XDIR_KEY={ruta}
+Tambien es necesario anadir: SERVICE_CODE={CODE}
+
+
 ## FAQS
 ### ¿COMO FUNCIONAN LOS RECURSOS?
 
