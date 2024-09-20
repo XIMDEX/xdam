@@ -38,6 +38,11 @@ use App\Enums\AccessPermission;
 use App\Models\Copy;
 use App\Services\ExternalApis\ScormService;
 
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Carbon\Carbon;
+
+
 class ResourceController extends Controller
 {
     /**
@@ -393,8 +398,39 @@ class ResourceController extends Controller
         $mimeType = $media->mime_type;
         $fileType = explode('/', $mimeType)[0];
 
-        if (($mediaId == 'f7a6a5c9-0c58-4760-bd7a-87839c59a5af' || $mediaId == '59878352-2e48-4168-a108-ed5030845dec') && $fileType == 'image' && $size === 'default') {
-            return $this-->directStream($media->getPath(), $mimeType, $mediaFileName);
+        if (true && $fileType == 'image' && $size === 'default') {
+            $path = explode('storage/app/', $media->getPath())[1];
+            if (!Storage::exists($path)) {
+                abort(404);
+            }
+
+            $file = Storage::get($path);
+            $type = $mimeType;
+            $lastModified = Storage::lastModified($path);
+        
+            $response = new StreamedResponse();
+            $response->setCallback(function () use ($file) {
+                echo $file;
+            });
+            $response->headers->set('Content-Type', $type);
+            $response->headers->set('Content-Length', strlen($file));
+
+            // Configurar las cabeceras de caché
+            $response->setCache([
+                'public' => true,
+                'max_age' => 3600*24*7, // Cache durante 1 hora
+                's_maxage' => 3600,
+                'last_modified' => Carbon   ::createFromTimestamp($lastModified),
+            ]);
+
+            // Configurar ETag
+            $response->setEtag(md5($file));
+
+            // Hacer que la respuesta sea condicional
+            $response->isNotModified(request());
+
+
+            return $response;
         }
         
         if ($fileType == 'video' || $fileType == 'image') {
@@ -448,27 +484,6 @@ class ResourceController extends Controller
             return response(['error' => 'Error! You don\'t have permission to download this file.'], Response::HTTP_BAD_REQUEST);
         }
         return response()->file($this->mediaService->preview($media, []));
-    }
-
-    private function directStream($path, $mimeType, $fileName)
-    {
-        $path = 'public/' . $filename;
-    
-        if (!Storage::exists($path)) {
-            abort(404);
-        }
-    
-        $file = Storage::get($path);
-        $type = Storage::mimeType($path);
-    
-        $response = new StreamedResponse();
-        $response->setCallback(function () use ($file) {
-            echo $file;
-        });
-        $response->headers->set('Content-Type', $type);
-        $response->headers->set('Content-Length', strlen($file));
-    
-        return $response;
     }
 
     private function getAvailableResourceSizes()
