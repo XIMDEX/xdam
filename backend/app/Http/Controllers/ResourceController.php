@@ -377,11 +377,18 @@ class ResourceController extends Controller
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      * @throws \Exception
      */
-    public function render($damUrl, $size = null)
+    public function render($damUrl, $size = 'default')
     {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         if (Cache::has("{$mediaId}__{$size}")) {
-            return Cache::get("{$mediaId}__$size");
+            $response = Cache::get("{$mediaId}__$size");
+            $response->setCache([
+                'public' => true,
+                'max_age' => 3600*24*7, 
+                's_maxage' => 3600
+            ]);
+            $response->isNotModified(request());
+            return $response;
         }
         $method = request()->method();
         return $this->renderResource($mediaId, $method, $size, null, false);
@@ -415,21 +422,23 @@ class ResourceController extends Controller
             $response->headers->set('Content-Type', $type);
             $response->headers->set('Content-Length', strlen($file));
 
-            // Configurar las cabeceras de caché
             $response->setCache([
                 'public' => true,
-                'max_age' => 3600*24*7, // Cache durante 1 hora
+                'max_age' => 3600*24*7, 
                 's_maxage' => 3600,
-                'last_modified' => Carbon   ::createFromTimestamp($lastModified),
+                'last_modified' => Carbon::createFromTimestamp($lastModified),
             ]);
 
-            // Configurar ETag
             $response->setEtag(md5($file));
-
-            // Hacer que la respuesta sea condicional
             $response->isNotModified(request());
 
-
+            $response_cache = new Response(
+                $file,
+                Response::HTTP_OK,
+                $response->headers->all()
+            );
+            
+            Cache::put("{$mediaId}__$size", $response_cache);
             return $response;
         }
         
@@ -444,12 +453,12 @@ class ResourceController extends Controller
             
             if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small', 'thumbnail']))) {
                 $response = response()->file($compressed->basePath());
-                // $response = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
                 $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
                 
                 $response->headers->set('Cache-Control', 'public, max-age=86400');
                 $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + 86400) . ' GMT');
-                // Cache::put("{$mediaId}__$size", serialize($response));
+                $response_cache = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
+                Cache::put("{$mediaId}__$size", $response_cache);
                 return $response;
             }
 
