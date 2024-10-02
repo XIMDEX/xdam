@@ -524,16 +524,31 @@ class ResourceService
             $wid cannot be null
         */
         $wsp = null;
+        if (isset($params['toWorkspaceId'])) {
+            $wsp = explode(',', $params['toWorkspaceId']);
+        }
         $paramsData =  is_array($params['data']) ?  Utils::arrayToObject($params['data']) : $params['data'];
         $exceptionStrings = ['notWorkspace' => 'Undefined workspace','notOrganization' => 'The workspace doesn\'t belong to an organization'];
+        if ($wsp) {
+            $wsps = [];
+            foreach ($wsp as $value) {
+                $_wsp = Workspace::find($value);
+                if ($_wsp) $wsps[] = $_wsp;
+            }
+        }
         $wsp  = $toWorkspaceId ? Workspace::find($toWorkspaceId) : Workspace::find(Auth::user()->selected_workspace);
+        if ($wsp) $wsps[] = $wsp;
+
         $name = array_key_exists('name', $params) ? $params["name"] : "";
         $type = $fromBatchType ?? ResourceType::fromKey($params["type"])->value;
         $idResourceData = ($type == ResourceType::course) ? $params['kakuma_id'] : Str::orderedUuid() ;
         $nameResource   = $paramsData->description->name ?? $name;
-
+        
         if($wsp === null) throw new Exception($exceptionStrings['notWorkspace']);
-        if(!$wsp->organization()->first()) throw new Exception($exceptionStrings['notOrganization']);
+        if (count($wsps) === 0) $wsps[] =  Workspace::find(Auth::user()->selected_workspace);
+        foreach ($wsps as $workspace) {
+            if(!$workspace->organization()->first()) throw new Exception($exceptionStrings['notOrganization']);
+        }
 
         $this->setDefaultLanguageIfNeeded($params);
 
@@ -556,7 +571,9 @@ class ResourceService
             $newResource = DamResource::create($resource_data);
             // $_newResource = $newResource;
 
-            $this->setResourceWorkspace($newResource, $wsp);
+            foreach ($wsps as $workspace) {
+                $this->setResourceWorkspace($newResource, $workspace);
+            }
             $this->linkCategoriesFromJson($newResource,$paramsData );
             $this->linkTagsFromJson($newResource,$paramsData);
             $this->saveAssociatedFiles($newResource, $params);
@@ -720,12 +737,20 @@ class ResourceService
     {
         $collection = ModelsCollection::find($data['collection']);
         $organization = $collection->organization()->first();
+        $wsps = [];
+        try {
+            $wsps = json_decode($data['workspaces']);
+        } catch(\Exception $exc) {}
 
-        if($data['create_wsp'] === '1') {
-            $wsp = $this->workspaceService->create($organization->id, $data['workspace'])->id;
-        } else {
-            $wsp = $data['workspace'];
+        if (!isset($data['workspaces']) && !$data['workspaces']) {
+            if($data['create_wsp'] === '1') {
+                $wsp = $this->workspaceService->create($organization->id, $data['workspace'])->id;
+            } else {
+                $wsp = $data['workspace'];
+            }
+            $wsps[] = $wsp;
         }
+        
 
         $genericResourceDescription = array_key_exists('generic', $data) ? json_decode($data['generic'], true) : [];
 
@@ -759,8 +784,9 @@ class ResourceService
                 'collection_id' => $collection->id,
                 'File' => [$file],
                 'Preview' => $this->searchPreviewImage($data, $name),
+                'toWorkspaceId' => implode(",", $wsps)
             ];
-            $resource = $this->store($params, $wsp, $collection->accept === ResourceType::multimedia ? $type : $collection->accept);
+            $resource = $this->store($params, null, $collection->accept === ResourceType::multimedia ? $type : $collection->accept);
             $createdResources[] = $resource;
         }
 

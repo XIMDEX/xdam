@@ -25,8 +25,17 @@ class BookService extends BaseService
     {
         parent::__construct();
         self::$type_service = ResourceType::book;
+        self::$array = ['workspaces' => 'Workspace'];
         $this->client = $solr->getClient(self::CLIENT_NAME);
         $this->solrSerice = $solr;
+    }
+
+    public static function handleFacetCard($facets)
+    {
+        $facets = parent::handleFacetCard($facets);
+        $facets = self::addWorkspace(ResourceType::book,$facets,array_keys(self::$array));
+
+        return $facets;
     }
 
     private function execute($query)

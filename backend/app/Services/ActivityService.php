@@ -11,6 +11,16 @@ class ActivityService extends BaseService
     public function __construct() {
         parent::__construct();
         self::$type_service = ResourceType::activity;
+        self::$array = ['workspaces' => 'Workspace'];
+    }
+
+
+    public static function handleFacetCard($facets)
+    {
+        $facets = parent::handleFacetCard($facets);
+        $facets = self::addWorkspace( ResourceType::activity,$facets,array_keys(self::$array));
+
+        return $facets;
     }
 
     public static function handleSchema($schema)

@@ -38,6 +38,11 @@ use App\Enums\AccessPermission;
 use App\Models\Copy;
 use App\Services\ExternalApis\ScormService;
 
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Carbon\Carbon;
+
+
 class ResourceController extends Controller
 {
     /**
@@ -372,11 +377,14 @@ class ResourceController extends Controller
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      * @throws \Exception
      */
-    public function render($damUrl, $size = null)
+    public function render($damUrl, $size = 'default') 
     {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         if (Cache::has("{$mediaId}__{$size}")) {
-            return Cache::get("{$mediaId}__$size");
+            $response = Cache::get("{$mediaId}__$size");
+            if (is_string($response)) {
+                Cache::delete("{$mediaId}__$size");
+            }
         }
         $method = request()->method();
         return $this->renderResource($mediaId, $method, $size, null, false);
@@ -393,6 +401,39 @@ class ResourceController extends Controller
         $mimeType = $media->mime_type;
         $fileType = explode('/', $mimeType)[0];
 
+        if ($fileType == 'image' && $size === 'default') {
+            $path = explode('storage/app/', $media->getPath())[1];
+            if (!Storage::exists($path)) {
+                abort(404);
+            }
+
+            $file = Storage::get($path);
+            $type = $mimeType;
+            $lastModified = Storage::lastModified($path);
+        
+            $response = new StreamedResponse();
+            $response->setCallback(function () use ($file) {
+                echo $file;
+            });
+
+            $response->headers->set('Content-Type', $type);
+            $response->headers->set('Content-Length', strlen($file));
+            $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
+                
+            $maxAge = 3600 * 24 * 7;
+            $response->headers->set('Cache-Control', 'public, max-age=' . $maxAge . ', immutable');
+            $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
+
+            $response_cache = new Response(
+                $file,
+                Response::HTTP_OK,
+                $response->headers->all()
+            );
+            
+            Cache::put("{$mediaId}__$size", $response_cache);
+            return $response;
+        }
+        
         if ($fileType == 'video' || $fileType == 'image') {
             $sizeValue = $this->getResourceSize($fileType, $size);
             $availableSizes = $this->getAvailableResourceSizes();
@@ -404,12 +445,38 @@ class ResourceController extends Controller
             
             if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small', 'thumbnail']))) {
                 $response = response()->file($compressed->basePath());
-                // $response = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
                 $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
                 
-                $response->headers->set('Cache-Control', 'public, max-age=86400');
-                $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + 86400) . ' GMT');
-                // Cache::put("{$mediaId}__$size", serialize($response));
+                $maxAge = 3600 * 24 * 7;
+                $response->headers->set('Cache-Control', 'public, max-age=' . $maxAge . ', immutable');
+                $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
+
+                // Añadir ETag
+                $etag = md5_file($compressed->basePath());
+                $response->setEtag($etag);
+
+                // Añadir Last-Modified
+                $lastModified = filemtime($compressed->basePath());
+                $response->setLastModified(Carbon::createFromTimestamp($lastModified));
+                
+                if ($fileType == 'image') {
+                    $response_cache = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
+                    
+                    $response_cache->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
+                    
+                    $maxAge = 3600 * 24 * 7;
+                    $response_cache->headers->set('Cache-Control', 'public, max-age=' . $maxAge . ', immutable');
+                    $response_cache->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
+
+                    // Añadir ETag
+                    $etag = md5_file($compressed->basePath());
+                    $response_cache->setEtag($etag);
+
+                    // Añadir Last-Modified
+                    $lastModified = filemtime($compressed->basePath());
+                    $response_cache->setLastModified(Carbon::createFromTimestamp($lastModified));
+                    Cache::put("{$mediaId}__$size", $response_cache);
+                }
                 return $response;
             }
 
