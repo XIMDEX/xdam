@@ -87,7 +87,6 @@ class MediaSizeImage
    public function getImage(){
     $result = $this->image->dirname."/__".$this->size.".jpg";
     if($this->size === "default" ) return $this->image;  //$result = $this->path;
-    $result = str_replace('Clave_B_Fig_02_00.jpg', 'Clave_B_Fig_02_00_edit.jpg', $result);
     return  $this->manager->make($result);
    }
 

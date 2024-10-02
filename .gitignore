@@ -9,3 +9,7 @@ backend/composer.phar
 backend/storage/media-library/*
 backend/php7.4.log
 backend/storage/semantic/
+backend/public/
+
+!backend/public/ViewerPDF/
+!backend/public/ViewerPDF/**
