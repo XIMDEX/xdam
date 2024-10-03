@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a498a473-68aa-4f21-84ae-da8fa144e05f",
+		"_postman_id": "b498a473-79bb-4f21-84ae-da8fa144e05f",
 		"name": "XDAM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -113,13 +113,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}{{api}}/category/0bfb421f-7550-4654-a62a-ebb1c87a7807",
+							"raw": "{{url}}{{api}}/category/bbfb422f-7550-4654-a62a-ebb1c87a7807",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"category",
-								"0bfb421f-7550-4654-a62a-ebb1c87a7807"
+								"bbfb422f-7550-4654-a62a-ebb1c87a7807"
 							],
 							"query": [
 								{
@@ -166,13 +166,13 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/category/0bfb421f-7550-4654-a62a-ebb1c87a7802",
+							"raw": "{{url}}{{api}}/category/bbfb422f-7550-4654-a62a-ebb1c87a7802",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"category",
-								"0bfb421f-7550-4654-a62a-ebb1c87a7802"
+								"bbfb422f-7550-4654-a62a-ebb1c87a7802"
 							],
 							"query": [
 								{
@@ -221,7 +221,7 @@
 								{
 									"key": "Preview",
 									"type": "file",
-									"src": "/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@7d9ae497-2950-4e8a-b534-2e08275c67ba@eaca770d-ba3c-49fd-a2b5-a82838a1f39d@@@.jpg"
+									"src": "/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@9d9ae497-3950-4e8a-b534-2e08275c67ba@aaca770e-ba3c-49fd-a2b5-c82838a1f49d@@@.jpg"
 								},
 								{
 									"key": "collection_id",
@@ -266,8 +266,8 @@
 									"key": "File",
 									"type": "file",
 									"src": [
-										"/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@27d604f2-198e-426e-b013-b9f5c3b55f6a@91790a1b-b120-4b5c-8652-d45e4bb1ece8@@@.png",
-										"/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@31e05aec-f7a3-4cb9-9df7-b28db0d275d4@2c676e2a-8e1d-4429-bded-95c8e4740540@@@.jpg"
+										"/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@57d604f2-198e-426e-b013-b9f5c3b55f6a@91790a1b-c120-4b5c-8652-e25e4bb1ece9@@@.png",
+										"/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@51e05aed-f7a3-4cb9-9df7-b28db0d275d4@2c676e2a-9e1d-4429-bded-15d8e4720540@@@.jpg"
 									]
 								},
 								{
@@ -284,18 +284,18 @@
 								{
 									"key": "Preview",
 									"type": "file",
-									"src": "/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@72ca76b8-0ae2-4c9a-8895-15bac935ef0d@86a53539-b321-42e7-8b6a-7bfcc319059f@@@.jpg"
+									"src": "/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@82ca76b8-0ae2-4c9a-8895-15bac935ef0d@86a53539-b321-42e7-8b6a-7bfcc319059a@@@.jpg"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/2700193d-1450-48c0-98af-15264462405e/update",
+							"raw": "{{url}}{{api}}/resource/1700193e-1450-48c0-98af-15264462405e/update",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
-								"2700193d-1450-48c0-98af-15264462405e",
+								"1700193e-1450-48c0-98af-15264462405e",
 								"update"
 							],
 							"query": [
@@ -371,18 +371,18 @@
 								{
 									"key": "Preview",
 									"type": "file",
-									"src": "/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@2f26f29d-61ff-4dd1-b32b-4a1130f22ad8@54bbb320-4df9-436b-aec1-1fec9e2e2536@@@.png"
+									"src": "/Users/develop/Downloads/2021-02-05 08_03_45/res/@@@dam:@image@3f26f29d-61ff-4dd1-b32b-4a1130f22ad8@54bbb320-4df9-436b-aec1-1fac9e2e2536@@@.png"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/13102607-e9ae-4cf4-9922-6efed656d31f/addPreview",
+							"raw": "{{url}}{{api}}/resource/13202617-e9ae-4cf4-9922-6efed656d31f/addPreview",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
-								"13102607-e9ae-4cf4-9922-6efed656d31f",
+								"13202617-e9ae-4cf4-9922-6efed656d31f",
 								"addPreview"
 							],
 							"query": [
@@ -435,13 +435,13 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/03d0b6d6-fdc2-401e-9aac-d61910f1efb3/addFile",
+							"raw": "{{url}}{{api}}/resource/03e0b6d2-fdc2-401e-9aac-d61910f1efb3/addFile",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
-								"03d0b6d6-fdc2-401e-9aac-d61910f1efb3",
+								"03e0b6d2-fdc2-401e-9aac-d61910f1efb3",
 								"addFile"
 							],
 							"query": [
@@ -471,7 +471,7 @@
 								{
 									"key": "Preview",
 									"type": "file",
-									"src": "/Users/develop/Downloads/Imprime esta etiqueta - Devolucion Gratuita ETAM.pdf"
+									"src": "/Users/develop/Downloads/Imprime esta etiqueta - Devolucion Gratuita.pdf"
 								},
 								{
 									"key": "type",
@@ -494,15 +494,15 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/15d42750-ea69-47f5-be2c-34cad0896760/addCategory/019fee0f-08d4-41dc-aef7-fc08faf0ae38",
+							"raw": "{{url}}{{api}}/resource/15d43758-ea69-47f5-be2c-34cad0896760/addCategory/019fee0f-08d4-41dc-aef7-fc08faf0ae48",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
-								"15d42750-ea69-47f5-be2c-34cad0896760",
+								"15d43758-ea69-47f5-be2c-34cad0896760",
 								"addCategory",
-								"019fee0f-08d4-41dc-aef7-fc08faf0ae38"
+								"019fee0f-08d4-41dc-aef7-fc08faf0ae48"
 							],
 							"query": [
 								{
@@ -535,13 +535,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/26941677-fc23-4761-b967-25af67df4e89/setTags",
+							"raw": "{{url}}{{api}}/resource/26941577-fc23-4761-b967-25af67df4e89/setTags",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
-								"26941677-fc23-4761-b967-25af67df4e89",
+								"26941577-fc23-4761-b967-25af67df4e89",
 								"setTags"
 							],
 							"query": [
@@ -699,13 +699,13 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/2fa01536-6da3-45e3-8d4d-c36146ad0195",
+							"raw": "{{url}}{{api}}/resource/2fa02536-6da3-45e3-8d4d-c36146ad0195",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
-								"2fa01536-6da3-45e3-8d4d-c36146ad0195"
+								"2fa02536-6da3-45e3-8d4d-c36146ad0195"
 							],
 							"query": [
 								{
@@ -752,13 +752,13 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/2fa01536-6da3-45e3-8d4d-c36146ad0195",
+							"raw": "{{url}}{{api}}/resource/2fa02536-6da3-45e3-8d4d-c36146ad0195",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
-								"2fa01536-6da3-45e3-8d4d-c36146ad0195"
+								"2fa02536-6da3-45e3-8d4d-c36146ad0195"
 							],
 							"query": [
 								{
@@ -805,15 +805,15 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/2fa01536-6da3-45e3-8d4d-c36146ad0195/associatedFile/f792ac03-5b81-4784-a374-bc8b22d1c184",
+							"raw": "{{url}}{{api}}/resource/2fa02536-6da3-45e3-8d4d-c36146ad0195/associatedFile/f792ac03-5b81-4784-a474-bc8b22d1c184",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
-								"2fa01536-6da3-45e3-8d4d-c36146ad0195",
+								"2fa02536-6da3-45e3-8d4d-c36146ad0195",
 								"associatedFile",
-								"f792ac03-5b81-4784-a374-bc8b22d1c184"
+								"f792ac03-5b81-4784-a474-bc8b22d1c184"
 							],
 							"query": [
 								{
@@ -860,15 +860,15 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/355f5c9b-259b-45c8-ae8e-79c53851643b/deleteCategory/2d90ced7-5f83-4e41-a83b-095073dbd9ee",
+							"raw": "{{url}}{{api}}/resource/555f5c9b-259b-45c8-ae8e-79c53851643b/deleteCategory/3d90ced7-5f83-4e41-a83b-095073dbd9ee",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
-								"355f5c9b-259b-45c8-ae8e-79c53851643b",
+								"555f5c9b-259b-45c8-ae8e-79c53851643b",
 								"deleteCategory",
-								"2d90ced7-5f83-4e41-a83b-095073dbd9ee"
+								"3d90ced7-5f83-4e41-a83b-095073dbd9ee"
 							],
 							"query": [
 								{
@@ -903,13 +903,13 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/a7615b52-d735-41a6-a585-ac3cf62d2ed8/deleteUse/8",
+							"raw": "{{url}}{{api}}/resource/a8615b52-d735-41a6-a585-ac3cf62d2ed8/deleteUse/8",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
-								"a7615b52-d735-41a6-a585-ac3cf62d2ed8",
+								"a8615b52-d735-41a6-a585-ac3cf62d2ed8",
 								"deleteUse",
 								"8"
 							],
@@ -961,14 +961,14 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/render/@@@dam:@image@3bcdeb31-313e-4376-aa2c-308fe2332d6a@a0e65c2e-f7e1-4f97-85e4-9d4aefe89e1f@@@/64x64",
+							"raw": "{{url}}{{api}}/resource/render/@@@dam:@image@1bcdeb31-313e-4376-aa2c-308fe2332d6a@a0e65c2e-f7e1-4f97-85e4-9d4aefe89e1a@@@/64x64",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
 								"render",
-								"@@@dam:@image@3bcdeb31-313e-4376-aa2c-308fe2332d6a@a0e65c2e-f7e1-4f97-85e4-9d4aefe89e1f@@@",
+								"@@@dam:@image@1bcdeb31-313e-4376-aa2c-308fe2332d6a@a0e65c2e-f7e1-4f97-85e4-9d4aefe89e1a@@@",
 								"64x64"
 							],
 							"query": [
@@ -1019,14 +1019,14 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/resource/download/@@@dam:@video@ab03fb1b-68cd-4a2e-938b-bab0424d9ff6@2cb1fa9d-53b1-4f98-a2bb-eb57b19d7322@@@",
+							"raw": "{{url}}{{api}}/resource/download/@@@dam:@video@cb03fb1b-68cd-4a2e-938b-bab0424d9ff6@2cb1fa9d-53b1-4f98-a2bb-ab57b19d7322@@@",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"resource",
 								"download",
-								"@@@dam:@video@ab03fb1b-68cd-4a2e-938b-bab0424d9ff6@2cb1fa9d-53b1-4f98-a2bb-eb57b19d7322@@@"
+								"@@@dam:@video@cb03fb1b-68cd-4a2e-938b-bab0424d9ff6@2cb1fa9d-53b1-4f98-a2bb-ab57b19d7322@@@"
 							],
 							"query": [
 								{
@@ -1122,12 +1122,12 @@
 							"formdata": [
 								{
 									"key": "email",
-									"value": "admin_of_all@xdam.com",
+									"value": "admin_of_all@domain.com",
 									"type": "text"
 								},
 								{
 									"key": "password",
-									"value": "123123",
+									"value": "abcdefghijk00",
 									"type": "text"
 								}
 							]
@@ -1163,17 +1163,17 @@
 								},
 								{
 									"key": "email",
-									"value": "pepega@test.com",
+									"value": "ybi@test.com",
 									"type": "text"
 								},
 								{
 									"key": "password",
-									"value": "123123",
+									"value": "abcdefgh01",
 									"type": "text"
 								},
 								{
 									"key": "password_confirmation",
-									"value": "123123",
+									"value": "abcdefgh01",
 									"type": "text"
 								}
 							]
@@ -2378,7 +2378,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}{{api}}/semantic/documents/fetch?ids=drupal8JdA-316366&type=noticia",
+							"raw": "{{url}}{{api}}/semantic/documents/fetch?ids=316366&type=noticia",
 							"host": [
 								"{{url}}{{api}}"
 							],
@@ -2390,7 +2390,7 @@
 							"query": [
 								{
 									"key": "ids",
-									"value": "drupal8JdA-316366"
+									"value": "316366"
 								},
 								{
 									"key": "type",
@@ -2412,7 +2412,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}{{api}}/semantic/documents/fetch-uuid?uuids=000260b4-85a0-442a-bc0e-a3ea86b61972,2e56c592-8f02-41bf-83b7-4df6594fbfb6&type=asunto&enhance=DBpedia",
+							"raw": "{{url}}{{api}}/semantic/documents/fetch-uuid?uuids=100260b4-85a0-442a-bc0e-a3ea86b61972,2e56c592-8f02-41bf-83b7-4df6594fbfb6&type=asunto&enhance=DBpedia",
 							"host": [
 								"{{url}}{{api}}"
 							],
@@ -2424,7 +2424,7 @@
 							"query": [
 								{
 									"key": "uuids",
-									"value": "000260b4-85a0-442a-bc0e-a3ea86b61972,2e56c592-8f02-41bf-83b7-4df6594fbfb6"
+									"value": "100260b4-85a0-442a-bc0e-a3ea86b61972,2e56c592-8f02-41bf-83b7-4df6594fbfb6"
 								},
 								{
 									"key": "type",
@@ -2469,20 +2469,20 @@
 								},
 								{
 									"key": "data",
-									"value": "{\"description\":{\"id\":\"drupal8JdA-316366\",\"uuid\":\"000260b4-85a0-442a-bc0e-a3ea86b61972\",\"language\":\"es\",\"title\":\"Un retrabajo sobre comportamientos en salud en la Sierra de C\\u00e1diz, publicado en una revista internacional\\u00a0\",\"body\":\"Un trabajo sobre comportamientos en salud de la Sierra de C\\u00e1diz y elaborado por una enfermera del Dispositivo de Cuidados Cr\\u00edticos y Urgencias (DCCU de Olvera) de la Sierra de C\\u00e1diz, en el \\u00c1rea de Gesti\\u00f3n Sanitaria de Jerez, Costa Noroeste y Sierra de C\\u00e1diz, ha sido publicado en la Revista Internacional Journal of Tissue Viability, cuyo factor de impacto hace que est\\u00e9 situada en el ranking de los primeros puestos.\\u00a0Adem\\u00e1s de ser enfermera en este DCCU, Mar\\u00eda de los Santos O\\u00f1ate Tenorio, es tambi\\u00e9n profesora asociada de la Facultad de Enfermer\\u00eda y Fisioterapia en la Universidad de C\\u00e1diz, y ha realizado esta publicaci\\u00f3n junto a la vicerrectora en Ciencias de la Salud, Ana Mar\\u00eda Garc\\u00eda Ba\\u00f1\\u00f3n, y a Antonio O\\u00f1ate Tenorio, doctorando en Ciencias Sociales.\\u00a0El estudio tiene como objetivo conocer si existen mitos y creencias en salud, describirlos, indagar si perduran y recopilar los m\\u00e1s comunes en la Sierra de C\\u00e1diz.As\\u00ed, el art\\u00edculo proviene de la tesis doctoral realizada y dirigida respectivamente por O\\u00f1ate Tenorio y Garc\\u00eda Ba\\u00f1\\u00f3n, basada en el estudio de la relaci\\u00f3n entre salud y medio rural. Como explican las dos autoras en el trabajo, a lo largo de la historia y del tiempo ha existido la pr\\u00e1ctica y persistencia de conductas y comportamientos en salud basados en la medicina tradicional, ya que toda persona que sufre un padecimiento siente el anhelo de sanar y mitigar sus manifestaciones negativas, es por ello que el ser humano adem\\u00e1s de hacer uso de la ciencia de la medicina, busca en otros conocimientos y hace uso del saber popular, remedios caseros, creencias, mitos, conductas o modos de proceder para obtener alivio de su malestar.En este proyecto se realiza un estudio descriptivo, observacional y transversal en el que participan 45 profesionales sanitarios de la zona de estudio, llevando a cabo un an\\u00e1lisis cuantitativo y cualitativo de los datos obtenidos, utilizando para ello una metodolog\\u00eda mixta de investigaci\\u00f3n.Entre los resultados m\\u00e1s destacados cabe subrayar que un 73,3% de la poblaci\\u00f3n tiene mitos o creencias sobre la salud, siendo el m\\u00e1s destacado la asistencia a curanderas y el remedio del herpes en un 70%, as\\u00ed como mitos y creencias referentes a la alimentaci\\u00f3n.Como conclusi\\u00f3n, este estudio detalla todos y cada uno de los mitos y creencias relativos a la salud y alimentaci\\u00f3n de la Sierra de C\\u00e1diz descritos por los profesionales de la salud, y abre e incentiva nuevas l\\u00edneas de investigaci\\u00f3n poniendo de manifiesto la necesidad de desarrollar campa\\u00f1as de educaci\\u00f3n e implementar programas de educaci\\u00f3n sanitaria en lo que a medicina tradicional se refiere.Adem\\u00e1s de haber sido publicado en esta revista, en el enlace https:\\/\\/www.sciencedirect.com\\/science\\/article\\/abs\\/pii\\/S0965206X2200002X?v=s5, el trabajo est\\u00e1 indexado en las principales bases de datos internacionales.\\u00a0\",\"image\":\"https:\\/\\/www.juntadeandalucia.es\\/sites\\/default\\/files\\/2020-11\\/imagen_noticia_por_defecto.png\",\"external_url\":\"https:\\/\\/www.juntadeandalucia.es\\/servicios\\/actualidad\\/noticias\\/detalle\\/277532.html\",\"category\":\"Noticia\",\"enhanced_interactive\":true,\"enhanced\":true,\"request_data\":{\"enhancer\":\"DBpedia\",\"text\":\"Un trabajo sobre comportamientos en salud de la Sierra de C\\u00e1diz y elaborado por una enfermera del Dispositivo de Cuidados Cr\\u00edticos y Urgencias (DCCU de Olvera) de la Sierra de C\\u00e1diz, en el \\u00c1rea de Gesti\\u00f3n Sanitaria de Jerez, Costa Noroeste y Sierra de C\\u00e1diz, ha sido publicado en la Revista Internacional Journal of Tissue Viability, cuyo factor de impacto hace que est\\u00e9 situada en el ranking de los primeros puestos.\\u00a0Adem\\u00e1s de ser enfermera en este DCCU, Mar\\u00eda de los Santos O\\u00f1ate Tenorio, es tambi\\u00e9n profesora asociada de la Facultad de Enfermer\\u00eda y Fisioterapia en la Universidad de C\\u00e1diz, y ha realizado esta publicaci\\u00f3n junto a la vicerrectora en Ciencias de la Salud, Ana Mar\\u00eda Garc\\u00eda Ba\\u00f1\\u00f3n, y a Antonio O\\u00f1ate Tenorio, doctorando en Ciencias Sociales.\\u00a0El estudio tiene como objetivo conocer si existen mitos y creencias en salud, describirlos, indagar si perduran y recopilar los m\\u00e1s comunes en la Sierra de C\\u00e1diz.As\\u00ed, el art\\u00edculo proviene de la tesis doctoral realizada y dirigida respectivamente por O\\u00f1ate Tenorio y Garc\\u00eda Ba\\u00f1\\u00f3n, basada en el estudio de la relaci\\u00f3n entre salud y medio rural. Como explican las dos autoras en el trabajo, a lo largo de la historia y del tiempo ha existido la pr\\u00e1ctica y persistencia de conductas y comportamientos en salud basados en la medicina tradicional, ya que toda persona que sufre un padecimiento siente el anhelo de sanar y mitigar sus manifestaciones negativas, es por ello que el ser humano adem\\u00e1s de hacer uso de la ciencia de la medicina, busca en otros conocimientos y hace uso del saber popular, remedios caseros, creencias, mitos, conductas o modos de proceder para obtener alivio de su malestar.En este proyecto se realiza un estudio descriptivo, observacional y transversal en el que participan 45 profesionales sanitarios de la zona de estudio, llevando a cabo un an\\u00e1lisis cuantitativo y cualitativo de los datos obtenidos, utilizando para ello una metodolog\\u00eda mixta de investigaci\\u00f3n.Entre los resultados m\\u00e1s destacados cabe subrayar que un 73,3% de la poblaci\\u00f3n tiene mitos o creencias sobre la salud, siendo el m\\u00e1s destacado la asistencia a curanderas y el remedio del herpes en un 70%, as\\u00ed como mitos y creencias referentes a la alimentaci\\u00f3n.Como conclusi\\u00f3n, este estudio detalla todos y cada uno de los mitos y creencias relativos a la salud y alimentaci\\u00f3n de la Sierra de C\\u00e1diz descritos por los profesionales de la salud, y abre e incentiva nuevas l\\u00edneas de investigaci\\u00f3n poniendo de manifiesto la necesidad de desarrollar campa\\u00f1as de educaci\\u00f3n e implementar programas de educaci\\u00f3n sanitaria en lo que a medicina tradicional se refiere.Adem\\u00e1s de haber sido publicado en esta revista, en el enlace https:\\/\\/www.sciencedirect.com\\/science\\/article\\/abs\\/pii\\/S0965206X2200002X?v=s5, el trabajo est\\u00e1 indexado en las principales bases de datos internacionales.\\u00a0\",\"options\":{\"0\":{\"confidence\":1,\"extra_links\":true},\"extra_links\":true},\"interactive\":\"1\",\"filename\":null,\"extra_links\":\"1\"},\"active\":true,\"entities_linked\":[{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":48,\"end\":64,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"Urgencias\",\"confidence\":0.9999999857968761,\"type\":\"Other\",\"start\":133,\"end\":142,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina_de_emergencia\"},{\"name\":\"Olvera\",\"confidence\":1,\"type\":\"Place\",\"start\":152,\"end\":158,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Olvera\"},{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":166,\"end\":182,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"Jerez\",\"confidence\":0.9999845327709157,\"type\":\"Place\",\"start\":218,\"end\":223,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Jerez_de_la_Frontera\"},{\"name\":\"Costa Noroeste\",\"confidence\":0.9999903927045969,\"type\":\"Place\",\"start\":225,\"end\":239,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Costa_Noroeste_de_C\\u00e1diz\"},{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":242,\"end\":258,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"factor de impacto\",\"confidence\":1,\"type\":\"Other\",\"start\":339,\"end\":356,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Factor_de_impacto\"},{\"name\":\"O\\u00f1ate\",\"confidence\":0.9977452825509624,\"type\":\"Place\",\"start\":476,\"end\":482,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/O\\u00f1ate\"},{\"name\":\"Enfermer\\u00eda\",\"confidence\":0.9995344910403624,\"type\":\"Other\",\"start\":539,\"end\":550,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Enfermer\\u00eda\"},{\"name\":\"Fisioterapia\",\"confidence\":1,\"type\":\"Other\",\"start\":552,\"end\":564,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Fisioterapia\"},{\"name\":\"Universidad de C\\u00e1diz\",\"confidence\":0.9999999995484359,\"type\":\"Organization\",\"start\":571,\"end\":592,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Universidad_de_C\\u00e1diz\"},{\"name\":\"Ba\\u00f1\\u00f3n\",\"confidence\":0.9479056560975558,\"type\":\"Place\",\"start\":691,\"end\":698,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Ba\\u00f1\\u00f3n\"},{\"name\":\"O\\u00f1ate\",\"confidence\":0.9977452825509624,\"type\":\"Place\",\"start\":710,\"end\":716,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/O\\u00f1ate\"},{\"name\":\"O\\u00f1ate\",\"confidence\":0.9994277594828974,\"type\":\"Place\",\"start\":1008,\"end\":1014,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/O\\u00f1ate\"},{\"name\":\"Ba\\u00f1\\u00f3n\",\"confidence\":0.9479056560975558,\"type\":\"Place\",\"start\":1031,\"end\":1038,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Ba\\u00f1\\u00f3n\"},{\"name\":\"medicina tradicional\",\"confidence\":0.9999956956386865,\"type\":\"Other\",\"start\":1278,\"end\":1298,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina_tradicional\"},{\"name\":\"ciencia\",\"confidence\":0.9999999993001438,\"type\":\"Other\",\"start\":1469,\"end\":1476,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Ciencia\"},{\"name\":\"medicina\",\"confidence\":0.9999999997985469,\"type\":\"Other\",\"start\":1483,\"end\":1491,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina\"},{\"name\":\"estudio descriptivo\",\"confidence\":1,\"type\":\"Other\",\"start\":1684,\"end\":1703,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Estudio_descriptivo\"},{\"name\":\"herpes\",\"confidence\":0.9960802530483894,\"type\":\"Other\",\"start\":2131,\"end\":2137,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Herpes_simple\"},{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":2327,\"end\":2343,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"medicina tradicional\",\"confidence\":0.9999956956386865,\"type\":\"Other\",\"start\":2570,\"end\":2590,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina_tradicional\"},{\"name\":\"abs\",\"confidence\":0.9999668760473954,\"type\":\"Other\",\"start\":2709,\"end\":2712,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sistema_antibloqueo_de_ruedas\"},{\"name\":\"bases de datos\",\"confidence\":0.9999999992703579,\"type\":\"Other\",\"start\":2785,\"end\":2799,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Base_de_datos\"}],\"entities_non_linked\":[]}}",
+									"value": "{\"description\":{\"id\":\"316366\",\"uuid\":\"100260b4-85a0-442a-bc0e-a3ea86b61972\",\"language\":\"es\",\"title\":\"Un retrabajo sobre comportamientos en salud en la Sierra de C\\u00e1diz, publicado en una revista internacional\\u00a0\",\"body\":\"Un trabajo sobre comportamientos en salud de la Sierra de C\\u00e1diz y elaborado por una enfermera del Dispositivo de Cuidados Cr\\u00edticos y Urgencias (DCCU de Olvera) de la Sierra de C\\u00e1diz, en el \\u00c1rea de Gesti\\u00f3n Sanitaria de Jerez, Costa Noroeste y Sierra de C\\u00e1diz, ha sido publicado en la Revista Internacional Journal of Tissue Viability, cuyo factor de impacto hace que est\\u00e9 situada en el ranking de los primeros puestos.\\u00a0Adem\\u00e1s de ser enfermera en este DCCU, Mar\\u00eda de los Santos O\\u00f1ate Tenorio, es tambi\\u00e9n profesora asociada de la Facultad de Enfermer\\u00eda y Fisioterapia en la Universidad de C\\u00e1diz, y ha realizado esta publicaci\\u00f3n junto a la vicerrectora en Ciencias de la Salud, Ana Mar\\u00eda Garc\\u00eda Ba\\u00f1\\u00f3n, y a Antonio O\\u00f1ate Tenorio, doctorando en Ciencias Sociales.\\u00a0El estudio tiene como objetivo conocer si existen mitos y creencias en salud, describirlos, indagar si perduran y recopilar los m\\u00e1s comunes en la Sierra de C\\u00e1diz.As\\u00ed, el art\\u00edculo proviene de la tesis doctoral realizada y dirigida respectivamente por O\\u00f1ate Tenorio y Garc\\u00eda Ba\\u00f1\\u00f3n, basada en el estudio de la relaci\\u00f3n entre salud y medio rural. Como explican las dos autoras en el trabajo, a lo largo de la historia y del tiempo ha existido la pr\\u00e1ctica y persistencia de conductas y comportamientos en salud basados en la medicina tradicional, ya que toda persona que sufre un padecimiento siente el anhelo de sanar y mitigar sus manifestaciones negativas, es por ello que el ser humano adem\\u00e1s de hacer uso de la ciencia de la medicina, busca en otros conocimientos y hace uso del saber popular, remedios caseros, creencias, mitos, conductas o modos de proceder para obtener alivio de su malestar.En este proyecto se realiza un estudio descriptivo, observacional y transversal en el que participan 45 profesionales sanitarios de la zona de estudio, llevando a cabo un an\\u00e1lisis cuantitativo y cualitativo de los datos obtenidos, utilizando para ello una metodolog\\u00eda mixta de investigaci\\u00f3n.Entre los resultados m\\u00e1s destacados cabe subrayar que un 73,3% de la poblaci\\u00f3n tiene mitos o creencias sobre la salud, siendo el m\\u00e1s destacado la asistencia a curanderas y el remedio del herpes en un 70%, as\\u00ed como mitos y creencias referentes a la alimentaci\\u00f3n.Como conclusi\\u00f3n, este estudio detalla todos y cada uno de los mitos y creencias relativos a la salud y alimentaci\\u00f3n de la Sierra de C\\u00e1diz descritos por los profesionales de la salud, y abre e incentiva nuevas l\\u00edneas de investigaci\\u00f3n poniendo de manifiesto la necesidad de desarrollar campa\\u00f1as de educaci\\u00f3n e implementar programas de educaci\\u00f3n sanitaria en lo que a medicina tradicional se refiere.Adem\\u00e1s de haber sido publicado en esta revista, en el enlace https:\\/\\/www.sciencedirect.com\\/science\\/article\\/abs\\/pii\\/S0965206X2200002X?v=s5, el trabajo est\\u00e1 indexado en las principales bases de datos internacionales.\\u00a0\",\"image\":\"https:\\/\\/www.juntadeandalucia.es\\/sites\\/default\\/files\\/2020-11\\/imagen_noticia_por_defecto.png\",\"external_url\":\"https:\\/\\/www.juntadeandalucia.es\\/servicios\\/actualidad\\/noticias\\/detalle\\/277532.html\",\"category\":\"Noticia\",\"enhanced_interactive\":true,\"enhanced\":true,\"request_data\":{\"enhancer\":\"DBpedia\",\"text\":\"Un trabajo sobre comportamientos en salud de la Sierra de C\\u00e1diz y elaborado por una enfermera del Dispositivo de Cuidados Cr\\u00edticos y Urgencias (DCCU de Olvera) de la Sierra de C\\u00e1diz, en el \\u00c1rea de Gesti\\u00f3n Sanitaria de Jerez, Costa Noroeste y Sierra de C\\u00e1diz, ha sido publicado en la Revista Internacional Journal of Tissue Viability, cuyo factor de impacto hace que est\\u00e9 situada en el ranking de los primeros puestos.\\u00a0Adem\\u00e1s de ser enfermera en este DCCU, Mar\\u00eda de los Santos O\\u00f1ate Tenorio, es tambi\\u00e9n profesora asociada de la Facultad de Enfermer\\u00eda y Fisioterapia en la Universidad de C\\u00e1diz, y ha realizado esta publicaci\\u00f3n junto a la vicerrectora en Ciencias de la Salud, Ana Mar\\u00eda Garc\\u00eda Ba\\u00f1\\u00f3n, y a Antonio O\\u00f1ate Tenorio, doctorando en Ciencias Sociales.\\u00a0El estudio tiene como objetivo conocer si existen mitos y creencias en salud, describirlos, indagar si perduran y recopilar los m\\u00e1s comunes en la Sierra de C\\u00e1diz.As\\u00ed, el art\\u00edculo proviene de la tesis doctoral realizada y dirigida respectivamente por O\\u00f1ate Tenorio y Garc\\u00eda Ba\\u00f1\\u00f3n, basada en el estudio de la relaci\\u00f3n entre salud y medio rural. Como explican las dos autoras en el trabajo, a lo largo de la historia y del tiempo ha existido la pr\\u00e1ctica y persistencia de conductas y comportamientos en salud basados en la medicina tradicional, ya que toda persona que sufre un padecimiento siente el anhelo de sanar y mitigar sus manifestaciones negativas, es por ello que el ser humano adem\\u00e1s de hacer uso de la ciencia de la medicina, busca en otros conocimientos y hace uso del saber popular, remedios caseros, creencias, mitos, conductas o modos de proceder para obtener alivio de su malestar.En este proyecto se realiza un estudio descriptivo, observacional y transversal en el que participan 45 profesionales sanitarios de la zona de estudio, llevando a cabo un an\\u00e1lisis cuantitativo y cualitativo de los datos obtenidos, utilizando para ello una metodolog\\u00eda mixta de investigaci\\u00f3n.Entre los resultados m\\u00e1s destacados cabe subrayar que un 73,3% de la poblaci\\u00f3n tiene mitos o creencias sobre la salud, siendo el m\\u00e1s destacado la asistencia a curanderas y el remedio del herpes en un 70%, as\\u00ed como mitos y creencias referentes a la alimentaci\\u00f3n.Como conclusi\\u00f3n, este estudio detalla todos y cada uno de los mitos y creencias relativos a la salud y alimentaci\\u00f3n de la Sierra de C\\u00e1diz descritos por los profesionales de la salud, y abre e incentiva nuevas l\\u00edneas de investigaci\\u00f3n poniendo de manifiesto la necesidad de desarrollar campa\\u00f1as de educaci\\u00f3n e implementar programas de educaci\\u00f3n sanitaria en lo que a medicina tradicional se refiere.Adem\\u00e1s de haber sido publicado en esta revista, en el enlace https:\\/\\/www.sciencedirect.com\\/science\\/article\\/abs\\/pii\\/S0965206X2200002X?v=s5, el trabajo est\\u00e1 indexado en las principales bases de datos internacionales.\\u00a0\",\"options\":{\"0\":{\"confidence\":1,\"extra_links\":true},\"extra_links\":true},\"interactive\":\"1\",\"filename\":null,\"extra_links\":\"1\"},\"active\":true,\"entities_linked\":[{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":48,\"end\":64,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"Urgencias\",\"confidence\":0.9999999857968761,\"type\":\"Other\",\"start\":133,\"end\":142,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina_de_emergencia\"},{\"name\":\"Olvera\",\"confidence\":1,\"type\":\"Place\",\"start\":152,\"end\":158,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Olvera\"},{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":166,\"end\":182,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"Jerez\",\"confidence\":0.9999845327709157,\"type\":\"Place\",\"start\":218,\"end\":223,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Jerez_de_la_Frontera\"},{\"name\":\"Costa Noroeste\",\"confidence\":0.9999903927045969,\"type\":\"Place\",\"start\":225,\"end\":239,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Costa_Noroeste_de_C\\u00e1diz\"},{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":242,\"end\":258,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"factor de impacto\",\"confidence\":1,\"type\":\"Other\",\"start\":339,\"end\":356,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Factor_de_impacto\"},{\"name\":\"O\\u00f1ate\",\"confidence\":0.9977452825509624,\"type\":\"Place\",\"start\":476,\"end\":482,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/O\\u00f1ate\"},{\"name\":\"Enfermer\\u00eda\",\"confidence\":0.9995344910403624,\"type\":\"Other\",\"start\":539,\"end\":550,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Enfermer\\u00eda\"},{\"name\":\"Fisioterapia\",\"confidence\":1,\"type\":\"Other\",\"start\":552,\"end\":564,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Fisioterapia\"},{\"name\":\"Universidad de C\\u00e1diz\",\"confidence\":0.9999999995484359,\"type\":\"Organization\",\"start\":571,\"end\":592,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Universidad_de_C\\u00e1diz\"},{\"name\":\"Ba\\u00f1\\u00f3n\",\"confidence\":0.9479056560975558,\"type\":\"Place\",\"start\":691,\"end\":698,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Ba\\u00f1\\u00f3n\"},{\"name\":\"O\\u00f1ate\",\"confidence\":0.9977452825509624,\"type\":\"Place\",\"start\":710,\"end\":716,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/O\\u00f1ate\"},{\"name\":\"O\\u00f1ate\",\"confidence\":0.9994277594828974,\"type\":\"Place\",\"start\":1008,\"end\":1014,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/O\\u00f1ate\"},{\"name\":\"Ba\\u00f1\\u00f3n\",\"confidence\":0.9479056560975558,\"type\":\"Place\",\"start\":1031,\"end\":1038,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Ba\\u00f1\\u00f3n\"},{\"name\":\"medicina tradicional\",\"confidence\":0.9999956956386865,\"type\":\"Other\",\"start\":1278,\"end\":1298,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina_tradicional\"},{\"name\":\"ciencia\",\"confidence\":0.9999999993001438,\"type\":\"Other\",\"start\":1469,\"end\":1476,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Ciencia\"},{\"name\":\"medicina\",\"confidence\":0.9999999997985469,\"type\":\"Other\",\"start\":1483,\"end\":1491,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina\"},{\"name\":\"estudio descriptivo\",\"confidence\":1,\"type\":\"Other\",\"start\":1684,\"end\":1703,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Estudio_descriptivo\"},{\"name\":\"herpes\",\"confidence\":0.9960802530483894,\"type\":\"Other\",\"start\":2131,\"end\":2137,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Herpes_simple\"},{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":2327,\"end\":2343,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"medicina tradicional\",\"confidence\":0.9999956956386865,\"type\":\"Other\",\"start\":2570,\"end\":2590,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina_tradicional\"},{\"name\":\"abs\",\"confidence\":0.9999668760473954,\"type\":\"Other\",\"start\":2709,\"end\":2712,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sistema_antibloqueo_de_ruedas\"},{\"name\":\"bases de datos\",\"confidence\":0.9999999992703579,\"type\":\"Other\",\"start\":2785,\"end\":2799,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Base_de_datos\"}],\"entities_non_linked\":[]}}",
 									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/semantic/documents/000260b4-85a0-442a-bc0e-a3ea86b61972",
+							"raw": "{{url}}{{api}}/semantic/documents/100260b4-85a0-442a-bc0e-a3ea86b61972",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"semantic",
 								"documents",
-								"000260b4-85a0-442a-bc0e-a3ea86b61972"
+								"100260b4-85a0-442a-bc0e-a3ea86b61972"
 							]
 						}
 					},
@@ -2508,7 +2508,7 @@
 								},
 								{
 									"key": "data",
-									"value": "{\"description\":{\"id\":\"drupal8JdA-316366\",\"uuid\":\"000260b4-85a0-442a-bc0e-a3ea86b61972\",\"language\":\"es\",\"title\":\"Un retrabajo sobre comportamientos en salud en la Sierra de C\\u00e1diz, publicado en una revista internacional\\u00a0\",\"body\":\"Un trabajo sobre comportamientos en salud de la Sierra de C\\u00e1diz y elaborado por una enfermera del Dispositivo de Cuidados Cr\\u00edticos y Urgencias (DCCU de Olvera) de la Sierra de C\\u00e1diz, en el \\u00c1rea de Gesti\\u00f3n Sanitaria de Jerez, Costa Noroeste y Sierra de C\\u00e1diz, ha sido publicado en la Revista Internacional Journal of Tissue Viability, cuyo factor de impacto hace que est\\u00e9 situada en el ranking de los primeros puestos.\\u00a0Adem\\u00e1s de ser enfermera en este DCCU, Mar\\u00eda de los Santos O\\u00f1ate Tenorio, es tambi\\u00e9n profesora asociada de la Facultad de Enfermer\\u00eda y Fisioterapia en la Universidad de C\\u00e1diz, y ha realizado esta publicaci\\u00f3n junto a la vicerrectora en Ciencias de la Salud, Ana Mar\\u00eda Garc\\u00eda Ba\\u00f1\\u00f3n, y a Antonio O\\u00f1ate Tenorio, doctorando en Ciencias Sociales.\\u00a0El estudio tiene como objetivo conocer si existen mitos y creencias en salud, describirlos, indagar si perduran y recopilar los m\\u00e1s comunes en la Sierra de C\\u00e1diz.As\\u00ed, el art\\u00edculo proviene de la tesis doctoral realizada y dirigida respectivamente por O\\u00f1ate Tenorio y Garc\\u00eda Ba\\u00f1\\u00f3n, basada en el estudio de la relaci\\u00f3n entre salud y medio rural. Como explican las dos autoras en el trabajo, a lo largo de la historia y del tiempo ha existido la pr\\u00e1ctica y persistencia de conductas y comportamientos en salud basados en la medicina tradicional, ya que toda persona que sufre un padecimiento siente el anhelo de sanar y mitigar sus manifestaciones negativas, es por ello que el ser humano adem\\u00e1s de hacer uso de la ciencia de la medicina, busca en otros conocimientos y hace uso del saber popular, remedios caseros, creencias, mitos, conductas o modos de proceder para obtener alivio de su malestar.En este proyecto se realiza un estudio descriptivo, observacional y transversal en el que participan 45 profesionales sanitarios de la zona de estudio, llevando a cabo un an\\u00e1lisis cuantitativo y cualitativo de los datos obtenidos, utilizando para ello una metodolog\\u00eda mixta de investigaci\\u00f3n.Entre los resultados m\\u00e1s destacados cabe subrayar que un 73,3% de la poblaci\\u00f3n tiene mitos o creencias sobre la salud, siendo el m\\u00e1s destacado la asistencia a curanderas y el remedio del herpes en un 70%, as\\u00ed como mitos y creencias referentes a la alimentaci\\u00f3n.Como conclusi\\u00f3n, este estudio detalla todos y cada uno de los mitos y creencias relativos a la salud y alimentaci\\u00f3n de la Sierra de C\\u00e1diz descritos por los profesionales de la salud, y abre e incentiva nuevas l\\u00edneas de investigaci\\u00f3n poniendo de manifiesto la necesidad de desarrollar campa\\u00f1as de educaci\\u00f3n e implementar programas de educaci\\u00f3n sanitaria en lo que a medicina tradicional se refiere.Adem\\u00e1s de haber sido publicado en esta revista, en el enlace https:\\/\\/www.sciencedirect.com\\/science\\/article\\/abs\\/pii\\/S0965206X2200002X?v=s5, el trabajo est\\u00e1 indexado en las principales bases de datos internacionales.\\u00a0\",\"image\":\"https:\\/\\/www.juntadeandalucia.es\\/sites\\/default\\/files\\/2020-11\\/imagen_noticia_por_defecto.png\",\"external_url\":\"https:\\/\\/www.juntadeandalucia.es\\/servicios\\/actualidad\\/noticias\\/detalle\\/277532.html\",\"category\":\"Noticia\",\"enhanced_interactive\":true,\"enhanced\":true,\"request_data\":{\"enhancer\":\"DBpedia\",\"text\":\"Un trabajo sobre comportamientos en salud de la Sierra de C\\u00e1diz y elaborado por una enfermera del Dispositivo de Cuidados Cr\\u00edticos y Urgencias (DCCU de Olvera) de la Sierra de C\\u00e1diz, en el \\u00c1rea de Gesti\\u00f3n Sanitaria de Jerez, Costa Noroeste y Sierra de C\\u00e1diz, ha sido publicado en la Revista Internacional Journal of Tissue Viability, cuyo factor de impacto hace que est\\u00e9 situada en el ranking de los primeros puestos.\\u00a0Adem\\u00e1s de ser enfermera en este DCCU, Mar\\u00eda de los Santos O\\u00f1ate Tenorio, es tambi\\u00e9n profesora asociada de la Facultad de Enfermer\\u00eda y Fisioterapia en la Universidad de C\\u00e1diz, y ha realizado esta publicaci\\u00f3n junto a la vicerrectora en Ciencias de la Salud, Ana Mar\\u00eda Garc\\u00eda Ba\\u00f1\\u00f3n, y a Antonio O\\u00f1ate Tenorio, doctorando en Ciencias Sociales.\\u00a0El estudio tiene como objetivo conocer si existen mitos y creencias en salud, describirlos, indagar si perduran y recopilar los m\\u00e1s comunes en la Sierra de C\\u00e1diz.As\\u00ed, el art\\u00edculo proviene de la tesis doctoral realizada y dirigida respectivamente por O\\u00f1ate Tenorio y Garc\\u00eda Ba\\u00f1\\u00f3n, basada en el estudio de la relaci\\u00f3n entre salud y medio rural. Como explican las dos autoras en el trabajo, a lo largo de la historia y del tiempo ha existido la pr\\u00e1ctica y persistencia de conductas y comportamientos en salud basados en la medicina tradicional, ya que toda persona que sufre un padecimiento siente el anhelo de sanar y mitigar sus manifestaciones negativas, es por ello que el ser humano adem\\u00e1s de hacer uso de la ciencia de la medicina, busca en otros conocimientos y hace uso del saber popular, remedios caseros, creencias, mitos, conductas o modos de proceder para obtener alivio de su malestar.En este proyecto se realiza un estudio descriptivo, observacional y transversal en el que participan 45 profesionales sanitarios de la zona de estudio, llevando a cabo un an\\u00e1lisis cuantitativo y cualitativo de los datos obtenidos, utilizando para ello una metodolog\\u00eda mixta de investigaci\\u00f3n.Entre los resultados m\\u00e1s destacados cabe subrayar que un 73,3% de la poblaci\\u00f3n tiene mitos o creencias sobre la salud, siendo el m\\u00e1s destacado la asistencia a curanderas y el remedio del herpes en un 70%, as\\u00ed como mitos y creencias referentes a la alimentaci\\u00f3n.Como conclusi\\u00f3n, este estudio detalla todos y cada uno de los mitos y creencias relativos a la salud y alimentaci\\u00f3n de la Sierra de C\\u00e1diz descritos por los profesionales de la salud, y abre e incentiva nuevas l\\u00edneas de investigaci\\u00f3n poniendo de manifiesto la necesidad de desarrollar campa\\u00f1as de educaci\\u00f3n e implementar programas de educaci\\u00f3n sanitaria en lo que a medicina tradicional se refiere.Adem\\u00e1s de haber sido publicado en esta revista, en el enlace https:\\/\\/www.sciencedirect.com\\/science\\/article\\/abs\\/pii\\/S0965206X2200002X?v=s5, el trabajo est\\u00e1 indexado en las principales bases de datos internacionales.\\u00a0\",\"options\":{\"0\":{\"confidence\":1,\"extra_links\":true},\"extra_links\":true},\"interactive\":\"1\",\"filename\":null,\"extra_links\":\"1\"},\"active\":true,\"entities_linked\":[{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":48,\"end\":64,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"Urgencias\",\"confidence\":0.9999999857968761,\"type\":\"Other\",\"start\":133,\"end\":142,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina_de_emergencia\"},{\"name\":\"Olvera\",\"confidence\":1,\"type\":\"Place\",\"start\":152,\"end\":158,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Olvera\"},{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":166,\"end\":182,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"Jerez\",\"confidence\":0.9999845327709157,\"type\":\"Place\",\"start\":218,\"end\":223,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Jerez_de_la_Frontera\"},{\"name\":\"Costa Noroeste\",\"confidence\":0.9999903927045969,\"type\":\"Place\",\"start\":225,\"end\":239,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Costa_Noroeste_de_C\\u00e1diz\"},{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":242,\"end\":258,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"factor de impacto\",\"confidence\":1,\"type\":\"Other\",\"start\":339,\"end\":356,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Factor_de_impacto\"},{\"name\":\"O\\u00f1ate\",\"confidence\":0.9977452825509624,\"type\":\"Place\",\"start\":476,\"end\":482,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/O\\u00f1ate\"},{\"name\":\"Enfermer\\u00eda\",\"confidence\":0.9995344910403624,\"type\":\"Other\",\"start\":539,\"end\":550,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Enfermer\\u00eda\"},{\"name\":\"Fisioterapia\",\"confidence\":1,\"type\":\"Other\",\"start\":552,\"end\":564,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Fisioterapia\"},{\"name\":\"Universidad de C\\u00e1diz\",\"confidence\":0.9999999995484359,\"type\":\"Organization\",\"start\":571,\"end\":592,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Universidad_de_C\\u00e1diz\"},{\"name\":\"Ba\\u00f1\\u00f3n\",\"confidence\":0.9479056560975558,\"type\":\"Place\",\"start\":691,\"end\":698,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Ba\\u00f1\\u00f3n\"},{\"name\":\"O\\u00f1ate\",\"confidence\":0.9977452825509624,\"type\":\"Place\",\"start\":710,\"end\":716,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/O\\u00f1ate\"},{\"name\":\"O\\u00f1ate\",\"confidence\":0.9994277594828974,\"type\":\"Place\",\"start\":1008,\"end\":1014,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/O\\u00f1ate\"},{\"name\":\"Ba\\u00f1\\u00f3n\",\"confidence\":0.9479056560975558,\"type\":\"Place\",\"start\":1031,\"end\":1038,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Ba\\u00f1\\u00f3n\"},{\"name\":\"medicina tradicional\",\"confidence\":0.9999956956386865,\"type\":\"Other\",\"start\":1278,\"end\":1298,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina_tradicional\"},{\"name\":\"ciencia\",\"confidence\":0.9999999993001438,\"type\":\"Other\",\"start\":1469,\"end\":1476,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Ciencia\"},{\"name\":\"medicina\",\"confidence\":0.9999999997985469,\"type\":\"Other\",\"start\":1483,\"end\":1491,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina\"},{\"name\":\"estudio descriptivo\",\"confidence\":1,\"type\":\"Other\",\"start\":1684,\"end\":1703,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Estudio_descriptivo\"},{\"name\":\"herpes\",\"confidence\":0.9960802530483894,\"type\":\"Other\",\"start\":2131,\"end\":2137,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Herpes_simple\"},{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":2327,\"end\":2343,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"medicina tradicional\",\"confidence\":0.9999956956386865,\"type\":\"Other\",\"start\":2570,\"end\":2590,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina_tradicional\"},{\"name\":\"abs\",\"confidence\":0.9999668760473954,\"type\":\"Other\",\"start\":2709,\"end\":2712,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sistema_antibloqueo_de_ruedas\"},{\"name\":\"bases de datos\",\"confidence\":0.9999999992703579,\"type\":\"Other\",\"start\":2785,\"end\":2799,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Base_de_datos\"}],\"entities_non_linked\":[]}}",
+									"value": "{\"description\":{\"id\":\"316366\",\"uuid\":\"100260b4-85a0-442a-bc0e-a3ea86b61972\",\"language\":\"es\",\"title\":\"Un retrabajo sobre comportamientos en salud en la Sierra de C\\u00e1diz, publicado en una revista internacional\\u00a0\",\"body\":\"Un trabajo sobre comportamientos en salud de la Sierra de C\\u00e1diz y elaborado por una enfermera del Dispositivo de Cuidados Cr\\u00edticos y Urgencias (DCCU de Olvera) de la Sierra de C\\u00e1diz, en el \\u00c1rea de Gesti\\u00f3n Sanitaria de Jerez, Costa Noroeste y Sierra de C\\u00e1diz, ha sido publicado en la Revista Internacional Journal of Tissue Viability, cuyo factor de impacto hace que est\\u00e9 situada en el ranking de los primeros puestos.\\u00a0Adem\\u00e1s de ser enfermera en este DCCU, Mar\\u00eda de los Santos O\\u00f1ate Tenorio, es tambi\\u00e9n profesora asociada de la Facultad de Enfermer\\u00eda y Fisioterapia en la Universidad de C\\u00e1diz, y ha realizado esta publicaci\\u00f3n junto a la vicerrectora en Ciencias de la Salud, Ana Mar\\u00eda Garc\\u00eda Ba\\u00f1\\u00f3n, y a Antonio O\\u00f1ate Tenorio, doctorando en Ciencias Sociales.\\u00a0El estudio tiene como objetivo conocer si existen mitos y creencias en salud, describirlos, indagar si perduran y recopilar los m\\u00e1s comunes en la Sierra de C\\u00e1diz.As\\u00ed, el art\\u00edculo proviene de la tesis doctoral realizada y dirigida respectivamente por O\\u00f1ate Tenorio y Garc\\u00eda Ba\\u00f1\\u00f3n, basada en el estudio de la relaci\\u00f3n entre salud y medio rural. Como explican las dos autoras en el trabajo, a lo largo de la historia y del tiempo ha existido la pr\\u00e1ctica y persistencia de conductas y comportamientos en salud basados en la medicina tradicional, ya que toda persona que sufre un padecimiento siente el anhelo de sanar y mitigar sus manifestaciones negativas, es por ello que el ser humano adem\\u00e1s de hacer uso de la ciencia de la medicina, busca en otros conocimientos y hace uso del saber popular, remedios caseros, creencias, mitos, conductas o modos de proceder para obtener alivio de su malestar.En este proyecto se realiza un estudio descriptivo, observacional y transversal en el que participan 45 profesionales sanitarios de la zona de estudio, llevando a cabo un an\\u00e1lisis cuantitativo y cualitativo de los datos obtenidos, utilizando para ello una metodolog\\u00eda mixta de investigaci\\u00f3n.Entre los resultados m\\u00e1s destacados cabe subrayar que un 73,3% de la poblaci\\u00f3n tiene mitos o creencias sobre la salud, siendo el m\\u00e1s destacado la asistencia a curanderas y el remedio del herpes en un 70%, as\\u00ed como mitos y creencias referentes a la alimentaci\\u00f3n.Como conclusi\\u00f3n, este estudio detalla todos y cada uno de los mitos y creencias relativos a la salud y alimentaci\\u00f3n de la Sierra de C\\u00e1diz descritos por los profesionales de la salud, y abre e incentiva nuevas l\\u00edneas de investigaci\\u00f3n poniendo de manifiesto la necesidad de desarrollar campa\\u00f1as de educaci\\u00f3n e implementar programas de educaci\\u00f3n sanitaria en lo que a medicina tradicional se refiere.Adem\\u00e1s de haber sido publicado en esta revista, en el enlace https:\\/\\/www.sciencedirect.com\\/science\\/article\\/abs\\/pii\\/S0965206X2200002X?v=s5, el trabajo est\\u00e1 indexado en las principales bases de datos internacionales.\\u00a0\",\"image\":\"https:\\/\\/www.juntadeandalucia.es\\/sites\\/default\\/files\\/2020-11\\/imagen_noticia_por_defecto.png\",\"external_url\":\"https:\\/\\/www.juntadeandalucia.es\\/servicios\\/actualidad\\/noticias\\/detalle\\/277532.html\",\"category\":\"Noticia\",\"enhanced_interactive\":true,\"enhanced\":true,\"request_data\":{\"enhancer\":\"DBpedia\",\"text\":\"Un trabajo sobre comportamientos en salud de la Sierra de C\\u00e1diz y elaborado por una enfermera del Dispositivo de Cuidados Cr\\u00edticos y Urgencias (DCCU de Olvera) de la Sierra de C\\u00e1diz, en el \\u00c1rea de Gesti\\u00f3n Sanitaria de Jerez, Costa Noroeste y Sierra de C\\u00e1diz, ha sido publicado en la Revista Internacional Journal of Tissue Viability, cuyo factor de impacto hace que est\\u00e9 situada en el ranking de los primeros puestos.\\u00a0Adem\\u00e1s de ser enfermera en este DCCU, Mar\\u00eda de los Santos O\\u00f1ate Tenorio, es tambi\\u00e9n profesora asociada de la Facultad de Enfermer\\u00eda y Fisioterapia en la Universidad de C\\u00e1diz, y ha realizado esta publicaci\\u00f3n junto a la vicerrectora en Ciencias de la Salud, Ana Mar\\u00eda Garc\\u00eda Ba\\u00f1\\u00f3n, y a Antonio O\\u00f1ate Tenorio, doctorando en Ciencias Sociales.\\u00a0El estudio tiene como objetivo conocer si existen mitos y creencias en salud, describirlos, indagar si perduran y recopilar los m\\u00e1s comunes en la Sierra de C\\u00e1diz.As\\u00ed, el art\\u00edculo proviene de la tesis doctoral realizada y dirigida respectivamente por O\\u00f1ate Tenorio y Garc\\u00eda Ba\\u00f1\\u00f3n, basada en el estudio de la relaci\\u00f3n entre salud y medio rural. Como explican las dos autoras en el trabajo, a lo largo de la historia y del tiempo ha existido la pr\\u00e1ctica y persistencia de conductas y comportamientos en salud basados en la medicina tradicional, ya que toda persona que sufre un padecimiento siente el anhelo de sanar y mitigar sus manifestaciones negativas, es por ello que el ser humano adem\\u00e1s de hacer uso de la ciencia de la medicina, busca en otros conocimientos y hace uso del saber popular, remedios caseros, creencias, mitos, conductas o modos de proceder para obtener alivio de su malestar.En este proyecto se realiza un estudio descriptivo, observacional y transversal en el que participan 45 profesionales sanitarios de la zona de estudio, llevando a cabo un an\\u00e1lisis cuantitativo y cualitativo de los datos obtenidos, utilizando para ello una metodolog\\u00eda mixta de investigaci\\u00f3n.Entre los resultados m\\u00e1s destacados cabe subrayar que un 73,3% de la poblaci\\u00f3n tiene mitos o creencias sobre la salud, siendo el m\\u00e1s destacado la asistencia a curanderas y el remedio del herpes en un 70%, as\\u00ed como mitos y creencias referentes a la alimentaci\\u00f3n.Como conclusi\\u00f3n, este estudio detalla todos y cada uno de los mitos y creencias relativos a la salud y alimentaci\\u00f3n de la Sierra de C\\u00e1diz descritos por los profesionales de la salud, y abre e incentiva nuevas l\\u00edneas de investigaci\\u00f3n poniendo de manifiesto la necesidad de desarrollar campa\\u00f1as de educaci\\u00f3n e implementar programas de educaci\\u00f3n sanitaria en lo que a medicina tradicional se refiere.Adem\\u00e1s de haber sido publicado en esta revista, en el enlace https:\\/\\/www.sciencedirect.com\\/science\\/article\\/abs\\/pii\\/S0965206X2200002X?v=s5, el trabajo est\\u00e1 indexado en las principales bases de datos internacionales.\\u00a0\",\"options\":{\"0\":{\"confidence\":1,\"extra_links\":true},\"extra_links\":true},\"interactive\":\"1\",\"filename\":null,\"extra_links\":\"1\"},\"active\":true,\"entities_linked\":[{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":48,\"end\":64,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"Urgencias\",\"confidence\":0.9999999857968761,\"type\":\"Other\",\"start\":133,\"end\":142,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina_de_emergencia\"},{\"name\":\"Olvera\",\"confidence\":1,\"type\":\"Place\",\"start\":152,\"end\":158,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Olvera\"},{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":166,\"end\":182,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"Jerez\",\"confidence\":0.9999845327709157,\"type\":\"Place\",\"start\":218,\"end\":223,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Jerez_de_la_Frontera\"},{\"name\":\"Costa Noroeste\",\"confidence\":0.9999903927045969,\"type\":\"Place\",\"start\":225,\"end\":239,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Costa_Noroeste_de_C\\u00e1diz\"},{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":242,\"end\":258,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"factor de impacto\",\"confidence\":1,\"type\":\"Other\",\"start\":339,\"end\":356,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Factor_de_impacto\"},{\"name\":\"O\\u00f1ate\",\"confidence\":0.9977452825509624,\"type\":\"Place\",\"start\":476,\"end\":482,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/O\\u00f1ate\"},{\"name\":\"Enfermer\\u00eda\",\"confidence\":0.9995344910403624,\"type\":\"Other\",\"start\":539,\"end\":550,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Enfermer\\u00eda\"},{\"name\":\"Fisioterapia\",\"confidence\":1,\"type\":\"Other\",\"start\":552,\"end\":564,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Fisioterapia\"},{\"name\":\"Universidad de C\\u00e1diz\",\"confidence\":0.9999999995484359,\"type\":\"Organization\",\"start\":571,\"end\":592,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Universidad_de_C\\u00e1diz\"},{\"name\":\"Ba\\u00f1\\u00f3n\",\"confidence\":0.9479056560975558,\"type\":\"Place\",\"start\":691,\"end\":698,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Ba\\u00f1\\u00f3n\"},{\"name\":\"O\\u00f1ate\",\"confidence\":0.9977452825509624,\"type\":\"Place\",\"start\":710,\"end\":716,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/O\\u00f1ate\"},{\"name\":\"O\\u00f1ate\",\"confidence\":0.9994277594828974,\"type\":\"Place\",\"start\":1008,\"end\":1014,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/O\\u00f1ate\"},{\"name\":\"Ba\\u00f1\\u00f3n\",\"confidence\":0.9479056560975558,\"type\":\"Place\",\"start\":1031,\"end\":1038,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Ba\\u00f1\\u00f3n\"},{\"name\":\"medicina tradicional\",\"confidence\":0.9999956956386865,\"type\":\"Other\",\"start\":1278,\"end\":1298,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina_tradicional\"},{\"name\":\"ciencia\",\"confidence\":0.9999999993001438,\"type\":\"Other\",\"start\":1469,\"end\":1476,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Ciencia\"},{\"name\":\"medicina\",\"confidence\":0.9999999997985469,\"type\":\"Other\",\"start\":1483,\"end\":1491,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina\"},{\"name\":\"estudio descriptivo\",\"confidence\":1,\"type\":\"Other\",\"start\":1684,\"end\":1703,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Estudio_descriptivo\"},{\"name\":\"herpes\",\"confidence\":0.9960802530483894,\"type\":\"Other\",\"start\":2131,\"end\":2137,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Herpes_simple\"},{\"name\":\"Sierra de C\\u00e1diz\",\"confidence\":0.9970201137457189,\"type\":\"Place\",\"start\":2327,\"end\":2343,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sierra_de_C\\u00e1diz\"},{\"name\":\"medicina tradicional\",\"confidence\":0.9999956956386865,\"type\":\"Other\",\"start\":2570,\"end\":2590,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Medicina_tradicional\"},{\"name\":\"abs\",\"confidence\":0.9999668760473954,\"type\":\"Other\",\"start\":2709,\"end\":2712,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Sistema_antibloqueo_de_ruedas\"},{\"name\":\"bases de datos\",\"confidence\":0.9999999992703579,\"type\":\"Other\",\"start\":2785,\"end\":2799,\"uri\":\"http:\\/\\/es.dbpedia.org\\/resource\\/Base_de_datos\"}],\"entities_non_linked\":[]}}",
 									"type": "text"
 								},
 								{
@@ -2525,14 +2525,14 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/semantic/documents/000260b4-85a0-442a-bc0e-a3ea86b61972",
+							"raw": "{{url}}{{api}}/semantic/documents/100260b4-85a0-442a-bc0e-a3ea86b61972",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"semantic",
 								"documents",
-								"000260b4-85a0-442a-bc0e-a3ea86b61972"
+								"100260b4-85a0-442a-bc0e-a3ea86b61972"
 							]
 						}
 					},
@@ -2544,14 +2544,14 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{url}}{{api}}/semantic/documents/000260b4-85a0-442a-bc0e-a3ea86b61972",
+							"raw": "{{url}}{{api}}/semantic/documents/100260b4-85a0-442a-bc0e-a3ea86b61972",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"semantic",
 								"documents",
-								"000260b4-85a0-442a-bc0e-a3ea86b61972"
+								"100260b4-85a0-442a-bc0e-a3ea86b61972"
 							]
 						}
 					},
@@ -2610,14 +2610,14 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}{{api}}/semantic/documents/000260b4-85a0-442a-bc0e-a3ea86b61972/enhance?enhancer=All",
+							"raw": "{{url}}{{api}}/semantic/documents/100260b4-85a0-442a-bc0e-a3ea86b61972/enhance?enhancer=All",
 							"host": [
 								"{{url}}{{api}}"
 							],
 							"path": [
 								"semantic",
 								"documents",
-								"000260b4-85a0-442a-bc0e-a3ea86b61972",
+								"100260b4-85a0-442a-bc0e-a3ea86b61972",
 								"enhance"
 							],
 							"query": [
@@ -2760,7 +2760,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiMjU4N2FkZmFkYzkyMWE1NTBkZTgwMDk1NTc4YjM2OTcxMDI4M2NkZTFjM2FkZjlmNGIyYjA4OGMzMTI4OGRkNDg0ZmQzNmY2NmM3N2YwZTciLCJpYXQiOiIxNjQzMjc1NzU1Ljg5ODg3NSIsIm5iZiI6IjE2NDMyNzU3NTUuODk4ODk1IiwiZXhwIjoiMTY1ODkxNDE1NS4wNTY1ODkiLCJzdWIiOiI2Iiwic2NvcGVzIjpbXX0.jIVdT2jYmIrL2LuF7-jrMWnehg5CMP5ZnlXVc_mLU8aSVyS6nvyW9f6TZey0bEePz1UxNvz1rw8v9nXep9E1aUKqxJ6TMDY9dVUY1H2v1NGFxF2uSztlqfE46NTStcKoGoLDLVJeXXDp9-UQucMDXpzpQkujGQ_fnHi58r2Ac84CcULxpgI_kWtla1PyZtgenD97mDr8Wfb9-7y-hL-mX03kbJc-IQKkniC_hLOPMpTNxPQRcTNQlrQe6Cnpk6HdnWN3QhhxkMXaz_6gDZiMdypIaPiReA0hRpDoYa0Wu8urovwvqk0wFhs34Y-HSxP3TA0RCM0o42-woqWvmPK3nsafql9T7HdCNs89vK1_YVT9X0dzvv9E1_tnRTThmu6MRugc_jIMvOjAHi5jDX58pqE7FopwH8SjgbMZl8MXtXYpg3BpAsbotzvvjgAlpSA5iadFhGdFVo7svzkOtVciB9-aIKJoTniQK2xaOBhy-7la2_Ycl_qtWI8CMNCGO48Mx6M7CQryBYZoCjn_nbesIa9ey5f3b7Dn7lCaHl85w3Yu0vRHWWLZhDmO3IsB_EDXdi-0_-XGXAqopThKRQ7lll8BCb5HOH-alatIYU7QhoT9oSyrRTExowk9AoS_8vsPqRkf7ZhamD86yg38BWpaxRUYvB_AoR5DB8hZAvhy8q4",
+				"value": "VALUE_TOKEN",
 				"type": "string"
 			}
 		]
@@ -2788,7 +2788,7 @@
 	"variable": [
 		{
 			"key": "url",
-			"value": "http://xdam.pre-cloud.ximdex.net",
+			"value": "http://xdamv10.pre-cloud.ximdex.org",
 			"disabled": true
 		},
 		{
@@ -2806,7 +2806,7 @@
 		},
 		{
 			"key": "url",
-			"value": "http://xdamv1.cloud.ximdex.net",
+			"value": "http://xdamv10.cloud.ximdex.org",
 			"disabled": true
 		}
 	]
