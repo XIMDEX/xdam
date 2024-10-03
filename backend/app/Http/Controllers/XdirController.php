@@ -42,7 +42,7 @@ class XdirController extends Controller
             if ($user) {
                 return response()->json(['success' => true], Response::HTTP_OK);
             }
-            $data['user']['password'] = Hash::make("pb0HuH9Ep+ThjvC;hz:T£3`V'A");
+            $data['user']['password'] = $data['password'];
             
             $user = User::create($data['user']);
             $user->save();
