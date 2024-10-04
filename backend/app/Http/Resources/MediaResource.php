@@ -25,7 +25,7 @@ class MediaResource extends JsonResource
             foreach($thumbnailsTypes as $thumbnailType)
             {
                 $hasPreview = $this->hasGeneratedConversion($thumbnailType);
-                $thumbnails[$thumbnailType] = $hasPreview;
+               $thumbnails[$thumbnailType] = $hasPreview;
             }
         }
 

@@ -69,7 +69,7 @@ class ResourceController extends Controller
      * @var UserService
      */
     private $userService;
-    
+
     /**
      * @var ScormService
      */
@@ -377,7 +377,7 @@ class ResourceController extends Controller
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      * @throws \Exception
      */
-    public function render($damUrl, $size = 'default') 
+    public function render($damUrl, $size = 'default')
     {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         if (Cache::has("{$mediaId}__{$size}")) {
@@ -410,7 +410,7 @@ class ResourceController extends Controller
             $file = Storage::get($path);
             $type = $mimeType;
             $lastModified = Storage::lastModified($path);
-        
+
             $response = new StreamedResponse();
             $response->setCallback(function () use ($file) {
                 echo $file;
@@ -419,7 +419,7 @@ class ResourceController extends Controller
             $response->headers->set('Content-Type', $type);
             $response->headers->set('Content-Length', strlen($file));
             $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
-                
+
             $maxAge = 3600 * 24 * 7;
             $response->headers->set('Cache-Control', 'public, max-age=' . $maxAge . ', immutable');
             $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
@@ -429,11 +429,11 @@ class ResourceController extends Controller
                 Response::HTTP_OK,
                 $response->headers->all()
             );
-            
+
             Cache::put("{$mediaId}__$size", $response_cache);
             return $response;
         }
-        
+
         if ($fileType == 'video' || $fileType == 'image') {
             $sizeValue = $this->getResourceSize($fileType, $size);
             $availableSizes = $this->getAvailableResourceSizes();
@@ -442,11 +442,11 @@ class ResourceController extends Controller
              */
             $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue);
 
-            
+
             if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small', 'thumbnail']))) {
                 $response = response()->file($compressed->basePath());
                 $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
-                
+
                 $maxAge = 3600 * 24 * 7;
                 $response->headers->set('Cache-Control', 'public, max-age=' . $maxAge . ', immutable');
                 $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
@@ -458,12 +458,12 @@ class ResourceController extends Controller
                 // Añadir Last-Modified
                 $lastModified = filemtime($compressed->basePath());
                 $response->setLastModified(Carbon::createFromTimestamp($lastModified));
-                
+
                 if ($fileType == 'image') {
                     $response_cache = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
-                    
+
                     $response_cache->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
-                    
+
                     $maxAge = 3600 * 24 * 7;
                     $response_cache->headers->set('Cache-Control', 'public, max-age=' . $maxAge . ', immutable');
                     $response_cache->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
@@ -493,7 +493,7 @@ class ResourceController extends Controller
                 'url'   => base64_encode($url . '?key=' . $key . '&dx=' . ($can_download ? 1 : 0))
             ]);
         } else if ($mimeType == 'application/pdf' && $renderKey != null && $isCDN) {
-            
+
             if ($this->mediaService->checkRendererKey($renderKey, $method)) {
                 // file lo hace con streaming de datos
                 // $response = response()->file($this->mediaService->preview($media, []));
@@ -777,7 +777,7 @@ class ResourceController extends Controller
             $accessCheck = true;
 
         $checkData = [
-            'ipAddress' => $ipAddress, 
+            'ipAddress' => $ipAddress,
             'originURL' => $originURL
         ];
 
@@ -791,7 +791,7 @@ class ResourceController extends Controller
             ];
             $checkData = array_merge($checkData, $extra_data);
         }
-    
+
         if ($cdnInfo->checkAccessRequirements($checkData))
             $accessCheck = true;
 
@@ -807,7 +807,7 @@ class ResourceController extends Controller
         if (count($responseJson->files) == 0)
             return response(['error' => 'No files attached!']);
 
-            
+
         $mediaId = DamUrlUtil::decodeUrl($responseJson->files[0]->dam_url);
         $size = $request->size;
         if (Cache::has("{$mediaId}__{$size}")) {
@@ -893,9 +893,9 @@ class ResourceController extends Controller
         if (isset($request->size) && $this->getFileType($responseJson->files[0]->dam_url) === 'application/pdf') {
             return true;
         }
-        
+
         $checkData = [
-            'ipAddress' => $ipAddress, 
+            'ipAddress' => $ipAddress,
             'originURL' => $originURL
         ];
 
@@ -910,7 +910,7 @@ class ResourceController extends Controller
             ];
             $checkData = array_merge($checkData, $extra_data);
         }
-    
+
         if ($cdnInfo->checkAccessRequirements($checkData)){
             return true;
         }
@@ -924,7 +924,7 @@ class ResourceController extends Controller
         } catch (\Exception $exc) {
             $this->resourceService->duplicateUpdateStatus($copy, ['message' => $exc->getMessage(), 'status' => 'error']);
             $message = $exc->getMessage();
-          
+
             return response()->json([
                 'error' => $message
             ])->setStatusCode(Response::HTTP_BAD_GATEWAY);
