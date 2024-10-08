@@ -78,12 +78,6 @@ sudo apt install jpegoptim optipng pngquant gifsicle ffmpeg
 sudo npm install -g svgo
 ```
 
-Then, navigate to the backend directory and install Composer dependencies:
-```bash
-cd backend
-composer install
-php artisan migrate
-```
 
 ## 7. Final Configuration Steps
 
@@ -93,4 +87,5 @@ Finally, execute the following commands:
 sudo php artisan solrCores:maintenance --action=ALL
 sudo php artisan optimize:clear
 sudo php artisan passport:install
+php artisan db:seed
 ```
