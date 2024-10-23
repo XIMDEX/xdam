@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Solarium\Client;
 use App\Enums\AccessPermission;
-
+use App\Services\Solr\SolrService;
 
 class CatalogueController extends Controller
 {
@@ -40,7 +40,7 @@ class CatalogueController extends Controller
      * @param CDNService $cdnService
      * @param CatalogueService $catalogueService
      */
-    public function __construct(CDNService $cdnService, CatalogueService $catalogueService, CategoryService $categoryService)
+    public function __construct(CDNService $cdnService, CatalogueService $catalogueService, CategoryService $categoryService, SolrService $solrService)
     {
         $this->cdnService = $cdnService;
         $this->catalogueService = $catalogueService;
@@ -100,7 +100,7 @@ class CatalogueController extends Controller
             $collection
         );
 
-        $response = $this->formatLOMFacetsResponse($response);
+       // $response = $this->formatLOMFacetsResponse($response);
         $response = $this->appendCDNDataToCatalogueResponse($response, $collection);
         $response = $this->appendAllCategories($response, $collection);
         return response()->json($response);

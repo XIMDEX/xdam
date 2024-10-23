@@ -15,6 +15,7 @@ class FacetManager
     private $facetList = [];
     // "name to display" => "name faceted"
     private $facetLists;
+    private CoreFacetsBuilder $coreFacetsBuilder;
     const UNLIMITED_FACETS_VALUES = -1;
     const RADIO_FACETS = ['active', 'aggregated', 'internal', 'internal', 'external', 'isFree', 'is_deleted', 'can_download'];
 
@@ -26,7 +27,7 @@ class FacetManager
 
     public function __construct(CoreFacetsBuilder $coreFacetsBuilder, SolrConfig $solrConfig, LOMService $lomService)
     {
-        $this->facetLists = $coreFacetsBuilder->upCoreConfig();
+        $this->coreFacetsBuilder = $coreFacetsBuilder;
         $this->solrConfig = $solrConfig;
         $this->lomService = $lomService;
     }
@@ -38,8 +39,9 @@ class FacetManager
      * @param Query $query
      * @param array $facetsFilter
      */
-    public function setQueryByFacets($query, $facetsFilter, $core)
+    public function setQueryByFacets($query, $facetsFilter, $core,$list)
     {
+        $this->facetLists = $this->coreFacetsBuilder->upCoreConfig($list);
         if (!empty($facetsFilter)) {
             foreach ($facetsFilter as $filterName => $filterValue) {
                 // The filter value can be single or an array
@@ -82,9 +84,9 @@ class FacetManager
      * @param \Solarium\Component\FacetSet $facetSet
      * @param array $facetsFilter
      */
-    public function setFacets($facetSet, $facetsFilter, $core)
+    public function setFacets($facetSet, $facetsFilter, $core,$list)
     {
-        $this->facetList = $this->facetLists[$core];
+        $this->facetList = $this->coreFacetsBuilder->upCoreConfig($list)[$core];
         foreach ($this->facetList as $key => $value) {
             $facetSet
                 ->createFacetField($value['name'])
@@ -107,9 +109,9 @@ class FacetManager
      * @param array $facetsFilter
      * @return array
      */
-    public function getFacets($facetSet, $facetsFilter, $core): array
+    public function getFacets($facetSet, $facetsFilter, $core,$list): array
     {
-        $this->facetList = $this->facetLists[$core];
+        $this->facetList = $this->coreFacetsBuilder->upCoreConfig($list)[$core];
         $facetsArray = [];
         // go through each of the facets list
         foreach ($this->facetList as $facetLabel => $facetKey) {
