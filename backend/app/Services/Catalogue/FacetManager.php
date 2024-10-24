@@ -44,18 +44,24 @@ class FacetManager
         $this->facetLists = $this->coreFacetsBuilder->upCoreConfig($list);
         if (!empty($facetsFilter)) {
             foreach ($facetsFilter as $filterName => $filterValue) {
-                // The filter value can be single or an array
+                
                 if (is_array($filterValue)) {
                     $q = '';
                     $operator = $this->facetLists[$core][$filterName]['operator'];
                     foreach ($filterValue as $key => $id) {
+                        if($id === "##web.DEFAULT.yes##"){
+                           $id='true';
+                        }
+                        if($id === "##web.DEFAULT.no##"){
+                           $id='false';
+                        }
                         $q .= $key == 0 ? "$filterName:$id" : " $operator $filterName : $id";
                     }
-                    //$q .= ' AND organization:'. $oid;
+                    
                     $query->createFilterQuery($filterName)->setQuery($q);
                 } else {
                     $q = $filterName . ':' . $filterValue;
-                    //$q .= ' AND organization:'. $oid;
+                                                                                                                                                                          
                     $query->createFilterQuery($filterName)->setQuery($q);
                 }
             }
