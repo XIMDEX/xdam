@@ -160,15 +160,32 @@ class SolrService
         Client $client,
         array $documentFound
     ): ResultInterface {
+        // Retrieve existing document from Solr by ID
+        $query = $client->createSelect();
+        $query->setQuery('id:' . $documentFound['id']);
+        $resultSet = $client->select($query);
+    
+        // Prepare the update command
         $createCommand = $client->createUpdate();
         $newDocument = $createCommand->createDocument();
-
+    
+        if ($resultSet->getNumFound() > 0) {
+            $existingDocument = $resultSet->getDocuments()[0];
+            // Copy fields from the existing document
+            foreach ($existingDocument as $key => $value) {
+                $newDocument->$key = $value;
+            }
+        }
+    
+        // Merge new fields
         foreach ($documentFound as $key => $value) {
             $newDocument->$key = $value;
         }
-
+    
         $createCommand->addDocument($newDocument);
         $createCommand->addCommit();
+    
+        // Execute the update
         return $client->update($createCommand);
     }
 
@@ -242,7 +259,7 @@ class SolrService
 
             // Manages the LOM and LOMES documents
             // $this->saveLOMDocuments($lomClient, $lomItem, Utils::getLomSchema(true), $damResource);
-            //  $this->saveLOMDocuments($lomesClient, $lomesItem, Utils::getLomesSchema(true), $damResource);
+            // $this->saveLOMDocuments($lomesClient, $lomesItem, Utils::getLomesSchema(true), $damResource);
         }
 
         // Gets the client attached to the current resource
@@ -261,6 +278,13 @@ class SolrService
                 $documentResource[$key] = $value;
             }
             unset($documentResource['lom']);
+        }
+        if (isset($damResource->lomes)) {
+            $documentResource['lomes'] = $damResource->lomes;
+            foreach ($damResource->lomes as $key => $value) {
+                $documentResource[$key] = $value;
+            }
+            unset($documentResource['lomes']);
         }
         return $this->saverOrUpdateSolrDocument($client, $documentResource);
     }
@@ -506,7 +530,7 @@ class SolrService
         foreach ($facets as $key => $facet) {
             ksort($facets[$key]['values']);
         }
-        $excludeKeys = ["created_at", "data", "core_resource_type", "collections", "core_resource_type_str", "files", "id", "name", "organization", "tags", "type", "updated_at", "attached_files", "previews", "tags_str", "types_str", "xeval_id", "catalog"];
+        $excludeKeys = ["created_at", "data", "core_resource_type", "collections", "core_resource_type_str", "files", "id", "name", "organization", "tags", "type", "updated_at", "attached_files", "previews", "tags_str", "types_str", "xeval_id", "catalog","exists","incrementing","preventsLazyLoading","score","usesUniqueIds","wasRecentlyCreated","timestamps"];
         $filteredFacetArray = [];
         $allKeys = array_column($facets, 'key');
 
