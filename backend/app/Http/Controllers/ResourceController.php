@@ -851,7 +851,7 @@ class ResourceController extends Controller
         }
 
         $can_download = $resource->type == ResourceType::document ? ($resource->data->description->can_download ?? false) : true;
-        return $this->renderResource($mediaId, $method, $size, $request->key, true, $can_download);
+        return $this->renderResource($request,$mediaId, $method, $size, $request->key, true, $can_download);
     }
 
     public function renderCDNResource(CDNRequest $request)
