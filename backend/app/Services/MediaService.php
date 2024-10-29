@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services;
+
 use App\Enums\MediaType;
 use App\Jobs\ProcessVideoCompression;
 use App\Models\DocumentRendererKey;
@@ -81,8 +82,8 @@ class MediaService
             return $isDownload
                 ? $this->downloadVideo($media->id, $media->file_name, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail)
                 : $this->previewVideo($media->id, $media->file_name, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail);
-        } else if($fileType === 'image') {
-            return $this->previewImage($mediaPath,$sizeKey);
+        } else if ($fileType === 'image') {
+            return $this->previewImage($mediaPath, $sizeKey);
         } else {
             return $mediaPath;
         }
@@ -92,8 +93,13 @@ class MediaService
     {
         $command = "ffmpeg -i \"$path\" 2>&1 | grep Video: | grep -Po '\d{3,5}x\d{3,5}'";
         $output = explode('x', exec($command));
-        $resolution = array("path" => $path, "width" => $output[0], "height" => $output[1], "aspect_ratio" => $output[0] / $output[1],
-                            "name" => $output[1] . "p");
+        $resolution = array(
+            "path" => $path,
+            "width" => $output[0],
+            "height" => $output[1],
+            "aspect_ratio" => $output[0] / $output[1],
+            "name" => $output[1] . "p"
+        );
         return $resolution;
     }
 
@@ -109,9 +115,9 @@ class MediaService
             if ($availableSizes['sizes'][$k]['width'] % 2 !== 0) $availableSizes['sizes'][$k]['width'] -= 1;
 
             $availableSizes['sizes'][$k]['path'] = implode('/', array_slice(explode('/', $mediaPath), 0, -1))
-                                                    . '/' . pathinfo($mediaFileName, PATHINFO_FILENAME) . '_'
-                                                    . $availableSizes['sizes'][$k]['name'] . '.'
-                                                    . pathinfo($mediaFileName, PATHINFO_EXTENSION);
+                . '/' . pathinfo($mediaFileName, PATHINFO_FILENAME) . '_'
+                . $availableSizes['sizes'][$k]['name'] . '.'
+                . pathinfo($mediaFileName, PATHINFO_EXTENSION);
             $availableSizes['sizes'][$k]['relative_path'] = str_replace(storage_path('app') . '/', '', $availableSizes['sizes'][$k]['path']);
         }
     }
@@ -135,7 +141,6 @@ class MediaService
         $video = new Video();
         $video->setPath($mediaPath);
         return $video;
-
     }
 
     private function previewVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey = null, $size = null, $thumbnail = null)
@@ -208,17 +213,17 @@ class MediaService
     {
         $manager = new ImageManager(['driver' => 'imagick']);
         $image   = $manager->make($mediaPath);
-        $imageProcess= new MediaSizeImage($type,$mediaPath,$manager,$image);
-        if(!$imageProcess->checkSize())$imageProcess->setSizeDefault();
+        $imageProcess = new MediaSizeImage($type, $mediaPath, $manager, $image);
+        if (!$imageProcess->checkSize()) $imageProcess->setSizeDefault();
         if (!$imageProcess->imageExists()) {
             $imageProcess->save();
         }
-        $result = $imageProcess->getImage();   
+        $result = $imageProcess->getImage();
         return $result;
     }
 
     public function saveVideoSnapshot($thumbPath, $videoSourcePath, $sec = 10)
-    {        
+    {
         $ffmpeg = FFMpeg::create([
             'ffmpeg.binaries'  => config('app.ffmpeg_path'),
             'ffprobe.binaries' => config('app.ffprobe_path')
@@ -236,15 +241,13 @@ class MediaService
      * @param null $files
      * @return array|mixed
      */
-    public function addFromRequest(Model $model,  $collection, $customProperties, $files = null,$requestKey = null)
+    public function addFromRequest(Model $model,  $collection, $customProperties, $files = null, $requestKey = null)
     {
         $collection = $collection ?? $this->defaultFileCollection;
-        if (!empty($requestKey) && empty($files))
-        {
+        if (!empty($requestKey) && empty($files)) {
             $model->addMediaFromRequest($requestKey)->withCustomProperties($customProperties)->toMediaCollection($collection);
         }
-        if (!empty($files) && empty($requestKey))
-        {
+        if (!empty($files) && empty($requestKey)) {
             $model->addMedia($files)->withCustomProperties($customProperties)->toMediaCollection($collection);
         }
         $model->save();
@@ -254,10 +257,10 @@ class MediaService
         $mediaList = $this->list($model, $collection);
 
         $media = Media::findOrFail($mediaList[0]->id);
-        $mimeType = $media->mime_type;        
+        $mimeType = $media->mime_type;
         $mediaPath = $media->getPath();
         $fileType = explode('/', $mimeType)[0];
-        if($fileType == 'video') {
+        if ($fileType == 'video') {
             $file_directory = str_replace($media->file_name, '', $mediaPath);
             $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.png';
             $this->saveVideoSnapshot($thumbnail, $mediaPath);
@@ -266,10 +269,13 @@ class MediaService
             $manager = new ImageManager(['driver' => 'imagick']);
             $image    = $manager->make($mediaPath);
             $image2   = $manager->make($mediaPath);
-            $thumb  = new MediaSizeImage('thumbnail',$mediaPath,$manager,$image);
-            $small  = new MediaSizeImage('small',$mediaPath,$manager,$image2);
-            if($thumb->checkSize()) $thumb->save();
-            if($small->checkSize()) $small->save();
+            $thumb  = new MediaSizeImage('thumbnail', $mediaPath, $manager, $image);
+            $small  = new MediaSizeImage('small', $mediaPath, $manager, $image2);
+            if ($thumb->checkSize()) $thumb->save();
+            if ($small->checkSize()) $small->save();
+            // Convert original image to AVIF format with 70% quality
+            $avifPath = pathinfo($mediaPath, PATHINFO_DIRNAME) . '/' . pathinfo($mediaPath, PATHINFO_FILENAME) . '.avif';
+            $image->encode('avif', 70)->save($avifPath);
         }
         return !empty($mediaList) ? end($mediaList) : [];
     }
@@ -314,7 +320,7 @@ class MediaService
                 $keyEntry = DocumentRendererKey::create(['key' => $key]);
                 $keyEntry->storeKeyExpirationDate();
                 $flag = true;
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 // echo $e->getMessage();
             }
         }

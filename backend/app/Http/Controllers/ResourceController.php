@@ -42,6 +42,9 @@ use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Carbon\Carbon;
 
+use Intervention\Image\Facades\Image;
+
+
 
 class ResourceController extends Controller
 {
@@ -69,7 +72,7 @@ class ResourceController extends Controller
      * @var UserService
      */
     private $userService;
-    
+
     /**
      * @var ScormService
      */
@@ -84,10 +87,14 @@ class ResourceController extends Controller
      * @param UserService $userService
      * @param ScormService $scormService
      */
-    public function __construct(ResourceService $resourceService, MediaService $mediaService,
-                                CDNService $cdnService, WorkspaceService $workspaceService,
-                                UserService $userService, ScormService $scormService)
-    {
+    public function __construct(
+        ResourceService $resourceService,
+        MediaService $mediaService,
+        CDNService $cdnService,
+        WorkspaceService $workspaceService,
+        UserService $userService,
+        ScormService $scormService
+    ) {
         $this->resourceService = $resourceService;
         $this->mediaService = $mediaService;
         $this->cdnService = $cdnService;
@@ -96,18 +103,18 @@ class ResourceController extends Controller
         $this->scormService = $scormService;
     }
 
-    public function resourcesSchema ()
+    public function resourcesSchema()
     {
         $schemas = $this->resourceService->resourcesSchema();
         return response()->json($schemas);
     }
 
-    public function lomesSchema ()
+    public function lomesSchema()
     {
         return response()->json($this->resourceService->lomesSchema());
     }
 
-    public function lomSchema ()
+    public function lomSchema()
     {
         return response()->json($this->resourceService->lomSchema());
     }
@@ -179,12 +186,13 @@ class ResourceController extends Controller
      * @param UpdateResourceRequest $request
      * @return \Illuminate\Http\JsonResponse|object
      */
-    public function updateFromXeval(string $xevalId,UpdateResourceRequest $request){
-        $damResource =$resource = DamResource::whereJsonContains('data->description', ['xeval_id' => $xevalId])->first();
-        $resource = $this->resourceService->updateFromXeval( $damResource, $request->all());
+    public function updateFromXeval(string $xevalId, UpdateResourceRequest $request)
+    {
+        $damResource = $resource = DamResource::whereJsonContains('data->description', ['xeval_id' => $xevalId])->first();
+        $resource = $this->resourceService->updateFromXeval($damResource, $request->all());
         return (new ResourceResource($resource))
-        ->response()
-        ->setStatusCode(Response::HTTP_OK);
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     /**
@@ -198,12 +206,13 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function duplicate(DamResource $damResource){
+    public function duplicate(DamResource $damResource)
+    {
         $duplicated = false;
         try {
             $duplicatedResource =  $this->resourceService->duplicateResource($damResource);
-            $this->resourceService->processDuplicateExtraData($duplicatedResource,$this->resourceService->getLomData($damResource),"lom" );
-            $this->resourceService->processDuplicateExtraData($duplicatedResource,$this->resourceService->getLomesData($damResource),"lomes" );
+            $this->resourceService->processDuplicateExtraData($duplicatedResource, $this->resourceService->getLomData($damResource), "lom");
+            $this->resourceService->processDuplicateExtraData($duplicatedResource, $this->resourceService->getLomesData($damResource), "lomes");
             $duplicated = true;
             $this->scormService->cloneBook($duplicatedResource->id);
         } catch (\Exception $exc) {
@@ -221,13 +230,15 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function copyStatus($copy,Request $request ){
-        $resource = $this->resourceService->duplicateUpdateStatus($copy,$request->all());
+    public function copyStatus($copy, Request $request)
+    {
+        $resource = $this->resourceService->duplicateUpdateStatus($copy, $request->all());
         return response(new JsonResource($resource))
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function copyGetStatus($copy){
+    public function copyGetStatus($copy)
+    {
         $resource = $this->resourceService->getCopy($copy);
         return response(new JsonResource($resource))
             ->setStatusCode(Response::HTTP_OK);
@@ -241,7 +252,8 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function setLomesData(DamResource $damResource,  Request $request) {
+    public function setLomesData(DamResource $damResource,  Request $request)
+    {
         $resource = $this->resourceService->setLomesData($damResource, $request);
         return (new JsonResource($resource))
             ->response()
@@ -256,7 +268,8 @@ class ResourceController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function getLomesData(DamResource $damResource) {
+    public function getLomesData(DamResource $damResource)
+    {
         $resource = $this->resourceService->getLomesData($damResource);
         return (new JsonResource($resource))
             ->response()
@@ -351,7 +364,7 @@ class ResourceController extends Controller
     public function addCategory(DamResource $damResource, Category $category)
     {
         $is_course = ($damResource->type === 'course');
-        $resource = $is_course ? $this->resourceService->setOnlyOneCategoryTo($damResource, $category) :$this->resourceService->addCategoryTo($damResource, $category);
+        $resource = $is_course ? $this->resourceService->setOnlyOneCategoryTo($damResource, $category) : $this->resourceService->addCategoryTo($damResource, $category);
         return (new ResourceResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -377,7 +390,7 @@ class ResourceController extends Controller
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      * @throws \Exception
      */
-    public function render($damUrl, $size = 'default') 
+    public function render(Request $request, $damUrl, $size = 'default')
     {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         if (Cache::has("{$mediaId}__{$size}")) {
@@ -387,10 +400,10 @@ class ResourceController extends Controller
             }
         }
         $method = request()->method();
-        return $this->renderResource($mediaId, $method, $size, null, false);
+        return $this->renderResource($request, $mediaId, $method, $size, null, false);
     }
 
-    private function renderResource($mediaId, $method = null, $size = null, $renderKey = null, $isCDN = false, $can_download = false)
+    private function renderResource(Request $request, $mediaId, $method = null, $size = null, $renderKey = null, $isCDN = false, $can_download = false)
     {
         $media = Media::findOrFail($mediaId);
         $mediaFileName = explode('/', $media->getPath());
@@ -403,6 +416,29 @@ class ResourceController extends Controller
 
         if ($fileType == 'image' && $size === 'default') {
             $path = explode('storage/app/', $media->getPath())[1];
+            $avifAvailable = $this->checkAvif($request);
+            if ($avifAvailable) {
+                $originalExtension = pathinfo($media->getPath(), PATHINFO_EXTENSION);
+                if (empty($originalExtension)) {
+                    $avifPath = $media->getPath() . '.avif';
+                } else {
+                    $avifPath = str_replace(".$originalExtension", '.avif', $media->getPath());
+                }
+                $relativeAvifPath = explode('storage/app/', $avifPath)[1];
+
+                if (!Storage::exists($relativeAvifPath)) {
+                    // Generate the AVIF file if it doesn't exist
+                     $image = Image::make(Storage::get($path))->encode('avif');
+                    Storage::put($relativeAvifPath, (string) $image);
+                }
+                $relativeAvifPath = explode('storage/app/', $avifPath)[1];
+                // Return the AVIF file
+                $file = Storage::get($relativeAvifPath);
+                $type = 'image/avif';
+
+                return response($file, 200)->header('Content-Type', $type);
+            }
+            
             if (!Storage::exists($path)) {
                 abort(404);
             }
@@ -410,7 +446,7 @@ class ResourceController extends Controller
             $file = Storage::get($path);
             $type = $mimeType;
             $lastModified = Storage::lastModified($path);
-        
+
             $response = new StreamedResponse();
             $response->setCallback(function () use ($file) {
                 echo $file;
@@ -419,7 +455,7 @@ class ResourceController extends Controller
             $response->headers->set('Content-Type', $type);
             $response->headers->set('Content-Length', strlen($file));
             $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
-                
+
             $maxAge = 3600 * 24 * 7;
             $response->headers->set('Cache-Control', 'public, max-age=' . $maxAge . ', immutable');
             $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
@@ -429,11 +465,11 @@ class ResourceController extends Controller
                 Response::HTTP_OK,
                 $response->headers->all()
             );
-            
+
             Cache::put("{$mediaId}__$size", $response_cache);
             return $response;
         }
-        
+
         if ($fileType == 'video' || $fileType == 'image') {
             $sizeValue = $this->getResourceSize($fileType, $size);
             $availableSizes = $this->getAvailableResourceSizes();
@@ -442,11 +478,11 @@ class ResourceController extends Controller
              */
             $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue);
 
-            
+
             if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small', 'thumbnail']))) {
                 $response = response()->file($compressed->basePath());
                 $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
-                
+
                 $maxAge = 3600 * 24 * 7;
                 $response->headers->set('Cache-Control', 'public, max-age=' . $maxAge . ', immutable');
                 $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
@@ -458,12 +494,12 @@ class ResourceController extends Controller
                 // Añadir Last-Modified
                 $lastModified = filemtime($compressed->basePath());
                 $response->setLastModified(Carbon::createFromTimestamp($lastModified));
-                
+
                 if ($fileType == 'image') {
                     $response_cache = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
-                    
+
                     $response_cache->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
-                    
+
                     $maxAge = 3600 * 24 * 7;
                     $response_cache->headers->set('Cache-Control', 'public, max-age=' . $maxAge . ', immutable');
                     $response_cache->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
@@ -493,7 +529,7 @@ class ResourceController extends Controller
                 'url'   => base64_encode($url . '?key=' . $key . '&dx=' . ($can_download ? 1 : 0))
             ]);
         } else if ($mimeType == 'application/pdf' && $renderKey != null && $isCDN) {
-            
+
             if ($this->mediaService->checkRendererKey($renderKey, $method)) {
                 // file lo hace con streaming de datos
                 // $response = response()->file($this->mediaService->preview($media, []));
@@ -777,7 +813,7 @@ class ResourceController extends Controller
             $accessCheck = true;
 
         $checkData = [
-            'ipAddress' => $ipAddress, 
+            'ipAddress' => $ipAddress,
             'originURL' => $originURL
         ];
 
@@ -791,7 +827,7 @@ class ResourceController extends Controller
             ];
             $checkData = array_merge($checkData, $extra_data);
         }
-    
+
         if ($cdnInfo->checkAccessRequirements($checkData))
             $accessCheck = true;
 
@@ -807,7 +843,7 @@ class ResourceController extends Controller
         if (count($responseJson->files) == 0)
             return response(['error' => 'No files attached!']);
 
-            
+
         $mediaId = DamUrlUtil::decodeUrl($responseJson->files[0]->dam_url);
         $size = $request->size;
         if (Cache::has("{$mediaId}__{$size}")) {
@@ -816,10 +852,10 @@ class ResourceController extends Controller
 
         $can_download = $resource->type == ResourceType::document ? ($resource->data->description->can_download ?? false) : true;
         return $this->renderResource($mediaId, $method, $size, $request->key, true, $can_download);
-
     }
 
-    public function renderCDNResource(CDNRequest $request){
+    public function renderCDNResource(CDNRequest $request)
+    {
         $method = request()->method();
         $ipAddress = $_SERVER['REMOTE_ADDR'];
         $originURL = $request->headers->get('referer');
@@ -850,7 +886,6 @@ class ResourceController extends Controller
         return (new ResourceResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
-
     }
 
 
@@ -865,7 +900,7 @@ class ResourceController extends Controller
             return response(['error' => 'User inaccessible.']);
 
         $resource = DamResource::where('id', $request->damResource)
-                        ->first();
+            ->first();
 
         if ($resource === null)
             return response(['error' => 'Resource doesn\'t exist.']);
@@ -886,16 +921,17 @@ class ResourceController extends Controller
         return response(['files_count' => $damResource->getNumberOfFilesAttached()], Response::HTTP_OK);
     }
 
-    public function checkAccess($request, $resource, $cdnInfo, $ipAddress, $originURL) {
+    public function checkAccess($request, $resource, $cdnInfo, $ipAddress, $originURL)
+    {
         $resourceResponse = new ResourceResource($resource);
         $responseJson = json_decode($resourceResponse->toJson());
 
         if (isset($request->size) && $this->getFileType($responseJson->files[0]->dam_url) === 'application/pdf') {
             return true;
         }
-        
+
         $checkData = [
-            'ipAddress' => $ipAddress, 
+            'ipAddress' => $ipAddress,
             'originURL' => $originURL
         ];
 
@@ -910,24 +946,37 @@ class ResourceController extends Controller
             ];
             $checkData = array_merge($checkData, $extra_data);
         }
-    
-        if ($cdnInfo->checkAccessRequirements($checkData)){
+
+        if ($cdnInfo->checkAccessRequirements($checkData)) {
             return true;
         }
 
         return false;
     }
 
-    public function retryClone($copy) {
+    public function retryClone($copy)
+    {
         try {
             $this->scormService->cloneBook($copy);
         } catch (\Exception $exc) {
             $this->resourceService->duplicateUpdateStatus($copy, ['message' => $exc->getMessage(), 'status' => 'error']);
             $message = $exc->getMessage();
-          
+
             return response()->json([
                 'error' => $message
             ])->setStatusCode(Response::HTTP_BAD_GATEWAY);
+        }
+    }
+
+
+    private function checkAvif(Request $request)
+    {
+        $acceptHeader = $request->header('Accept', '');
+
+        if (strpos($acceptHeader, 'image/avif') !== false) {
+            return true;
+        } else {
+            return false;
         }
     }
 }
