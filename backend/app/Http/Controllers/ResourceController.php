@@ -428,7 +428,7 @@ class ResourceController extends Controller
 
                 if (!Storage::exists($relativeAvifPath)) {
                     // Generate the AVIF file if it doesn't exist
-                     $image = Image::make(Storage::get($path))->encode('avif');
+                    $image = Image::make(Storage::get($path))->encode('avif', 70);
                     Storage::put($relativeAvifPath, (string) $image);
                 }
                 $relativeAvifPath = explode('storage/app/', $avifPath)[1];
