@@ -2,29 +2,21 @@
 
 namespace App\Services;
 
-use Illuminate\Http\Client\Request;
+use App\Models\Media;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 
 class RenderService
 {
-    private function renderImage(Request $request, $media, $mediaFileName, $size)
+    public function renderAvifImage(Media $media)
     {
-        $path = $this->getRelativePath($media->getPath());
-        $avifAvailable = $this->checkAvif($request);
         $originalExtension = pathinfo($media->getPath(), PATHINFO_EXTENSION);
         if (empty($originalExtension)) {
             $avifPath = $media->getPath() . '.avif';
         } else {
-            $avifPath = $this->getAvifPath($media->getPath());
+            $avifPath = $this->getConvertedPath($media->getPath(), 'avif');
         }
-
-        if (!$avifAvailable) {
-            if (!Storage::exists($path)) {
-                $this->generateAvif($media, $path, $mediaFileName);
-            }
-        }
-
         $relativeAvifPath = explode('storage/app/', $avifPath)[1];
         $file = Storage::get($relativeAvifPath);
         $type = 'image/avif';
@@ -32,12 +24,22 @@ class RenderService
         return response($file, 200)->header('Content-Type', $type);
     }
 
+    public function checkIfImageExists($mediaPath)
+    {
+        if (!Storage::exists($mediaPath)) {
+            return false;
+        }
+        return true;
+    }
+
+
+
     private function getRelativePath($mediaPath)
     {
         return explode('storage/app/', $mediaPath)[1];
     }
 
-    private function generateAvif($path)
+    public function generateAvif($path)
     {
         try {
             $img = Image::make(Storage::get($path))->encode('avif', 70)->optimize();
@@ -48,7 +50,7 @@ class RenderService
         }
     }
 
-    private function checkAvif(Request $request)
+    public function checkAvif(Request $request)
     {
         $acceptHeader = $request->header('Accept', '');
 
@@ -59,13 +61,23 @@ class RenderService
         }
     }
 
-    private function getAvifPath($mediaPath)
+    public function getConvertedPath($mediaPath, $targetExtension)
     {
         $originalExtension = pathinfo($mediaPath, PATHINFO_EXTENSION);
 
-        // Only replace the last occurrence of the extension
-        $avifPath = preg_replace('/\.' . preg_quote($originalExtension, '/') . '$/', '.avif', $mediaPath);
+        $convertedPath = preg_replace('/\.' . preg_quote($originalExtension, '/') . '$/', '.' . $targetExtension, $mediaPath);
 
-        return $avifPath;
+        return $convertedPath;
+    }
+
+    public function appendSizeToPath($mediaPath, $size)
+    {
+        $originalExtension = pathinfo($mediaPath, PATHINFO_EXTENSION);
+
+        $directoryPath = dirname($mediaPath);
+
+        $sizedPath = $directoryPath.'/__' . $size . '.' . $originalExtension;
+
+        return  $sizedPath;
     }
 }
