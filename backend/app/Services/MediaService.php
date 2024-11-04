@@ -77,7 +77,6 @@ class MediaService
         $fileType = explode('/', $mimeType)[0];
         $file_directory = str_replace($media->file_name, '', $mediaPath);
         $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.png';
-
         if ($fileType === 'video') {
             return $isDownload
                 ? $this->downloadVideo($media->id, $media->file_name, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail)
@@ -214,11 +213,13 @@ class MediaService
         $manager = new ImageManager(['driver' => 'imagick']);
         $image   = $manager->make($mediaPath);
         $imageProcess = new MediaSizeImage($type, $mediaPath, $manager, $image);
-        if (!$imageProcess->checkSize()) $imageProcess->setSizeDefault();
-        if (!$imageProcess->imageExists()) {
-            $imageProcess->save();
+        $extension = pathinfo($mediaPath, PATHINFO_EXTENSION);
+        
+       // if (!$imageProcess->checkSize()) $imageProcess->setSizeDefault();
+        if (!$imageProcess->imageExists($extension)) {
+            $imageProcess->save($extension);
         }
-        $result = $imageProcess->getImage();
+        $result = $imageProcess->getImage($extension );
         return $result;
     }
 
@@ -271,11 +272,18 @@ class MediaService
             $image2   = $manager->make($mediaPath);
             $thumb  = new MediaSizeImage('thumbnail', $mediaPath, $manager, $image);
             $small  = new MediaSizeImage('small', $mediaPath, $manager, $image2);
-            if ($thumb->checkSize()) $thumb->save();
-            if ($small->checkSize()) $small->save();
+            $large  = new MediaSizeImage('large', $mediaPath, $manager, $image2);
+            $largeHD  = new MediaSizeImage('largeHD', $mediaPath, $manager, $image2);
+            $extension = $image->extension;
+            
+            if ($thumb->checkSize()) $thumb->save($extension);
+            if ($small->checkSize()) $small->save($extension);
+            $large->save($extension);
+            $largeHD->save($extension);
             // Convert original image to AVIF format with 70% quality
             $avifPath = pathinfo($mediaPath, PATHINFO_DIRNAME) . '/' . pathinfo($mediaPath, PATHINFO_FILENAME) . '.avif';
             $image->encode('avif', 70)->save($avifPath);
+           
         }
         return !empty($mediaList) ? end($mediaList) : [];
     }

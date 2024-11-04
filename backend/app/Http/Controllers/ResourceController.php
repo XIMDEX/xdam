@@ -37,7 +37,7 @@ use Illuminate\Support\Facades\Cache;
 use App\Enums\AccessPermission;
 use App\Models\Copy;
 use App\Services\ExternalApis\ScormService;
-
+use App\Services\RenderService;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Carbon\Carbon;
@@ -79,6 +79,11 @@ class ResourceController extends Controller
     private $scormService;
 
     /**
+     * @var RenderService
+     */
+    private $renderService;
+
+    /**
      * CategoryController constructor.
      * @param ResourceService $resourceService
      * @param MediaService $mediaService
@@ -93,7 +98,8 @@ class ResourceController extends Controller
         CDNService $cdnService,
         WorkspaceService $workspaceService,
         UserService $userService,
-        ScormService $scormService
+        ScormService $scormService,
+        RenderService $renderService
     ) {
         $this->resourceService = $resourceService;
         $this->mediaService = $mediaService;
@@ -101,6 +107,7 @@ class ResourceController extends Controller
         $this->workspaceService = $workspaceService;
         $this->userService = $userService;
         $this->scormService = $scormService;
+        $this->renderService = $renderService;
     }
 
     public function resourcesSchema()
@@ -416,37 +423,31 @@ class ResourceController extends Controller
 
         if ($fileType == 'image' && $size === 'default') {
             $path = explode('storage/app/', $media->getPath())[1];
-            $avifAvailable = $this->checkAvif($request);
-            if ($avifAvailable) {
-                $originalExtension = pathinfo($media->getPath(), PATHINFO_EXTENSION);
-                if (empty($originalExtension)) {
-                    $avifPath = $media->getPath() . '.avif';
-                } else {
-                    $avifPath = str_replace(".$originalExtension", '.avif', $media->getPath());
+            if (!$this->renderService->checkAvif($request)) {
+                $path = $this->renderService->getConvertedPath($path, "avif");
+                if (!$this->renderService->checkIfImageExists($path)) {
+                    $this->renderService->generateAvif($path);
                 }
-                $relativeAvifPath = explode('storage/app/', $avifPath)[1];
-
-                if (!Storage::exists($relativeAvifPath)) {
-                    // Generate the AVIF file if it doesn't exist
-                    $image = Image::make(Storage::get($path))->encode('avif', 70);
-                    Storage::put($relativeAvifPath, (string) $image);
-                }
-                $relativeAvifPath = explode('storage/app/', $avifPath)[1];
-                // Return the AVIF file
-                $file = Storage::get($relativeAvifPath);
+                $file = Storage::get($this->renderService->getConvertedPath($path, "avif"));
                 $type = 'image/avif';
+            } else {
+                $pathLarge = $this->renderService->appendSizeToPath($path, 'large');
+                if (!Storage::exists($path)) {
+                    abort(404);
+                }
+                if (!Storage::exists($pathLarge)) {
+                    $sizeValue = $this->getResourceSize($fileType, $size);
+                    $availableSizes = $this->getAvailableResourceSizes();
+                    $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], 'large', $sizeValue);
 
-                return response($file, 200)->header('Content-Type', $type);
-            }
-            
-            if (!Storage::exists($path)) {
-                abort(404);
+                }
+
+                $file = Storage::get($pathLarge);
+                $type = $mimeType;
             }
 
-            $file = Storage::get($path);
-            $type = $mimeType;
+
             $lastModified = Storage::lastModified($path);
-
             $response = new StreamedResponse();
             $response->setCallback(function () use ($file) {
                 echo $file;
@@ -553,11 +554,13 @@ class ResourceController extends Controller
     {
         $sizes = [
             'image' => [
-                'allowed_sizes' => ['thumbnail', 'small', 'medium', 'raw', 'default'],
+                'allowed_sizes' => ['thumbnail', 'small', 'medium', 'large', 'largeHD', 'raw', 'default'],
                 'sizes' => [
                     'thumbnail' => array('width' => 256, 'height' => 144),
                     'small'     => array('width' => 426, 'height' => 240),
                     'medium'    => array('width' => 854, 'height' => 480),
+                    'large'     => array('width' => 3840, 'height' => 2160),
+                    'largeHD'     => array('width' => 1920, 'height' => 1080),
                     'raw'       => 'raw',
                     'default'   => array('width' => 1280, 'height' => 720)
                 ],
@@ -566,7 +569,9 @@ class ResourceController extends Controller
                     'small'     => 25,
                     'medium'    => 50,
                     'raw'       => 'raw',
-                    'default'   => 90
+                    'default'   => 90,
+                    'large'     => 100,
+                    'largeHD'     => 100,
                 ],
                 'error_message' => ''
             ],
@@ -851,7 +856,7 @@ class ResourceController extends Controller
         }
 
         $can_download = $resource->type == ResourceType::document ? ($resource->data->description->can_download ?? false) : true;
-        return $this->renderResource($request,$mediaId, $method, $size, $request->key, true, $can_download);
+        return $this->renderResource($request, $mediaId, $method, $size, $request->key, true, $can_download);
     }
 
     public function renderCDNResource(CDNRequest $request)
@@ -965,18 +970,6 @@ class ResourceController extends Controller
             return response()->json([
                 'error' => $message
             ])->setStatusCode(Response::HTTP_BAD_GATEWAY);
-        }
-    }
-
-
-    private function checkAvif(Request $request)
-    {
-        $acceptHeader = $request->header('Accept', '');
-
-        if (strpos($acceptHeader, 'image/avif') !== false) {
-            return true;
-        } else {
-            return false;
         }
     }
 }
