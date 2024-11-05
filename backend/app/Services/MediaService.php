@@ -282,11 +282,7 @@ class MediaService
             if ($thumb->checkSize())   $thumb->save($extension);
             if ($small->checkSize())   $small->save($extension);
             $large->save($extension);
-            $largeHD->save($extension);
-            // Convert original image to AVIF format with 70% quality
-            $avifPath = pathinfo($mediaPath, PATHINFO_DIRNAME) . '/' . pathinfo($mediaPath, PATHINFO_FILENAME) . '.avif';
-            $image->encode('avif', 70)->save($avifPath);
-           
+            $largeHD->save($extension);   
         }
         return !empty($mediaList) ? end($mediaList) : [];
     }
