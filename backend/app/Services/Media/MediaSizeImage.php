@@ -129,4 +129,9 @@ class MediaSizeImage
     {
         $this->size = 'default';
     }
+
+    public function pngHasAlpha()
+    {
+        return strpos($this->image->encode('png')->getEncoded(), 'tRNS') !== false;
+    }
 }
