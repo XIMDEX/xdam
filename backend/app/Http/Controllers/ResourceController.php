@@ -433,7 +433,7 @@ class ResourceController extends Controller
                     $this->renderService->logAvifConversion($mediaFileName, $originalSize, $avifSize);
                 }
                
-                $file = Storage::get($path);
+                $file = Storage::get($avifPath);
                 $type = 'image/avif';
             } else {
                 $pathLarge = $this->renderService->appendSizeToPath($path, 'large');
