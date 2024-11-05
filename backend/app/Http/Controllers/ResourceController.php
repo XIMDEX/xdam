@@ -423,16 +423,22 @@ class ResourceController extends Controller
 
         if ($fileType == 'image' && $size === 'default') {
             $path = explode('storage/app/', $media->getPath())[1];
-            if (!$this->renderService->checkAvif($request)) {
-                $path = $this->renderService->getConvertedPath($path, "avif");
-                if (!$this->renderService->checkIfImageExists($path)) {
+            if ($this->renderService->checkAvif($request)) {
+                
+                $avifPath = $this->renderService->getConvertedPath($path, "avif");
+                if (!$this->renderService->checkIfImageExists($avifPath)) {
+                    $originalSize = Storage::size($path);
                     $this->renderService->generateAvif($path);
+                    $avifSize = Storage::size($avifPath);
+                    $this->renderService->logAvifConversion($mediaFileName, $originalSize, $avifSize);
                 }
-                $file = Storage::get($this->renderService->getConvertedPath($path, "avif"));
+               
+                $file = Storage::get($path);
                 $type = 'image/avif';
             } else {
                 $pathLarge = $this->renderService->appendSizeToPath($path, 'large');
-                if (!Storage::exists($path)) {
+               
+                if (!Storage::exists($pathLarge)) {
                     abort(404);
                 }
                 if (!Storage::exists($pathLarge)) {
@@ -440,6 +446,12 @@ class ResourceController extends Controller
                     $availableSizes = $this->getAvailableResourceSizes();
                     $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], 'large', $sizeValue);
 
+                }
+                if (strtolower($media->extension) === 'png') {
+                    $pathJPG = $this->renderService->getConvertedPath($pathLarge, "jpg");
+                    if (Storage::exists($pathJPG)) {
+                        $pathLarge = $pathJPG;
+                    }
                 }
 
                 $file = Storage::get($pathLarge);

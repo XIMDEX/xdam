@@ -214,9 +214,12 @@ class MediaService
         $image   = $manager->make($mediaPath);
         $imageProcess = new MediaSizeImage($type, $mediaPath, $manager, $image);
         $extension = pathinfo($mediaPath, PATHINFO_EXTENSION);
-        
+        if (!$imageProcess->pngHasAlpha()) {
+            $extension = 'jpg';
+        }
        // if (!$imageProcess->checkSize()) $imageProcess->setSizeDefault();
         if (!$imageProcess->imageExists($extension)) {
+           
             $imageProcess->save($extension);
         }
         $result = $imageProcess->getImage($extension );
@@ -275,9 +278,9 @@ class MediaService
             $large  = new MediaSizeImage('large', $mediaPath, $manager, $image2);
             $largeHD  = new MediaSizeImage('largeHD', $mediaPath, $manager, $image2);
             $extension = $image->extension;
-            
-            if ($thumb->checkSize()) $thumb->save($extension);
-            if ($small->checkSize()) $small->save($extension);
+            if(!$large->pngHasAlpha()) $extension = 'jpg';
+            if ($thumb->checkSize())   $thumb->save($extension);
+            if ($small->checkSize())   $small->save($extension);
             $large->save($extension);
             $largeHD->save($extension);
             // Convert original image to AVIF format with 70% quality
