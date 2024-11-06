@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
 
 class RenderService
 {
@@ -44,6 +45,12 @@ class RenderService
     public function generateAvif($path)
     {
         try {
+            $manager = new ImageManager(['driver' => 'imagick']);
+            $image    = $manager->make(Storage::get($path));
+            $avifImage = $image->encode('avif', 70);
+            $avifPath = $this->getConvertedPath($path, 'avif');
+            Storage::put($avifPath, (string) $avifImage);
+            return true;
             $img = Image::make(Storage::get($path))->encode('avif', 70);
             $avifPath = $this->getConvertedPath($path, 'avif');
             Storage::put($avifPath, (string) $img);
@@ -85,7 +92,7 @@ class RenderService
     }
 
     public function logAvifConversion($fileName, $originalSize, $newSize)
-    { 
+    {
         $truncatedFileName = strlen($fileName) > 12 ? substr($fileName, 0, 9) . '...' : $fileName;
         $sizeDifference = $originalSize - $newSize;
 
