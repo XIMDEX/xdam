@@ -416,15 +416,13 @@ class ResourceController extends Controller
         $mediaFileName = explode('/', $media->getPath());
         $mediaFileName = $mediaFileName[count($mediaFileName) - 1];
         $size = ($size === null ? 'default' : $size);
-        if ($size === 'raw') $size = 'default';
-
         $mimeType = $media->mime_type;
         $fileType = explode('/', $mimeType)[0];
+        $response = null;
 
         if ($fileType == 'image' && $size === 'default') {
             $path = explode('storage/app/', $media->getPath())[1];
             if ($this->renderService->checkAvif($request)) {
-                
                 $avifPath = $this->renderService->getConvertedPath($path, "avif");
                 if (!$this->renderService->checkIfImageExists($avifPath)) {
                     $originalSize = Storage::size($path);
@@ -432,104 +430,32 @@ class ResourceController extends Controller
                     $avifSize = Storage::size($avifPath);
                     $this->renderService->logAvifConversion($mediaFileName, $originalSize, $avifSize);
                 }
-               
+
                 $file = Storage::get($avifPath);
                 $type = 'image/avif';
             } else {
-                $pathLarge = $this->renderService->appendSizeToPath($path, 'large');
-               
-                if (!Storage::exists($pathLarge)) {
-                    abort(404);
-                }
-                if (!Storage::exists($pathLarge)) {
-                    $sizeValue = $this->getResourceSize($fileType, $size);
-                    $availableSizes = $this->getAvailableResourceSizes();
-                    $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], 'large', $sizeValue);
-
-                }
-                if (strtolower($media->extension) === 'png') {
-                    $pathJPG = $this->renderService->getConvertedPath($pathLarge, "jpg");
-                    if (Storage::exists($pathJPG)) {
-                        $pathLarge = $pathJPG;
-                    }
-                }
-
-                $file = Storage::get($pathLarge);
-                $type = $mimeType;
+                list($file, $type) = $this->handleLargeImageRendering($path, $media, $fileType, $size, $mimeType);
             }
 
 
             $lastModified = Storage::lastModified($path);
-            $response = new StreamedResponse();
-            $response->setCallback(function () use ($file) {
-                echo $file;
-            });
+            $streamedResponse = $this->createStreamedResponse($file, $type, $mediaFileName);
 
-            $response->headers->set('Content-Type', $type);
-            $response->headers->set('Content-Length', strlen($file));
-            $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
+            $cachedResponse = $this->createCachedResponse($file, $streamedResponse);
 
-            $maxAge = 3600 * 24 * 7;
-            $response->headers->set('Cache-Control', 'public, max-age=' . $maxAge . ', immutable');
-            $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
+            Cache::put("{$mediaId}__$size", $cachedResponse);
 
-            $response_cache = new Response(
-                $file,
-                Response::HTTP_OK,
-                $response->headers->all()
-            );
-
-            Cache::put("{$mediaId}__$size", $response_cache);
-            return $response;
-        }
-
-        if ($fileType == 'video' || $fileType == 'image') {
+            $response = $streamedResponse;
+        } else if ($fileType == 'video' || $fileType == 'image') {
             $sizeValue = $this->getResourceSize($fileType, $size);
             $availableSizes = $this->getAvailableResourceSizes();
-            /**
-             * @var \Intervention\Image\Image $compressed
-             */
             $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue);
-
-
             if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small', 'thumbnail']))) {
-                $response = response()->file($compressed->basePath());
-                $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
-
-                $maxAge = 3600 * 24 * 7;
-                $response->headers->set('Cache-Control', 'public, max-age=' . $maxAge . ', immutable');
-                $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
-
-                // Añadir ETag
-                $etag = md5_file($compressed->basePath());
-                $response->setEtag($etag);
-
-                // Añadir Last-Modified
-                $lastModified = filemtime($compressed->basePath());
-                $response->setLastModified(Carbon::createFromTimestamp($lastModified));
-
-                if ($fileType == 'image') {
-                    $response_cache = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
-
-                    $response_cache->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
-
-                    $maxAge = 3600 * 24 * 7;
-                    $response_cache->headers->set('Cache-Control', 'public, max-age=' . $maxAge . ', immutable');
-                    $response_cache->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
-
-                    // Añadir ETag
-                    $etag = md5_file($compressed->basePath());
-                    $response_cache->setEtag($etag);
-
-                    // Añadir Last-Modified
-                    $lastModified = filemtime($compressed->basePath());
-                    $response_cache->setLastModified(Carbon::createFromTimestamp($lastModified));
-                    Cache::put("{$mediaId}__$size", $response_cache);
-                }
-                return $response;
+                $response = $this->handleImageAndVideoResponse($fileType, $size, $compressed, $mediaFileName, $mediaId, $availableSizes);
+            }else{
+                $response = response()->file($compressed);
             }
-
-            return response()->file($compressed);
+            
         } else if ($mimeType == 'application/pdf' && $renderKey == null && $isCDN) {
             $route = Route::getCurrentRoute();
             $routeParams = $route->parameters();
@@ -551,15 +477,18 @@ class ResourceController extends Controller
                 $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
                 $response->headers->set('Pragma', 'no-cache');
                 $response->headers->set('Expires', '0');
-                return $response;
             } else {
                 return response(['error' => 'Error! You don\'t have permission to view this file.'], Response::HTTP_BAD_REQUEST);
             }
         }
-        if ($fileType !== 'audio' && !$can_download) {
+        if ($fileType !== 'audio' && !$can_download && !$response ) {
             return response(['error' => 'Error! You don\'t have permission to download this file.'], Response::HTTP_BAD_REQUEST);
         }
-        return response()->file($this->mediaService->preview($media, []));
+        if (!$response) {
+            return response()->file($this->mediaService->preview($media, []));
+        }
+        return $response;
+ 
     }
 
     private function getAvailableResourceSizes()
@@ -983,5 +912,100 @@ class ResourceController extends Controller
                 'error' => $message
             ])->setStatusCode(Response::HTTP_BAD_GATEWAY);
         }
+    }
+
+    private function handleLargeImageRendering(string $path, Media $media, string $fileType, string $size, string $mimeType): array
+    {
+        $pathLarge = $this->renderService->appendSizeToPath($path, 'large');
+
+        if (!Storage::exists($path)) {
+            abort(404);
+        }
+
+        if (!Storage::exists($pathLarge)) {
+            $sizeValue = $this->getResourceSize($fileType, $size);
+            $availableSizes = $this->getAvailableResourceSizes();
+            $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], 'large', $sizeValue);
+        }
+
+        if (strtolower($media->extension) === 'png') {
+            $pathJPG = $this->renderService->getConvertedPath($pathLarge, "jpg");
+            if (Storage::exists($pathJPG)) {
+                $pathLarge = $pathJPG;
+            }
+        }
+
+        $file = Storage::get($pathLarge);
+        $type = $mimeType;
+
+        return [$file, $type];
+    }
+
+    private function createStreamedResponse(string $file, string $type, string $mediaFileName): StreamedResponse
+    {
+        $response = new StreamedResponse();
+        $response->setCallback(function () use ($file) {
+            echo $file;
+        });
+
+        $maxAge = 3600 * 24 * 7;
+
+        $response->headers->set('Content-Type', $type);
+        $response->headers->set('Content-Length', strlen($file));
+        $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
+        $response->headers->set('Cache-Control', 'public, max-age=' . $maxAge . ', immutable');
+        $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
+
+        return $response;
+    }
+
+    private function createCachedResponse(string $file, StreamedResponse $streamedResponse): Response
+    {
+        return new Response(
+            $file,
+            Response::HTTP_OK,
+            $streamedResponse->headers->all()
+        );
+    }
+
+    private function handleImageAndVideoResponse($fileType, $size, $compressed, $mediaFileName, $mediaId, $availableSizes)
+    {
+        if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small', 'thumbnail']))) {
+            $response = response()->file($compressed->basePath());
+            $this->setCommonHeaders($response, $mediaFileName, $compressed);
+
+            if ($fileType == 'image') {
+                $response_cache = $this->createImageCacheResponse($compressed, $fileType, $size, $availableSizes, $mediaFileName);
+                Cache::put("{$mediaId}__$size", $response_cache);
+            }
+
+            return $response;
+        }
+
+        return null;
+    }
+
+    private function setCommonHeaders($response, $mediaFileName, $compressed)
+    {
+        $maxAge = 3600 * 24 * 7;
+        $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
+        $response->headers->set('Cache-Control', 'public, max-age=' . $maxAge . ', immutable');
+        $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
+
+        $etag = md5_file($compressed->basePath());
+        $response->setEtag($etag);
+
+        $lastModified = filemtime($compressed->basePath());
+        $response->setLastModified(Carbon::createFromTimestamp($lastModified));
+    }
+
+    private function createImageCacheResponse($compressed, $fileType, $size, $availableSizes, $mediaFileName)
+    {
+        $quality = $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size];
+        $response_cache = $compressed->response('jpeg', $quality);
+
+        $this->setCommonHeaders($response_cache, $mediaFileName, $compressed);
+
+        return $response_cache;
     }
 }
