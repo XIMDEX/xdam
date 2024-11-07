@@ -47,11 +47,12 @@ class MediaSizeImage
     public function save(String $extension)
     {
         $pathSave = $this->image->dirname . "/__" . $this->size . ".$extension";
-        $aspectRatio = $this->getAspectRatio();
-        if ($this->size === 'default') {
+
+        if ($this->size === 'default' || $this->size === 'raw') {
             $pathSave = $this->path;
             $this->image->save($pathSave);
         } else {
+            $aspectRatio = $this->getAspectRatio();
             $this->image->resize($aspectRatio['width'], $aspectRatio['height'])->save($pathSave);
         }
     }
