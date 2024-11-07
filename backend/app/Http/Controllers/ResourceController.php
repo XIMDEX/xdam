@@ -640,10 +640,10 @@ class ResourceController extends Controller
             return response()->download($compressed->getPath(), null, ['Content-Disposition' => sprintf('attachment; filename="%s"', $mediaFileName)]);
         }
 
-        $thumb = $this->getThumbnailBySize($size, $media);
+       /* $thumb = $this->getThumbnailBySize($size, $media);
         if ($thumb) {
             return response()->download($thumb, $fileName);
-        }
+        }*/
         return response()->download($media->getPath(), $fileName);
     }
 
