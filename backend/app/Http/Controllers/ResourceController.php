@@ -455,7 +455,7 @@ class ResourceController extends Controller
             }else{
                 $response = response()->file($compressed);
             }
-            
+
         } else if ($mimeType == 'application/pdf' && $renderKey == null && $isCDN) {
             $route = Route::getCurrentRoute();
             $routeParams = $route->parameters();
@@ -488,7 +488,7 @@ class ResourceController extends Controller
             return response()->file($this->mediaService->preview($media, []));
         }
         return $response;
- 
+
     }
 
     private function getAvailableResourceSizes()
@@ -622,10 +622,10 @@ class ResourceController extends Controller
             return response()->download($compressed->getPath(), null, ['Content-Disposition' => sprintf('attachment; filename="%s"', $mediaFileName)]);
         }
 
-        $thumb = $this->getThumbnailBySize($size, $media);
+        /*$thumb = $this->getThumbnailBySize($size, $media);
         if ($thumb) {
             return response()->download($thumb, $fileName);
-        }
+        }*/
         return response()->download($media->getPath(), $fileName);
     }
 
