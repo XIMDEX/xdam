@@ -618,7 +618,7 @@ class ResourceService
         // $workspace = Workspace::find(Auth::user()->selected_workspace);
 
         $newData = $newResourceData['data'];
-        $newData->description->name = $newData->description->name . "_copy";
+        $newData->description->name = preg_replace('/_copy/', '',$newData->description->name) . "_copy";
         $newResourceData['name'] = $newData->description->name;
         $newResourceData['data'] =  $newData;
         $newResource = DamResource::create($newResourceData);
@@ -1282,10 +1282,10 @@ class ResourceService
             $extension = $path_parts['extension'];
 
             $newFileName = preg_replace('/_copy/', '', $filename) . '_copy.' . $extension;
-            $newMediaFilePath = storage_path($mediaFile->uuid . '/' . $newFileName);
+            $newMediaFilePath = storage_path('app/public/'.$mediaFile->uuid . '/' . $newFileName);
 
             if (!file_exists($newMediaFilePath)) {
-                $path = $mediaFile->getPath();
+                $path = ($mediaFile->getPath());
                 $dir = dirname($newMediaFilePath);
                 if (!file_exists($dir)) {
                     mkdir($dir);
@@ -1318,7 +1318,7 @@ class ResourceService
             $extension  = $path_parts['extension'];
 
             $newFileName      = preg_replace('/_copy/', '', $filename) . '_copy.' . $extension;
-            $newMediaFilePath = storage_path($mediaFile->uuid . '/' . $newFileName);
+            $newMediaFilePath = storage_path('app/public/'.$mediaFile->uuid . '/' . $newFileName);
 
             if (!file_exists($newMediaFilePath)) {
                 $path = $mediaFile->getPath();
