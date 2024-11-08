@@ -400,12 +400,12 @@ class ResourceController extends Controller
     public function render(Request $request, $damUrl, $size = 'default')
     {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
-        /*if (Cache::has("{$mediaId}__{$size}")) {
-            $response = Cache::get("{$mediaId}__$size");
-            if (is_string($response)) {
-                Cache::delete("{$mediaId}__$size");
-            }
-        }*/
+        //if (Cache::has("{$mediaId}__{$size}")) {
+        //    $response = Cache::get("{$mediaId}__$size");
+        //    if (is_string($response)) {
+        //        Cache::delete("{$mediaId}__$size");
+        //    }
+        //}
         $method = request()->method();
         return $this->renderResource($request, $mediaId, $method, $size, null, false);
     }
@@ -794,9 +794,9 @@ class ResourceController extends Controller
 
         $mediaId = DamUrlUtil::decodeUrl($responseJson->files[0]->dam_url);
         $size = $request->size;
-        if (Cache::has("{$mediaId}__{$size}")) {
-            return Cache::get("{$mediaId}__$size");
-        }
+        //if (Cache::has("{$mediaId}__{$size}")) {
+        //    return Cache::get("{$mediaId}__$size");
+        //}
 
         $can_download = $resource->type == ResourceType::document ? ($resource->data->description->can_download ?? false) : true;
         return $this->renderResource($request, $mediaId, $method, $size, $request->key, true, $can_download);
@@ -976,10 +976,10 @@ class ResourceController extends Controller
             $response = response()->file($compressed->basePath());
             $this->setCommonHeaders($response, $mediaFileName, $compressed);
 
-           /* if ($fileType == 'image') {
-                $response_cache = $this->createImageCacheResponse($compressed, $fileType, $size, $availableSizes, $mediaFileName);
-                Cache::put("{$mediaId}__$size", $response_cache);
-            }*/
+           // if ($fileType == 'image') {
+           //     $response_cache = $this->createImageCacheResponse($compressed, $fileType, $size, $availableSizes, $mediaFileName);
+           //     Cache::put("{$mediaId}__$size", $response_cache);
+           // }
 
             return $response;
         }
