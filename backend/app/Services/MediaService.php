@@ -217,9 +217,9 @@ class MediaService
         if ($type !== 'raw') {
             // if (!$imageProcess->checkSize()) $imageProcess->setSizeDefault();
             if (!$imageProcess->imageExists($extension)) {
-                if (!$imageProcess->pngHasAlpha() && $extension === 'png') {
+                /*if (!$imageProcess->pngHasAlpha() && $extension === 'png') {
                     $extension = 'jpg';
-                }
+                }*/
                 $imageProcess->save($extension);
             }
         }
