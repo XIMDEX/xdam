@@ -35,6 +35,8 @@ class Texts {
     public static function facets(string $key, string $lang = null, array $replace = [], $default = null)
     {
         $client = env('APP_CLIENT') ?? self::DEFAULT;
+        $key = strpos($key, 'lomes.') === 0 ? 'lomes' : $key;
+        $key = strpos($key, 'lom.') === 0 ? 'lom' : $key;
         return self::getText(self::getKey($key, self::TYPE_FACETS, $client), $lang, $key, $replace, $default);
     }
 
