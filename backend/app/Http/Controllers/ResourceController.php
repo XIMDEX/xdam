@@ -400,12 +400,12 @@ class ResourceController extends Controller
     public function render(Request $request, $damUrl, $size = 'default')
     {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
-        if (Cache::has("{$mediaId}__{$size}")) {
+        /*if (Cache::has("{$mediaId}__{$size}")) {
             $response = Cache::get("{$mediaId}__$size");
             if (is_string($response)) {
                 Cache::delete("{$mediaId}__$size");
             }
-        }
+        }*/
         $method = request()->method();
         return $this->renderResource($request, $mediaId, $method, $size, null, false);
     }
@@ -443,13 +443,15 @@ class ResourceController extends Controller
 
             $cachedResponse = $this->createCachedResponse($file, $streamedResponse);
 
-            Cache::put("{$mediaId}__$size", $cachedResponse);
+            //Cache::put("{$mediaId}__$size", $cachedResponse);
 
             $response = $streamedResponse;
         } else if ($fileType == 'video' || $fileType == 'image') {
             $sizeValue = $this->getResourceSize($fileType, $size);
             $availableSizes = $this->getAvailableResourceSizes();
+
             $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue);
+
             if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small', 'thumbnail']))) {
                 $response = $this->handleImageAndVideoResponse($fileType, $size, $compressed, $mediaFileName, $mediaId, $availableSizes);
             }else{
@@ -974,10 +976,10 @@ class ResourceController extends Controller
             $response = response()->file($compressed->basePath());
             $this->setCommonHeaders($response, $mediaFileName, $compressed);
 
-            if ($fileType == 'image') {
+           /* if ($fileType == 'image') {
                 $response_cache = $this->createImageCacheResponse($compressed, $fileType, $size, $availableSizes, $mediaFileName);
                 Cache::put("{$mediaId}__$size", $response_cache);
-            }
+            }*/
 
             return $response;
         }
