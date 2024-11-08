@@ -48,7 +48,7 @@ class MediaSizeImage
     {
         $pathSave = $this->image->dirname . "/__" . $this->size . ".$extension";
 
-        if ($this->size === 'default' || $this->size === 'raw') {
+        if ($this->size === 'default') {
             $pathSave = $this->path;
             $this->image->save($pathSave);
         } else {
@@ -94,7 +94,7 @@ class MediaSizeImage
     public function getImage(String $extension)
     {
         $result = $this->image->dirname . "/__" . $this->size . ".$extension";
-        if ($this->size === "default") return $this->image;  //$result = $this->path;
+        if ($this->size === "default" || $this->size === "raw") return $this->image;  //$result = $this->path;
         return  $this->manager->make($result);
     }
 

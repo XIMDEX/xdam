@@ -214,15 +214,16 @@ class MediaService
         $image   = $manager->make($mediaPath);
         $imageProcess = new MediaSizeImage($type, $mediaPath, $manager, $image);
         $extension = pathinfo($mediaPath, PATHINFO_EXTENSION);
-        if (!$imageProcess->pngHasAlpha()) {
-            $extension = 'jpg';
+        if ($type !== 'raw') {
+            // if (!$imageProcess->checkSize()) $imageProcess->setSizeDefault();
+            if (!$imageProcess->imageExists($extension)) {
+                if (!$imageProcess->pngHasAlpha() && $extension === 'png') {
+                    $extension = 'jpg';
+                }
+                $imageProcess->save($extension);
+            }
         }
-       // if (!$imageProcess->checkSize()) $imageProcess->setSizeDefault();
-        if (!$imageProcess->imageExists($extension)) {
-           
-            $imageProcess->save($extension);
-        }
-        $result = $imageProcess->getImage($extension );
+        $result = $imageProcess->getImage($extension);
         return $result;
     }
 
@@ -278,11 +279,11 @@ class MediaService
             $large  = new MediaSizeImage('large', $mediaPath, $manager, $image2);
             $largeHD  = new MediaSizeImage('largeHD', $mediaPath, $manager, $image2);
             $extension = $image->extension;
-            if(!$large->pngHasAlpha()) $extension = 'jpg';
+            if (!$large->pngHasAlpha()) $extension = 'jpg';
             if ($thumb->checkSize())   $thumb->save($extension);
             if ($small->checkSize())   $small->save($extension);
             $large->save($extension);
-            $largeHD->save($extension);   
+            $largeHD->save($extension);
         }
         return !empty($mediaList) ? end($mediaList) : [];
     }
