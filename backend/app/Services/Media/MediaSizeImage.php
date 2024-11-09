@@ -5,15 +5,15 @@ namespace App\Services\Media;
 use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
 
+// JAP ELIMINAR REDUNDANCIA DE ARRAY DE TAMAÑOS
 class MediaSizeImage
 {
     private array $allowed_sizes =   ['thumbnail', 'small', 'medium', 'raw', 'large', 'largeHD', 'default'];
     private array $sizes = [
         'thumbnail' => array('width' => 256, 'height' => 144),
         'small'     => array('width' => 426, 'height' => 240),
-        'medium'    => array('width' => 854, 'height' => 480),
-        'largeHD'     => array('width' => 1920, 'height' => 1080),
-        'large'     => array('width' => 3840, 'height' => 2160),
+        'medium'    => array('width' => 1920, 'height' => 1080), //HD
+        'large'     => array('width' => 3840, 'height' => 2160), //4k
         'raw'       => 'raw',
         'default'   => array('width' => 1280, 'height' => 720)
     ];
@@ -21,6 +21,7 @@ class MediaSizeImage
         'thumbnail' => 25,
         'small'     => 25,
         'medium'    => 50,
+        'large'     => 100,
         'raw'       => 'raw',
         'default'   => 90
     ];
