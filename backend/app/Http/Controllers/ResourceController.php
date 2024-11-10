@@ -638,11 +638,14 @@ class ResourceController extends Controller
         $fileName = $damUrl . "." . $mimes->getExtension($media->mime_type); // json
         $mediaFileName = $fileName;
         $size = ($size === null ? 'default' : $size);
-
+        if ($size == 'default') $size = 'raw';
+        
         $mimeType = $media->mime_type;
         $fileType = explode('/', $mimeType)[0];
 
-        if ($fileType == 'video' || $fileType == 'image') {
+        if ($size === 'raw' && $fileType === 'image') {
+            return response()->download($media->getPath(), $fileName);
+        } else if ($fileType == 'video' || $fileType == 'image') {
             $sizeValue = $this->getResourceSize($fileType, $size);
             $availableSizes = $this->getAvailableResourceSizes();
             $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue, true);
