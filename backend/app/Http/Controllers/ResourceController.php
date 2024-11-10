@@ -638,6 +638,7 @@ class ResourceController extends Controller
         $fileName = $damUrl . "." . $mimes->getExtension($media->mime_type); // json
         $mediaFileName = $fileName;
         $size = ($size === null ? 'default' : $size);
+	//JAP return raw file
         if ($size == 'default') $size = 'raw';
         
         $mimeType = $media->mime_type;
