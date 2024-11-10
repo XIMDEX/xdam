@@ -271,6 +271,8 @@ class MediaService
             $this->saveVideoSnapshot($thumbnail, $mediaPath);
         }
         if ($fileType === 'image') {
+            //JAP se generan al vuelo
+/*
             $manager = new ImageManager(['driver' => 'imagick']);
             $image    = $manager->make($mediaPath);
             $image2   = $manager->make($mediaPath);
@@ -282,6 +284,7 @@ class MediaService
             if ($thumb->checkSize())   $thumb->save($extension);
             if ($small->checkSize())   $small->save($extension);
             $large->save($extension);
+*/
         }
         return !empty($mediaList) ? end($mediaList) : [];
     }
