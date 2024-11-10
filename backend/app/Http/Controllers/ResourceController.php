@@ -415,7 +415,10 @@ class ResourceController extends Controller
         $media = Media::findOrFail($mediaId);
         $mediaFileName = explode('/', $media->getPath());
         $mediaFileName = $mediaFileName[count($mediaFileName) - 1];
+        $path = explode('storage/app/', $media->getPath())[1];
+        
         $size = ($size === null ? 'default' : $size);
+       
         $mimeType = $media->mime_type;
         $fileType = explode('/', $mimeType)[0];
         $response = null;
@@ -434,16 +437,21 @@ class ResourceController extends Controller
                 $file = Storage::get($avifPath);
                 $type = 'image/avif';
             } else {
-                list($file, $type) = $this->handleSizedImageRendering($path, $media, $fileType, 'large', $mimeType);
+                // if weight under 2Mbyte returns original and do not create variant
+                $mediaweight = Storage::size($path); 
+                if ($mediaweight < 2000000) {
+                    $file = Storage::get($path);
+                    $type = $mimeType;
+                } else {
+                    list($file, $type) = $this->handleSizedImageRendering($path, $media, $fileType, 'medium', $mimeType);
+                }
+
             }
 
             $lastModified = Storage::lastModified($path);
             $streamedResponse = $this->createStreamedResponse($file, $type, $mediaFileName);
-
             $cachedResponse = $this->createCachedResponse($file, $streamedResponse);
-
             //Cache::put("{$mediaId}__$size", $cachedResponse);
-
             $response = $streamedResponse;
 
         } else if ($fileType == 'image' && $size === 'raw') {
@@ -452,9 +460,7 @@ class ResourceController extends Controller
             $lastModified = Storage::lastModified($rawPath);
             $streamedResponse = $this->createStreamedResponse($rawFile, $mimeType, $mediaFileName);
             $cachedResponse = $this->createCachedResponse($rawFile, $streamedResponse);
-
             //Cache::put("{$mediaId}__$size", $cachedResponse);
-
             $response = $streamedResponse;
 
 	}  else if ($fileType == 'image' && $size) {
@@ -464,22 +470,6 @@ class ResourceController extends Controller
             $streamedResponse = $this->createStreamedResponse($file, $type, $mediaFileName);
             $cachedResponse = $this->createCachedResponse($file, $streamedResponse);
             $response = $streamedResponse;
-            /* JAP variante directa
-            $mediaPath = pathinfo($media->getPath());
-            $extension = $mediaPath['extension'];
-            $file_directory = $mediaPath['dirname'];
-            $file_directory = explode('storage/app/', $file_directory)[1];
-            $targetimage = $file_directory . "/__$size.$extension";
-            if ($this->renderService->checkIfImageExists($targetimage)) {
-                $rawFile = Storage::get($targetimage);
-            } else {
-            }
-            $lastModified = Storage::lastModified($targetimage);
-            $streamedResponse = $this->createStreamedResponse($rawFile, $mimeType, $mediaFileName);
-            $cachedResponse = $this->createCachedResponse($rawFile, $streamedResponse);
-            $response = $streamedResponse;
-	     */
-
 	} else if ($fileType == 'video') {
 
             $sizeValue = $this->getResourceSize($fileType, $size);
@@ -969,14 +959,14 @@ class ResourceController extends Controller
             $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue);
         }
 
-	/* JAP VERIFICAR
+        /* JAP VERIFICAR
         if (strtolower($media->extension) === 'png') {
             $pathJPG = $this->renderService->getConvertedPath($pathSize, "jpg");
             if (Storage::exists($pathJPG)) {
-                $pathSize = $pathJPG;
+            $pathSize = $pathJPG;
             }
         }
-	 */
+        */
 
         $file = Storage::get($pathSize);
         $type = $mimeType;
