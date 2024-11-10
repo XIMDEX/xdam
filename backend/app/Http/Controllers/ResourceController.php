@@ -432,39 +432,41 @@ class ResourceController extends Controller
                     $avifSize = Storage::size($avifPath);
                     //$this->renderService->logAvifConversion($mediaFileName, $originalSize, $avifSize);
                 }
-                $file = Storage::get($avifPath);
+                //$file = Storage::get($avifPath);
+                $fileVariantPath = $avifPath;
                 $type = 'image/avif';
             } else {
                 // if it weights under 2 Mbytes returns original and do not create variant
                 if ($originalSize < 2000000) {
-                    $file = Storage::get($path);
+                    //$file = Storage::get($path);
+                    $fileVariantPath = $path;
                     $type = $mimeType;
                 } else {
-                    list($file, $type) = $this->handleSizedImageRendering($path, $media, $fileType, 'medium', $mimeType);
+                    list($fileVariantPath, $type) = $this->handleSizedImageRendering($path, $media, $fileType, 'medium', $mimeType);
                 }
             }
 
-            $lastModified = Storage::lastModified($path);
-            $streamedResponse = $this->createStreamedResponse($file, $type, $mediaFileName);
-            $cachedResponse = $this->createCachedResponse($file, $streamedResponse);
+            $lastModified = Storage::lastModified($fileVariantPath);
+            $streamedResponse = $this->createStreamedResponse($fileVariantPath, $type, $mediaFileName);
+            //$cachedResponse = $this->createCachedResponse($file, $streamedResponse);
             //Cache::put("{$mediaId}__$size", $cachedResponse);
             $response = $streamedResponse;
 
         } else if ($fileType == 'image' && $size === 'raw') {
 
-            $file = Storage::get($path);
+            //$file = Storage::get($path);
             $lastModified = Storage::lastModified($path);
-            $streamedResponse = $this->createStreamedResponse($file, $mimeType, $mediaFileName);
-            $cachedResponse = $this->createCachedResponse($file, $streamedResponse);
+            $streamedResponse = $this->createStreamedResponse($path, $mimeType, $mediaFileName);
+            //$cachedResponse = $this->createCachedResponse($file, $streamedResponse);
             //Cache::put("{$mediaId}__$size", $cachedResponse);
             $response = $streamedResponse;
 
 	}  else if ($fileType == 'image' && $size) {
         
-            list($file, $type) = $this->handleSizedImageRendering($path, $media, $fileType, $size, $mimeType);
+            list($fileVariantPath, $type) = $this->handleSizedImageRendering($path, $media, $fileType, $size, $mimeType);
             $lastModified = Storage::lastModified($path);
-            $streamedResponse = $this->createStreamedResponse($file, $type, $mediaFileName);
-            $cachedResponse = $this->createCachedResponse($file, $streamedResponse);
+            $streamedResponse = $this->createStreamedResponse($fileVariantPath, $type, $mediaFileName);
+            //$cachedResponse = $this->createCachedResponse($file, $streamedResponse);
             $response = $streamedResponse;
 
 	} else if ($fileType == 'video') {
@@ -618,6 +620,7 @@ class ResourceController extends Controller
      */
     public function download($damUrl, $size = null)
     {
+       //JAP REVIEW CANDOWNLOAD FOR IMAGES
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         $media = Media::findOrFail($mediaId);
 
@@ -639,6 +642,7 @@ class ResourceController extends Controller
             $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue, true);
 
             if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small', 'thumbnail']))) {
+                //JAP: revisar
                 $response = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
                 $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"', $mediaFileName));
                 $response->header('Cache-Control', 'public, max-age=86400'); // Configura el tiempo de caché en segundos (en este caso, 24 horas)
@@ -965,21 +969,19 @@ class ResourceController extends Controller
         }
         */
 
-        $file = Storage::get($pathSize);
-        $type = $mimeType;
+        //$file = Storage::get($pathSize);
 
-        return [$file, $type];
+        return [$pathSize, $mimeType];
     }
 
-    private function createStreamedResponse(string $file, string $type, string $mediaFileName): StreamedResponse
+    private function createStreamedResponse(string $fileVariantpath, string $type, string $mediaFileName): StreamedResponse
     {
         $response = new StreamedResponse();
+        $file = Storage::get($fileVariantpath);
         $response->setCallback(function () use ($file) {
             echo $file;
         });
 
-	//JAP USAR setCommonHeaders!!
-	//JAP EVITAR paso de tocho archivo con la imagen (pasar referencia o bien nombre)
         $maxAge = 3600 * 24 * 7;
 
         $response->headers->set('Content-Type', $type);
@@ -987,6 +989,12 @@ class ResourceController extends Controller
         $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
         $response->headers->set('Cache-Control', 'public, max-age=' . $maxAge . ', immutable');
         $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
+
+        $etag = md5($file);
+        $response->setEtag($etag);
+
+        $lastModified = Storage::lastModified($fileVariantpath);
+        $response->setLastModified(Carbon::createFromTimestamp($lastModified));
 
         return $response;
     }
