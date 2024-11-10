@@ -413,39 +413,35 @@ class ResourceController extends Controller
     private function renderResource(Request $request, $mediaId, $method = null, $size = null, $renderKey = null, $isCDN = false, $can_download = false)
     {
         $media = Media::findOrFail($mediaId);
-        $mediaFileName = explode('/', $media->getPath());
-        $mediaFileName = $mediaFileName[count($mediaFileName) - 1];
-        $path = explode('storage/app/', $media->getPath())[1];
-        
-        $size = ($size === null ? 'default' : $size);
-       
+        $absolutePath = $media->getPath();
+        $mediaFileName = pathinfo($absolutePath, PATHINFO_FILENAME);
+        $path = explode(Storage::path(''), $absolutePath)[1]; //removes storage/app 
+                
+        $originalSize = Storage::size($path); //file weight
+        $size = ($size === null ? 'default' : $size); //image variant
         $mimeType = $media->mime_type;
         $fileType = explode('/', $mimeType)[0];
         $response = null;
 
         if ($fileType == 'image' && $size === 'default') {
-            $path = explode('storage/app/', $media->getPath())[1];
-            if ($this->renderService->checkAvif($request)) {
+
+            if ($this->renderService->checkAvif($request)) { // does the browser allow AVIF ?
                 $avifPath = $this->renderService->getConvertedPath($path, "avif");
                 if (!$this->renderService->checkIfImageExists($avifPath)) {
-                    $originalSize = Storage::size($path);
                     $this->renderService->generateAvif($path);
                     $avifSize = Storage::size($avifPath);
-                    $this->renderService->logAvifConversion($mediaFileName, $originalSize, $avifSize);
+                    //$this->renderService->logAvifConversion($mediaFileName, $originalSize, $avifSize);
                 }
-
                 $file = Storage::get($avifPath);
                 $type = 'image/avif';
             } else {
-                // if weight under 2Mbyte returns original and do not create variant
-                $mediaweight = Storage::size($path); 
-                if ($mediaweight < 2000000) {
+                // if it weights under 2 Mbytes returns original and do not create variant
+                if ($originalSize < 2000000) {
                     $file = Storage::get($path);
                     $type = $mimeType;
                 } else {
                     list($file, $type) = $this->handleSizedImageRendering($path, $media, $fileType, 'medium', $mimeType);
                 }
-
             }
 
             $lastModified = Storage::lastModified($path);
@@ -455,21 +451,22 @@ class ResourceController extends Controller
             $response = $streamedResponse;
 
         } else if ($fileType == 'image' && $size === 'raw') {
-            $rawPath = explode('storage/app/', $media->getPath())[1];
-            $rawFile = Storage::get($rawPath);
-            $lastModified = Storage::lastModified($rawPath);
-            $streamedResponse = $this->createStreamedResponse($rawFile, $mimeType, $mediaFileName);
-            $cachedResponse = $this->createCachedResponse($rawFile, $streamedResponse);
+
+            $file = Storage::get($path);
+            $lastModified = Storage::lastModified($path);
+            $streamedResponse = $this->createStreamedResponse($file, $mimeType, $mediaFileName);
+            $cachedResponse = $this->createCachedResponse($file, $streamedResponse);
             //Cache::put("{$mediaId}__$size", $cachedResponse);
             $response = $streamedResponse;
 
 	}  else if ($fileType == 'image' && $size) {
-            $path = explode('storage/app/', $media->getPath())[1];
+        
             list($file, $type) = $this->handleSizedImageRendering($path, $media, $fileType, $size, $mimeType);
             $lastModified = Storage::lastModified($path);
             $streamedResponse = $this->createStreamedResponse($file, $type, $mediaFileName);
             $cachedResponse = $this->createCachedResponse($file, $streamedResponse);
             $response = $streamedResponse;
+
 	} else if ($fileType == 'video') {
 
             $sizeValue = $this->getResourceSize($fileType, $size);
@@ -628,7 +625,7 @@ class ResourceController extends Controller
         $fileName = $damUrl . "." . $mimes->getExtension($media->mime_type); // json
         $mediaFileName = $fileName;
         $size = ($size === null ? 'default' : $size);
-	//JAP return raw file
+        //JAP return raw file
         if ($size == 'default') $size = 'raw';
         
         $mimeType = $media->mime_type;

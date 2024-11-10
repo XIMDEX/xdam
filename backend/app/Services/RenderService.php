@@ -20,7 +20,7 @@ class RenderService
         } else {
             $avifPath = $this->getConvertedPath($media->getPath(), 'avif');
         }
-        $relativeAvifPath = explode('storage/app/', $avifPath)[1];
+        $relativeAvifPath = explode(Storage::path(''), $avifPath)[1];
         $file = Storage::get($relativeAvifPath);
         $type = 'image/avif';
 
@@ -33,13 +33,6 @@ class RenderService
             return false;
         }
         return true;
-    }
-
-
-
-    private function getRelativePath($mediaPath)
-    {
-        return explode('storage/app/', $mediaPath)[1];
     }
 
     public function generateAvif($path)
