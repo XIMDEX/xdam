@@ -727,6 +727,7 @@ class ResourceController extends Controller
     public function deleteAssociatedFiles(damResource $damResource, Request $request)
     {
         $idsToDelete = $request->all();
+        //JAP REVISAR imagen mostrada cuando recurso borrado 
         if (!empty($idsToDelete)) {
             $resource = $this->resourceService->deleteAssociatedFiles($damResource, array_values($idsToDelete));
             return (new ResourceResource($resource))

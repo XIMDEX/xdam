@@ -5,7 +5,7 @@ namespace App\Services\Media;
 use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
 
-// JAP ELIMINAR REDUNDANCIA DE ARRAY DE TAMAÑOS
+// JAP ELIMINAR REDUNDANCIA DE ARRAY DE TAMAÑOS con archivo ResourceController. Eliminar entrada para default ya que se trata como large o avif
 class MediaSizeImage
 {
     private array $allowed_sizes =   ['thumbnail', 'small', 'medium', 'raw', 'large', 'largeHD', 'default'];
