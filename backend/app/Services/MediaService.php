@@ -271,19 +271,20 @@ class MediaService
             $this->saveVideoSnapshot($thumbnail, $mediaPath);
         }
         if ($fileType === 'image') {
+            //JAP se generan al vuelo
+/*
             $manager = new ImageManager(['driver' => 'imagick']);
             $image    = $manager->make($mediaPath);
             $image2   = $manager->make($mediaPath);
             $thumb  = new MediaSizeImage('thumbnail', $mediaPath, $manager, $image);
             $small  = new MediaSizeImage('small', $mediaPath, $manager, $image2);
             $large  = new MediaSizeImage('large', $mediaPath, $manager, $image2);
-            $largeHD  = new MediaSizeImage('largeHD', $mediaPath, $manager, $image2);
             $extension = $image->extension;
-            if (!$large->pngHasAlpha()) $extension = 'jpg';
+            //if (!$large->pngHasAlpha()) $extension = 'jpg';
             if ($thumb->checkSize())   $thumb->save($extension);
             if ($small->checkSize())   $small->save($extension);
             $large->save($extension);
-            $largeHD->save($extension);
+*/
         }
         return !empty($mediaList) ? end($mediaList) : [];
     }

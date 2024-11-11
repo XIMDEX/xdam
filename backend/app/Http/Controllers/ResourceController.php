@@ -400,12 +400,12 @@ class ResourceController extends Controller
     public function render(Request $request, $damUrl, $size = 'default')
     {
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
-        /*if (Cache::has("{$mediaId}__{$size}")) {
-            $response = Cache::get("{$mediaId}__$size");
-            if (is_string($response)) {
-                Cache::delete("{$mediaId}__$size");
-            }
-        }*/
+        //if (Cache::has("{$mediaId}__{$size}")) {
+        //    $response = Cache::get("{$mediaId}__$size");
+        //    if (is_string($response)) {
+        //        Cache::delete("{$mediaId}__$size");
+        //    }
+        //}
         $method = request()->method();
         return $this->renderResource($request, $mediaId, $method, $size, null, false);
     }
@@ -413,40 +413,64 @@ class ResourceController extends Controller
     private function renderResource(Request $request, $mediaId, $method = null, $size = null, $renderKey = null, $isCDN = false, $can_download = false)
     {
         $media = Media::findOrFail($mediaId);
-        $mediaFileName = explode('/', $media->getPath());
-        $mediaFileName = $mediaFileName[count($mediaFileName) - 1];
-        $size = ($size === null ? 'default' : $size);
+        $absolutePath = $media->getPath();
+        $mediaFileName = pathinfo($absolutePath, PATHINFO_FILENAME);
+        $path = explode(Storage::path(''), $absolutePath)[1]; //removes storage/app 
+                
+        $originalSize = Storage::size($path); //file weight
+        $size = ($size === null ? 'default' : $size); //image variant
         $mimeType = $media->mime_type;
         $fileType = explode('/', $mimeType)[0];
         $response = null;
 
         if ($fileType == 'image' && $size === 'default') {
-            $path = explode('storage/app/', $media->getPath())[1];
-            if ($this->renderService->checkAvif($request)) {
+
+            if ($this->renderService->checkAvif($request)) { // does the browser allow AVIF ?
                 $avifPath = $this->renderService->getConvertedPath($path, "avif");
                 if (!$this->renderService->checkIfImageExists($avifPath)) {
-                    $originalSize = Storage::size($path);
                     $this->renderService->generateAvif($path);
                     $avifSize = Storage::size($avifPath);
-                    $this->renderService->logAvifConversion($mediaFileName, $originalSize, $avifSize);
+                    //$this->renderService->logAvifConversion($mediaFileName, $originalSize, $avifSize);
                 }
-
-                $file = Storage::get($avifPath);
+                //$file = Storage::get($avifPath);
+                $fileVariantPath = $avifPath;
                 $type = 'image/avif';
             } else {
-                list($file, $type) = $this->handleLargeImageRendering($path, $media, $fileType, $size, $mimeType);
+                // if it weights under 2 Mbytes returns original and do not create variant
+                if ($originalSize < 2000000) {
+                    //$file = Storage::get($path);
+                    $fileVariantPath = $path;
+                    $type = $mimeType;
+                } else {
+                    list($fileVariantPath, $type) = $this->handleSizedImageRendering($path, $media, $fileType, 'medium', $mimeType);
+                }
             }
 
-
-            $lastModified = Storage::lastModified($path);
-            $streamedResponse = $this->createStreamedResponse($file, $type, $mediaFileName);
-
-            $cachedResponse = $this->createCachedResponse($file, $streamedResponse);
-
+            $lastModified = Storage::lastModified($fileVariantPath);
+            $streamedResponse = $this->createStreamedResponse($fileVariantPath, $type, $mediaFileName);
+            //$cachedResponse = $this->createCachedResponse($file, $streamedResponse);
             //Cache::put("{$mediaId}__$size", $cachedResponse);
-
             $response = $streamedResponse;
-        } else if ($fileType == 'video' || $fileType == 'image') {
+
+        } else if ($fileType == 'image' && $size === 'raw') {
+
+            //$file = Storage::get($path);
+            $lastModified = Storage::lastModified($path);
+            $streamedResponse = $this->createStreamedResponse($path, $mimeType, $mediaFileName);
+            //$cachedResponse = $this->createCachedResponse($file, $streamedResponse);
+            //Cache::put("{$mediaId}__$size", $cachedResponse);
+            $response = $streamedResponse;
+
+	}  else if ($fileType == 'image' && $size) {
+        
+            list($fileVariantPath, $type) = $this->handleSizedImageRendering($path, $media, $fileType, $size, $mimeType);
+            $lastModified = Storage::lastModified($path);
+            $streamedResponse = $this->createStreamedResponse($fileVariantPath, $type, $mediaFileName);
+            //$cachedResponse = $this->createCachedResponse($file, $streamedResponse);
+            $response = $streamedResponse;
+
+	} else if ($fileType == 'video') {
+
             $sizeValue = $this->getResourceSize($fileType, $size);
             $availableSizes = $this->getAvailableResourceSizes();
 
@@ -482,7 +506,7 @@ class ResourceController extends Controller
             } else {
                 return response(['error' => 'Error! You don\'t have permission to view this file.'], Response::HTTP_BAD_REQUEST);
             }
-        }
+	} 
         if ($fileType !== 'audio' && !$can_download && !$response ) {
             return response(['error' => 'Error! You don\'t have permission to download this file.'], Response::HTTP_BAD_REQUEST);
         }
@@ -493,17 +517,17 @@ class ResourceController extends Controller
 
     }
 
+    // JAP ELIMINAR REDUNDANCIAS CON SIZES DECLARADOS EN OTRO ARCHIVO
     private function getAvailableResourceSizes()
     {
         $sizes = [
             'image' => [
-                'allowed_sizes' => ['thumbnail', 'small', 'medium', 'large', 'largeHD', 'raw', 'default'],
+                'allowed_sizes' => ['thumbnail', 'small', 'medium', 'large', 'raw', 'default'],
                 'sizes' => [
                     'thumbnail' => array('width' => 256, 'height' => 144),
                     'small'     => array('width' => 426, 'height' => 240),
-                    'medium'    => array('width' => 854, 'height' => 480),
-                    'large'     => array('width' => 3840, 'height' => 2160),
-                    'largeHD'     => array('width' => 1920, 'height' => 1080),
+                    'medium'    => array('width' => 1920, 'height' => 1080), //HD
+                    'large'     => array('width' => 3840, 'height' => 2160), //4k
                     'raw'       => 'raw',
                     'default'   => array('width' => 1280, 'height' => 720)
                 ],
@@ -511,10 +535,9 @@ class ResourceController extends Controller
                     'thumbnail' => 25,
                     'small'     => 25,
                     'medium'    => 50,
+                    'large'     => 100,
                     'raw'       => 'raw',
                     'default'   => 90,
-                    'large'     => 100,
-                    'largeHD'     => 100,
                 ],
                 'error_message' => ''
             ],
@@ -597,6 +620,7 @@ class ResourceController extends Controller
      */
     public function download($damUrl, $size = null)
     {
+       //JAP REVIEW CANDOWNLOAD FOR IMAGES
         $mediaId = DamUrlUtil::decodeUrl($damUrl);
         $media = Media::findOrFail($mediaId);
 
@@ -604,16 +628,21 @@ class ResourceController extends Controller
         $fileName = $damUrl . "." . $mimes->getExtension($media->mime_type); // json
         $mediaFileName = $fileName;
         $size = ($size === null ? 'default' : $size);
-
+        //JAP return raw file
+        if ($size == 'default') $size = 'raw';
+        
         $mimeType = $media->mime_type;
         $fileType = explode('/', $mimeType)[0];
 
-        if ($fileType == 'video' || $fileType == 'image') {
+        if ($size === 'raw' && $fileType === 'image') {
+            return response()->download($media->getPath(), $fileName);
+        } else if ($fileType == 'video' || $fileType == 'image') {
             $sizeValue = $this->getResourceSize($fileType, $size);
             $availableSizes = $this->getAvailableResourceSizes();
             $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue, true);
 
             if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small', 'thumbnail']))) {
+                //JAP: revisar
                 $response = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
                 $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"', $mediaFileName));
                 $response->header('Cache-Control', 'public, max-age=86400'); // Configura el tiempo de caché en segundos (en este caso, 24 horas)
@@ -690,6 +719,7 @@ class ResourceController extends Controller
     public function deleteAssociatedFiles(damResource $damResource, Request $request)
     {
         $idsToDelete = $request->all();
+        //JAP REVISAR imagen mostrada cuando recurso borrado 
         if (!empty($idsToDelete)) {
             $resource = $this->resourceService->deleteAssociatedFiles($damResource, array_values($idsToDelete));
             return (new ResourceResource($resource))
@@ -794,9 +824,9 @@ class ResourceController extends Controller
 
         $mediaId = DamUrlUtil::decodeUrl($responseJson->files[0]->dam_url);
         $size = $request->size;
-        if (Cache::has("{$mediaId}__{$size}")) {
-            return Cache::get("{$mediaId}__$size");
-        }
+        //if (Cache::has("{$mediaId}__{$size}")) {
+        //    return Cache::get("{$mediaId}__$size");
+        //}
 
         $can_download = $resource->type == ResourceType::document ? ($resource->data->description->can_download ?? false) : true;
         return $this->renderResource($request, $mediaId, $method, $size, $request->key, true, $can_download);
@@ -916,36 +946,38 @@ class ResourceController extends Controller
         }
     }
 
-    private function handleLargeImageRendering(string $path, Media $media, string $fileType, string $size, string $mimeType): array
+    private function handleSizedImageRendering(string $path, Media $media, string $fileType, string $size, string $mimeType): array
     {
-        $pathLarge = $this->renderService->appendSizeToPath($path, 'large');
+        $pathSize = $this->renderService->appendSizeToPath($path, $size);
 
         if (!Storage::exists($path)) {
             abort(404);
         }
 
-        if (!Storage::exists($pathLarge)) {
+        if (!Storage::exists($pathSize)) {
             $sizeValue = $this->getResourceSize($fileType, $size);
             $availableSizes = $this->getAvailableResourceSizes();
-            $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], 'large', $sizeValue);
+            $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue);
         }
 
+        /* JAP VERIFICAR
         if (strtolower($media->extension) === 'png') {
-            $pathJPG = $this->renderService->getConvertedPath($pathLarge, "jpg");
+            $pathJPG = $this->renderService->getConvertedPath($pathSize, "jpg");
             if (Storage::exists($pathJPG)) {
-                $pathLarge = $pathJPG;
+            $pathSize = $pathJPG;
             }
         }
+        */
 
-        $file = Storage::get($pathLarge);
-        $type = $mimeType;
+        //$file = Storage::get($pathSize);
 
-        return [$file, $type];
+        return [$pathSize, $mimeType];
     }
 
-    private function createStreamedResponse(string $file, string $type, string $mediaFileName): StreamedResponse
+    private function createStreamedResponse(string $fileVariantpath, string $type, string $mediaFileName): StreamedResponse
     {
         $response = new StreamedResponse();
+        $file = Storage::get($fileVariantpath);
         $response->setCallback(function () use ($file) {
             echo $file;
         });
@@ -957,6 +989,12 @@ class ResourceController extends Controller
         $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
         $response->headers->set('Cache-Control', 'public, max-age=' . $maxAge . ', immutable');
         $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
+
+        $etag = md5($file);
+        $response->setEtag($etag);
+
+        $lastModified = Storage::lastModified($fileVariantpath);
+        $response->setLastModified(Carbon::createFromTimestamp($lastModified));
 
         return $response;
     }
@@ -976,10 +1014,10 @@ class ResourceController extends Controller
             $response = response()->file($compressed->basePath());
             $this->setCommonHeaders($response, $mediaFileName, $compressed);
 
-           /* if ($fileType == 'image') {
-                $response_cache = $this->createImageCacheResponse($compressed, $fileType, $size, $availableSizes, $mediaFileName);
-                Cache::put("{$mediaId}__$size", $response_cache);
-            }*/
+           // if ($fileType == 'image') {
+           //     $response_cache = $this->createImageCacheResponse($compressed, $fileType, $size, $availableSizes, $mediaFileName);
+           //     Cache::put("{$mediaId}__$size", $response_cache);
+           // }
 
             return $response;
         }
@@ -1001,6 +1039,7 @@ class ResourceController extends Controller
         $response->setLastModified(Carbon::createFromTimestamp($lastModified));
     }
 
+    //JAP VERIFICAR uso funcion
     private function createImageCacheResponse($compressed, $fileType, $size, $availableSizes, $mediaFileName)
     {
         $quality = $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size];
