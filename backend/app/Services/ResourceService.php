@@ -79,12 +79,12 @@ class ResourceService
      */
     private XowlImageService $xowlImageService;
 
-    /** 
+    /**
      * @var XevalSyncActivityService
      */
     private XevalSyncActivityService $xevalSyncActivityService;
 
-    /** 
+    /**
      * @var XevalSyncAssessmentService
      */
     private XevalSyncAssessmentService $xevalSyncAssessmentService;
@@ -387,7 +387,7 @@ class ResourceService
                         'Entry' => $semantic_tag->name
                     ];
                 }
-    
+
                 // TODO save on xTags
                 $lang = App::getLocale();
                 if (isset($resource->data->description->semantic_tags)) {
@@ -398,7 +398,7 @@ class ResourceService
                         $resource->data->description->semantic_tags
                     );
                 }*/
-                $this->setLomData($resource, $lom_params);
+               // $this->setLomData($resource, $lom_params);
             }
 
             $this->saveAssociatedFiles($resource, $params);
@@ -885,7 +885,7 @@ class ResourceService
 
     $dam_lomes = $damResource->lomes()->firstOrCreate();
     $updateArray = [];
-    
+
     $tabKey = $tab_key;
     $lomesSchema = $this->lomesSchema(true);
     $tabSchema = $this->searchForAssociativeKey('key', $tabKey, $lomesSchema['tabs']);
@@ -942,7 +942,7 @@ class ResourceService
                 }
             }
         }
-       
+
 
         $dam_lom->update($updateArray);
         $dam_lom->save();
