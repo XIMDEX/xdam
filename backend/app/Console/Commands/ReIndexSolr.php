@@ -66,14 +66,18 @@ class ReIndexSolr extends Command
             if (!isset($reindexed[$resource->type])) $reindexed[$resource->type] = 0;
             $reindexed[$resource->type]++;
             // if ( $reindexed[$resource->type] >= 10) return;
-            $resourceCoreName = $solrService->getClientFromResource($resource)->getEndpoint()->getOptions()['core'];
+
+            $resourceCoreName = $solrService->getClientFromResource($resource)?->getEndpoint()?->getOptions()['core'] ?? null;
+            if ($resourceCoreName === null) {
+                $this->warn("Could not get core name for resource ID: " . $resource->id);
+               // continue; // Skip to the next iteration of the loop
+            }
 
             if (!in_array($resourceCoreName, $excludedCores) && $resourceCoreName !== null) {
                 try {
                     $solrService->saveOrUpdateDocument($resource, $solrVersion, $reindexLOM);
                 } catch (\Throwable $th) {
                     $this->error("\n Reindex of resource with ID " . $resource->id . " failed. Message Error: " . $th->getMessage());
-                    // continue with reindex
                 }
                 $count++;
             }
