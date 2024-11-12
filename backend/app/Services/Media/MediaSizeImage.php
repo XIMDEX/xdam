@@ -8,32 +8,17 @@ use Intervention\Image\ImageManager;
 // JAP ELIMINAR REDUNDANCIA DE ARRAY DE TAMAÑOS con archivo ResourceController. Eliminar entrada para default ya que se trata como large o avif
 class MediaSizeImage
 {
-    private array $allowed_sizes =   ['thumbnail', 'small', 'medium', 'raw', 'large', 'largeHD', 'default'];
-    private array $sizes = [
-        'thumbnail' => array('width' => 256, 'height' => 144),
-        'small'     => array('width' => 426, 'height' => 240),
-        'medium'    => array('width' => 1920, 'height' => 1080), //HD
-        'large'     => array('width' => 3840, 'height' => 2160), //4k
-        'raw'       => 'raw',
-        'default'   => array('width' => 1280, 'height' => 720)
-    ];
-    private array $qualities = [
-        'thumbnail' => 25,
-        'small'     => 25,
-        'medium'    => 50,
-        'large'     => 100,
-        'raw'       => 'raw',
-        'default'   => 90
-    ];
+    private array $sizes;
     private string $size;
     private ImageManager $manager;
     private Image $image;
     private string $path;
     private float $height;
     private float $width;
-    public function __construct(string $size, string $path, ImageManager $manager, Image $image)
+    public function __construct(string $size, string $path, ImageManager $manager, Image $image, array $sizes)
     {
         $this->size = $size;
+        $this->sizes = $sizes;
         $this->manager = $manager;
         $this->image   = $image;
         $this->path = $path;
