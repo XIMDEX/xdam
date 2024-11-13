@@ -204,7 +204,7 @@ class SolrCoresMaintenance extends Command
         } else if ($action === 'REINDEX') {
             return $this->manageCoresReindexing($solrService, $coresToManage, $solrCores, $coreVersion, $confirmation);
         } else if ($action === 'ALL') {
-            $this->manageCoresDeleting($solrService, $path, $coresToManage, $solrCores, $coreVersion, $confirmation);
+          //  $this->manageCoresDeleting($solrService, $path, $coresToManage, $solrCores, $coreVersion, $confirmation);
             $this->manageCoresCreation($solrService, $path, $coresToManage, $solrCores, $coreVersion, $confirmation);
             $this->manageCoresReindexing($solrService, $coresToManage, $solrCores, $coreVersion, $confirmation);
         }
