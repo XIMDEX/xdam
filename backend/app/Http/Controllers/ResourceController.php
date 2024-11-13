@@ -415,8 +415,8 @@ class ResourceController extends Controller
         $media = Media::findOrFail($mediaId);
         $absolutePath = $media->getPath();
         $mediaFileName = pathinfo($absolutePath, PATHINFO_FILENAME);
-        $path = explode(Storage::path(''), $absolutePath)[1]; //removes storage/app 
-                
+        $path = explode(Storage::path(''), $absolutePath)[1];
+
         $originalSize = Storage::size($path); //file weight
         $size = ($size === null ? 'default' : $size); //image variant
         $mimeType = $media->mime_type;
@@ -462,7 +462,7 @@ class ResourceController extends Controller
             $response = $streamedResponse;
 
 	}  else if ($fileType == 'image' && $size) {
-        
+
             list($fileVariantPath, $type) = $this->handleSizedImageRendering($path, $media, $fileType, $size, $mimeType);
             $lastModified = Storage::lastModified($path);
             $streamedResponse = $this->createStreamedResponse($fileVariantPath, $type, $mediaFileName);
@@ -506,7 +506,7 @@ class ResourceController extends Controller
             } else {
                 return response(['error' => 'Error! You don\'t have permission to view this file.'], Response::HTTP_BAD_REQUEST);
             }
-	} 
+	}
         if ($fileType !== 'audio' && !$can_download && !$response ) {
             return response(['error' => 'Error! You don\'t have permission to download this file.'], Response::HTTP_BAD_REQUEST);
         }
@@ -517,7 +517,7 @@ class ResourceController extends Controller
 
     }
 
-    // JAP ELIMINAR REDUNDANCIAS CON SIZES DECLARADOS EN OTRO ARCHIVO
+
     private function getAvailableResourceSizes()
     {
         $sizes = [
@@ -630,7 +630,7 @@ class ResourceController extends Controller
         $size = ($size === null ? 'default' : $size);
         //JAP return raw file
         if ($size == 'default') $size = 'raw';
-        
+
         $mimeType = $media->mime_type;
         $fileType = explode('/', $mimeType)[0];
 
@@ -719,7 +719,7 @@ class ResourceController extends Controller
     public function deleteAssociatedFiles(damResource $damResource, Request $request)
     {
         $idsToDelete = $request->all();
-        //JAP REVISAR imagen mostrada cuando recurso borrado 
+
         if (!empty($idsToDelete)) {
             $resource = $this->resourceService->deleteAssociatedFiles($damResource, array_values($idsToDelete));
             return (new ResourceResource($resource))
@@ -959,17 +959,6 @@ class ResourceController extends Controller
             $availableSizes = $this->getAvailableResourceSizes();
             $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue);
         }
-
-        /* JAP VERIFICAR
-        if (strtolower($media->extension) === 'png') {
-            $pathJPG = $this->renderService->getConvertedPath($pathSize, "jpg");
-            if (Storage::exists($pathJPG)) {
-            $pathSize = $pathJPG;
-            }
-        }
-        */
-
-        //$file = Storage::get($pathSize);
 
         return [$pathSize, $mimeType];
     }
