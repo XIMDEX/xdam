@@ -59,26 +59,14 @@ class SolrService
      * returns the document that will be finally indexed in solr
      * @param DamResource $resource
      * @param $resourceClass
-     * @param string $lomCoreName
-     * @param string $lomesCoreName
      * @return array
      */
     private function getDocumentFromResource(
         DamResource $resource,
-        $resourceClass,
-        string $lomCoreName,
-        string $lomesCoreName): array
+        $resourceClass): array
     {
-        try {
-            $lomClient = $this->getClient('lom');
-            $lomesClient = $this->getClient('lomes');
-        } catch (\Exception $ex) {
-            // echo $ex->getMessage();
-            $lomClient = null;
-            $lomesClient = null;
-        }
 
-        return json_decode((new $resourceClass($resource, $lomClient, $lomesClient, true))->toJson(), true);
+        return json_decode((new $resourceClass($resource,true))->toJson(), true);
     }
 
     /**
@@ -221,31 +209,12 @@ class SolrService
         $solrVersion = $this->getCoreVersion($solrVersion);
         $this->clients = $this->solrConfig->updateSolariumClients($solrVersion);
 
-        // Gets the LOM and LOMES core names versioned
-        $lomCoreName = $this->getCoreNameVersioned('lom', $solrVersion);
-        $lomesCoreName = $this->getCoreNameVersioned('lomes', $solrVersion);
-
-        // Checks if the LOM and the LOMES must be updated
-        if ($reindexLOM) {
-            // Gets the LOM and the LOMES client
-            $lomClient = $this->getClient($lomCoreName);
-            $lomesClient = $this->getClient($lomesCoreName);
-
-            // Gets the LOM and the LOMES items
-            $lomItem = Lom::where('dam_resource_id', $damResource->id)->first();
-            $lomesItem = Lomes::where('dam_resource_id', $damResource->id)->first();
-
-            // Manages the LOM and LOMES documents
-            $this->saveLOMDocuments($lomClient, $lomItem, Utils::getLomSchema(true), $damResource);
-            $this->saveLOMDocuments($lomesClient, $lomesItem, Utils::getLomesSchema(true), $damResource);
-        }
 
         // Gets the client attached to the current resource
         $client = $this->getClientFromResource($damResource);
 
         // Gets the current resource document, and updates it
-        $documentResource = $this->getDocumentFromResource($damResource, $client->getOption('resource'),
-                                                            $lomCoreName, $lomesCoreName);
+        $documentResource = $this->getDocumentFromResource($damResource, $client->getOption('resource'));
         return $this->saverOrUpdateSolrDocument($client, $documentResource);
     }
 
@@ -439,7 +408,7 @@ class SolrService
                 foreach ($fields['files'] as $file) {
                     $last_uuid = substr($file, strrpos($file, "@",-4));
                     $last_uuid= str_replace("@", "", $last_uuid);
-                    
+
                     if (Storage::disk("semantic")->exists($fields["id"]."/".$last_uuid.".json")) {
                         $json = json_decode(Storage::disk("semantic")->get($fields["id"]."/".$last_uuid.".json"));
                         if(isset($json->xtags_interlinked)){
@@ -477,12 +446,12 @@ class SolrService
                             $fields['data']->description->semantic_tags[$key] = $semanticData;
                         }
                      }
-                    
+
                 }
-                
-              
+
+
             }
-        
+
             $documentsResponse[] = $fields;
         }
 
