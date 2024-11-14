@@ -129,7 +129,6 @@ class SolrService
         if (!array_key_exists($client, $this->clients)) {
             $client = $this->getCoreNameVersioned($client);
         }
-
         if (!array_key_exists($client, $this->clients)) {
             throw new Exception("There is no client $client ". json_encode($this->clients));
         }
@@ -721,4 +720,22 @@ class SolrService
         return $dom->saveXML();
     }
 
+
+    public function documentExists($resource, $solrVersion = null)
+    {
+        $solrVersion = $this->getCoreVersion($solrVersion);
+        $this->clients = $this->solrConfig->updateSolariumClients($solrVersion);
+
+        $client = $this->getClientFromResource($resource);
+
+        if ($client === null) {
+            throw new Exception("Unable to get Solr client for the provided resource.");
+        }
+
+        $query = $client->createSelect();
+        $query->setQuery("id:$resource->id");
+        $resultset = $client->select($query);
+
+        return $resultset->getNumFound() > 0;
+    }
 }

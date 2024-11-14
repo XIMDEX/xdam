@@ -38,7 +38,7 @@ class ReIndexSolr extends Command
     {
         $excludedCores = $this->option('exclude');
         $solrVersion = $this->option('solrVersion');
-
+        /*
         if (count($excludedCores) > 0) {
             $toExclude = '';
 
@@ -54,7 +54,7 @@ class ReIndexSolr extends Command
             $command = 'solr:clean --fromReindex=true';
             $command .= ($solrVersion === null || $solrVersion === '' ? '' : (' --solrVersion=' . $solrVersion));
             Artisan::call($command);
-        }
+        }*/
 
         $resources = $resourceService->getAll(null, null, true);
         $count = 0;
@@ -70,7 +70,9 @@ class ReIndexSolr extends Command
 
             if (!in_array($resourceCoreName, $excludedCores) && $resourceCoreName !== null) {
                 try {
-                    $solrService->saveOrUpdateDocument($resource, $solrVersion);
+                    if(!$solrService->documentExists($resource, $solrVersion)) {
+                        $solrService->saveOrUpdateDocument($resource, $solrVersion);
+                    }
                 } catch (\Throwable $th) {
                     $this->error("\n Reindex of resource with ID " . $resource->id . " failed. Message Error: " . $th->getMessage());
                     // continue with reindex
