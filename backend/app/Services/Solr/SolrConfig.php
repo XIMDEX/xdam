@@ -210,16 +210,23 @@ class SolrConfig
             //exclude cores
             $clientCoreName = $client->getEndpoint()->getOptions()['core'];
             $aliasClient = $this->getClientCoreAlias($clientCoreName);
+            if (!empty($solrVersion)) {
+                $aliasClient = array_map(function ($auxClientCoreNames, $clientName) use ($solrVersion) {
+                    return [$clientName . "_$solrVersion" => $auxClientCoreNames];
+                }, $aliasClient, array_keys($aliasClient));
+                $aliasClient = call_user_func_array('array_merge', $aliasClient);
+            }
+
 
             $isValid = false;
-           /* 
+
             foreach ($aliasClient[$clientCoreName] as $auxClientCoreName) {
                 $isValid = !$isValid && array_key_exists($auxClientCoreName, config('solarium.connections', []));
             }
             if (!$isValid) {
                 echo "Client detected not valid for xdam \n";
                 continue;
-            }*/
+            }
 
             if (in_array($clientCoreName, $excludedCores)) {
                 echo "$clientCoreName core excluded from $action \n";
@@ -340,7 +347,7 @@ class SolrConfig
 
     public function getCoreVersion($coreVersion)
     {
-        $solrVersion = env('SOLR_CORES_VERSION', 'garcia_vaquero');
+        $solrVersion = env('SOLR_CORES_VERSION', '');
         $solrVersionUsed = $solrVersion;
         $solrVersionUsed = ($coreVersion !== NULL ? $coreVersion : $solrVersionUsed);
         return $solrVersionUsed;
@@ -348,6 +355,7 @@ class SolrConfig
 
     public function getCoreNameVersioned($solrCore, $solrVersion = null)
     {
+
         if (isset($this->solrFullConfig[$solrCore]['endpoint']['core'])) $solrCore = $this->solrFullConfig[$solrCore]['endpoint']['core'];
         $solrVersion = (gettype($solrVersion) === 'array' && count($solrVersion) > 0 ? $solrVersion[0] : $solrVersion);
         if ($solrVersion === null || $solrVersion === '') return $solrCore;
