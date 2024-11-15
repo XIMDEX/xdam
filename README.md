@@ -81,10 +81,11 @@ sudo npm install -g svgo
 
 ## 7. Final Configuration Steps
 
+Set the core name in the .env file under the variable SOLR_CORES_VERSION.
 Finally, execute the following commands:
 
 ```bash
-sudo php artisan solrCores:maintenance --action=ALL
+sudo php artisan solrCores:maintenance --action=ALL --coreVersion={name in the .env(SOLR_CORES_VERSION)}
 sudo php artisan optimize:clear
 sudo php artisan passport:install
 php artisan db:seed
