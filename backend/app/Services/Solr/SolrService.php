@@ -86,10 +86,10 @@ class SolrService
             if (array_key_exists($connection, $this->clients)) {
                 return $this->clients[$connection];
             } else {
-                throw new Exception ("there is no client for the collection $collection->id");
+                throw new Exception("there is no client for the collection $collection->id");
             }
         } else {
-            throw new Exception ("The collection $collection->id does not have a connection_name configured");
+            throw new Exception("The collection $collection->id does not have a connection_name configured");
         }
     }
 
@@ -130,7 +130,7 @@ class SolrService
             $client = $this->getCoreNameVersioned($client);
         }
         if (!array_key_exists($client, $this->clients)) {
-            throw new Exception("There is no client $client ". json_encode($this->clients));
+            throw new Exception("There is no client $client " . json_encode($this->clients));
         }
 
         return $this->clients[$client];
@@ -147,15 +147,32 @@ class SolrService
         Client $client,
         array $documentFound
     ): ResultInterface {
+        // Retrieve existing document from Solr by ID
+        $query = $client->createSelect();
+        $query->setQuery('id:' . $documentFound['id']);
+        $resultSet = $client->select($query);
+
+        // Prepare the update command
         $createCommand = $client->createUpdate();
         $newDocument = $createCommand->createDocument();
 
+        if ($resultSet->getNumFound() > 0) {
+            $existingDocument = $resultSet->getDocuments()[0];
+            // Copy fields from the existing document
+            foreach ($existingDocument as $key => $value) {
+                $newDocument->$key = $value;
+            }
+        }
+
+        // Merge new fields
         foreach ($documentFound as $key => $value) {
             $newDocument->$key = $value;
         }
 
         $createCommand->addDocument($newDocument);
         $createCommand->addCommit();
+
+        // Execute the update
         return $client->update($createCommand);
     }
 
@@ -183,8 +200,13 @@ class SolrService
 
             // Iterates through the attributes
             foreach ($lomValues as $lomItem) {
-                $resource = new LOMSolrResource($element, $damResource, $lomItem['key'],
-                                                $lomItem['value'], $lomItem['subkey']);
+                $resource = new LOMSolrResource(
+                    $element,
+                    $damResource,
+                    $lomItem['key'],
+                    $lomItem['value'],
+                    $lomItem['subkey']
+                );
                 $documentFound = json_decode($resource->toJson(), true);
                 $this->saverOrUpdateSolrDocument($client, $documentFound);
             }
@@ -338,10 +360,11 @@ class SolrService
         $query = $client->createSelect();
         $facetSet = $query->getFacetSet();
 
+        $list3 = $this->getAllFieldsFromCore($core);
         // The facets to be applied to the query
-        $this->facetManager->setFacets($facetSet, [], $core);
+        $this->facetManager->setFacets($facetSet, [], $core, $list3);
         // Limit the query to facets that the user has marked us
-        $this->facetManager->setQueryByFacets($query, [], $core);
+        $this->facetManager->setQueryByFacets($query, [], $core, $list3);
 
         /* if we have a search param, restrict the query */
         if (!empty($search)) {
@@ -379,7 +402,7 @@ class SolrService
         }
 
         // make a new request, filtering for each facet
-        $this->facetManager->setQueryByFacets($query, $facetsFilter, $core);
+        $this->facetManager->setQueryByFacets($query, $facetsFilter, $core, $list3);
 
         //overwrite current fq to core specifics
         $coreHandler = new $classCore($query);
@@ -417,17 +440,16 @@ class SolrService
                             }
                             $fields["data"]->description->entities_linked = array_merge($fields["data"]->description->entities_linked, $json->xtags_interlinked);
                         }
-                        if(isset($json->xtags)){
+                        if (isset($json->xtags)) {
                             foreach ($json->xtags as $line) {
                                 $line->uuid = $last_uuid;
                                 $line->vocabulary = $json->vocabulary ?? "";
                             }
-                            $fields["data"]->description->entities_non_linked = array_merge($fields["data"]->description->entities_non_linked, $json->xtags) ;
+                            $fields["data"]->description->entities_non_linked = array_merge($fields["data"]->description->entities_non_linked, $json->xtags);
                         }
                         if (isset($json->imageCaptionAi)) {
                             $fields["data"]->description->imageCaptionAi = $json->imageCaptionAi;
                         }
-
                     }
                 }
                 if (isset($fields['data']->description->semantic_tags)) {
@@ -436,7 +458,7 @@ class SolrService
                         if ($semanticData) {
                             $fields['data']->description->semantic_tags[$key] = $semanticData;
                         }
-                     }
+                    }
                 }
                 if (isset($fields['data']->description->semantic_tags)) {
                     foreach ($fields['data']->description->semantic_tags  as $key => $tag) {
@@ -455,10 +477,21 @@ class SolrService
         }
 
         // the facets returned here are a complete unfiltered list, only the one that has been selected is marked as selected
-        $facets = $this->stdToArray($this->facetManager->getFacets($faceSetFound, $facetsFilter, $core));
+
+        $facets = $this->stdToArray($this->facetManager->getFacets($faceSetFound, $facetsFilter, $core,   $list3));
 
         foreach ($facets as $key => $facet) {
             ksort($facets[$key]['values']);
+        }
+        $excludeKeys = ["created_at", "data", "core_resource_type", "collections", "core_resource_type_str", "files", "id", "name", "organization", "tags", "type", "updated_at", "attached_files", "previews", "tags_str", "types_str", "xeval_id", "catalog","exists","incrementing","preventsLazyLoading","score","usesUniqueIds","wasRecentlyCreated","timestamps"];
+        $filteredFacetArray = [];
+        $allKeys = array_column($facets, 'key');
+
+        foreach ($facets as $obj) {
+            $key = $obj['key'];
+            if (!in_array("{$key}_str", $allKeys) && !in_array($key, $excludeKeys)) {
+                $filteredFacetArray[] = $obj;
+            }
         }
 
         return [
@@ -467,7 +500,7 @@ class SolrService
             'totalPages'            => $totalPages,
             'currentPageFrom'       => $currentPageFrom,
             'documentsResponse'     => $documentsResponse,
-            'facets'                => $facets,
+            'facets'                => $filteredFacetArray,
             'currentPage'           => $currentPage,
             'limit'                 => $limit,
             'nextPage'              => (($currentPage + 1) > $totalPages) ? $totalPages : $currentPage + 1,
@@ -475,7 +508,8 @@ class SolrService
         ];
     }
 
-    private function findObjectByName($array, $name) {
+    private function findObjectByName($array, $name)
+    {
         $result = array_filter($array, function ($e) use ($name) {
             return $e->name == $name;
         });
@@ -513,7 +547,7 @@ class SolrService
             }
         }
         $resultset = $client->select($query);
-        echo 'NumFound: '.$resultset->getNumFound();
+        echo 'NumFound: ' . $resultset->getNumFound();
         exit();
         return [];
     }
@@ -542,7 +576,6 @@ class SolrService
             }
             $facet[$key]['type'] = $type;
         }
-
     }
     private function generateQuery($collection, $core, $searchTerm, $searchPhrase): string
     {
@@ -573,7 +606,8 @@ class SolrService
         return $this->solrConfig->getCoreNameVersioned($solrCore, $solrVersion);
     }
 
-    public function getClientCoreAlias() {
+    public function getClientCoreAlias()
+    {
         return $this->solrConfig->getClientCoreAlias('lom');
     }
 
@@ -584,7 +618,7 @@ class SolrService
         $request_params = array_merge([], $params);
 
         $request = $client->createRequest($query);
-        $schemaConfig = config('solr_facets.client.'.env('APP_CLIENT', 'DEFAULT'));
+        $schemaConfig = config('solr_facets.client.' . env('APP_CLIENT', 'DEFAULT'));
 
         foreach ($params as $pKey => $param) {
             if (!is_array($param)) $param = [$param];
@@ -598,7 +632,7 @@ class SolrService
                     $param_value = $this->getJoin($core) . $param_value;
                 } else {
                     foreach ($schemaConfig as $scKey => $value) {
-                        $param_value = str_replace($value['solr_label'].':', $this->getJoin($core), $param_value);
+                        $param_value = str_replace($value['solr_label'] . ':', $this->getJoin($core), $param_value);
                     }
                 }
                 $param[$param_key] = $param_value;
@@ -612,7 +646,6 @@ class SolrService
         $endpoint = $client->getEndpoint();
         $uri = AdapterHelper::buildUri($request, $endpoint);
         return $this->executeRequest($uri, $params['wt'] ?? 'json', $request_params, $core);
-
     }
 
     private function executeRequest($url, $wt, $changeParams, $core)
@@ -646,7 +679,7 @@ class SolrService
 
     private function getJoin()
     {
-        return "{!join from=dam_resource_id to=id fromIndex=". self::LOM . "}lom_value:";
+        return "{!join from=dam_resource_id to=id fromIndex=" . self::LOM . "}lom_value:";
     }
 
     private function handleJSONResponseFail($txt, $changeParams, $core)
@@ -673,8 +706,8 @@ class SolrService
         // $cdnAlfresco = CDN::where('name', env('CDN_ALFRESCO_NAME', 'alfrescoCDN'));
 
         $lom_items_id = array_column($lom_items->toArray(), 'dam_resource_id');
-        $hideFields = config('solr_facets.lom_hidden.'.env('APP_CLIENT', 'DEFAULT'));
-        $schemaConfig = config('solr_facets.client.'.env('APP_CLIENT', 'DEFAULT'));
+        $hideFields = config('solr_facets.lom_hidden.' . env('APP_CLIENT', 'DEFAULT'));
+        $schemaConfig = config('solr_facets.client.' . env('APP_CLIENT', 'DEFAULT'));
         // $changeParams = [];
         foreach ($json['response']['docs'] as $idx => $doc) {
             $indexLom = array_search($doc['id'], $lom_items_id);
@@ -716,7 +749,7 @@ class SolrService
     {
         $dom = new DOMDocument();
         $dom->loadXML($txt);
-        $hideFields = config('solr_facets.lom_hidden.'.env('APP_CLIENT', 'DEFAULT'));
+        $hideFields = config('solr_facets.lom_hidden.' . env('APP_CLIENT', 'DEFAULT'));
         return $dom->saveXML();
     }
 
@@ -737,5 +770,29 @@ class SolrService
         $resultset = $client->select($query);
 
         return $resultset->getNumFound() > 0;
+    }
+    public function getAllFieldsFromCore(string $core): array
+    {
+        try {
+            $client = $this->getClient($core);
+
+            $lukeQuery = $client->createLuke();
+            $lukeQuery->setShow($lukeQuery::SHOW_ALL);
+
+            $result = $client->luke($lukeQuery);
+
+            $fields = $result->getFields();
+
+            $fieldNames = array_keys($fields);
+
+            $fieldNames = array_filter($fieldNames, function ($fieldName) {
+                return !str_starts_with($fieldName, '_');
+            });
+
+            return [$core => array_values($fieldNames)];
+        } catch (Exception $e) {
+            Log::error("Error retrieving fields from core {$core}: " . $e->getMessage());
+            return [];
+        }
     }
 }

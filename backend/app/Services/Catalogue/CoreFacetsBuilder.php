@@ -91,19 +91,17 @@ class CoreFacetsBuilder {
         ];
     }
 
-    public function upCoreConfig(): array
+    public function upCoreConfig($list): array
     {
-
-        foreach ($this->coreList as $coreName => $facets) {
+        foreach ($list as $coreName => $facets) {
             foreach ($facets as $facet) {
-
                 $this->formedList[$coreName][$facet] = [
                     "name" => $facet,
                     "operator" => in_array($facet, $this->and_facets) ? 'AND' : 'OR'
                 ];
             }
         }
-
         return $this->formedList;
     }
+
 }
