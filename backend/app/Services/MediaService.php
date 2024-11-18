@@ -82,7 +82,7 @@ class MediaService
                 ? $this->downloadVideo($media->id, $media->file_name, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail)
                 : $this->previewVideo($media->id, $media->file_name, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail);
         } else if ($fileType === 'image') {
-            return $this->previewImage($mediaPath, $sizeKey,$availableSizes['sizes']);
+            return $this->previewImage($mediaPath, $sizeKey, $availableSizes['sizes']);
         } else {
             return $mediaPath;
         }
@@ -208,7 +208,7 @@ class MediaService
         return VideoStreamer::streamFile($path);
     }
 
-    private function previewImage($mediaPath, $type = 'raw',$sizes)
+    private function previewImage($mediaPath, $type = 'raw', $sizes)
     {
         $manager = new ImageManager(['driver' => 'imagick']);
         $image   = $manager->make($mediaPath);
@@ -265,6 +265,14 @@ class MediaService
         $mimeType = $media->mime_type;
         $mediaPath = $media->getPath();
         $fileType = explode('/', $mimeType)[0];
+        if ($fileType === 'image') {
+
+            $manager = new ImageManager(['driver' => 'imagick']);
+            $image    = $manager->make($mediaPath);
+            $thumb  = new MediaSizeImage('thumbnail', $mediaPath, $manager, $image,['thumbnail' => array('width' => 256, 'height' => 144)]);
+            $extension = $image->extension;
+            if ($thumb->checkSize())   $thumb->save($extension);
+        }
         if ($fileType == 'video') {
             $file_directory = str_replace($media->file_name, '', $mediaPath);
             $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.png';
