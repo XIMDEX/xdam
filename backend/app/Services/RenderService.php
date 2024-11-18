@@ -38,16 +38,16 @@ class RenderService
     public function generateAvif($path)
     {
         try {
-            //$manager = new ImageManager(['driver' => 'imagick']);
-            //$image    = $manager->make(Storage::get($path));
-            //$avifImage = $image->encode('avif', 70);
-            //$avifPath = $this->getConvertedPath($path, 'avif');
-            //Storage::put($avifPath, (string) $avifImage);
-            //return true;
-            $img = Image::make(Storage::get($path))->encode('avif', 70);
+            $manager = new ImageManager(['driver' => 'imagick']);
+            $image    = $manager->make(Storage::get($path));
+            $avifImage = $image->encode('avif', 70);
             $avifPath = $this->getConvertedPath($path, 'avif');
-            Storage::put($avifPath, (string) $img);
+            Storage::put($avifPath, (string) $avifImage);
             return true;
+            //$img = Image::make(Storage::get($path))->encode('avif', 70);
+            //$avifPath = $this->getConvertedPath($path, 'avif');
+            //Storage::put($avifPath, (string) $img);
+            //return true;
         } catch (\Throwable $th) {
             return false;
         }
