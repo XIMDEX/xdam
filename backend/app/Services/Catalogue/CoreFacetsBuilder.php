@@ -93,6 +93,7 @@ class CoreFacetsBuilder {
 
     public function upCoreConfig($list): array
     {
+        $this->formedList = [];
         foreach ($list as $coreName => $facets) {
             foreach ($facets as $facet) {
                 $this->formedList[$coreName][$facet] = [
