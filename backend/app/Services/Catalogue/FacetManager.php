@@ -41,10 +41,10 @@ class FacetManager
      */
     public function setQueryByFacets($query, $facetsFilter, $core,$list)
     {
-        $this->facetLists = $this->coreFacetsBuilder->upCoreConfig($list);
+        $this->facetLists = $this->coreFacetsBuilder->upCoreConfig($list) ?? null;
         if (!empty($facetsFilter)) {
             foreach ($facetsFilter as $filterName => $filterValue) {
-                
+
                 if (is_array($filterValue)) {
                     $q = '';
                     $operator = $this->facetLists[$core][$filterName]['operator'];
@@ -57,11 +57,11 @@ class FacetManager
                         }
                         $q .= $key == 0 ? "$filterName:$id" : " $operator $filterName : $id";
                     }
-                    
+
                     $query->createFilterQuery($filterName)->setQuery($q);
                 } else {
                     $q = $filterName . ':' . $filterValue;
-                                                                                                                                                                          
+
                     $query->createFilterQuery($filterName)->setQuery($q);
                 }
             }
@@ -90,9 +90,15 @@ class FacetManager
      * @param \Solarium\Component\FacetSet $facetSet
      * @param array $facetsFilter
      */
-    public function setFacets($facetSet, $facetsFilter, $core,$list)
+    public function setFacets($facetSet, $facetsFilter, $core, $list)
     {
-        $this->facetList = $this->coreFacetsBuilder->upCoreConfig($list)[$core];
+        $this->facetList = $this->coreFacetsBuilder->upCoreConfig($list)[$core] ?? null;
+
+        if ($this->facetList === null) {
+            // If facetList is null, just return early
+            return;
+        }
+
         foreach ($this->facetList as $key => $value) {
             $facetSet
                 ->createFacetField($value['name'])
@@ -117,10 +123,10 @@ class FacetManager
      */
     public function getFacets($facetSet, $facetsFilter, $core,$list): array
     {
-        $this->facetList = $this->coreFacetsBuilder->upCoreConfig($list)[$core];
+        $this->facetList = $this->coreFacetsBuilder->upCoreConfig($list)[$core] ?? null;
         $facetsArray = [];
         // go through each of the facets list
-        foreach ($this->facetList as $facetLabel => $facetKey) {
+        foreach ($this->facetList ?? [] as $facetLabel => $facetKey) {
             $facetItem = null;
             $facet = $facetSet->getFacet($facetKey['name']);
             $values = $facet->getValues();
@@ -141,7 +147,7 @@ class FacetManager
                         $facetItem->key = $facetKey['name'];
                         $facetItem->label = Texts::facets($facetLabel);
                         $isSelected = false;
-        
+
                         // if it exists in the parameter filter, mark it as selected
                         if (array_key_exists($facetKey['name'], $facetsFilter)) {
                             if (is_array($facetsFilter[$facetKey['name']])) {
@@ -174,7 +180,7 @@ class FacetManager
                         $facetItem->values->{Texts::facets('true')} = ['count' => 0, 'selected' => false, 'radio' => true];
                         $values['true']=0;
                     }
-                    
+
                     if ($isBoolean && count($values) == 2) {
                         $all_count = $values['false'] + $values['true'];
                         $facetItem->values->{Texts::facets('all')} = ['count' => $all_count, 'selected' => true, 'radio' => true];
@@ -185,7 +191,7 @@ class FacetManager
                         if (class_exists("App\\Services\\{$type}Service")){
                             $service = app("App\\Services\\{$type}Service");
                             $facetItem->values = $service::handleFacetValues($facetItem->values, $facetItem->key);
-                        } 
+                        }
                     }
                 }
                 if ($facetItem != null) {

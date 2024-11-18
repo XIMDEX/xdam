@@ -63,10 +63,10 @@ class SolrService
      */
     private function getDocumentFromResource(
         DamResource $resource,
-        $resourceClass): array
-    {
+        $resourceClass
+    ): array {
 
-        return json_decode((new $resourceClass($resource,true))->toJson(), true);
+        return json_decode((new $resourceClass($resource, true))->toJson(), true);
     }
 
     /**
@@ -236,6 +236,20 @@ class SolrService
 
         // Gets the current resource document, and updates it
         $documentResource = $this->getDocumentFromResource($damResource, $client->getOption('resource'));
+        if (isset($damResource->lom)) {
+            $documentResource['lom'] = $damResource->lom;
+            foreach ($damResource->lom as $key => $value) {
+                $documentResource[$key] = $value;
+            }
+            unset($documentResource['lom']);
+        }
+        if (isset($damResource->lomes)) {
+            $documentResource['lomes'] = $damResource->lomes;
+            foreach ($damResource->lomes as $key => $value) {
+                $documentResource[$key] = $value;
+            }
+            unset($documentResource['lomes']);
+        }
         return $this->saverOrUpdateSolrDocument($client, $documentResource);
     }
 
@@ -360,11 +374,11 @@ class SolrService
         $query = $client->createSelect();
         $facetSet = $query->getFacetSet();
 
-        $list3 = $this->getAllFieldsFromCore($core);
+        $fieldList = $this->getAllFieldsFromCore($core);
         // The facets to be applied to the query
-        $this->facetManager->setFacets($facetSet, [], $core, $list3);
+        $this->facetManager->setFacets($facetSet, [], $core, $fieldList);
         // Limit the query to facets that the user has marked us
-        $this->facetManager->setQueryByFacets($query, [], $core, $list3);
+        $this->facetManager->setQueryByFacets($query, [], $core, $fieldList);
 
         /* if we have a search param, restrict the query */
         if (!empty($search)) {
@@ -402,7 +416,7 @@ class SolrService
         }
 
         // make a new request, filtering for each facet
-        $this->facetManager->setQueryByFacets($query, $facetsFilter, $core, $list3);
+      //  $this->facetManager->setQueryByFacets($query, $facetsFilter, $core, $fieldList);
 
         //overwrite current fq to core specifics
         $coreHandler = new $classCore($query);
@@ -428,12 +442,12 @@ class SolrService
             if (!isset($fields['data']->description->semantic_tags)) $fields['data']->description->semantic_tags = [];
             if (isset($fields['files'])) {
                 foreach ($fields['files'] as $file) {
-                    $last_uuid = substr($file, strrpos($file, "@",-4));
-                    $last_uuid= str_replace("@", "", $last_uuid);
+                    $last_uuid = substr($file, strrpos($file, "@", -4));
+                    $last_uuid = str_replace("@", "", $last_uuid);
 
-                    if (Storage::disk("semantic")->exists($fields["id"]."/".$last_uuid.".json")) {
-                        $json = json_decode(Storage::disk("semantic")->get($fields["id"]."/".$last_uuid.".json"));
-                        if(isset($json->xtags_interlinked)){
+                    if (Storage::disk("semantic")->exists($fields["id"] . "/" . $last_uuid . ".json")) {
+                        $json = json_decode(Storage::disk("semantic")->get($fields["id"] . "/" . $last_uuid . ".json"));
+                        if (isset($json->xtags_interlinked)) {
                             foreach ($json->xtags_interlinked as  $line) {
                                 $line->uuid = $last_uuid;
                                 $line->vocabulary = $json->vocabulary ?? "";
@@ -466,11 +480,8 @@ class SolrService
                         if ($semanticData) {
                             $fields['data']->description->semantic_tags[$key] = $semanticData;
                         }
-                     }
-
+                    }
                 }
-
-
             }
 
             $documentsResponse[] = $fields;
@@ -478,12 +489,12 @@ class SolrService
 
         // the facets returned here are a complete unfiltered list, only the one that has been selected is marked as selected
 
-        $facets = $this->stdToArray($this->facetManager->getFacets($faceSetFound, $facetsFilter, $core,   $list3));
+        $facets = $this->stdToArray($this->facetManager->getFacets($faceSetFound, $facetsFilter, $core,  $fieldList));
 
         foreach ($facets as $key => $facet) {
             ksort($facets[$key]['values']);
         }
-        $excludeKeys = ["created_at", "data", "core_resource_type", "collections", "core_resource_type_str", "files", "id", "name", "organization", "tags", "type", "updated_at", "attached_files", "previews", "tags_str", "types_str", "xeval_id", "catalog","exists","incrementing","preventsLazyLoading","score","usesUniqueIds","wasRecentlyCreated","timestamps"];
+        $excludeKeys = ["created_at", "data", "core_resource_type", "collections", "core_resource_type_str", "files", "id", "name", "organization", "tags", "type", "updated_at", "attached_files", "previews", "tags_str", "types_str", "xeval_id", "catalog", "exists", "incrementing", "preventsLazyLoading", "score", "usesUniqueIds", "wasRecentlyCreated", "timestamps"];
         $filteredFacetArray = [];
         $allKeys = array_column($facets, 'key');
 
