@@ -265,14 +265,6 @@ class MediaService
         $mimeType = $media->mime_type;
         $mediaPath = $media->getPath();
         $fileType = explode('/', $mimeType)[0];
-        if ($fileType === 'image') {
-
-            $manager = new ImageManager(['driver' => 'imagick']);
-            $image    = $manager->make($mediaPath);
-            $thumb  = new MediaSizeImage('thumbnail', $mediaPath, $manager, $image,['thumbnail' => array('width' => 256, 'height' => 144)]);
-            $extension = $image->extension;
-            if ($thumb->checkSize())   $thumb->save($extension);
-        }
         if ($fileType == 'video') {
             $file_directory = str_replace($media->file_name, '', $mediaPath);
             $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.png';
