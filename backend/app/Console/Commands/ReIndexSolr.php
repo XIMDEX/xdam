@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Console\Commands;
+namespace App\Console\Commands;
 
 use App\Services\ResourceService;
 use App\Services\Solr\SolrService;
@@ -58,7 +58,7 @@ class ReIndexSolr extends Command
 
         $resources = $resourceService->getAll(null, null, true);
         $count = 0;
-    //    $reindexLOM = (!in_array('lom', $excludedCores));
+        //    $reindexLOM = (!in_array('lom', $excludedCores));
 
         $reindexed = [];
 
@@ -70,9 +70,9 @@ class ReIndexSolr extends Command
 
             if (!in_array($resourceCoreName, $excludedCores) && $resourceCoreName !== null) {
                 try {
-                    if(!$solrService->documentExists($resource, $solrVersion)) {
-                        $lomes = $resource->lom()->first();
-                        dd(  $this->transformAttributes($lomes));
+                    if (!$solrService->documentExists($resource, $solrVersion)) {
+                        $lom = $this->transformAttributes($resource->lom()->first()->toArray());
+                        $resource->lom = $lom;
                         $solrService->saveOrUpdateDocument($resource, $solrVersion);
                     }
                 } catch (\Throwable $th) {
@@ -85,30 +85,41 @@ class ReIndexSolr extends Command
         $this->line("$count documents indexed");
     }
 
-    private function transformAttributes($attributes) {
+    private function transformAttributes($attributes)
+    {
         $transformed = [];
 
         foreach ($attributes as $key => $value) {
             // Match the pattern general_1_identifier
-            dd($attributes );
             if (preg_match('/^(\w+)_(\d+)_(\w+)$/', $key, $matches)) {
                 $section = $matches[1]; // e.g., "general"
                 $index = $matches[2];   // e.g., "1"
                 $field = $matches[3];   // e.g., "identifier"
 
-                // Construct the new key
-                $newKey = "lom.$index.$field";
+                // Construct the base key
+                $baseKey = "lom.$index.$field";
 
                 // If value is JSON encoded array, decode it
                 if (is_string($value) && is_array(json_decode($value, true))) {
                     $value = json_decode($value, true);
                 }
 
-                // Assign the value to the new key
-                $transformed[$newKey] = $value;
-            } else {
-                // Keep other keys as they are
-                $transformed[$key] = $value;
+                // Check if the value is a nested array
+                if (is_array($value)) {
+                    foreach ($value as $subIndex => $subValue) {
+                        if (is_array($subValue)) {
+                            foreach ($subValue as $subKey => $subFieldValue) {
+                                // Construct the new key for nested values
+                                $newKey = "$baseKey.$subIndex.$subKey";
+                                if($subFieldValue)$transformed[$newKey] = $subFieldValue;
+                            }
+                        } else {
+                            // Handle case where the sub-value is not an array
+                            $newKey = "$baseKey.$subIndex";
+                            if($subValue)$transformed[$newKey] = $subValue;
+                        }
+                    }
+                }
             }
         }
 
