@@ -71,8 +71,14 @@ class ReIndexSolr extends Command
             if (!in_array($resourceCoreName, $excludedCores) && $resourceCoreName !== null) {
                 try {
                     if (!$solrService->documentExists($resource, $solrVersion)) {
-                        $lom = $this->transformAttributes($resource->lom()->first()->toArray());
+                        $lomModel = $resource->lom()->first();
+                        $lom = $lomModel ? $this->transformAttributes($lomModel->toArray(), 'lom') : [];
+
+                        $lomesModel = $resource->lomes()->first();
+                        $lomes = $lomesModel ? $this->transformAttributes($lomesModel->toArray(), 'lomes') : [];
+
                         $resource->lom = $lom;
+                        $resource->lomes = $lomes;
                         $solrService->saveOrUpdateDocument($resource, $solrVersion);
                     }
                 } catch (\Throwable $th) {
@@ -85,40 +91,35 @@ class ReIndexSolr extends Command
         $this->line("$count documents indexed");
     }
 
-    private function transformAttributes($attributes)
+    private function transformAttributes($attributes, $type)
     {
         $transformed = [];
-
+        $exclusionArray = [];
         foreach ($attributes as $key => $value) {
-            // Match the pattern general_1_identifier
             if (preg_match('/^(\w+)_(\d+)_(\w+)$/', $key, $matches)) {
-                $section = $matches[1]; // e.g., "general"
                 $index = $matches[2];   // e.g., "1"
                 $field = $matches[3];   // e.g., "identifier"
+                if(in_array($field, $exclusionArray)) continue;
+                $baseKey = "$type.$index.$field";
 
-                // Construct the base key
-                $baseKey = "lom.$index.$field";
-
-                // If value is JSON encoded array, decode it
                 if (is_string($value) && is_array(json_decode($value, true))) {
                     $value = json_decode($value, true);
                 }
 
-                // Check if the value is a nested array
                 if (is_array($value)) {
                     foreach ($value as $subIndex => $subValue) {
                         if (is_array($subValue)) {
                             foreach ($subValue as $subKey => $subFieldValue) {
-                                // Construct the new key for nested values
                                 $newKey = "$baseKey.$subIndex.$subKey";
-                                if($subFieldValue)$transformed[$newKey] = $subFieldValue;
+                                if ($subFieldValue) $transformed[$newKey] = $subFieldValue;
                             }
                         } else {
-                            // Handle case where the sub-value is not an array
                             $newKey = "$baseKey.$subIndex";
-                            if($subValue)$transformed[$newKey] = $subValue;
+                            if ($subValue) $transformed[$newKey] = $subValue;
                         }
                     }
+                }else{
+                    if($value) $transformed[$baseKey] = $value;
                 }
             }
         }
