@@ -227,7 +227,7 @@ class MediaService
         return $result;
     }
 
-    public function saveVideoSnapshot($thumbPath, $videoSourcePath, $sec = 10)
+    public function saveVideoSnapshot($thumbPath, $videoSourcePath, $sec = 1)
     {
         $ffmpeg = FFMpeg::create([
             'ffmpeg.binaries'  => config('app.ffmpeg_path'),
