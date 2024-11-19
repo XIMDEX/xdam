@@ -476,7 +476,7 @@ class ResourceController extends Controller
 
             $compressed = $this->mediaService->preview($media, $availableSizes[$fileType], $size, $sizeValue);
 
-            if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small', 'thumbnail']))) {
+            if (in_array($size, ['medium', 'small', 'thumbnail'])) {
                 $response = $this->handleImageAndVideoResponse($fileType, $size, $compressed, $mediaFileName, $mediaId, $availableSizes);
             }else{
                 $response = response()->file($compressed);
