@@ -163,7 +163,7 @@ class MediaService
             if (!$thumb_exists) {
                 $this->saveVideoSnapshot($thumbnail, $mediaPath);
             } else {
-                return $this->previewImage($thumbnail, $size, $availableSizes['sizes']);
+                return $this->previewImage($thumbnail, $sizeKey, $availableSizes['sizes']);
             }
         } else if ($size == 'raw') {
             return $this->getPreviewOrDownload($mediaPath, $isDownload);
