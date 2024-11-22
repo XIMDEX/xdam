@@ -6,6 +6,7 @@ use App\Models\DamResource;
 use App\Services\Amazon\GetAmazonResourceMetadataService;
 use App\Services\Amazon\GetAmazonResourceService;
 use App\Services\Amazon\SaveAmazonResourceService;
+use App\Services\ResourceService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -14,12 +15,14 @@ class ResourceAmazonController extends Controller
     private SaveAmazonResourceService $saveAmazonResourceService;
     private GetAmazonResourceService $getAmazonResourceService;
     private GetAmazonResourceMetadataService $getAmazonResourceMetadataService;
+    private ResourceService $resourceService;
 
-    public function __construct(SaveAmazonResourceService $saveAmazonResourceService, GetAmazonResourceService $getAmazonResourceService, GetAmazonResourceMetadataService $getAmazonResourceMetadataService)
+    public function __construct(SaveAmazonResourceService $saveAmazonResourceService, GetAmazonResourceService $getAmazonResourceService, GetAmazonResourceMetadataService $getAmazonResourceMetadataService, ResourceService $resourceService )
     {
         $this->saveAmazonResourceService = $saveAmazonResourceService;
         $this->getAmazonResourceService = $getAmazonResourceService;
         $this->getAmazonResourceMetadataService = $getAmazonResourceMetadataService;
+        $this->resourceService = $resourceService;
 
     }
     public function save(Request $request)
@@ -29,7 +32,7 @@ class ResourceAmazonController extends Controller
         $files['remoteFile'] = $remoteFile;
         $resource = $this->saveAmazonResourceService->save($request->urlFile, $request->nameFile, $request->metadata,  $files);
 
-        return $resource;
+        return response($this->resourceService->get($resource))->setStatusCode(Response::HTTP_OK);
         //return response(new ResourceAmazonResource($resource))->setStatusCode(Response::HTTP_OK);
     }
 
@@ -37,6 +40,15 @@ class ResourceAmazonController extends Controller
         try {
             $metadata = $this->getAmazonResourceMetadataService->getMetadata($damResource, $fileName);
             return response($metadata)->setStatusCode(Response::HTTP_OK);
+        } catch (\Exception $e) {
+            return response(['error' => $e->getMessage()], Response::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function getFileUrl(DamResource $damResource,string $fileName){
+        try {
+            $resource = $this->resourceService->get($damResource);
+            return response($damResource->urlFile)->setStatusCode(Response::HTTP_OK);
         } catch (\Exception $e) {
             return response(['error' => $e->getMessage()], Response::HTTP_NOT_FOUND);
         }
