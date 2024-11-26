@@ -7,9 +7,11 @@ use App\Http\Resources\MediaResource;
 use App\Http\Resources\Solr\LOMSolrResource;
 use App\Models\Lom;
 use App\Models\Lomes;
+use App\Services\Media\MediaSizeImage;
 use App\Utils\DamUrlUtil;
 use App\Utils\Utils;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Intervention\Image\ImageManager;
 use Solarium\Client;
 
 class BaseSolrResource extends JsonResource
@@ -215,12 +217,17 @@ class BaseSolrResource extends JsonResource
     }
 
     protected function imgToBase64() {
+
             $media = $this->getMedia(MediaType::File()->key);
             $file = $media->first();
             $mediaPath = $file->getPath();
-            $type = explode('/', mime_content_type($mediaPath))[1];
-            $data = file_get_contents($mediaPath);
-            $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            $manager = new ImageManager(['driver' => 'imagick']);
+            $image   = $manager->make($mediaPath);
+            $image->fit(256, 144, function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            });
+            $base64 = (string) $image->encode('data-url');
             return $base64;
     }
 }
