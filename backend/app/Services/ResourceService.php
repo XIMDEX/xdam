@@ -73,20 +73,20 @@ class ResourceService
      */
     private XTagsService $xtagService;
 
-     /**
+    /**
 
      * @var XowlImageService
      */
     private XowlImageService $xowlImageService;
 
     /** 
-      * @var XevalSyncActivityService
-      */
+     * @var XevalSyncActivityService
+     */
     private XevalSyncActivityService $xevalSyncActivityService;
 
     /** 
-      * @var XevalSyncAssessmentService
-      */
+     * @var XevalSyncAssessmentService
+     */
     private XevalSyncAssessmentService $xevalSyncAssessmentService;
 
     const PAGE_SIZE = 30;
@@ -97,10 +97,18 @@ class ResourceService
      * @param SolrService $solr
      * @param CategoryService $categoryService
      */
-    public function __construct(MediaService $mediaService, SolrService $solr, CategoryService $categoryService, WorkspaceService $workspaceService,
-                                KakumaService $kakumaService, XTagsService $xtagService, XowlImageService $xowlImageService,SolrConfig $solrConfig,XevalSyncActivityService $xevalSyncActivityService, XevalSyncAssessmentService $xevalSyncAssessmentService)
-
-    {
+    public function __construct(
+        MediaService $mediaService,
+        SolrService $solr,
+        CategoryService $categoryService,
+        WorkspaceService $workspaceService,
+        KakumaService $kakumaService,
+        XTagsService $xtagService,
+        XowlImageService $xowlImageService,
+        SolrConfig $solrConfig,
+        XevalSyncActivityService $xevalSyncActivityService,
+        XevalSyncAssessmentService $xevalSyncAssessmentService
+    ) {
         $this->mediaService = $mediaService;
         $this->categoryService = $categoryService;
         $this->solr = $solr;
@@ -179,7 +187,7 @@ class ResourceService
                 if (property_exists($data->description, $possibleKeyName)) {
                     $property = $data->description->$possibleKeyName;
                     if (is_array($property)) {
-                        if(count($property) > 0) {
+                        if (count($property) > 0) {
                             foreach ($property as $child) {
                                 $this->setCategories($resource, $child, $data);
                             }
@@ -199,7 +207,7 @@ class ResourceService
 
     private function setDefaultLanguageIfNeeded(array $params): void
     {
-        if( isset($params['type']) && $params["type"] === ResourceType::book && !property_exists($params["data"]->description, "lang")) {
+        if (isset($params['type']) && $params["type"] === ResourceType::book && !property_exists($params["data"]->description, "lang")) {
             $params["data"]->description->lang = getenv('BOOK_DEFAULT_LANGUAGE');
         }
     }
@@ -267,7 +275,6 @@ class ResourceService
     {
 
         return DamResource::whereRaw($queryFilters)->get();
-
     }
 
     /**
@@ -288,7 +295,7 @@ class ResourceService
     public function getRecommendedCategory($user_id): array
     {
         if (!$user_id) {
-            throw new Exception ("User id must be sent to get recommendations");
+            throw new Exception("User id must be sent to get recommendations");
         }
 
         $courses = $this->kakumaService->getRecommendedCourses($user_id);
@@ -334,7 +341,7 @@ class ResourceService
                 );
             }
             if (array_key_exists("data", $params) && !empty($params["data"])) {
-    
+
                 $this->setDefaultLanguageIfNeeded($params);
                 if (isset($params['data']->description->entities_linked) || isset($params['data']->description->entities_non_linked)) {
                     if (isset($params['data']->description->entities_linked)) {
@@ -344,7 +351,7 @@ class ResourceService
                         unset($params['data']->description->entities_non_linked);
                     }
                 }
-    
+
                 $resource->update(
                     [
                         'data' => $params['data'],
@@ -352,26 +359,26 @@ class ResourceService
                         'name' => $params['data']->description->name ?? 'name not found'
                     ]
                 );
-    
+
                 $this->linkCategoriesFromJson($resource, $params['data']);
                 $this->linkTagsFromJson($resource, $params['data']);
             }
-    
+
             if (array_key_exists("FilesToRemove", $params)) {
                 foreach ($params["FilesToRemove"] as $mediaID) {
                     $mediaResult = Media::where('id', $mediaID)->first();
-    
+
                     if ($mediaResult !== null) {
                         $this->deleteAssociatedFile($resource, $mediaResult);
                     }
                 }
             }
-    
+
             // TODO save all languages label on taxon path
             if (isset($params['data']->description->semantic_tags)) {
                 $semantic_tags = $params['data']->description->semantic_tags;
                 $lom_params = [
-                    'Taxon Path'=> [],
+                    'Taxon Path' => [],
                     '_tab_key' => "9"
                 ];
                 /*foreach ($semantic_tags as $semantic_tag) {
@@ -393,7 +400,7 @@ class ResourceService
                 }*/
                 $this->setLomData($resource, $lom_params);
             }
-    
+
             $this->saveAssociatedFiles($resource, $params);
             $resource = $resource->fresh();
             $this->solr->saveOrUpdateDocument($resource);
@@ -410,13 +417,13 @@ class ResourceService
                 $XowlQueue->addImageToQueue($mediaFiles);
             }
             $mediaFiles = $resource->getMedia('Preview');
-            if( $params['type'] === "activity"){
-                $parseActivity = $this->xevalSyncActivityService->parseActivityData($resource->id,$params['data'],$params['collection_id']);
+            if ($params['type'] === "activity") {
+                $parseActivity = $this->xevalSyncActivityService->parseActivityData($resource->id, $params['data'], $params['collection_id']);
                 $res = $this->xevalSyncActivityService->syncActivityOnXeval($parseActivity);
             }
             if ($params['type'] === "assessment") {
-                $parseAssessment =  $this->xevalSyncAssessmentService->parseAssessmentData($resource->id,$params['data'],$params['collection_id']);
-                $res = $this->xevalSyncAssessmentService->syncAssessmentOnXeval( $parseAssessment);
+                $parseAssessment =  $this->xevalSyncAssessmentService->parseAssessmentData($resource->id, $params['data'], $params['collection_id']);
+                $res = $this->xevalSyncAssessmentService->syncAssessmentOnXeval($parseAssessment);
             }
             DB::commit();
             return $resource;
@@ -424,10 +431,10 @@ class ResourceService
             DB::rollback();
             throw $th;
         }
-       
     }
 
-    public function updateFromXeval(DamResource $resource,$params){
+    public function updateFromXeval(DamResource $resource, $params)
+    {
         DB::beginTransaction();
         try {
             $params['data'] = json_decode($params['data']);
@@ -439,10 +446,10 @@ class ResourceService
                 );
             }
             if (array_key_exists("data", $params) && !empty($params["data"])) {
-    
+
                 $this->setDefaultLanguageIfNeeded($params);
-    
-             
+
+
                 $json_data_xdam = $resource->data->description;
                 $json_data_xeval = $params['data']->description;
                 $merged_json = (object) array_merge((array) $json_data_xdam, (array) $json_data_xeval);
@@ -459,7 +466,7 @@ class ResourceService
             }
             if (isset($params['data']->description->semantic_tags)) {
                 $lom_params = [
-                    'Taxon Path'=> [],
+                    'Taxon Path' => [],
                     '_tab_key' => "9"
                 ];
                 $this->setLomData($resource, $lom_params);
@@ -467,7 +474,7 @@ class ResourceService
             $this->saveAssociatedFiles($resource, $params);
             $resource = $resource->fresh();
             $this->solr->saveOrUpdateDocument($resource);
-           
+
             DB::commit();
             return $resource;
         } catch (\Throwable $th) {
@@ -476,7 +483,7 @@ class ResourceService
         }
     }
 
-      /**
+    /**
      * @param DamResource $resource
      * @param $params
      * @return DamResource
@@ -516,10 +523,8 @@ class ResourceService
         $toWorkspaceId = null,
         $fromBatchType = null,
         $launchThrow = true
-    ): DamResource
-
-    {
-        if (is_string($params['data'] )) $params['data'] = json_decode($params['data']);
+    ): DamResource {
+        if (is_string($params['data'])) $params['data'] = json_decode($params['data']);
         /*
             $wid cannot be null
         */
@@ -528,7 +533,7 @@ class ResourceService
             $wsp = explode(',', $params['toWorkspaceId']);
         }
         $paramsData =  is_array($params['data']) ?  Utils::arrayToObject($params['data']) : $params['data'];
-        $exceptionStrings = ['notWorkspace' => 'Undefined workspace','notOrganization' => 'The workspace doesn\'t belong to an organization'];
+        $exceptionStrings = ['notWorkspace' => 'Undefined workspace', 'notOrganization' => 'The workspace doesn\'t belong to an organization'];
         if ($wsp) {
             $wsps = [];
             foreach ($wsp as $value) {
@@ -541,13 +546,13 @@ class ResourceService
 
         $name = array_key_exists('name', $params) ? $params["name"] : "";
         $type = $fromBatchType ?? ResourceType::fromKey($params["type"])->value;
-        $idResourceData = ($type == ResourceType::course) ? $params['kakuma_id'] : Str::orderedUuid() ;
+        $idResourceData = ($type == ResourceType::course) ? $params['kakuma_id'] : Str::orderedUuid();
         $nameResource   = $paramsData->description->name ?? $name;
-        
-        if($wsp === null) throw new Exception($exceptionStrings['notWorkspace']);
+
+        if ($wsp === null) throw new Exception($exceptionStrings['notWorkspace']);
         if (count($wsps) === 0) $wsps[] =  Workspace::find(Auth::user()->selected_workspace);
         foreach ($wsps as $workspace) {
-            if(!$workspace->organization()->first()) throw new Exception($exceptionStrings['notOrganization']);
+            if (!$workspace->organization()->first()) throw new Exception($exceptionStrings['notOrganization']);
         }
 
         $this->setDefaultLanguageIfNeeded($params);
@@ -574,8 +579,8 @@ class ResourceService
             foreach ($wsps as $workspace) {
                 $this->setResourceWorkspace($newResource, $workspace);
             }
-            $this->linkCategoriesFromJson($newResource,$paramsData );
-            $this->linkTagsFromJson($newResource,$paramsData);
+            $this->linkCategoriesFromJson($newResource, $paramsData);
+            $this->linkTagsFromJson($newResource, $paramsData);
             $this->saveAssociatedFiles($newResource, $params);
             $newResource = $newResource->fresh();
             $this->solr->saveOrUpdateDocument($newResource);
@@ -609,11 +614,11 @@ class ResourceService
     public function duplicateResource($data): DamResource
     {
         $newResourceData = $data->toArray();
-        $newResourceData['id'] = Str::orderedUuid(); 
-       // $workspace = Workspace::find(Auth::user()->selected_workspace);
-       
+        $newResourceData['id'] = Str::orderedUuid();
+        // $workspace = Workspace::find(Auth::user()->selected_workspace);
+
         $newData = $newResourceData['data'];
-        $newData->description->name = $newData->description->name."_copy";
+        $newData->description->name = preg_replace('/_copy/', '',$newData->description->name) . "_copy";
         $newResourceData['name'] = $newData->description->name;
         $newResourceData['data'] =  $newData;
         $newResource = DamResource::create($newResourceData);
@@ -627,19 +632,20 @@ class ResourceService
 
         $newResource = $this->duplicateAssociatedData($data, $newResource);
         $newCopy = new \App\Models\Copy([
-            'id' => (string) Str::uuid(),  
-            'parent_id' => null,  
-            'hash_new' => $newResourceData['id'], 
-            'hash_old' => $data->id,  
-            'status' => 'pending'  
+            'id' => (string) Str::uuid(),
+            'parent_id' => null,
+            'hash_new' => $newResourceData['id'],
+            'hash_old' => $data->id,
+            'status' => 'pending'
         ]);
 
-        $newCopy->save();   
-       
+        $newCopy->save();
+
         return $newResource;
     }
 
-    public function duplicateUpdateStatus($copy, $data) {
+    public function duplicateUpdateStatus($copy, $data)
+    {
         try {
             if ($data['status'] === 'OK') $data['status'] = 'completed';
             if ($data['status'] === 'KO') $data['status'] = 'error';
@@ -651,7 +657,7 @@ class ResourceService
             $copy->status = $data['status'];
             if ($data['status'] == 'completed' && !isset($data['message'])) {
                 $copy->message = '';
-            } 
+            }
             if (isset($data['message'])) {
                 $copy->message = $data['message'];
             }
@@ -661,8 +667,9 @@ class ResourceService
             throw $e;
         }
     }
-    
-    public function getCopy(String $copy) {
+
+    public function getCopy(String $copy)
+    {
         try {
             $copy = Copy::where('hash_new', $copy)->first();
             if (!$copy) {
@@ -674,18 +681,19 @@ class ResourceService
         }
     }
 
-    public function processDuplicateExtraData(DamResource $damResource, $dataToProcess,$type){
+    public function processDuplicateExtraData(DamResource $damResource, $dataToProcess, $type)
+    {
         foreach ($dataToProcess as $value) {
             $data = array_merge($value['formData'], ['_tab_key' => $value['key']]);
-            if($type==="lom"){
+            if ($type === "lom") {
                 $this->setLomData($damResource, $data);
-            }else if($type==="lomes"){
+            } else if ($type === "lomes") {
                 $this->setLomesData($damResource, $data);
-            }           
+            }
         }
     }
-    
-    public function resourcesSchema ()
+
+    public function resourcesSchema()
     {
         $path = storage_path('solr_validators');
         $dir = new DirectoryIterator($path);
@@ -693,7 +701,7 @@ class ResourceService
         foreach ($dir as $fileinfo) {
             if (!$fileinfo->isDot()) {
                 $fileName = $fileinfo->getFilename();
-                $json_file = file_get_contents($path .'/'. $fileName);
+                $json_file = file_get_contents($path . '/' . $fileName);
                 $key = str_replace('.json', '', $fileName);
                 $resourceName = ucfirst($this->solrConfig->getNameCoreConfig(str_replace('_validator', '', $key)));
                 $json = json_decode($json_file);
@@ -717,7 +725,7 @@ class ResourceService
         foreach ($dir as $fileinfo) {
             if (!$fileinfo->isDot()) {
                 $fileName = $fileinfo->getFilename();
-                $json_file = file_get_contents($path .'/'. $fileName);
+                $json_file = file_get_contents($path . '/' . $fileName);
                 $key = str_replace('.json', '', $fileName);
                 $schemas['collection_config'][$key] = json_decode($json_file);
             }
@@ -728,29 +736,30 @@ class ResourceService
 
     private function searchPreviewImage($data, $name): ?UploadedFile
     {
-        $fileName = str_replace('.', '_', $name).'_preview';
+        $fileName = str_replace('.', '_', $name) . '_preview';
 
         return array_key_exists($fileName, $data) ? $data[$fileName] : null;
     }
 
-    public function storeBatch ($data)
+    public function storeBatch($data)
     {
         $collection = ModelsCollection::find($data['collection']);
         $organization = $collection->organization()->first();
         $wsps = [];
         try {
             $wsps = json_decode($data['workspaces']);
-        } catch(\Exception $exc) {}
+        } catch (\Exception $exc) {
+        }
 
         if (!isset($data['workspaces']) && !$data['workspaces']) {
-            if($data['create_wsp'] === '1') {
+            if ($data['create_wsp'] === '1') {
                 $wsp = $this->workspaceService->create($organization->id, $data['workspace'])->id;
             } else {
                 $wsp = $data['workspace'];
             }
             $wsps[] = $wsp;
         }
-        
+
 
         $genericResourceDescription = array_key_exists('generic', $data) ? json_decode($data['generic'], true) : [];
 
@@ -797,7 +806,7 @@ class ResourceService
     {
         $lomesSchema =  Utils::getLomesSchema($asArray);
 
-        $lomesSchemaClient = array_keys(config('solr_facets.client.'.env('APP_CLIENT', 'DEFAULT')));
+        $lomesSchemaClient = array_keys(config('solr_facets.client.' . env('APP_CLIENT', 'DEFAULT')));
 
         $tabsToDel = [];
         if (count($lomesSchemaClient) > 0) {
@@ -844,7 +853,7 @@ class ResourceService
         return Utils::getLomSchema($asArray);
     }
 
-    public function searchForAssociativeKey($key, $tabKey, $array )
+    public function searchForAssociativeKey($key, $tabKey, $array)
     {
         //move to Utils
         foreach ($array as $k => $val) {
@@ -870,7 +879,7 @@ class ResourceService
 
         foreach ($tabSchema['properties'] as $label => $props) {
             foreach ($formData as $f_key => $f_value) {
-                if($f_key === $label && $f_value !== null) {
+                if ($f_key === $label && $f_value !== null) {
                     $updateArray[$props['data_field']] = $f_value;
                 }
             }
@@ -896,7 +905,7 @@ class ResourceService
 
         foreach ($tabSchema['properties'] as $label => $props) {
             foreach ($formData as $f_key => $f_value) {
-                if($f_key === $label && $f_value !== null) {
+                if ($f_key === $label && $f_value !== null) {
                     $updateArray[$props['data_field']] = $f_value;
                 }
             }
@@ -911,7 +920,7 @@ class ResourceService
     {
         $schema = $this->lomesSchema(true);
         $lomes = $damResource->lomes()->first();
-        if(!$lomes) {
+        if (!$lomes) {
             return [];
         }
         $lomes = $lomes->toArray();
@@ -923,7 +932,7 @@ class ResourceService
     {
         $schema = $this->lomSchema(true);
         $lom = $damResource->lom()->first();
-        if(!$lom) {
+        if (!$lom) {
             return [];
         }
         $lom = $lom->toArray();
@@ -947,7 +956,6 @@ class ResourceService
                     'type' => $prop_values['type']
                 ];
             }
-
         }
 
         foreach ($data as $db_field => $value) {
@@ -962,7 +970,7 @@ class ResourceService
                             $response[$key]['formData'][$label] = $value;
                         }
                     }
-                    }
+                }
                 if (count($response[$key]['formData']) === 0) unset($response[$key]);
             }
         }
@@ -981,18 +989,18 @@ class ResourceService
     public function delete($resourceId)
     {
         $resource = DamResource::withTrashed()->findOrFail($resourceId);
-        if($resource->type === "activity"){
+        if ($resource->type === "activity") {
             $data = $resource->data;
             $data->description->status_id = 3;
-            $parseActivity = $this->xevalSyncActivityService->parseActivityData($resource->id,$data,$resource->collection_id);
+            $parseActivity = $this->xevalSyncActivityService->parseActivityData($resource->id, $data, $resource->collection_id);
             $res = $this->xevalSyncActivityService->syncActivityOnXeval($parseActivity);
         }
-        if(Copy::where('hash_new', $resourceId)->exists()){
+        if (Copy::where('hash_new', $resourceId)->exists()) {
             $copy = Copy::where('hash_new', $resourceId)->first();
             $copy->status = 'deleted';
             $copy->save();
             $copy->delete();
-            foreach ($resource->getMedia('File') as $mediaFile){
+            foreach ($resource->getMedia('File') as $mediaFile) {
                 $copy_child =  Copy::where('hash_new', $mediaFile->id)->first();
                 $copy_child->status = 'deleted';
                 $copy_child->save();
@@ -1006,7 +1014,6 @@ class ResourceService
         } catch (\Throwable $th) {
             throw $th;
         }
-
     }
 
     /**
@@ -1020,12 +1027,12 @@ class ResourceService
         if ($resource->type == ResourceType::course && !$onlyLocal) {
             $this->kakumaService->softDeleteCourse($resource->id, $force);
         }
-        if(Copy::where('hash_new', $resource->id)->exists()){
+        if (Copy::where('hash_new', $resource->id)->exists()) {
             $copy = Copy::where('hash_new', $resource->id)->first();
             $copy->status = 'deleted';
             $copy->save();
             $copy->delete();
-            foreach ($resource->getMedia('File') as $mediaFile){
+            foreach ($resource->getMedia('File') as $mediaFile) {
                 $copy_child =  Copy::where('hash_new', $mediaFile->id)->first();
                 $copy_child->status = 'deleted';
                 $copy_child->save();
@@ -1036,7 +1043,6 @@ class ResourceService
         $this->solr->saveOrUpdateDocument($resource);
 
         return true;
-
     }
 
     /**
@@ -1055,7 +1061,6 @@ class ResourceService
         $this->solr->saveOrUpdateDocument($resource);
 
         return true;
-
     }
 
     /**
@@ -1097,7 +1102,7 @@ class ResourceService
                 $resource->categories()->attach($category);
             }
         } else {
-            throw new Exception ("category type and resource type are not equals");
+            throw new Exception("category type and resource type are not equals");
         }
         $this->solr->saveOrUpdateDocument($resource);
         return $resource;
@@ -1106,12 +1111,12 @@ class ResourceService
     public function setOnlyOneCategoryTo(DamResource $resource, Category $category): DamResource
     {
         if ($category->type == $resource->type) {
-            foreach($resource->categories()->get() as $cat) {
+            foreach ($resource->categories()->get() as $cat) {
                 $resource->categories()->detach($cat);
             }
             $resource->categories()->attach($category);
         } else {
-            throw new Exception ("category type and resource type are not equals");
+            throw new Exception("category type and resource type are not equals");
         }
         $this->solr->saveOrUpdateDocument($resource);
         return $resource;
@@ -1165,7 +1170,7 @@ class ResourceService
                 $this->solr->saveOrUpdateDocument($resource);
             }
         } else {
-            throw new Exception ("category type and resource type are not equals");
+            throw new Exception("category type and resource type are not equals");
         }
         return $resource;
     }
@@ -1204,13 +1209,12 @@ class ResourceService
         foreach ($ids as $id) {
             $media = Media::findOrFail($id);
             $media->delete();
-            if(Copy::where('hash_new', $id)->exists()){
+            if (Copy::where('hash_new', $id)->exists()) {
                 $copy = Copy::where('hash_new', $id)->first();
                 $copy->status = 'deleted';
                 $copy->save();
                 $copy->delete();
             }
-            
         }
         $this->solr->saveOrUpdateDocument($resource);
         return $resource->refresh();
@@ -1225,7 +1229,7 @@ class ResourceService
     public function deleteAssociatedFile(DamResource $resource, Media $media): DamResource
     {
         $media->delete();
-        if(Copy::where('hash_new', $media->id)->exists()){
+        if (Copy::where('hash_new', $media->id)->exists()) {
             $copy = Copy::where('hash_new', $media->id)->first();
             $copy->status = 'deleted';
             $copy->save();
@@ -1235,7 +1239,8 @@ class ResourceService
         return $resource->refresh();
     }
 
-    public function updateAsLast($toBeCloned, $created) {
+    public function updateAsLast($toBeCloned, $created)
+    {
         $collection = $toBeCloned->collection()->first();
         $theClon = $collection->resources()->orderBy($created ? 'created_at' : 'updated_at', 'desc')->first();
         $toBeCloned->data = $theClon->data;
@@ -1244,15 +1249,13 @@ class ResourceService
         return $toBeCloned;
     }
 
-    public function updateAsOther($toBeCloned, $theClon) {
-
-    }
+    public function updateAsOther($toBeCloned, $theClon) {}
 
     public function getResource($resourceID, $collectionID)
     {
         $resource = DamResource::where('id', $resourceID)
-                        ->where('collection_id', $collectionID)
-                        ->first();
+            ->where('collection_id', $collectionID)
+            ->first();
 
         return $resource;
     }
@@ -1260,7 +1263,7 @@ class ResourceService
     public function getCollection($collectionID)
     {
         $collection = ModelsCollection::where('id', $collectionID)
-                        ->first();
+            ->first();
 
         return $collection;
     }
@@ -1275,66 +1278,79 @@ class ResourceService
     {
         foreach ($originalResource->getMedia('File') as $mediaFile) {
             $path_parts = pathinfo($mediaFile->file_name);
-            $newFileName = $path_parts['filename'] . '_copy.' . $path_parts['extension'];
-            $newMediaFilePath = $path_parts['dirname'] . '/' . $newFileName;
-            
+            $filename = $path_parts['filename'];
+            $extension = $path_parts['extension'];
+
+            $newFileName = preg_replace('/_copy/', '', $filename) . '_copy.' . $extension;
+            $newMediaFilePath = storage_path('app/public/'.$mediaFile->uuid . '/' . $newFileName);
+
             if (!file_exists($newMediaFilePath)) {
-                // Copy the file to the new location
-                copy($mediaFile->getPath(), $newMediaFilePath);
+                $path = ($mediaFile->getPath());
+                $dir = dirname($newMediaFilePath);
+                if (!file_exists($dir)) {
+                    mkdir($dir);
+                }
+                copy($path, $newMediaFilePath);
             }
 
             $mediaFile->name = $newFileName;
             $newMedia = $newResource->addMedia($newMediaFilePath)
-                        ->usingName($newFileName)
-                        ->preservingOriginal()
-                        ->withCustomProperties(['parent_id' => $originalResource->id])
-                        ->toMediaCollection('File');
+                ->usingName($newFileName)
+                ->preservingOriginal()
+                ->withCustomProperties(['parent_id' => $originalResource->id])
+                ->toMediaCollection('File');
 
 
             $newCopy = new \App\Models\Copy([
-                'id' => (string) Str::uuid(),  
-                'parent_id' => $originalResource->id,  
-                'hash_new' => $newMedia->id, 
-                'hash_old' => $mediaFile->id,  
+                'id' => (string) Str::uuid(),
+                'parent_id' => $originalResource->id,
+                'hash_new' => $newMedia->id,
+                'hash_old' => $mediaFile->id,
                 'status' =>  "completed"
             ]);
-        
-            $newCopy->save();             
+
+            $newCopy->save();
         }
 
         foreach ($originalResource->getMedia('Preview') as $mediaFile) {
             $path_parts = pathinfo($mediaFile->file_name);
-            $newFileName = $path_parts['filename'] . '_copy.' . $path_parts['extension'];
-            $newMediaFilePath = $path_parts['dirname'] . '/' . $newFileName;
-            
+            $filename   = $path_parts['filename'];
+            $extension  = $path_parts['extension'];
+
+            $newFileName      = preg_replace('/_copy/', '', $filename) . '_copy.' . $extension;
+            $newMediaFilePath = storage_path('app/public/'.$mediaFile->uuid . '/' . $newFileName);
+
             if (!file_exists($newMediaFilePath)) {
-                // Copy the file to the new location
-                copy($mediaFile->getPath(), $newMediaFilePath);
+                $path = $mediaFile->getPath();
+                $dir = dirname($newMediaFilePath);
+                if (!file_exists($dir)) {
+                    mkdir($dir);
+                }
+                copy($path, $newMediaFilePath);
             }
 
             $mediaFile->name = $newFileName;
             $newResource->addMedia($newMediaFilePath)
-                        ->usingName($newFileName)
-                        ->withCustomProperties(['parent_id' => $originalResource->id])
-                        ->preservingOriginal()
-                        ->toMediaCollection('Preview');
-            
+                ->usingName($newFileName)
+                ->withCustomProperties(['parent_id' => $originalResource->id])
+                ->preservingOriginal()
+                ->toMediaCollection('Preview');
+
             $newCopy = new \App\Models\Copy([
-                'id' => (string) Str::uuid(),  
-                'parent_id' => $originalResource->id,  
-                'hash_new' => $newMedia->uuid, 
-                'hash_old' => $mediaFile->uuid,  
-                'status' => 'completed'  
+                'id' => (string) Str::uuid(),
+                'parent_id' => $originalResource->id,
+                'hash_new' => $newMedia->uuid,
+                'hash_old' => $mediaFile->uuid,
+                'status' => 'completed'
             ]);
-            
-            $newCopy->save();   
-            
+
+            $newCopy->save();
         }
 
         foreach ($originalResource->categories as $category) {
             $newResource->categories()->attach($category);
         }
-        
+
         foreach ($originalResource->tags as $tag) {
             $newResource->tags()->attach($tag);
         }
