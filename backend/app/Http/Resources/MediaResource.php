@@ -18,16 +18,16 @@ class MediaResource extends JsonResource
      */
     public function toArray($request)
     {
-        $thumbnailsTypes = ThumbnailTypes::getValues();
+        /*$thumbnailsTypes = ThumbnailTypes::getValues();
         $thumbnails = [];
         if ($this->collection_name == MediaType::Preview()->key)
         {
             foreach($thumbnailsTypes as $thumbnailType)
             {
                 $hasPreview = $this->hasGeneratedConversion($thumbnailType);
-                $thumbnails[$thumbnailType] = $hasPreview;
+               $thumbnails[$thumbnailType] = $hasPreview;
             }
-        }
+        }*/
 
 
         $parent_id = $this->hasCustomProperty('parent_id') ? $this->getCustomProperty('parent_id') : "";
@@ -38,7 +38,7 @@ class MediaResource extends JsonResource
             'parent_id' => $parent_id,
             'file_name' => $this->file_name,
             'mime_type' => $this->mime_type,
-            'thumbnails' => $thumbnails,
+          //  'thumbnails' => $thumbnails,
         ];
     }
 }

@@ -28,12 +28,21 @@ First, clone the repository from GitHub using the following command:
 git clone https://github.com/XIMDEX/xdam.git
 ```
 
-## 3. Environment Configuration
+
+## 2. Environment Configuration
 Create and configure the .env file. To do this, first go to the backend folder. You can use the .env.example file as a base:
 ```bash
 cd backend
 cp .env.example .env
 nano .env
+```
+
+## 3. Install Dependencies
+
+To install the necessary dependencies, run the following command:
+
+```bash
+composer install
 ```
 
 ## 4. Database Migration
@@ -69,12 +78,6 @@ sudo apt install jpegoptim optipng pngquant gifsicle ffmpeg
 sudo npm install -g svgo
 ```
 
-Then, navigate to the backend directory and install Composer dependencies:
-```bash
-cd backend
-composer install
-php artisan migrate
-```
 
 ## 7. Final Configuration Steps
 
@@ -84,4 +87,5 @@ Finally, execute the following commands:
 sudo php artisan solrCores:maintenance --action=ALL
 sudo php artisan optimize:clear
 sudo php artisan passport:install
+php artisan db:seed
 ```
