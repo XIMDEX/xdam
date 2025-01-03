@@ -11,9 +11,11 @@ use App\Utils\DamUrlUtil;
 
 class MultimediaSolrResource extends BaseSolrResource
 {
+
     public function __construct($resource, $lomSolrClient = null, $lomesSolrClient = null, $toSolr = false)
     {
         parent::__construct($resource, $lomSolrClient, $lomesSolrClient);
+
     }
 
     protected function getPreviews()
@@ -88,11 +90,15 @@ class MultimediaSolrResource extends BaseSolrResource
     public function toArray($request)
     {
         $files = $this->getFiles();
-
+        $data  = json_decode($this->getData());
+        if (isset($files[0]) && env('SOLR_THUMBNAIL')) {
+            $data->img = $this->imgToBase64($files[0]);
+        }
+        $data = json_encode($data);
         return [
             'id'                    => $this->getID(),
             'name'                  => $this->getName(),
-            'data'                  => $this->getData(),
+            'data'                  => $data,
             'active'                => $this->getActive(),
             'type'                  => $this->getType(),
             'types'                 => $this->getTypes($files),
@@ -108,7 +114,7 @@ class MultimediaSolrResource extends BaseSolrResource
             'created_at'            => $this->created_at,
             'updated_at'            => $this->updated_at,
             'lom'                   => $this->getLOMValues(),
-            'lomes'                 => $this->getLOMValues('lomes')
+            'lomes'                 => $this->getLOMValues('lomes'),
         ];
     }
 }

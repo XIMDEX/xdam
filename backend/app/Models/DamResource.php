@@ -40,7 +40,7 @@ class DamResource extends Model implements HasMedia, TaggableInterface
         "id" => "string"
     ];
 
-    public function registerMediaConversions(\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+   /* public function registerMediaConversions(\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
         $this->addMediaConversion(ThumbnailTypes::thumb_64x64)
             ->width(64)
@@ -51,7 +51,7 @@ class DamResource extends Model implements HasMedia, TaggableInterface
             ->width(200)
             ->height(400)
             ->performOnCollections(MediaType::Preview()->key);
-    }
+    }*/
 
     public function categories(): BelongsToMany
     {
