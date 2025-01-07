@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Imagick\Driver;
 
 class RenderService
 {
@@ -38,9 +39,9 @@ class RenderService
     public function generateAvif($path)
     {
         try {
-            $manager = new ImageManager(['driver' => 'imagick']);
-            $image    = $manager->make(Storage::get($path));
-            $avifImage = $image->encode('avif', 70);
+            $manager = new ImageManager(new Driver());
+            $image    = $manager->read(Storage::get($path));
+            $avifImage = $image->toAvif(70);
             $avifPath = $this->getConvertedPath($path, 'avif');
             Storage::put($avifPath, (string) $avifImage);
             return true;
