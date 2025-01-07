@@ -1001,7 +1001,7 @@ class ResourceController extends Controller
     private function handleImageAndVideoResponse($fileType, $size, $compressed, $mediaFileName, $mediaId, $availableSizes)
     {
         if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small', 'thumbnail']))) {
-            $response = response()->file($compressed->basePath());
+            $response = response()->file($compressed->origin()->filePath());
             $this->setCommonHeaders($response, $mediaFileName, $compressed);
 
            // if ($fileType == 'image') {
@@ -1022,10 +1022,10 @@ class ResourceController extends Controller
         $response->headers->set('Cache-Control', 'public, max-age=' . $maxAge . ', immutable');
         $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
 
-        $etag = md5_file($compressed->basePath());
+        $etag = md5_file($compressed->origin()->filePath());
         $response->setEtag($etag);
 
-        $lastModified = filemtime($compressed->basePath());
+        $lastModified = filemtime($compressed->origin()->filePath());
         $response->setLastModified(Carbon::createFromTimestamp($lastModified));
     }
 
