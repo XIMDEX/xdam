@@ -444,7 +444,7 @@ class ResourceController extends Controller
 
 
             if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small', 'thumbnail']))) {
-                $response = response()->file($compressed->basePath());
+                $response = response()->file($compressed->origin()->filePath());
                 $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
 
                 $maxAge = 3600 * 24 * 7;
@@ -452,15 +452,15 @@ class ResourceController extends Controller
                 $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
 
                 // Añadir ETag
-                $etag = md5_file($compressed->basePath());
+                $etag = md5_file($compressed->origin()->filePath());
                 $response->setEtag($etag);
 
                 // Añadir Last-Modified
-                $lastModified = filemtime($compressed->basePath());
+                $lastModified = filemtime($compressed->origin()->filePath());
                 $response->setLastModified(Carbon::createFromTimestamp($lastModified));
 
                 if ($fileType == 'image') {
-                    $response_cache = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
+                    /*$response_cache = $compressed->response('jpeg', $availableSizes[$fileType]['sizes'][$size] === 'raw' ? 100 : $availableSizes[$fileType]['qualities'][$size]);
 
                     $response_cache->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $mediaFileName));
 
@@ -469,13 +469,13 @@ class ResourceController extends Controller
                     $response_cache->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
 
                     // Añadir ETag
-                    $etag = md5_file($compressed->basePath());
+                    $etag = md5_file($compressed->origin()->filePath());
                     $response_cache->setEtag($etag);
 
                     // Añadir Last-Modified
-                    $lastModified = filemtime($compressed->basePath());
+                    $lastModified = filemtime($compressed->origin()->filePath());
                     $response_cache->setLastModified(Carbon::createFromTimestamp($lastModified));
-                    Cache::put("{$mediaId}__$size", $response_cache);
+                    Cache::put("{$mediaId}__$size", $response_cache);*/
                 }
                 return $response;
             }

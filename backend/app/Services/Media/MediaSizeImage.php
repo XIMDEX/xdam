@@ -42,7 +42,8 @@ class MediaSizeImage
     * @return void
     */
    public function save(){
-    $pathSave = $this->image->dirname."/__".$this->size.".jpg";
+    $originalPath = $this->image->origin()->filePath();
+    $pathSave = dirname($originalPath) . "/__" . $this->size . ".jpg";
     $aspectRatio = $this->getAspectRatio($this->width /  $this->height);
     if ($this->size === 'default'){
             $pathSave = $this->path;
@@ -62,7 +63,7 @@ class MediaSizeImage
     $heightNew      = $this->sizes[$this->size]['height'] ;
     if ($widthNew >=  $this->width &&  $heightNew >=  $this->height ) $result = false;
     return $result;
-   }    
+   }
 
    /**
     * Check if a specific image exits.
@@ -73,7 +74,7 @@ class MediaSizeImage
     $result = false;
     $path = $this->path;
     if ($this->size !== 'default') {
-        $path = $this->image->dirname."/__".$this->size.".jpg";
+        $path = dirname($this->image->origin()->filePath())."/__".$this->size.".jpg";
     }
     $result = file_exists($path);
     return $result;
@@ -85,9 +86,9 @@ class MediaSizeImage
     * @return \Intervention\Image\Image
     */
    public function getImage(){
-    $result = $this->image->dirname."/__".$this->size.".jpg";
+    $result = dirname($this->image->origin()->filePath())."/__".$this->size.".jpg";
     if($this->size === "default" ) return $this->image;  //$result = $this->path;
-    return  $this->manager->make($result);
+    return  $this->manager->read($result);
    }
 
    private function getAspectRatio($aspectRatio){
