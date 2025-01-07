@@ -151,7 +151,7 @@ class ResourceService
                         ["parent_id" => $model->id],
                         $params[$type],
                         null,
-                        $availableSizes
+                        $availableSizes['image']['sizes']
                     );
                 }
             }
