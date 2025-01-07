@@ -99,6 +99,11 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+        'avif_conversion' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/avif_conversion.log'),
+            'level' => 'info',
+        ],
     ],
 
 ];

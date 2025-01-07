@@ -79,13 +79,12 @@ class MediaService
         $fileType = explode('/', $mimeType)[0];
         $file_directory = str_replace($media->file_name, '', $mediaPath);
         $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.png';
-
         if ($fileType === 'video') {
             return $isDownload
                 ? $this->downloadVideo($media->id, $media->file_name, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail)
                 : $this->previewVideo($media->id, $media->file_name, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail);
         } else if ($fileType === 'image') {
-            return $this->previewImage($mediaPath, $sizeKey);
+            return $this->previewImage($mediaPath, $sizeKey, $availableSizes['sizes']);
         } else {
             return $mediaPath;
         }
@@ -166,7 +165,7 @@ class MediaService
             if (!$thumb_exists) {
                 $this->saveVideoSnapshot($thumbnail, $mediaPath);
             } else {
-                return $this->previewImage($thumbnail, $size);
+                return $this->previewImage($thumbnail, $sizeKey, $availableSizes['sizes']);
             }
         } else if ($size == 'raw') {
             return $this->getPreviewOrDownload($mediaPath, $isDownload);
@@ -211,20 +210,26 @@ class MediaService
         return VideoStreamer::streamFile($path);
     }
 
-    private function previewImage($mediaPath, $type = 'raw')
+    private function previewImage($mediaPath, $type = 'raw', $sizes)
     {
         $manager = new ImageManager(new Driver());
-        $image = $manager->read($mediaPath);
-        $imageProcess = new MediaSizeImage($type, $mediaPath, $manager, $image);
-        if (!$imageProcess->checkSize()) $imageProcess->setSizeDefault();
-        if (!$imageProcess->imageExists()) {
-            $imageProcess->save();
+        $image   = $manager->read($mediaPath);
+        $imageProcess = new MediaSizeImage($type, $mediaPath, $manager, $image, $sizes);
+        $extension = pathinfo($mediaPath, PATHINFO_EXTENSION);
+        if ($type !== 'raw') {
+            // if (!$imageProcess->checkSize()) $imageProcess->setSizeDefault();
+            if (!$imageProcess->imageExists($extension)) {
+                /*if (!$imageProcess->pngHasAlpha() && $extension === 'png') {
+                    $extension = 'jpg';
+                }*/
+                $imageProcess->save($extension);
+            }
         }
-        $result = $imageProcess->getImage();
+        $result = $imageProcess->getImage($extension);
         return $result;
     }
 
-    public function saveVideoSnapshot($thumbPath, $videoSourcePath, $sec = 10)
+    public function saveVideoSnapshot($thumbPath, $videoSourcePath, $sec = 1)
     {
         $ffmpeg = FFMpeg::create([
             'ffmpeg.binaries'  => config('app.ffmpeg_path'),
@@ -243,7 +248,7 @@ class MediaService
      * @param null $files
      * @return array|mixed
      */
-    public function addFromRequest(Model $model,  $collection, $customProperties, $files = null, $requestKey = null)
+    public function addFromRequest(Model $model,  $collection, $customProperties, $files = null, $requestKey = null,$availableSizes)
     {
         $collection = $collection ?? $this->defaultFileCollection;
         if (!empty($requestKey) && empty($files)) {
@@ -268,13 +273,14 @@ class MediaService
             $this->saveVideoSnapshot($thumbnail, $mediaPath);
         }
         if ($fileType === 'image') {
+            $extension = pathinfo($mediaPath, PATHINFO_EXTENSION);
             $manager = new ImageManager(new Driver());
             $image   = $manager->read($mediaPath);
             $image2  = $manager->read($mediaPath);
-            $thumb  = new MediaSizeImage('thumbnail', $mediaPath, $manager, $image);
-            $small  = new MediaSizeImage('small', $mediaPath, $manager, $image2);
-            if ($thumb->checkSize()) $thumb->save();
-            if ($small->checkSize()) $small->save();
+            $thumb  = new MediaSizeImage('thumbnail', $mediaPath, $manager, $image, $availableSizes);
+            $small  = new MediaSizeImage('small', $mediaPath, $manager, $image2, $availableSizes);
+            if ($thumb->checkSize()) $thumb->save($extension);
+            if ($small->checkSize()) $small->save($extension);
         }
         return !empty($mediaList) ? end($mediaList) : [];
     }
