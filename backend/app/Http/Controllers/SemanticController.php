@@ -231,6 +231,7 @@ class SemanticController extends Controller
             Response::HTTP_OK
         );
     }
+
     private function getAvailableResourceSizes()
     {
         $sizes = [
@@ -239,8 +240,8 @@ class SemanticController extends Controller
                 'sizes' => [
                     'thumbnail' => array('width' => 256, 'height' => 144),
                     'small'     => array('width' => 426, 'height' => 240),
-                    'medium'    => array('width' => 1920, 'height' => 1080), //HD
-                    'large'     => array('width' => 3840, 'height' => 2160), //4k
+                    'medium'    => array('width' => 1280, 'height' => 720), 
+                    'large'     => array('width' => 1920, 'height' => 1080), //4k 3840x2160 HD 1920x1080
                     'raw'       => 'raw',
                     'default'   => array('width' => 1280, 'height' => 720)
                 ],
