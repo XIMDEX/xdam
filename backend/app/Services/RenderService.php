@@ -57,34 +57,37 @@ class RenderService
     public function checkAvif(Request $request)
     {
         $acceptHeader = $request->header('Accept', '');
-    
+
         if (strpos($acceptHeader, 'image/avif') !== false) {
             return true;
-        } else {
-            list($browser, $version) = $this->getBrowserAndVersion();
-            
-            $version = (int) $version;
-            
-            if ($browser === 'Chrome' && $version >= 85) {
-                return true;
-            } else if ($browser === 'Firefox' && $version >= 93) {
-                return true;
-            } else if ($browser === 'Safari' && $version >= 14) {
-                return true;
-            } else if ($browser === 'Opera' && $version >= 72) {
-                return true;
-            } else if ($browser === 'Edge' && $version >= 85) {
-                return true;
-            } else if ($browser === 'Internet Explorer' && $version >= 11) {
-                return true;
-            }
         }
-        
+
+        try {
+            list($browser, $version) = $this->getBrowserAndVersion();
+            $version = (int) $version;
+
+            $supportedBrowsers = [
+                'Chrome' => 85,
+                'Firefox' => 113,
+                'Safari' => 18,
+                'Edge' => 121
+            ];
+
+            foreach ($supportedBrowsers as $supportedBrowser => $minVersion) {
+                if ($browser === $supportedBrowser && $version >= $minVersion) {
+                    return true;
+                }
+            }
+        } catch (\Throwable $th) {
+            return false;
+        }
+
         return false;
     }
-    
-    private function getBrowserAndVersion() {
-        $userAgent = $_SERVER['HTTP_USER_AGENT']; // Obtener el User-Agent del cliente
+
+    private function getBrowserAndVersion()
+    {
+        $userAgent = $_SERVER['HTTP_USER_AGENT'];
         $browser = null;
         $version = null;
         $versionnu = null;
@@ -97,7 +100,7 @@ class RenderService
             'Edge' => 'Edg',
             'Internet Explorer' => 'MSIE|Trident',
         ];
-    
+
         foreach ($browsers as $name => $pattern) {
             if (preg_match("/$pattern/i", $userAgent, $matches)) {
                 $browser = $name;
@@ -117,7 +120,7 @@ class RenderService
                 }
             }
         }
-    
+
         return [$browser, $versionnu];
     }
 
