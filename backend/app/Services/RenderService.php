@@ -57,13 +57,71 @@ class RenderService
     public function checkAvif(Request $request)
     {
         $acceptHeader = $request->header('Accept', '');
-
+    
         if (strpos($acceptHeader, 'image/avif') !== false) {
             return true;
         } else {
-            return false;
+            list($browser, $version) = $this->getBrowserAndVersion();
+            
+            $version = (int) $version;
+            
+            if ($browser === 'Chrome' && $version >= 85) {
+                return true;
+            } else if ($browser === 'Firefox' && $version >= 93) {
+                return true;
+            } else if ($browser === 'Safari' && $version >= 14) {
+                return true;
+            } else if ($browser === 'Opera' && $version >= 72) {
+                return true;
+            } else if ($browser === 'Edge' && $version >= 85) {
+                return true;
+            } else if ($browser === 'Internet Explorer' && $version >= 11) {
+                return true;
+            }
         }
+        
+        return false;
     }
+    
+    private function getBrowserAndVersion() {
+        $userAgent = $_SERVER['HTTP_USER_AGENT']; // Obtener el User-Agent del cliente
+        $browser = null;
+        $version = null;
+        $versionnu = null;
+
+        $browsers = [
+            'Chrome' => 'Chrome',
+            'Firefox' => 'Firefox',
+            'Safari' => 'Safari',
+            'Opera' => '(Opera|OPR)',
+            'Edge' => 'Edg',
+            'Internet Explorer' => 'MSIE|Trident',
+        ];
+    
+        foreach ($browsers as $name => $pattern) {
+            if (preg_match("/$pattern/i", $userAgent, $matches)) {
+                $browser = $name;
+                if ($browser === 'Safari') {
+                    $regex = '/Version\/(\d+)\.\d+.*Safari\/(\d+)\.\d+\.\d+/';
+                    preg_match($regex, $userAgent, $versionMatches);
+                    if (!empty($versionMatches[1])) {
+                        $version = $versionMatches[1];
+                    }
+                    break;
+                } else {
+                    preg_match("/{$matches[0]}\/([0-9\.]+)/", $userAgent, $versionMatches);
+                    if (!empty($versionMatches[1])) {
+                        $version = $versionMatches[1];
+                    }
+                    break;
+                }
+            }
+        }
+    
+        return [$browser, $versionnu];
+    }
+
+
 
     public function getConvertedPath($mediaPath, $targetExtension)
     {
