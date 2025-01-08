@@ -90,7 +90,6 @@ class RenderService
         $userAgent = $_SERVER['HTTP_USER_AGENT'];
         $browser = null;
         $version = null;
-        $versionnu = null;
 
         $browsers = [
             'Chrome' => 'Chrome',
@@ -121,7 +120,7 @@ class RenderService
             }
         }
 
-        return [$browser, $versionnu];
+        return [$browser, $version];
     }
 
 
