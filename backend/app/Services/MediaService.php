@@ -12,13 +12,11 @@ use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
-use Iman\Streamer\VideoStreamer;
-use Intervention\Image\Facades\Image;
 use Intervention\Image\ImageManager;
 use App\Utils\DamUrlUtil;
-use Imagine;
-use Iman\Streamer\Video;
 use stdClass;
+use Intervention\Image\Drivers\Imagick\Driver;
+
 
 
 class MediaService
@@ -137,9 +135,6 @@ class MediaService
     private function downloadVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey = null, $size = null, $thumbnail = null)
     {
         return $this->getVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey, $size, $thumbnail, true);
-        $video = new Video();
-        $video->setPath($mediaPath);
-        return $video;
     }
 
     private function previewVideo($mediaID, $mediaFileName, $mediaPath, $availableSizes, $sizeKey = null, $size = null, $thumbnail = null)
@@ -200,18 +195,41 @@ class MediaService
 
     private function getPreviewOrDownload($path, $isDownload)
     {
-        if ($isDownload) {
-            $video = new Video();
-            $video->setPath($path);
-            return $video;
+        if (!file_exists($path)) {
+            abort(404, 'File not found');
         }
-        return VideoStreamer::streamFile($path);
+
+        $fileSize = filesize($path);
+        $fileName = basename($path);
+
+        // Determine content type (you might want to expand this based on your file types)
+        $contentType = 'video/mp4';
+
+        if ($isDownload) {
+            // For download
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename="' . $fileName . '"');
+        } else {
+            // For preview/streaming
+            header('Content-Type: ' . $contentType);
+            header('Content-Disposition: inline; filename="' . $fileName . '"');
+        }
+
+        header('Content-Length: ' . $fileSize);
+        header('Accept-Ranges: bytes');
+
+        // Output the file
+        $file = fopen($path, 'rb');
+        fpassthru($file);
+        fclose($file);
+
+        exit;
     }
 
     private function previewImage($mediaPath, $type = 'raw', $sizes)
     {
-        $manager = new ImageManager(['driver' => 'imagick']);
-        $image   = $manager->make($mediaPath);
+        $manager = new ImageManager(new Driver());
+        $image   = $manager->read($mediaPath);
         $imageProcess = new MediaSizeImage($type, $mediaPath, $manager, $image, $sizes);
         $extension = pathinfo($mediaPath, PATHINFO_EXTENSION);
         if ($type !== 'raw') {
@@ -246,7 +264,7 @@ class MediaService
      * @param null $files
      * @return array|mixed
      */
-    public function addFromRequest(Model $model,  $collection, $customProperties, $files = null, $requestKey = null)
+    public function addFromRequest(Model $model,  $collection, $customProperties, $files = null, $requestKey = null, $availableSizes)
     {
         $collection = $collection ?? $this->defaultFileCollection;
         if (!empty($requestKey) && empty($files)) {
@@ -269,6 +287,16 @@ class MediaService
             $file_directory = str_replace($media->file_name, '', $mediaPath);
             $thumbnail = $file_directory . '/' . $media->filename . '__thumb_.png';
             $this->saveVideoSnapshot($thumbnail, $mediaPath);
+        }
+        if ($fileType === 'image') {
+            $extension = pathinfo($mediaPath, PATHINFO_EXTENSION);
+            $manager = new ImageManager(new Driver());
+            $image   = $manager->read($mediaPath);
+            $image2  = $manager->read($mediaPath);
+            $thumb  = new MediaSizeImage('thumbnail', $mediaPath, $manager, $image, $availableSizes);
+            $small  = new MediaSizeImage('small', $mediaPath, $manager, $image2, $availableSizes);
+            if ($thumb->checkSize()) $thumb->save($extension);
+            if ($small->checkSize()) $small->save($extension);
         }
         return !empty($mediaList) ? end($mediaList) : [];
     }

@@ -79,12 +79,12 @@ class ResourceService
      */
     private XowlImageService $xowlImageService;
 
-    /** 
+    /**
      * @var XevalSyncActivityService
      */
     private XevalSyncActivityService $xevalSyncActivityService;
 
-    /** 
+    /**
      * @var XevalSyncAssessmentService
      */
     private XevalSyncAssessmentService $xevalSyncAssessmentService;
@@ -121,7 +121,7 @@ class ResourceService
         $this->xevalSyncAssessmentService = $xevalSyncAssessmentService;
     }
 
-    private function saveAssociateFile($type, $params, $model)
+    private function saveAssociateFile($type, $params, $model,$availableSizes)
     {
         if (array_key_exists($type, $params) && $params[$type]) {
             if ($type === MediaType::Preview()->key) {
@@ -137,7 +137,8 @@ class ResourceService
                             $type,
                             ["parent_id" => $model->id],
                             $file,
-                            null
+                            null,
+                            $availableSizes['image']['sizes']
                         );
                     }
                 }
@@ -149,7 +150,8 @@ class ResourceService
                         $type,
                         ["parent_id" => $model->id],
                         $params[$type],
-                        null
+                        null,
+                        $availableSizes['image']['sizes']
                     );
                 }
             }
@@ -160,12 +162,12 @@ class ResourceService
      * @param $model
      * @param $params
      */
-    private function saveAssociatedFiles(DamResource $model, $params): void
+    private function saveAssociatedFiles(DamResource $model, $params, $availableSizes): void
     {
         // Save Associated Files
-        $this->saveAssociateFile(MediaType::File()->key, $params, $model);
+        $this->saveAssociateFile(MediaType::File()->key, $params, $model, $availableSizes);
         // Save Associated Previews
-        $this->saveAssociateFile(MediaType::Preview()->key, $params, $model);
+        $this->saveAssociateFile(MediaType::Preview()->key, $params, $model, $availableSizes);
     }
 
     /**
@@ -327,7 +329,7 @@ class ResourceService
      * @return DamResource
      * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
      */
-    public function update(DamResource $resource, $params): DamResource
+    public function update(DamResource $resource, $params, $availableSizes): DamResource
     {
         DB::beginTransaction();
         try {
@@ -387,7 +389,7 @@ class ResourceService
                         'Entry' => $semantic_tag->name
                     ];
                 }
-    
+
                 // TODO save on xTags
                 $lang = App::getLocale();
                 if (isset($resource->data->description->semantic_tags)) {
@@ -401,7 +403,7 @@ class ResourceService
                 $this->setLomData($resource, $lom_params);
             }
 
-            $this->saveAssociatedFiles($resource, $params);
+            $this->saveAssociatedFiles($resource, $params, $availableSizes);
             $resource = $resource->fresh();
             $this->solr->saveOrUpdateDocument($resource);
             if (isset($params['File'][0]) || isset($params['Preview'])) {
@@ -433,7 +435,7 @@ class ResourceService
         }
     }
 
-    public function updateFromXeval(DamResource $resource, $params)
+    public function updateFromXeval(DamResource $resource, $params, $availableSizes)
     {
         DB::beginTransaction();
         try {
@@ -471,7 +473,7 @@ class ResourceService
                 ];
                 $this->setLomData($resource, $lom_params);
             }
-            $this->saveAssociatedFiles($resource, $params);
+            $this->saveAssociatedFiles($resource, $params, $availableSizes);
             $resource = $resource->fresh();
             $this->solr->saveOrUpdateDocument($resource);
 
@@ -489,7 +491,7 @@ class ResourceService
      * @return DamResource
      * @throws \BenSampo\Enum\Exceptions\InvalidEnumKeyException
      */
-    public function patch(DamResource $resource, $params): DamResource
+    public function patch(DamResource $resource, $params, $availableSizes): DamResource
     {
         if (array_key_exists("type", $params) && $params["type"]) {
             $resource->update(
@@ -507,7 +509,7 @@ class ResourceService
         $resource->update($params);
 
 
-        $this->saveAssociatedFiles($resource, $params);
+        $this->saveAssociatedFiles($resource, $params, $availableSizes);
         $resource = $resource->fresh();
         $this->solr->saveOrUpdateDocument($resource);
         return $resource;
@@ -522,7 +524,8 @@ class ResourceService
         $params,
         $toWorkspaceId = null,
         $fromBatchType = null,
-        $launchThrow = true
+        $launchThrow = true,
+        $availableSizes = []
     ): DamResource {
         if (is_string($params['data'])) $params['data'] = json_decode($params['data']);
         /*
@@ -578,10 +581,10 @@ class ResourceService
 
             foreach ($wsps as $workspace) {
                 $this->setResourceWorkspace($newResource, $workspace);
-            }
+           }
             $this->linkCategoriesFromJson($newResource, $paramsData);
             $this->linkTagsFromJson($newResource, $paramsData);
-            $this->saveAssociatedFiles($newResource, $params);
+            $this->saveAssociatedFiles($newResource, $params, $availableSizes);
             $newResource = $newResource->fresh();
             $this->solr->saveOrUpdateDocument($newResource);
 
@@ -741,7 +744,7 @@ class ResourceService
         return array_key_exists($fileName, $data) ? $data[$fileName] : null;
     }
 
-    public function storeBatch($data)
+    public function storeBatch($data, $availableSizes)
     {
         $collection = ModelsCollection::find($data['collection']);
         $organization = $collection->organization()->first();
@@ -795,7 +798,7 @@ class ResourceService
                 'Preview' => $this->searchPreviewImage($data, $name),
                 'toWorkspaceId' => implode(",", $wsps)
             ];
-            $resource = $this->store($params, null, $collection->accept === ResourceType::multimedia ? $type : $collection->accept);
+            $resource = $this->store($params, null, $collection->accept === ResourceType::multimedia ? $type : $collection->accept, false, $availableSizes);
             $createdResources[] = $resource;
         }
 

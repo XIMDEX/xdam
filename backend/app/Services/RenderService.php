@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Imagick\Driver;
 
 class RenderService
 {
@@ -38,9 +39,9 @@ class RenderService
     public function generateAvif($path)
     {
         try {
-            $manager = new ImageManager(['driver' => 'imagick']);
-            $image    = $manager->make(Storage::get($path));
-            $avifImage = $image->encode('avif', 70);
+            $manager = new ImageManager(new Driver());
+            $image    = $manager->read(Storage::get($path));
+            $avifImage = $image->toAvif(70);
             $avifPath = $this->getConvertedPath($path, 'avif');
             Storage::put($avifPath, (string) $avifImage);
             return true;
@@ -59,10 +60,70 @@ class RenderService
 
         if (strpos($acceptHeader, 'image/avif') !== false) {
             return true;
-        } else {
+        }
+
+        try {
+            list($browser, $version) = $this->getBrowserAndVersion();
+            $version = (int) $version;
+
+            $supportedBrowsers = [
+                'Chrome' => 85,
+                'Firefox' => 113,
+                'Safari' => 18,
+                'Edge' => 121
+            ];
+
+            foreach ($supportedBrowsers as $supportedBrowser => $minVersion) {
+                if ($browser === $supportedBrowser && $version >= $minVersion) {
+                    return true;
+                }
+            }
+        } catch (\Throwable $th) {
             return false;
         }
+
+        return false;
     }
+
+    private function getBrowserAndVersion()
+    {
+        $userAgent = $_SERVER['HTTP_USER_AGENT'];
+        $browser = null;
+        $version = null;
+
+        $browsers = [
+            'Chrome' => 'Chrome',
+            'Firefox' => 'Firefox',
+            'Safari' => 'Safari',
+            'Opera' => '(Opera|OPR)',
+            'Edge' => 'Edg',
+            'Internet Explorer' => 'MSIE|Trident',
+        ];
+
+        foreach ($browsers as $name => $pattern) {
+            if (preg_match("/$pattern/i", $userAgent, $matches)) {
+                $browser = $name;
+                if ($browser === 'Safari') {
+                    $regex = '/Version\/(\d+)\.\d+.*Safari\/(\d+)\.\d+\.\d+/';
+                    preg_match($regex, $userAgent, $versionMatches);
+                    if (!empty($versionMatches[1])) {
+                        $version = $versionMatches[1];
+                    }
+                    break;
+                } else {
+                    preg_match("/{$matches[0]}\/([0-9\.]+)/", $userAgent, $versionMatches);
+                    if (!empty($versionMatches[1])) {
+                        $version = $versionMatches[1];
+                    }
+                    break;
+                }
+            }
+        }
+
+        return [$browser, $version];
+    }
+
+
 
     public function getConvertedPath($mediaPath, $targetExtension)
     {

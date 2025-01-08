@@ -89,7 +89,7 @@ class SemanticController extends Controller
      */
     public function update(DamResource $damResource, UpdateResourceRequest $request)
     {
-        $resource = $this->resourceService->update($damResource, $request->all());
+        $resource = $this->resourceService->update($damResource, $request->all(), $this->getAvailableResourceSizes());
         return (new ResourceResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -102,7 +102,7 @@ class SemanticController extends Controller
      */
     public function patch(DamResource $damResource, PatchResourceRequest $request)
     {
-        $resource = $this->resourceService->patch($damResource, $request->all());
+        $resource = $this->resourceService->patch($damResource, $request->all(), $this->getAvailableResourceSizes());
         return (new ResourceResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -131,7 +131,7 @@ class SemanticController extends Controller
         $semanticRequest['text'] = $damResourceData->description->body;
         $enhanced = $this->semanticService->updateWithEnhance($damResourceData->description, $semanticRequest);
         $semanticRequest['data'] = json_encode($enhanced['resources']['data']);
-        $resource = $this->resourceService->patch($damResource, $semanticRequest);
+        $resource = $this->resourceService->patch($damResource, $semanticRequest, $this->getAvailableResourceSizes());
 
         return (new ResourceResource($resource))
             ->response()
@@ -207,7 +207,7 @@ class SemanticController extends Controller
         );
     }
 
-    
+
 
     /**
      * @param Request $request
@@ -230,5 +230,64 @@ class SemanticController extends Controller
             ],
             Response::HTTP_OK
         );
+    }
+
+    private function getAvailableResourceSizes()
+    {
+        $sizes = [
+            'image' => [
+                'allowed_sizes' => ['thumbnail', 'small', 'medium', 'large', 'raw', 'default'],
+                'sizes' => [
+                    'thumbnail' => array('width' => 256, 'height' => 144),
+                    'small'     => array('width' => 426, 'height' => 240),
+                    'medium'    => array('width' => 1280, 'height' => 720), 
+                    'large'     => array('width' => 1920, 'height' => 1080), //4k 3840x2160 HD 1920x1080
+                    'raw'       => 'raw',
+                    'default'   => array('width' => 1280, 'height' => 720)
+                ],
+                'qualities' => [
+                    'thumbnail' => 25,
+                    'small'     => 25,
+                    'medium'    => 50,
+                    'large'     => 100,
+                    'raw'       => 'raw',
+                    'default'   => 90,
+                ],
+                'error_message' => ''
+            ],
+            'video' => [
+                'allowed_sizes' => ['very_low', 'low', 'standard', 'hd', 'raw', 'thumbnail', 'small', 'medium', 'default'],
+                'sizes_scale'   => ['very_low', 'low', 'standard', 'hd'],   // Order Lowest to Greatest
+                'screenshot_sizes'  => ['thumbnail', 'small', 'medium'],
+                'sizes' => [
+                    // 'lowest'        => array('width' => 256, 'height' => 144, 'name' => '144p'),
+                    'very_low'      => array('width' => 426, 'height' => 240, 'name' => '240p'),
+                    'low'           => array('width' => 640, 'height' => 360, 'name' => '360p'),
+                    'standard'      => array('width' => 854, 'height' => 480, 'name' => '480p'),
+                    'hd'            => array('width' => 1280, 'height' => 720, 'name' => '720p'),
+                    // 'full_hd'       => array('width' => 1920, 'height' => 1080, 'name' => '1080p'),
+                    'raw'           => 'raw',
+                    //'thumbnail'     => 'thumbnail',
+                    'thumbnail'     => array('width' => 256, 'height' => 144, 'name' => '144p'),
+                    'small'         => array('width' => 426, 'height' => 240, 'name' => '240p'),
+                    'medium'        => array('width' => 854, 'height' => 480, 'name' => '480p'),
+                    'default'       => 'raw'
+                ],
+                'qualities' => [
+                    'thumbnail' => 25,
+                    'small'     => 25,
+                    'medium'    => 50,
+                    'raw'       => 'raw',
+                    'default'   => 90
+                ],
+                'error_message' => ''
+            ]
+        ];
+
+        foreach ($sizes as $k => $v) {
+            $sizes[$k]['error_message'] = $this->setErrorMessage($sizes[$k]['allowed_sizes']);
+        }
+
+        return $sizes;
     }
 }
