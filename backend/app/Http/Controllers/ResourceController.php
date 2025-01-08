@@ -254,7 +254,8 @@ class ResourceController extends Controller
 
     public function storeBatch(Request $request)
     {
-        $resources = $this->resourceService->storeBatch($request->all());
+        $resources = $this->resourceService->storeBatch( data: $request->all(),
+        availableSizes: $this->getAvailableResourceSizes());
         return (new ResourceCollection($resources))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -527,7 +528,7 @@ class ResourceController extends Controller
                 'sizes' => [
                     'thumbnail' => array('width' => 256, 'height' => 144),
                     'small'     => array('width' => 426, 'height' => 240),
-                    'medium'    => array('width' => 1280, 'height' => 720), 
+                    'medium'    => array('width' => 1280, 'height' => 720),
                     'large'     => array('width' => 1920, 'height' => 1080), //4k 3840x2160 HD 1920x1080
                     'raw'       => 'raw',
                     'default'   => array('width' => 1280, 'height' => 720)

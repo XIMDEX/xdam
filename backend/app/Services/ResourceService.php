@@ -744,7 +744,7 @@ class ResourceService
         return array_key_exists($fileName, $data) ? $data[$fileName] : null;
     }
 
-    public function storeBatch($data)
+    public function storeBatch($data, $availableSizes)
     {
         $collection = ModelsCollection::find($data['collection']);
         $organization = $collection->organization()->first();
@@ -798,7 +798,7 @@ class ResourceService
                 'Preview' => $this->searchPreviewImage($data, $name),
                 'toWorkspaceId' => implode(",", $wsps)
             ];
-            $resource = $this->store($params, null, $collection->accept === ResourceType::multimedia ? $type : $collection->accept);
+            $resource = $this->store($params, null, $collection->accept === ResourceType::multimedia ? $type : $collection->accept, false, $availableSizes);
             $createdResources[] = $resource;
         }
 
