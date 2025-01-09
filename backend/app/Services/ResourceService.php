@@ -400,7 +400,7 @@ class ResourceService
                         $resource->data->description->semantic_tags
                     );
                 }*/
-                $this->setLomData($resource, $lom_params);
+               // $this->setLomData($resource, $lom_params);
             }
 
             $this->saveAssociatedFiles($resource, $params, $availableSizes);
