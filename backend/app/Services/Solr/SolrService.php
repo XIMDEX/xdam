@@ -227,15 +227,15 @@ class SolrService
 
         // Checks if the LOM and the LOMES must be updated
         if ($reindexLOM) {
-            // Gets the LOM and the LOMES client
-            $lomClient = $this->getClient($lomCoreName);
-            $lomesClient = $this->getClient($lomesCoreName);
+       //     // Gets the LOM and the LOMES client
+            $lomClient = $this->getClient('lom');
+            $lomesClient = $this->getClient('lomes');
 
-            // Gets the LOM and the LOMES items
+       //     // Gets the LOM and the LOMES items
             $lomItem = Lom::where('dam_resource_id', $damResource->id)->first();
             $lomesItem = Lomes::where('dam_resource_id', $damResource->id)->first();
 
-            // Manages the LOM and LOMES documents
+       //     // Manages the LOM and LOMES documents
             $this->saveLOMDocuments($lomClient, $lomItem, Utils::getLomSchema(true), $damResource);
             $this->saveLOMDocuments($lomesClient, $lomesItem, Utils::getLomesSchema(true), $damResource);
         }
@@ -439,7 +439,6 @@ class SolrService
                 foreach ($fields['files'] as $file) {
                     $last_uuid = substr($file, strrpos($file, "@",-4));
                     $last_uuid= str_replace("@", "", $last_uuid);
-                    
                     if (Storage::disk("semantic")->exists($fields["id"]."/".$last_uuid.".json")) {
                         $json = json_decode(Storage::disk("semantic")->get($fields["id"]."/".$last_uuid.".json"));
                         if(isset($json->xtags_interlinked)){
@@ -477,12 +476,8 @@ class SolrService
                             $fields['data']->description->semantic_tags[$key] = $semanticData;
                         }
                      }
-                    
                 }
-                
-              
             }
-        
             $documentsResponse[] = $fields;
         }
 
