@@ -210,7 +210,12 @@ class SolrConfig
             //exclude cores
             $clientCoreName = $client->getEndpoint()->getOptions()['core'];
             $aliasClient = $this->getClientCoreAlias($clientCoreName);
-
+            if (!empty($solrVersion)) {
+                $aliasClient = array_map(function ($auxClientCoreNames, $clientName) use ($solrVersion) {
+                    return [$clientName . "_$solrVersion" => $auxClientCoreNames];
+                }, $aliasClient, array_keys($aliasClient));
+                $aliasClient = call_user_func_array('array_merge', $aliasClient);
+            }
             $isValid = false;
             foreach ($aliasClient[$clientCoreName] as $auxClientCoreName) {
                 $isValid = !$isValid && array_key_exists($auxClientCoreName, config('solarium.connections', []));
