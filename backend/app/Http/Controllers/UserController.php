@@ -15,6 +15,7 @@ use App\Models\DamResource;
 use App\Services\UserService;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Request;
+use Lib\Xrole\Services\JwtService;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
@@ -24,14 +25,16 @@ class UserController extends Controller
      * @var UserService
      */
     private $userService;
+    private $jwtService;
 
     /**
      * RoleController constructor.
      * @param RoleService $roleService
      */
-    public function __construct(UserService $userService)
+    public function __construct(UserService $userService, JwtService $jwtService)
     {
         $this->userService = $userService;
+        $this->jwtService  = $jwtService;
     }
         /**
      * @return \Illuminate\Http\JsonResponse|object
@@ -111,6 +114,14 @@ class UserController extends Controller
     public function selectWorkspace(SelectWorkspaceRequest $request)
     {
         $userResource = $this->userService->selectWorkspace($request->workspace_id);
+        return (new JsonResource($userResource))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function getAdditionalData()
+    {
+        $userResource = $this->userService->getAdditionalData($this->jwtService->verifyToken(request()->bearerToken()));
         return (new JsonResource($userResource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);

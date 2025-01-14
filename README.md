@@ -87,5 +87,14 @@ Finally, execute the following commands:
 sudo php artisan solrCores:maintenance --action=ALL
 sudo php artisan optimize:clear
 sudo php artisan passport:install
-php artisan db:seed
 ```
+
+## Configuration of XDIR Public Key
+
+To configure the public key of XDIR in your application, follow the steps detailed below:
+
+### Step 1: Place the Public Key
+
+First, obtain the public key of XDIR. Once you have it, place it in the following directory "lib/xrole/" using the name "oauth-public.key".
+
+It is also necessary to add: SERVICE_CODE={CODE} in the .env. We can find this code in xdir.
