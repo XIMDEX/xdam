@@ -6,7 +6,6 @@ use App\Enums\ResourceType;
 use App\Enums\ThumbnailTypes;
 use App\Http\Requests\addFileToResourceRequest;
 use App\Http\Requests\addPreviewToResourceRequest;
-use App\Http\Requests\addUseRequest;
 use App\Http\Requests\CDNRequest;
 use App\Http\Requests\GetDamResourceRequest;
 use App\Http\Requests\ResouceCategoriesRequest;
@@ -36,6 +35,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Cache;
 use App\Enums\AccessPermission;
 use App\Models\Copy;
+use App\Services\ExternalApis\CognitrekService;
 use App\Services\ExternalApis\ScormService;
 use App\Services\RenderService;
 use Illuminate\Support\Facades\Storage;
@@ -83,6 +83,12 @@ class ResourceController extends Controller
      */
     private $renderService;
 
+
+    /**
+     * @var CognitrekService
+     */
+    private $cognitrekService;
+
     /**
      * CategoryController constructor.
      * @param ResourceService $resourceService
@@ -99,7 +105,8 @@ class ResourceController extends Controller
         WorkspaceService $workspaceService,
         UserService $userService,
         ScormService $scormService,
-        RenderService $renderService
+        RenderService $renderService,
+        CognitrekService $cognitrekService
     ) {
         $this->resourceService = $resourceService;
         $this->mediaService = $mediaService;
@@ -108,6 +115,7 @@ class ResourceController extends Controller
         $this->userService = $userService;
         $this->scormService = $scormService;
         $this->renderService = $renderService;
+        $this->cognitrekService = $cognitrekService;
     }
 
     public function resourcesSchema()
@@ -209,6 +217,11 @@ class ResourceController extends Controller
     public function store(StoreResourceRequest $request)
     {
         $resource = $this->resourceService->store($request->all());
+
+        if (env('ENABLED_COGNITREK', true)) {
+            $this->cognitrekService->store($resource->id);
+        }
+
         return response(new ResourceResource($resource))
             ->setStatusCode(Response::HTTP_OK);
     }
@@ -925,7 +938,7 @@ class ResourceController extends Controller
             $checkData = array_merge($checkData, $extra_data);
         }
 
-        if ($cdnInfo->checkAccessRequirements($checkData)) {
+        if ($cdnInfo->checkAccessRequirements($checkData)){
             return true;
         }
 
