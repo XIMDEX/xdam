@@ -32,7 +32,7 @@ class MediaSizeImage
      */
     public function save(String $extension)
     {
-        $pathSave = $this->image->dirname . "/__" . $this->size . ".$extension";
+        $pathSave = dirname($this->image->origin()->filePath()). "/__" . $this->size . ".$extension";
 
         if ($this->size === 'default') {
             $pathSave = $this->path;
@@ -66,7 +66,7 @@ class MediaSizeImage
         $result = false;
         $path = $this->path;
         if ($this->size !== 'default') {
-            $path = $this->image->dirname . "/__" . $this->size . ".$extension";
+            $path = dirname($this->image->origin()->filePath()) . "/__" . $this->size . ".$extension";
         }
         $result = file_exists($path);
         return $result;
@@ -79,9 +79,9 @@ class MediaSizeImage
      */
     public function getImage(String $extension)
     {
-        $result = $this->image->dirname . "/__" . $this->size . ".$extension";
+        $result = dirname($this->image->origin()->filePath()) . "/__" . $this->size . ".$extension";
         if ($this->size === "default" || $this->size === "raw") return $this->image;  //$result = $this->path;
-        return  $this->manager->make($result);
+        return  $this->manager->read($result);
     }
 
     private function getAspectRatio()
@@ -119,6 +119,6 @@ class MediaSizeImage
 
     public function pngHasAlpha()
     {
-        return strpos($this->image->encode('png')->getEncoded(), 'tRNS') !== false;
+       // return strpos($this->image->encode('png')->getEncoded(), 'tRNS') !== false;
     }
 }

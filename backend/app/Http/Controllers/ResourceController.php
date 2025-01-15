@@ -190,7 +190,7 @@ class ResourceController extends Controller
      */
     public function update(DamResource $damResource, UpdateResourceRequest $request)
     {
-        $resource = $this->resourceService->update($damResource, $request->all());
+        $resource = $this->resourceService->update($damResource, $request->all(),$this->getAvailableResourceSizes());
         return (new ResourceResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -204,7 +204,7 @@ class ResourceController extends Controller
     public function updateFromXeval(string $xevalId, UpdateResourceRequest $request)
     {
         $damResource = $resource = DamResource::whereJsonContains('data->description', ['xeval_id' => $xevalId])->first();
-        $resource = $this->resourceService->updateFromXeval($damResource, $request->all());
+        $resource = $this->resourceService->updateFromXeval($damResource, $request->all(),$this->getAvailableResourceSizes());
         return (new ResourceResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -216,7 +216,8 @@ class ResourceController extends Controller
      */
     public function store(StoreResourceRequest $request)
     {
-        $resource = $this->resourceService->store($request->all());
+        $resource = $this->resourceService->store( params: $request->all(),
+        availableSizes: $this->getAvailableResourceSizes());
 
         if (env('ENABLED_COGNITREK', true)) {
             $this->cognitrekService->store($resource->id);
@@ -266,7 +267,8 @@ class ResourceController extends Controller
 
     public function storeBatch(Request $request)
     {
-        $resources = $this->resourceService->storeBatch($request->all());
+        $resources = $this->resourceService->storeBatch( data: $request->all(),
+        availableSizes: $this->getAvailableResourceSizes());
         return (new ResourceCollection($resources))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -539,8 +541,8 @@ class ResourceController extends Controller
                 'sizes' => [
                     'thumbnail' => array('width' => 256, 'height' => 144),
                     'small'     => array('width' => 426, 'height' => 240),
-                    'medium'    => array('width' => 1920, 'height' => 1080), //HD
-                    'large'     => array('width' => 3840, 'height' => 2160), //4k
+                    'medium'    => array('width' => 1280, 'height' => 720),
+                    'large'     => array('width' => 1920, 'height' => 1080), //4k 3840x2160 HD 1920x1080
                     'raw'       => 'raw',
                     'default'   => array('width' => 1280, 'height' => 720)
                 ],
@@ -1013,7 +1015,7 @@ class ResourceController extends Controller
     private function handleImageAndVideoResponse($fileType, $size, $compressed, $mediaFileName, $mediaId, $availableSizes)
     {
         if ($fileType == 'image' || ($fileType == 'video' && in_array($size, ['medium', 'small', 'thumbnail']))) {
-            $response = response()->file($compressed->basePath());
+            $response = response()->file($compressed->origin()->filePath());
             $this->setCommonHeaders($response, $mediaFileName, $compressed);
 
            // if ($fileType == 'image') {
@@ -1034,10 +1036,10 @@ class ResourceController extends Controller
         $response->headers->set('Cache-Control', 'public, max-age=' . $maxAge . ', immutable');
         $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT');
 
-        $etag = md5_file($compressed->basePath());
+        $etag = md5_file($compressed->origin()->filePath());
         $response->setEtag($etag);
 
-        $lastModified = filemtime($compressed->basePath());
+        $lastModified = filemtime($compressed->origin()->filePath());
         $response->setLastModified(Carbon::createFromTimestamp($lastModified));
     }
 
