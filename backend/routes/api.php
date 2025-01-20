@@ -13,6 +13,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\CorporationController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\ResourceAmazonController;
 use App\Http\Controllers\ResourceJsonController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SemanticController;
@@ -74,6 +75,8 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
             Route::get('/{damResourceHash}/render',        [ResourceController::class, 'renderCDNResourceFile'])->name('damResource.renderCDNResource');
             Route::get('/{damResourceHash}',        [ResourceController::class, 'renderCDNResource'])->name('damResource.previewCDNResource');
             Route::get('/{damResourceHash}/{size}', [ResourceController::class, 'renderCDNResource'])->name('damResource.renderCDNResourceWithSize');
+            Route::post('/amazon/save', [ResourceAmazonController::class, 'save'])->name('damResource.amazon.save');
+            Route::get('/amazon/metadata/{damResource}/{fileName}', [ResourceAmazonController::class, 'getMetadata'])->name('damResource.metadata.get');
         });
     });
 
