@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ResourceResource;
 use App\Models\DamResource;
 use App\Services\Amazon\GetAmazonResourceMetadataService;
 use App\Services\Amazon\GetAmazonResourceService;
@@ -27,12 +28,18 @@ class ResourceAmazonController extends Controller
     }
     public function save(Request $request)
     {
+        $media = [];
         $remoteFile = $this->getAmazonResourceService->getResourceByCurl($request->urlFile);
         $files = $request->allFiles();
-        $files['remoteFile'] = $remoteFile;
-        $resource = $this->saveAmazonResourceService->save($request->urlFile, $request->nameFile, $request->metadata,  $files);
+        $files['File'] = $remoteFile;
+        $resource = ($this->saveAmazonResourceService->save($request->urlFile, $request->nameFile, $request->metadata, $request->collection_id,  $files));
 
-        return response($this->resourceService->get($resource))->setStatusCode(Response::HTTP_OK);
+        foreach ($resource->media as  $mediaFile) {
+            $media[] = $mediaFile->url;
+        }
+        return ($resource)
+        ->response()
+        ->setStatusCode(Response::HTTP_OK);
         //return response(new ResourceAmazonResource($resource))->setStatusCode(Response::HTTP_OK);
     }
 

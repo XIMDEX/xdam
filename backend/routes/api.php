@@ -75,9 +75,13 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
             Route::get('/{damResourceHash}/render',        [ResourceController::class, 'renderCDNResourceFile'])->name('damResource.renderCDNResource');
             Route::get('/{damResourceHash}',        [ResourceController::class, 'renderCDNResource'])->name('damResource.previewCDNResource');
             Route::get('/{damResourceHash}/{size}', [ResourceController::class, 'renderCDNResource'])->name('damResource.renderCDNResourceWithSize');
-            Route::post('/amazon/save', [ResourceAmazonController::class, 'save'])->name('damResource.amazon.save');
-            Route::get('/amazon/metadata/{damResource}/{fileName}', [ResourceAmazonController::class, 'getMetadata'])->name('damResource.metadata.get');
+            Route::middleware(['middleware' => 'auth:api'])->group(function () {
+                Route::post('/amazon/save', [ResourceAmazonController::class, 'save'])->name('damResource.amazon.save');
+                Route::get('/amazon/metadata/{damResource}/{fileName}', [ResourceAmazonController::class, 'getMetadata'])->name('damResource.metadata.get');
+            });
+
         });
+
     });
 
     Route::group(['prefix' => 'auth'], function() {
