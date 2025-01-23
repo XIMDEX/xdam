@@ -268,10 +268,10 @@ class MediaService
     {
         $collection = $collection ?? $this->defaultFileCollection;
         if (!empty($requestKey) && empty($files)) {
-            $model->addMediaFromRequest($requestKey)->withCustomProperties($customProperties)->toMediaCollection($collection);
+            $modelMedia = $model->addMediaFromRequest($requestKey)->withCustomProperties($customProperties)->toMediaCollection($collection);
         }
         if (!empty($files) && empty($requestKey)) {
-            $model->addMedia($files)->withCustomProperties($customProperties)->toMediaCollection($collection);
+            $modelMedia = $model->addMedia($files)->withCustomProperties($customProperties)->toMediaCollection($collection);
         }
         $model->save();
 
@@ -279,7 +279,7 @@ class MediaService
 
         $mediaList = $this->list($model, $collection);
 
-        $media = Media::findOrFail($mediaList[0]->id);
+        $media = count($mediaList) > 0 ? Media::findOrFail($mediaList[0]->id) : $modelMedia;
         $mimeType = $media->mime_type;
         $mediaPath = $media->getPath();
         $fileType = explode('/', $mimeType)[0];
