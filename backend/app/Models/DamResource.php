@@ -24,6 +24,7 @@ use Silber\Bouncer\Database\Role;
 use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Support\Collection as IlluminateCollection;
 
 class DamResource extends Model implements HasMedia, TaggableInterface
 {
@@ -223,5 +224,10 @@ class DamResource extends Model implements HasMedia, TaggableInterface
                     ->where('collection_name', MediaType::File)
                     ->get();
         return count($media);
+    }
+
+    public function getMedia(string $collectionName = 'default', array|callable $filters = []): IlluminateCollection
+    {
+        return $this->media()->where(['collection_name' => $collectionName])->get();
     }
 }
