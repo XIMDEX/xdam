@@ -4,8 +4,6 @@ namespace App\Services\Amazon;
 
 use App\Enums\ResourceType;
 use App\Services\ResourceService;
-use Illuminate\Support\Facades\Auth;
-
 class SaveAmazonResourceService
 {
     private $resourceService;
@@ -15,29 +13,51 @@ class SaveAmazonResourceService
         $this->resourceService = $resourceService;
     }
 
-    public function save(String $urlFile, String $nameFile, $metadata,string $collection_id, $txtFile)
+    /**
+     * Saves a resource on Amazon.
+     *
+     * @param string $urlFile the url of the resource.
+     * @param string $nameFile the name of the resource.
+     * @param string $metadata the metadata of the resource.
+     * @param string $collection_id the id of the collection where the resource will be saved.
+     * @param string $workspace_id the id of the workspace where the resource will be saved.
+     * @param array $File the file to be saved.
+     * @return DamResource the saved resource.
+     *
+     * @throws \Exception if the resource couldn't be saved.
+     */
+    public function save(String $urlFile, String $nameFile, String $metadata, string $collection_id,$type, $workspace_id, $File)
     {
+        $metadata = json_decode($metadata, true);
+        $isbn = $metadata['{macgh.model}isbn'] ?? null;
         $params = [
             'data' => json_encode([
                 'description' => [
                     'name' => $nameFile,
                     'active' => true,
                     'url' => $urlFile,
+                    'categories' => [$isbn],
                 ],
-            'metadata' => $metadata ?? []
+                'metadata' => $metadata ?? [],
+
             ]),
+
             'name' => $nameFile,
-            'type' => ResourceType::fromKey('image')->value,
+            'type' => ResourceType::fromKey($type)->value,
             'collection_id' => $collection_id,
         ];
-        if ($txtFile !== null) {
-            $params['File'] = $txtFile;
+        if ($File !== null) {
+            $params['File'] = $File;
         }
 
         try {
 
-            $newResource = $this->resourceService->store(params: $params,toWorkspaceId: 24,
-            availableSizes: $this->getAvailableResourceSizes());
+            $newResource = $this->resourceService->store(
+                params: $params,
+                toWorkspaceId: $workspace_id,
+                availableSizes: $this->getAvailableResourceSizes()
+            );
+
             return $newResource;
         } catch (\Exception $e) {
             throw $e;
