@@ -79,7 +79,6 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function () {
                 Route::get('{cdnCode}/{idName}', [ResourceAmazonController::class, 'getResource'])->name('damResource.amazon.get');
                 Route::post('assign/{isbn}/{workspace}',[ResourceAmazonController::class, 'assignWorkspace'])->name('damResource.assign.workspace');
                 Route::post('unassign/{isbn}/{workspace}',[ResourceAmazonController::class, 'unassignWorkspace'])->name('damResource.unassign.workspace');
-                Route::get('/amazon/metadata/{damResource}/{fileName}', [ResourceAmazonController::class, 'getMetadata'])->name('damResource.metadata.get');
             });
             Route::get('/{damResourceHash}/render',        [ResourceController::class, 'renderCDNResourceFile'])->name('damResource.renderCDNResource');
             Route::get('/{damResourceHash}',        [ResourceController::class, 'renderCDNResource'])->name('damResource.previewCDNResource');
