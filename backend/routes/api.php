@@ -75,8 +75,8 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function () {
             Route::get('/{damResourceHash}/render',        [ResourceController::class, 'renderCDNResourceFile'])->name('damResource.renderCDNResource');
             Route::get('/{damResourceHash}/{size}', [ResourceController::class, 'renderCDNResource'])->name('damResource.renderCDNResourceWithSize');
             Route::middleware(['middleware' => 'auth:api'])->group(function () {
-                Route::get('/{damResourceHash}',        [ResourceController::class, 'renderCDNResource'])->name('damResource.previewCDNResource');
                 Route::get('/workspaces', [ResourceAmazonController::class, 'getWorkspaces'])->name('damResource.workspaces.get');
+                Route::get('/{damResourceHash}',        [ResourceController::class, 'renderCDNResource'])->name('damResource.previewCDNResource');
                 Route::get('workspace/{cdnCode}/{idName}',  [ResourceAmazonController::class, 'getUrls'])->name('damResource.amazon.workspace');
                 Route::post('{cdn_code}/save', [ResourceAmazonController::class, 'save'])->name('damResource.amazon.save');
                 Route::get('{cdnCode}/{idName}', [ResourceAmazonController::class, 'getResource'])->name('damResource.amazon.get');
