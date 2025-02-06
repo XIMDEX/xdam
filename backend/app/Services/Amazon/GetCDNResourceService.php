@@ -35,7 +35,7 @@ class GetCDNResourceService
                 $workspaces = $resource->workspaces()->get();
                 $previews   = [];
                 foreach ($workspaces as $workspace) {
-                    $previews[] = ["id" => $workspace->id, "name" => $workspace->name, "url" => env('APP_URL', 'http://localhost') . "/cdn/" . $this->cdnService->encodeHash($this->cdnService->generateDamResourceHash($cdn, $resource, $resource->collection_id), $workspace->id, $resource->collection_id, false)];
+                    $previews[] = ["id" => $workspace->id, "name" => $workspace->name, "url" => env('DAM_FRONT_URL', '') . '/' . 'cdn'. '/' . $this->cdnService->encodeHash($this->cdnService->generateDamResourceHash($cdn, $resource, $resource->collection_id), $workspace->id, $resource->collection_id, false)];
                 }
                 $result[] = [
                     'ID' => $resource->id,
