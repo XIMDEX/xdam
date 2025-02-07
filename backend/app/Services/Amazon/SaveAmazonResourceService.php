@@ -36,7 +36,8 @@ class SaveAmazonResourceService
                 'active' => true,
                 'url' => $urlFile,
                 'categories' => [$isbn],
-                'lang' => $lang
+                'lang' => $lang,
+                'can_download' => true
             ],
             'metadata' => $metadata ?? [],
 

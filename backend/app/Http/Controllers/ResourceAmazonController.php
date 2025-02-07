@@ -45,17 +45,18 @@ class ResourceAmazonController extends Controller
             if (($cdn = $this->cdnService->getCDNInfo($cdnCode)) === null) throw new \Exception('The CDN doesn\'t exist.');
             if ($cdn->isCollectionAccessible($request->collection_id) === false) throw new \Exception('The collection isn\'t accessible for this CDN.');
             
-            $metadataString = ($request->metadata);
+            //$metadataString = ($request->metadata);
 
-            $tmpFilePath = tempnam(sys_get_temp_dir(), 'metadata_') . '.txt';
+            //$tmpFilePath = tempnam(sys_get_temp_dir(), 'metadata_') . '.txt';
 
-            file_put_contents($tmpFilePath, $metadataString);
+            //file_put_contents($tmpFilePath, $metadataString);
             $remoteFile = $this->getAmazonResourceService->getResourceByCurl($request->urlFile);
             $files['File'] = $remoteFile;
             $type = Collection::find($request->collection_id)->accept;
             $lang  = $request->lang ?? false;
             $resource = ($this->saveAmazonResourceService->save($request->urlFile, $request->nameFile, $request->metadata, $request->collection_id,$type, $request->workspace_id,  $files, $lang));
-            $resource->addMedia($tmpFilePath)->toMediaCollection('File');
+          //  $resource->addMedia($tmpFilePath)->toMediaCollection('File');
+            
 
             $url =  $resource->id;
             return response(['resource_id' => $url])
