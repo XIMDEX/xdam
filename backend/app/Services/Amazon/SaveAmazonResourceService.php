@@ -26,26 +26,31 @@ class SaveAmazonResourceService
      *
      * @throws \Exception if the resource couldn't be saved.
      */
-    public function save(String $urlFile, String $nameFile, String $metadata, string $collection_id,$type, $workspace_id, $File)
+    public function save(String $urlFile, String $nameFile, String $metadata, string $collection_id,$type, $workspace_id, $File, $lang = 'es')
     {
         $metadata = json_decode($metadata, true);
         $isbn = $metadata['{macgh.model}isbn'] ?? null;
+        $data = [
+            'description' => [
+                'name' => $nameFile,
+                'active' => true,
+                'url' => $urlFile,
+                'categories' => [$isbn],
+            ],
+            'metadata' => $metadata ?? [],
+
+        ];
+        if ($lang) {
+            $data['description']['lang'] = $lang;
+        }
+
         $params = [
-            'data' => json_encode([
-                'description' => [
-                    'name' => $nameFile,
-                    'active' => true,
-                    'url' => $urlFile,
-                    'categories' => [$isbn],
-                ],
-                'metadata' => $metadata ?? [],
-
-            ]),
-
+            'data' => json_encode($data),
             'name' => $nameFile,
             'type' => ResourceType::fromKey($type)->value,
             'collection_id' => $collection_id,
         ];
+
         if ($File !== null) {
             $params['File'] = $File;
         }

@@ -53,7 +53,8 @@ class ResourceAmazonController extends Controller
             $remoteFile = $this->getAmazonResourceService->getResourceByCurl($request->urlFile);
             $files['File'] = $remoteFile;
             $type = Collection::find($request->collection_id)->accept;
-            $resource = ($this->saveAmazonResourceService->save($request->urlFile, $request->nameFile, $request->metadata, $request->collection_id,$type, $request->workspace_id,  $files));
+            $lang  = $request->lang ?? false;
+            $resource = ($this->saveAmazonResourceService->save($request->urlFile, $request->nameFile, $request->metadata, $request->collection_id,$type, $request->workspace_id,  $files, $lang));
             $resource->addMedia($tmpFilePath)->toMediaCollection('File');
 
             $url =  $resource->id;
