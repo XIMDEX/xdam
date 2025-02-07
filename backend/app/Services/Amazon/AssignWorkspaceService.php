@@ -29,13 +29,14 @@ class AssignWorkspaceService
     public function unassignWorkspace($workspaceId,$isbns) 
     {
         foreach ($isbns as $isbn) {
-            if(!$this->checkIfResourceHasWorkspace($workspaceId,$isbn)){
+            if($this->checkIfResourceHasWorkspace($workspaceId,$isbn)){
                 $isbn->workspaces()->detach($workspaceId);
                 $isbn->save();
                 $isbn->refresh();
                 $this->solrService->saveOrUpdateDocument($isbn);
             }
         }
+     
         return true;
     }
     
