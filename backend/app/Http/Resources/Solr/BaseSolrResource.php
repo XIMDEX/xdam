@@ -11,6 +11,7 @@ use App\Services\Media\MediaSizeImage;
 use App\Utils\DamUrlUtil;
 use App\Utils\Utils;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Intervention\Image\Drivers\Imagick\Driver;
 use Intervention\Image\ImageManager;
 use Solarium\Client;
 
@@ -218,16 +219,13 @@ class BaseSolrResource extends JsonResource
 
     protected function imgToBase64() {
 
-            $media = $this->getMedia(MediaType::File()->key);
-            $file = $media->first();
-            $mediaPath = $file->getPath();
-            $manager = new ImageManager(['driver' => 'imagick']);
-            $image   = $manager->make($mediaPath);
-            $image->fit(256, 144, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
-            $base64 = (string) $image->encode('data-url');
-            return $base64;
+        $media = $this->getMedia(MediaType::File()->key);
+        $file = $media->first();
+        $mediaPath = $file->getPath();
+        $manager = new ImageManager(new Driver());
+        $image   = $manager->read($mediaPath);
+        $image->coverDown(256, 144);
+        $base64 = (string) $image->toPng()->toDataUri();
+        return $base64;
     }
 }
