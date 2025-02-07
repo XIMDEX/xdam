@@ -36,13 +36,11 @@ class SaveAmazonResourceService
                 'active' => true,
                 'url' => $urlFile,
                 'categories' => [$isbn],
+                'lang' => $lang
             ],
             'metadata' => $metadata ?? [],
 
         ];
-        if ($lang) {
-            $data['description']['lang'] = $lang;
-        }
 
         $params = [
             'data' => json_encode($data),
