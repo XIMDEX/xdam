@@ -191,6 +191,10 @@ class ResourceController extends Controller
     public function update(DamResource $damResource, UpdateResourceRequest $request)
     {
         $resource = $this->resourceService->update($damResource, $request->all(),$this->getAvailableResourceSizes());
+        if (env('ENABLED_COGNITREK', true)) {
+            $this->cognitrekService->store($resource->id);
+        }
+        
         return (new ResourceResource($resource))
             ->response()
             ->setStatusCode(Response::HTTP_OK);

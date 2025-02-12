@@ -13,7 +13,7 @@ class CognitrekService extends BaseApi
 
     public function store($resourceID){
         $client = new Client();
-        $res = $client->request(strtoupper("POST"),("{$this->BASE_URL}/resource/".$resourceID),['json' => ["resource_id" => $resourceID]]);
+        $res = $client->request(strtoupper("POST"),("{$this->BASE_URL}/resources/".$resourceID),['json' => ["resource_id" => $resourceID]]);
         return $res;
     }
 }

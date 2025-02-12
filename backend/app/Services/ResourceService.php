@@ -403,7 +403,7 @@ class ResourceService
                // $this->setLomData($resource, $lom_params);
             }
 
-            $this->saveAssociatedFiles($resource, $params);
+            $this->saveAssociatedFiles($resource, $params, $availableSizes);
             $resource = $resource->fresh();
             $this->solr->saveOrUpdateDocument($resource);
             if (isset($params['File'][0]) || isset($params['Preview'])) {
