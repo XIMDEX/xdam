@@ -82,7 +82,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function () {
                 Route::get('metadata/{cdnCode}/{idName}', [ResourceAmazonController::class, 'getResource'])->name('damResource.amazon.get');
                 Route::get('workspace/{cdnCode}/{idName}',  [ResourceAmazonController::class, 'getUrls'])->name('damResource.amazon.workspace');
                 Route::post('{cdn_code}/save', [ResourceAmazonController::class, 'save'])->name('damResource.amazon.save');
-                Route::get('details/{cdnCode}/{idName}', [ResourceAmazonController::class, 'getResource'])->name('damResource.amazon.get');
+                Route::get('details/{cdnCode}/{idName}', [ResourceAmazonController::class, 'getResource'])->name('damResource.amazon.details');
                 Route::get('/{damResourceHash}',        [ResourceController::class, 'renderCDNResource'])->name('damResource.previewCDNResource');
 
 

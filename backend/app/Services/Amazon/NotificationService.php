@@ -13,7 +13,8 @@ class NotificationService
     }
     
     public function notification()
-    {
-        shell_exec("/bin/bash".$this->notificationScriptPath);
+    { 
+        $path = base_path($this->notificationScriptPath);
+        return shell_exec("php " . escapeshellarg($path));
     }
 }

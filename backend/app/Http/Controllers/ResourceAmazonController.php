@@ -156,7 +156,7 @@ class ResourceAmazonController extends Controller
     }
 
     public function notification(){
-        return $this->notificationService->notification();
+        return response()->json($this->notificationService->notification());
     }
 }
 
