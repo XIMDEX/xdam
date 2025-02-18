@@ -9,6 +9,7 @@ use App\Services\Amazon\GetAmazonResourceService;
 use App\Services\Amazon\GetCDNResourceService;
 use App\Services\Amazon\SaveAmazonResourceService;
 use App\Services\Amazon\AssignWorkspaceService;
+use App\Services\Amazon\NotificationService;
 use App\Services\CategoryService;
 use App\Services\CDNService;
 use Illuminate\Http\Request;
@@ -22,8 +23,9 @@ class ResourceAmazonController extends Controller
     private CDNService  $cdnService;
     private AssignWorkspaceService $assignWorkspaceService;
     private CategoryService $categoryService;
+    private NotificationService $notificationService;
 
-    public function __construct(SaveAmazonResourceService $saveAmazonResourceService, GetAmazonResourceService $getAmazonResourceService, CDNService $cdnService, GetCDNResourceService $getCDNResourceService, AssignWorkspaceService $assignWorkspaceService, CategoryService $categoryService)
+    public function __construct(SaveAmazonResourceService $saveAmazonResourceService, GetAmazonResourceService $getAmazonResourceService, CDNService $cdnService, GetCDNResourceService $getCDNResourceService, AssignWorkspaceService $assignWorkspaceService, CategoryService $categoryService, NotificationService $notificationService)
     {
         $this->saveAmazonResourceService = $saveAmazonResourceService;
         $this->getAmazonResourceService = $getAmazonResourceService;
@@ -31,6 +33,7 @@ class ResourceAmazonController extends Controller
         $this->getCDNResourceService = $getCDNResourceService;
         $this->assignWorkspaceService = $assignWorkspaceService;
         $this->categoryService = $categoryService;
+        $this->notificationService = $notificationService;
     }
     /**
      * Saves a resource on the specified CDN
@@ -150,6 +153,10 @@ class ResourceAmazonController extends Controller
         } catch (\Exception $e) {
             return response(['error' => 'error deassigning resources'], Response::HTTP_BAD_REQUEST);
         }
+    }
+
+    public function notification(){
+        return $this->notificationService->notification();
     }
 }
 
