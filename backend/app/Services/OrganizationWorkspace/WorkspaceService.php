@@ -375,4 +375,10 @@ class WorkspaceService
         $this->solrService->saveOrUpdateDocument($resource);
         return $result;
     }
+
+    public function getUsers($wid)
+    {
+        $wsp = Workspace::find($wid);
+        return $wsp->users()->get();
+    }
 }

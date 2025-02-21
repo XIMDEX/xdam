@@ -158,6 +158,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function() {
                 Route::post('set/user',             [AdminController::class, 'setWorkspaces'])  ->name('adm.usr.set.wsp');
                 Route::post('unset/user',           [AdminController::class, 'unsetWorkspaces'])->name('adm.usr.unset.wsp');
                 Route::get('/get/{workspace_id}',   [WorkspaceController::class, 'get'])->name('wsp.get');
+                Route::get('/{workspace_id}/users', [WorkspaceController::class, 'getUsers'])->name('wsp.get.users');
                 Route::post('update',               [WorkspaceController::class, 'update'])->name('wsp.update');
                 Route::delete('/{workspace_id}',    [WorkspaceController::class, 'delete'])->name('wsp.delete');
             });

@@ -34,7 +34,7 @@ class WorkspaceController extends Controller
 
     /**
      * WorkspaceController constructor.
-     * 
+     *
      * @param WorkspaceService $workspaceService
      */
     public function __construct(WorkspaceService $workspaceService)
@@ -128,4 +128,25 @@ class WorkspaceController extends Controller
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
+
+    public function getResourcesOfOrganization(Organization $organization)
+    {
+        $res = $this->workspaceService->getOrganizationResources($organization->id);
+        return (new ResourceCollection($res))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function getUsers($workspaceID)
+    {
+        $workspace = $this->workspaceService->get($workspaceID);
+        if (!$workspace) {
+            return response()->json(['error' => 'Workspace not found'], 404);
+        }
+        $users = $this->workspaceService->getUsers($workspace->id);
+        return (new JsonResource($users))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
 }
