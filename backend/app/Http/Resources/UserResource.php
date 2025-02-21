@@ -23,7 +23,8 @@ class UserResource extends JsonResource
             'current_workspace' => $this->selected_workspace,
             'selected_org_data' => new OrganizationResource($organization_sel),
             'organizations' => OrganizationResource::collection($this->organizations()->get()),
-            'workspaces' => WorkspaceInfoResource::collection(Workspace::where('organization_id', $organization_sel->id)->get())
+            'workspaces' => WorkspaceInfoResource::collection(Workspace::where('organization_id', $organization_sel->id)->get()),
+            'role' => $this->roles()->first(),
         ];
     }
 }
