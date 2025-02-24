@@ -78,7 +78,10 @@ Route::group(['prefix' => 'v1', 'as' => 'v1'], function () {
                 Route::post('notification', [ResourceAmazonController::class, 'notification'])->name('damResource.notification');
                 Route::post('assign/{isbn}/{workspace}',[ResourceAmazonController::class, 'assignWorkspace'])->name('damResource.assign.workspace');
                 Route::post('unassign/{isbn}/{workspace}',[ResourceAmazonController::class, 'unassignWorkspace'])->name('damResource.unassign.workspace');
-                Route::get('/workspaces', [ResourceAmazonController::class, 'getWorkspaces'])->name('damResource.workspaces.get');
+
+                Route::get('workspaces/{workspace_id}/resources', [WorkspaceController::class, 'getResources'])->name('damResource.resources.workspaces.get');                Route::get('/workspaces', [ResourceAmazonController::class, 'getWorkspaces'])->name('damResource.workspaces.get');
+  
+
                 Route::get('metadata/{cdnCode}/{idName}', [ResourceAmazonController::class, 'getResource'])->name('damResource.amazon.get');
                 Route::get('workspace/{cdnCode}/{idName}',  [ResourceAmazonController::class, 'getUrls'])->name('damResource.amazon.workspace');
                 Route::post('{cdn_code}/save', [ResourceAmazonController::class, 'save'])->name('damResource.amazon.save');
