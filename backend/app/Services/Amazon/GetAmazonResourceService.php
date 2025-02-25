@@ -19,15 +19,16 @@ class GetAmazonResourceService
 
     public function getResource(string $s3Key): UploadedFile
     {
+        $s3Key = $this->getS3Key($s3Key);;
         $this->validateFileExists($s3Key);
-        
-       // $contentType = $this->disk->mimeType($s3Key);
+
+        $contentType = $this->disk->mimeType($s3Key);
         $contentLength = $this->disk->size($s3Key);
         $resourceContent = $this->disk->get($s3Key);
 
         $tempFilePath = $this->createTempFile($resourceContent);
 
-        return $this->createUploadedFile($tempFilePath, $s3Key, 'image/jpeg', $contentLength);
+        return $this->createUploadedFile($tempFilePath, $s3Key,  $contentType, $contentLength);
     }
 
     private function validateFileExists(string $s3Key): void
@@ -54,5 +55,11 @@ class GetAmazonResourceService
             UPLOAD_ERR_OK,
             true
         );
+    }
+
+    private function getS3Key($url)
+    {
+        $parsedUrl = parse_url($url);
+        return ltrim($parsedUrl['path'], '/');
     }
 }

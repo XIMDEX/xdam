@@ -62,7 +62,7 @@ class ResourceAmazonController extends Controller
             throw new AccessDeniedHttpException('The collection isn\'t accessible for this CDN.');
         }
 
-        if (strpos($request->urlFile, 's3://') === 0) {
+        if (preg_match('/s3.*?.amazonaws\.com/', $request->urlFile)) {
             try {
                 $remoteFile = $this->getAmazonResourceService->getResource($request->urlFile);
             } catch (FileNotFoundException $e) {
