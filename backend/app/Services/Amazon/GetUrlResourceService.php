@@ -6,7 +6,7 @@ namespace App\Services\Amazon;
 
 class GetUrlResourceService
 {
-    public static function getResourceByCurl(string $url)
+    public static function getResource(string $url)
     {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

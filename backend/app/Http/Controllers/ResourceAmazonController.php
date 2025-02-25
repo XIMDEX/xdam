@@ -10,6 +10,7 @@ use App\Services\Amazon\GetCDNResourceService;
 use App\Services\Amazon\SaveAmazonResourceService;
 use App\Services\Amazon\AssignWorkspaceService;
 use App\Services\Amazon\NotificationService;
+use App\Services\Amazon\GetUrlResourceService;
 use App\Services\CategoryService;
 use App\Services\CDNService;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ use Illuminate\Http\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 
 
 class ResourceAmazonController extends Controller
@@ -28,8 +30,9 @@ class ResourceAmazonController extends Controller
     private AssignWorkspaceService $assignWorkspaceService;
     private CategoryService $categoryService;
     private NotificationService $notificationService;
+    private GetUrlResourceService $getUrlResourceService;
 
-    public function __construct(SaveAmazonResourceService $saveAmazonResourceService, GetAmazonResourceService $getAmazonResourceService, CDNService $cdnService, GetCDNResourceService $getCDNResourceService, AssignWorkspaceService $assignWorkspaceService, CategoryService $categoryService, NotificationService $notificationService)
+    public function __construct(SaveAmazonResourceService $saveAmazonResourceService, GetAmazonResourceService $getAmazonResourceService, CDNService $cdnService, GetCDNResourceService $getCDNResourceService, AssignWorkspaceService $assignWorkspaceService, CategoryService $categoryService, NotificationService $notificationService, GetUrlResourceService $getUrlResourceService)
     {
         $this->saveAmazonResourceService = $saveAmazonResourceService;
         $this->getAmazonResourceService = $getAmazonResourceService;
@@ -38,6 +41,7 @@ class ResourceAmazonController extends Controller
         $this->assignWorkspaceService = $assignWorkspaceService;
         $this->categoryService = $categoryService;
         $this->notificationService = $notificationService;
+        $this->getUrlResourceService = $getUrlResourceService;
     }
     /**
      * Saves a resource on the specified CDN
@@ -58,7 +62,21 @@ class ResourceAmazonController extends Controller
             throw new AccessDeniedHttpException('The collection isn\'t accessible for this CDN.');
         }
 
-        $remoteFile = $this->getAmazonResourceService->getResource($request->urlFile);
+        if (strpos($request->urlFile, 's3://') === 0) {
+            try {
+                $remoteFile = $this->getAmazonResourceService->getResource($request->urlFile);
+            } catch (FileNotFoundException $e) {
+                throw new NotFoundHttpException('The file doesn\'t exist.');
+            }
+        }else{
+            try {
+                $remoteFile = $this->getUrlResourceService->getResource($request->urlFile);
+            } catch (NotFoundHttpException $e) {
+                throw new NotFoundHttpException('The file doesn\'t exist.');
+            }
+        }
+        
+        
         $files['File'] = $remoteFile;
 
         $collection = Collection::find($request->collection_id);
