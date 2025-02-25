@@ -14,6 +14,10 @@ use App\Services\CategoryService;
 use App\Services\CDNService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Illuminate\Http\JsonResponse;
+
 
 class ResourceAmazonController extends Controller
 {
@@ -42,32 +46,50 @@ class ResourceAmazonController extends Controller
      * @param  string  $cdnCode
      * @return \Illuminate\Http\Response
      */
-    public function save(Request $request, $cdnCode)
-    {
-        try {
-            if (($cdn = $this->cdnService->getCDNInfo($cdnCode)) === null) throw new \Exception('The CDN doesn\'t exist.');
-            if ($cdn->isCollectionAccessible($request->collection_id) === false) throw new \Exception('The collection isn\'t accessible for this CDN.');
-            
-            //$metadataString = ($request->metadata);
-
-            //$tmpFilePath = tempnam(sys_get_temp_dir(), 'metadata_') . '.txt';
-
-            //file_put_contents($tmpFilePath, $metadataString);
-            $remoteFile = $this->getAmazonResourceService->getResourceByCurl($request->urlFile);
-            $files['File'] = $remoteFile;
-            $type = Collection::find($request->collection_id)->accept;
-            $lang  = $request->lang ?? false;
-            $resource = ($this->saveAmazonResourceService->save($request->urlFile, $request->nameFile, $request->metadata, $request->collection_id,$type, $request->workspace_id,  $files, $lang));
-          //  $resource->addMedia($tmpFilePath)->toMediaCollection('File');
-            
-
-            $url =  $resource->id;
-            return response(['resource_id' => $url])
-                ->setStatusCode(Response::HTTP_OK);
-        } catch (\Exception $e) {
-            return response(['error' => 'error saving resource'], Response::HTTP_BAD_REQUEST);
+    public function save(Request $request, $cdnCode): JsonResponse
+{
+    try {
+        $cdn = $this->cdnService->getCDNInfo($cdnCode);
+        if ($cdn === null) {
+            throw new NotFoundHttpException('The CDN doesn\'t exist.');
         }
+
+        if (!$cdn->isCollectionAccessible($request->collection_id)) {
+            throw new AccessDeniedHttpException('The collection isn\'t accessible for this CDN.');
+        }
+
+        $remoteFile = $this->getAmazonResourceService->getResource($request->urlFile);
+        $files['File'] = $remoteFile;
+
+        $collection = Collection::find($request->collection_id);
+        if ($collection === null) {
+            throw new NotFoundHttpException('The collection doesn\'t exist.');
+        }
+
+        $type = $collection->accept;
+        $lang = $request->lang ?? false;
+
+        $resource = $this->saveAmazonResourceService->save(
+            $request->urlFile,
+            $request->nameFile,
+            $request->metadata,
+            $request->collection_id,
+            $type,
+            $request->workspace_id,
+            $files,
+            $lang
+        );
+
+        return response()->json(['resource_id' => $resource->id], Response::HTTP_OK);
+
+    } catch (NotFoundHttpException $e) {
+        return response()->json(['error' => $e->getMessage()], Response::HTTP_NOT_FOUND);
+    } catch (AccessDeniedHttpException $e) {
+        return response()->json(['error' => $e->getMessage()], Response::HTTP_FORBIDDEN);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Error saving resource: ' . $e->getMessage()], Response::HTTP_BAD_REQUEST);
     }
+}
 
     /**
      * Gets the urls of a resource on the specified CDN
@@ -129,9 +151,21 @@ class ResourceAmazonController extends Controller
     public function assignWorkspace($isbn, $workspaceId)
     {
         try {
-            $resources = $this->categoryService->getResources(Category::where('name', $isbn)->first(), true);
+            $workspace = Workspace::where('id', $workspaceId)->first();
+            if ($workspace === null) {
+                throw new NotFoundHttpException('The workspace doesn\'t exist.');
+            }
+
+            $category = Category::where('name', $isbn)->first();
+            if ($category === null) {
+                throw new NotFoundHttpException('The ISBN doesn\'t exist.');
+            }
+
+            $resources = $this->categoryService->getResources($category, true);
             $this->assignWorkspaceService->assignWorkspace($workspaceId, $resources);
             return response(['message' => 'Resources assigned to workspace ' . $workspaceId . ' successfully'], Response::HTTP_OK);
+        } catch (NotFoundHttpException $e) {
+            return response(['error' => $e->getMessage()], Response::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             return response(['error' => 'error assigning resources'], Response::HTTP_BAD_REQUEST);
         }
@@ -147,16 +181,28 @@ class ResourceAmazonController extends Controller
     public function unassignWorkspace($isbn, $workspaceId)
     {
         try {
-            $resources = $this->categoryService->getResources(Category::where('name', $isbn)->first(), true);
-            $this->assignWorkspaceService->unassignWorkspace($workspaceId,$resources );
+            $workspace = Workspace::where('id', $workspaceId)->first();
+            if ($workspace === null) {
+                throw new NotFoundHttpException('The workspace doesn\'t exist.');
+            }
+
+            $category = Category::where('name', $isbn)->first();
+            if ($category === null) {
+                throw new NotFoundHttpException('The ISBN doesn\'t exist.');
+            }
+
+            $resources = $this->categoryService->getResources($category, true);
+            $this->assignWorkspaceService->unassignWorkspace($workspaceId, $resources);
             return response(['message' => "Resources with ISBN: $isbn deassigned from workspace $workspaceId successfully"], Response::HTTP_OK);
+        } catch (NotFoundHttpException $e) {
+            return response(['error' => $e->getMessage()], Response::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             return response(['error' => 'error deassigning resources'], Response::HTTP_BAD_REQUEST);
         }
     }
 
-    public function notification(){
+    public function notification()
+    {
         return response()->json($this->notificationService->notification());
     }
 }
-
