@@ -97,7 +97,11 @@ class ResourceAmazonController extends Controller
             $files,
             $lang
         );
-
+       
+        if (preg_match('/s3.*?.amazonaws\.com/', $request->urlFile)){
+            //$notification = $this->notificationService->notification($request->nameFile,$request->metadata, "url");
+           // dd($notification);
+        }
         return response()->json(['resource_id' => $resource->id], Response::HTTP_OK);
 
     } catch (NotFoundHttpException $e) {
@@ -120,7 +124,7 @@ class ResourceAmazonController extends Controller
     {
         try {
             $resource = $this->getCDNResourceService->getResourceUrls($cdnCode, $damResource);
-            return  response($resource)
+            return  response()->json($resource)
                 ->setStatusCode(Response::HTTP_OK);
         } catch (\Exception $e) {
             return response(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
@@ -221,6 +225,6 @@ class ResourceAmazonController extends Controller
 
     public function notification()
     {
-        return response()->json($this->notificationService->notification());
+       // return response()->json($this->notificationService->notification());
     }
 }
