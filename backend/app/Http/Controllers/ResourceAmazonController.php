@@ -127,7 +127,7 @@ class ResourceAmazonController extends Controller
             return  response()->json($resource)
                 ->setStatusCode(Response::HTTP_OK);
         } catch (\Exception $e) {
-            return response(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response(['error' => 'error getting resource'], Response::HTTP_BAD_REQUEST);
         }
     }
 

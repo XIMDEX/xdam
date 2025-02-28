@@ -20,14 +20,14 @@ class GetCDNResourceService
 
     public function getResourceUrls($cdnCode, $idName)
     {
-        if (($cdn = $this->cdnService->getCDNInfo($cdnCode)) === null) return response(['error' => 'The CDN doesn\'t exist.']);
+        if (($cdn = $this->cdnService->getCDNInfo($cdnCode)) === null) return (['error' => 'The CDN doesn\'t exist.']);
   
         $resource = DamResource::find($idName);
         $result = new \stdClass();
 
         if (is_null($resource)) {
             $resources = DamResource::where('name', $idName)->get();
-            if ($resources->count() == 0) return response(['error' => 'The resource doesn\'t exist.']);
+            if ($resources->count() == 0) return (['error' => 'The resource doesn\'t exist.']);
         } else {
             $resources = collect([$resource]);
         }
@@ -39,11 +39,19 @@ class GetCDNResourceService
                 foreach ($workspaces as $workspace) {
                     $previews[] = ["id" => $workspace->id, "name" => $workspace->name, "url" => env('DAM_FRONT_URL', '') . '/' . 'cdn'. '/' . $this->cdnService->encodeHash($this->cdnService->generateDamResourceHash($cdn, $resource, $resource->collection_id), $workspace->id, $resource->collection_id, false)];
                 }
-                $result->{$index}  = [
-                    'ID' => $resource->id,
-                    'nombre' => $resource->name,
-                    'urls' => $previews,
-                ];
+                if($resources->count() == 1){
+                    $result  = [
+                        'ID' => $resource->id,
+                        'nombre' => $resource->name,
+                        'urls' => $previews,
+                    ];
+                }else{
+                    $result->{$index}  = [
+                        'ID' => $resource->id,
+                        'nombre' => $resource->name,
+                        'urls' => $previews,
+                    ];
+                }
             }
         }
 
