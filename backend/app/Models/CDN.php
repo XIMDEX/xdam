@@ -40,13 +40,14 @@ class CDN extends Model
         return $this->hasMany(CDNCollection::class, 'cdn_id');
     }
 
-    public function isCollectionAccessible($collectionID)
+    public function isCollectionAccessible(int $collectionID)
     {
         $collections = CDNCollection::where('cdn_id', $this->id)->get();
-
-        foreach ($collections as $item)
-            if ($item->collection_id === $collectionID)
-                return true;
+        dd($collectionID,$collections,$this->id);
+        foreach ($collections as $item){
+            if ((int) $item->collection_id === $collectionID) return true;
+        }
+         
 
         return false;
     }
