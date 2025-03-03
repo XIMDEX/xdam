@@ -42,14 +42,11 @@ class CDN extends Model
 
     public function isCollectionAccessible(int $collectionID)
     {
-        $collections = CDNCollection::where('cdn_id', $this->id)->get();
-        dd($collectionID,$collections,$this->id);
-        foreach ($collections as $item){
-            if ((int) $item->collection_id === $collectionID) return true;
-        }
-         
-
-        return false;
+        $collectionIds = CDNCollection::where('cdn_id', $this->id)
+            ->pluck('collection_id')
+            ->toArray();
+    
+        return in_array($collectionID, $collectionIds, true);
     }
 
     public function checkAccessRequirements($params = ['ipAddress' => null, 'originURL' => null])
