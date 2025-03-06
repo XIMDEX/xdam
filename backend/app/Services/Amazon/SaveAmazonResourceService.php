@@ -29,7 +29,12 @@ class SaveAmazonResourceService
     public function save(String $urlFile, String $nameFile, String $metadata, string $collection_id,$type, $workspace_id, $File, $lang = 'es')
     {
         $metadata = json_decode($metadata, true);
+        if (!isset($metadata['{macgh.model}isbn'])) {
+            throw new \Exception('{macgh.model}isbn is required');
+        }
         $isbn = $metadata['{macgh.model}isbn'] ?? null;
+       
+        
         $data = [
             'description' => [
                 'name' => $nameFile,
