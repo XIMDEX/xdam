@@ -27,7 +27,7 @@ class GetAmazonResourceService
         $resourceContent = $this->disk->get($s3Key);
 
         $tempFilePath = $this->createTempFile($resourceContent);
-
+ 
         return $this->createUploadedFile($tempFilePath, $s3Key,  $contentType, $contentLength);
     }
 
