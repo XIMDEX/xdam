@@ -98,9 +98,9 @@ class ResourceAmazonController extends Controller
             $lang
         );
        
+        $hashUrl = env('DAM_FRONT_URL', '') . '/' . 'cdn'. '/' .($this->cdnService->encodeHash($this->cdnService->generateDamResourceHash($cdn, $resource, $resource->collection_id), $resource->workspaces->first()->id, $resource->collection_id, false)) ?? '';
         if (preg_match('/s3.*?.amazonaws\.com/', $request->urlFile)){
-            //$notification = $this->notificationService->notification($request->nameFile,$request->metadata, "url");
-           // dd($notification);
+            ($this->notificationService->notification(['name' => $request->nameFile,'metadata' => $request->metadata, 'url' => $hashUrl]));
         }
         return response()->json(['resource_id' => $resource->id], Response::HTTP_OK);
 

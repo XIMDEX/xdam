@@ -12,9 +12,9 @@ class NotificationService
         $this->notificationScriptPath = env('NOTIFICATION_SCRIPT_PATH');
     }
     
-    public function notification()
+    public function notification($params)
     { 
         $path = base_path($this->notificationScriptPath);
-        return shell_exec("php " . escapeshellarg($path));
+        return shell_exec("php " . escapeshellarg($path) . ' ' . escapeshellarg($params['name']) . ' ' . escapeshellarg($params['metadata']) . ' ' . escapeshellarg($params['url']));
     }
 }
