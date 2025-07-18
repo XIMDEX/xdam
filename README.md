@@ -1,4 +1,5 @@
 # What is XDAM?
+JAP comment 
 The Digital Asset Management service of the Ximdex Platform (XDAM) provides a single point of interaction with all types of digital objects (images, videos, audio, e- books, documents, fonts, links, websites, etc.), categorizing them for quick and efficient search based on customizable facets.
 
 # Installation of XDAM Backend
