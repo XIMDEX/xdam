@@ -23,6 +23,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection as JsonResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class WorkspaceController extends Controller
 {
@@ -96,10 +97,21 @@ class WorkspaceController extends Controller
 
     public function getResources(GetWorkspaceRequest $request)
     {
-        $wsp = $this->workspaceService->getResources($request->workspace_id);
-        return (new JsonResource($wsp))
-            ->response()
-            ->setStatusCode(Response::HTTP_OK);
+        try {
+            $wsp = $this->workspaceService->getResources($request->workspace_id);
+            
+            if ($wsp === null) {
+                throw new NotFoundHttpException('Workspace not found.');
+            }
+    
+            return (new JsonResource($wsp))
+                ->response()
+                ->setStatusCode(Response::HTTP_OK);
+        } catch (NotFoundHttpException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_NOT_FOUND);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'An error occurred while fetching resources.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     public function getOrganizationResources(GetOrganizationResourcesRequest $request)
